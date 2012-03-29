@@ -971,6 +971,10 @@ disk.free.hardlimit = 1000
 memory.acceptDHTabove = 50
 memory.disabledDHT = false
 
+# maximum data to store
+performance.maxlinks =
+performance.maxrwi =
+
 # wether using standard memory strategy - or try generation memory strategy
 memory.standardStrategy = true
 
