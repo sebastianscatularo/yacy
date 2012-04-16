@@ -393,8 +393,13 @@ public final class SwitchboardConstants {
     public static final String DISK_FREE_HARDLIMIT = "disk.free.hardlimit";
 
     public static final String MEMORY_ACCEPTDHT = "memory.acceptDHTabove";
-    public static final String INDEX_RECEIVE_AUTODISABLED = "memory.disabledDHT";
+    public static final String INDEX_RECEIVE_AUTODISABLED = "dht.autoDisabledReceive";
 
+    // maximum data to store
+    public static final String DATA_MAXLINKS = "data.maxlinks";
+    public static final String DATA_MAXRWI = "data.maxrwi";
+    
+    
     /*
      * Some constants
      */

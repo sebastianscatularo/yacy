@@ -66,10 +66,18 @@ public class ResourceObserver {
 
     	this.normalizedDiskFree = getNormalizedDiskFree();
     	this.normalizedMemoryFree = getNormalizedMemoryFree();
+    	
+    	final boolean maximumLinks = sb.peers.mySeed().getLinkCount() >= sb.getConfigLong(SwitchboardConstants.DATA_MAXLINKS, 10000000L);
+    	final boolean maximumRWI = sb.peers.mySeed().getWordCount() >= sb.getConfigLong(SwitchboardConstants.DATA_MAXRWI, 5000000L);
+    	
+    	if (maximumLinks) log.logInfo("reached maximum Links");
+    	if (maximumRWI) log.logInfo("reached maximum RWI");
 
-    	if (this.normalizedDiskFree.compareTo(Space.HIGH) < 0 || this.normalizedMemoryFree.compareTo(Space.HIGH) < 0 ) {
+    	if (this.normalizedDiskFree.compareTo(Space.HIGH) < 0 || this.normalizedMemoryFree.compareTo(Space.HIGH) < 0
+    			|| maximumLinks || maximumRWI) {
 
-    		if (this.normalizedDiskFree.compareTo(Space.HIGH) < 0 ) { // pause crawls
+    		if (this.normalizedDiskFree.compareTo(Space.HIGH) < 0 
+    				|| maximumLinks || maximumRWI) { // pause crawls
     			if (!this.sb.crawlJobIsPaused(SwitchboardConstants.CRAWLJOB_LOCAL_CRAWL)) {
     				log.logInfo("pausing local crawls");
     				this.sb.pauseCrawlJob(SwitchboardConstants.CRAWLJOB_LOCAL_CRAWL);
@@ -80,7 +88,10 @@ public class ResourceObserver {
     			}
     		}
 
-    		if ((this.normalizedDiskFree == Space.LOW || this.normalizedMemoryFree.compareTo(Space.HIGH) < 0) && this.sb.getConfigBool(SwitchboardConstants.INDEX_RECEIVE_ALLOW, false)) {
+    		if ( (this.normalizedDiskFree == Space.LOW
+    				|| this.normalizedMemoryFree.compareTo(Space.HIGH) < 0
+    				|| maximumLinks || maximumRWI)
+    					&& this.sb.getConfigBool(SwitchboardConstants.INDEX_RECEIVE_ALLOW, false)) {
     			log.logInfo("disabling index receive");
     			this.sb.setConfig(SwitchboardConstants.INDEX_RECEIVE_ALLOW, false);
     			this.sb.peers.mySeed().setFlagAcceptRemoteIndex(false);

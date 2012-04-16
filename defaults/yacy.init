@@ -969,11 +969,11 @@ disk.free.hardlimit = 1000
 
 # minimum memory to accept dht-in (MiB)
 memory.acceptDHTabove = 50
-memory.disabledDHT = false
+dht.autoDisabledReceive = false
 
 # maximum data to store
-performance.maxlinks =
-performance.maxrwi =
+data.maxlinks =
+data.maxrwi =
 
 # wether using standard memory strategy - or try generation memory strategy
 memory.standardStrategy = true
