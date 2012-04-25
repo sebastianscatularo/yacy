@@ -30,11 +30,12 @@ import java.util.Date;
 
 import net.yacy.cora.date.GenericFormatter;
 import net.yacy.cora.document.ASCII;
+import net.yacy.cora.document.Classification;
+import net.yacy.cora.document.MultiProtocolURI;
 import net.yacy.cora.document.UTF8;
 import net.yacy.cora.protocol.HeaderFramework;
 import net.yacy.cora.protocol.RequestHeader;
 import net.yacy.cora.protocol.ResponseHeader;
-import net.yacy.document.Classification;
 import net.yacy.document.Document;
 import net.yacy.document.Parser;
 import net.yacy.document.TextParser;
@@ -67,7 +68,7 @@ public class Response {
     private        int                status;          // tracker indexing status, see status defs below
 
     // doctype calculation
-    public static char docType(final DigestURI url) {
+    public static char docType(final MultiProtocolURI url) {
         final String path = url.getPath().toLowerCase();
         // serverLog.logFinest("PLASMA", "docType URL=" + path);
         char doctype = DT_UNKNOWN;
@@ -161,16 +162,23 @@ public class Response {
         this.content = content;
     }
 
+    /**
+     * create a 'virtual' response that is composed using crawl details from the request object
+     * this is used when the NOLOAD queue is processed
+     * @param request
+     * @param profile
+     */
     public Response(final Request request, final CrawlProfile profile) {
         this.request = request;
         // request and response headers may be zero in case that we process surrogates
         this.requestHeader = new RequestHeader();
         this.responseHeader = new ResponseHeader();
+        this.responseHeader.put(HeaderFramework.CONTENT_TYPE, "text/plain"); // tell parser how to handle the content
         if (request.size() > 0) this.responseHeader.put(HeaderFramework.CONTENT_LENGTH, Long.toString(request.size()));
         this.responseStatus = "200";
         this.profile = profile;
         this.status = QUEUE_STATE_FRESH;
-        this.content = request.url().toTokens().getBytes();
+        this.content = request.name().length() > 0 ? request.name().getBytes() : request.url().toTokens().getBytes();
     }
 
     public Response(
@@ -823,7 +831,7 @@ public class Response {
         final String supportError = TextParser.supports(url(), this.responseHeader == null ? null : this.responseHeader.mime());
         if (supportError != null) throw new Parser.Failure("no parser support:" + supportError, url());
         try {
-            return TextParser.parseSource(url(), this.responseHeader == null ? null : this.responseHeader.mime(), this.responseHeader == null ? "UTF-8" : this.responseHeader.getCharacterEncoding(), this.content, false);
+            return TextParser.parseSource(url(), this.responseHeader == null ? null : this.responseHeader.mime(), this.responseHeader == null ? "UTF-8" : this.responseHeader.getCharacterEncoding(), this.content);
         } catch (final Exception e) {
             return null;
         }

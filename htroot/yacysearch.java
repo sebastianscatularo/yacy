@@ -39,6 +39,8 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import net.yacy.cora.document.ASCII;
+import net.yacy.cora.document.Classification;
+import net.yacy.cora.document.Classification.ContentDomain;
 import net.yacy.cora.document.RSSMessage;
 import net.yacy.cora.document.UTF8;
 import net.yacy.cora.protocol.Domains;
@@ -76,7 +78,6 @@ import net.yacy.search.query.QueryParams;
 import net.yacy.search.query.SearchEvent;
 import net.yacy.search.query.SearchEventCache;
 import net.yacy.search.ranking.RankingProfile;
-import net.yacy.search.snippet.ContentDomain;
 import de.anomic.data.DidYouMean;
 import de.anomic.data.UserDB;
 import de.anomic.data.ymark.YMarkTables;
@@ -121,7 +122,7 @@ public class yacysearch {
         //get focus option
         final boolean focus  = (post == null) ? true : post.get("focus", "1").equals("1");
         prop.put("focus", focus ? 1 : 0);
-        
+
         // produce vocabulary navigation sidebars
         Collection<Vocabulary> vocabularies = LibraryProvider.autotagging.getVocabularies();
         int j = 0;
@@ -270,8 +271,8 @@ public class yacysearch {
         }
 
         // find search domain
-        final ContentDomain contentdom =
-            ContentDomain.contentdomParser(post == null ? "text" : post.get("contentdom", "text"));
+        final Classification.ContentDomain contentdom =
+            ContentDomain.contentdomParser(post == null ? "all" : post.get("contentdom", "all"));
 
         // patch until better search profiles are available
         if ( contentdom == ContentDomain.TEXT ) {
@@ -520,12 +521,6 @@ public class yacysearch {
                 }
                 sitehash = DigestURI.hosthash(sitehost);
                 modifier.append("site:").append(sitehost).append(' ');
-            }
-
-            final int heuristicScroogle = querystring.indexOf("/heuristic/scroogle", 0);
-            if ( heuristicScroogle >= 0 ) {
-                querystring = querystring.replace("/heuristic/scroogle", "");
-                modifier.append("/heuristic/scroogle ");
             }
 
             final int heuristicBlekko = querystring.indexOf("/heuristic/blekko", 0);
@@ -821,10 +816,6 @@ public class yacysearch {
             if ( startRecord == 0 ) {
                 if ( sitehost != null && sb.getConfigBool("heuristic.site", false) && authenticated ) {
                     sb.heuristicSite(theSearch, sitehost);
-                }
-                if ( (heuristicScroogle >= 0 || sb.getConfigBool("heuristic.scroogle", false))
-                    && authenticated ) {
-                    sb.heuristicScroogle(theSearch);
                 }
                 if ( (heuristicBlekko >= 0 || sb.getConfigBool("heuristic.blekko", false)) && authenticated ) {
                     sb.heuristicRSS("http://blekko.com/ws/$+/rss", theSearch, "blekko");

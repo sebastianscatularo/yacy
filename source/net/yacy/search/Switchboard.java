@@ -76,6 +76,7 @@ import java.util.zip.ZipInputStream;
 
 import net.yacy.cora.date.GenericFormatter;
 import net.yacy.cora.document.ASCII;
+import net.yacy.cora.document.Classification;
 import net.yacy.cora.document.MultiProtocolURI;
 import net.yacy.cora.document.RSSFeed;
 import net.yacy.cora.document.RSSMessage;
@@ -149,7 +150,7 @@ import net.yacy.search.query.SearchEvent;
 import net.yacy.search.query.SearchEventCache;
 import net.yacy.search.ranking.BlockRank;
 import net.yacy.search.ranking.RankingProfile;
-import net.yacy.search.snippet.ContentDomain;
+import de.anomic.crawler.Cache;
 import de.anomic.crawler.CrawlProfile;
 import de.anomic.crawler.CrawlQueues;
 import de.anomic.crawler.CrawlStacker;
@@ -174,7 +175,6 @@ import de.anomic.data.WorkTables;
 import de.anomic.data.wiki.WikiBoard;
 import de.anomic.data.wiki.WikiCode;
 import de.anomic.data.wiki.WikiParser;
-import de.anomic.http.client.Cache;
 import de.anomic.http.server.RobotsTxtConfig;
 import de.anomic.server.serverCore;
 import de.anomic.server.serverSwitch;
@@ -1462,7 +1462,7 @@ public final class Switchboard extends serverSwitch
 
     public RankingProfile getRanking() {
         return (getConfig("rankingProfile", "").length() == 0)
-            ? new RankingProfile(ContentDomain.TEXT)
+            ? new RankingProfile(Classification.ContentDomain.TEXT)
             : new RankingProfile("", crypt.simpleDecode(sb.getConfig("rankingProfile", ""), null));
     }
 
@@ -2329,8 +2329,7 @@ public final class Switchboard extends serverSwitch
                     response.url(),
                     response.getMimeType(),
                     response.getCharacterEncoding(),
-                    response.getContent(),
-                    response.profile().directDocByURL());
+                    response.getContent());
             if ( documents == null ) {
                 throw new Parser.Failure("Parser returned null.", response.url());
             }
@@ -2355,8 +2354,11 @@ public final class Switchboard extends serverSwitch
             // get the hyperlinks
             final Map<MultiProtocolURI, String> hl = Document.getHyperlinks(documents);
 
-            // add all images also to the crawl stack
+            // add all media links also to the crawl stack. They will be re-sorted to the NOLOAD queue and indexed afterwards as pure links
             hl.putAll(Document.getImagelinks(documents));
+            hl.putAll(Document.getApplinks(documents));
+            hl.putAll(Document.getVideolinks(documents));
+            hl.putAll(Document.getAudiolinks(documents));
 
             // insert those hyperlinks to the crawler
             MultiProtocolURI nextUrl;

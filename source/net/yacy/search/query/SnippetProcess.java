@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import net.yacy.cora.document.ASCII;
+import net.yacy.cora.document.Classification;
 import net.yacy.cora.document.MultiProtocolURI;
 import net.yacy.cora.protocol.ResponseHeader;
 import net.yacy.cora.services.federated.solr.SolrConnector;
@@ -52,7 +53,6 @@ import net.yacy.peers.SeedDB;
 import net.yacy.peers.graphics.ProfilingGraph;
 import net.yacy.repository.LoaderDispatcher;
 import net.yacy.search.Switchboard;
-import net.yacy.search.snippet.ContentDomain;
 import net.yacy.search.snippet.MediaSnippet;
 import net.yacy.search.snippet.ResultEntry;
 import net.yacy.search.snippet.TextSnippet;
@@ -60,8 +60,8 @@ import net.yacy.search.snippet.TextSnippet;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 
+import de.anomic.crawler.Cache;
 import de.anomic.data.WorkTables;
-import de.anomic.http.client.Cache;
 
 public class SnippetProcess {
 
@@ -293,23 +293,15 @@ public class SnippetProcess {
         long r = 0;
 
         // for media search: prefer pages with many links
-        if (this.query.contentdom == ContentDomain.IMAGE) {
-            r += rentry.limage() << this.query.ranking.coeff_cathasimage;
-        }
-        if (this.query.contentdom == ContentDomain.AUDIO) {
-            r += rentry.laudio() << this.query.ranking.coeff_cathasaudio;
-        }
-        if (this.query.contentdom == ContentDomain.VIDEO) {
-            r += rentry.lvideo() << this.query.ranking.coeff_cathasvideo;
-        }
-        if (this.query.contentdom == ContentDomain.APP  ) {
-            r += rentry.lapp()   << this.query.ranking.coeff_cathasapp;
-        }
+        r += rentry.limage() << this.query.ranking.coeff_cathasimage;
+        r += rentry.laudio() << this.query.ranking.coeff_cathasaudio;
+        r += rentry.lvideo() << this.query.ranking.coeff_cathasvideo;
+        r += rentry.lapp()   << this.query.ranking.coeff_cathasapp;
 
         // apply citation count
         //System.out.println("POSTRANKING CITATION: references = " + rentry.referencesCount() + ", inbound = " + rentry.llocal() + ", outbound = " + rentry.lother());
-        r += (128 * rentry.referencesCount() / (1 + 2 * rentry.llocal() + rentry.lother())) << 8;
-        
+        r += (128 * rentry.referencesCount() / (1 + 2 * rentry.llocal() + rentry.lother())) << this.query.ranking.coeff_citation;
+
         // prefer hit with 'prefer' pattern
         if (this.query.prefer.matcher(rentry.url().toNormalform(true, true)).matches()) {
             r += 256 << this.query.ranking.coeff_prefer;
@@ -588,7 +580,7 @@ public class SnippetProcess {
         }
 
         // load snippet
-        if (this.query.contentdom == ContentDomain.TEXT) {
+        if (page.url().getContentDomain() == Classification.ContentDomain.TEXT) {
             // attach text snippet
             startTime = System.currentTimeMillis();
             final TextSnippet snippet = new TextSnippet(
@@ -621,26 +613,7 @@ public class SnippetProcess {
                 return null;
             }
         } else {
-            // attach media information
-            startTime = System.currentTimeMillis();
-            final List<MediaSnippet> mediaSnippets = MediaSnippet.retrieveMediaSnippets(page.url(), this.snippetFetchWordHashes, this.query.contentdom, cacheStrategy, 6000, !this.query.isLocal());
-            final long snippetComputationTime = System.currentTimeMillis() - startTime;
-            Log.logInfo("SEARCH", "media snippet load time for " + page.url() + ": " + snippetComputationTime);
-
-            if (mediaSnippets != null && !mediaSnippets.isEmpty()) {
-                // found media snippets, return entry
-                return new ResultEntry(page, this.query.getSegment(), this.peers, null, mediaSnippets, dbRetrievalTime, snippetComputationTime);
-            } else if (cacheStrategy.mustBeOffline()) {
-                return new ResultEntry(page, this.query.getSegment(), this.peers, null, null, dbRetrievalTime, snippetComputationTime);
-            } else {
-                // problems with snippet fetch
-                final String reason = "no media snippet";
-                if (this.deleteIfSnippetFail) {
-                    this.workTables.failURLsRegisterMissingWord(this.query.getSegment().termIndex(), page.url(), this.query.queryHashes, reason);
-                }
-                Log.logInfo("SEARCH", "sorted out url " + page.url().toNormalform(true, false) + " during search: " + reason);
-                return null;
-            }
+            return new ResultEntry(page, this.query.getSegment(), this.peers, null, null, dbRetrievalTime, 0); // result without snippet
         }
         // finished, no more actions possible here
     }

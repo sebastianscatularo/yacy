@@ -39,6 +39,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 
 import net.yacy.cora.document.ASCII;
+import net.yacy.cora.document.Classification;
+import net.yacy.cora.document.Classification.ContentDomain;
 import net.yacy.cora.document.MultiProtocolURI;
 import net.yacy.cora.protocol.Scanner;
 import net.yacy.cora.sorting.ClusteredScoreMap;
@@ -65,7 +67,6 @@ import net.yacy.peers.graphics.ProfilingGraph;
 import net.yacy.search.Switchboard;
 import net.yacy.search.index.Segment;
 import net.yacy.search.ranking.ReferenceOrder;
-import net.yacy.search.snippet.ContentDomain;
 import net.yacy.search.snippet.ResultEntry;
 
 public final class RWIProcess extends Thread
@@ -288,7 +289,7 @@ public final class RWIProcess extends Thread
                 }
 
                 // check document domain
-                if ( this.query.contentdom != ContentDomain.TEXT ) {
+                if ( this.query.contentdom != Classification.ContentDomain.ALL ) {
                     if ( (this.query.contentdom == ContentDomain.AUDIO)
                         && (!(iEntry.flags().get(Condenser.flag_cat_hasaudio))) ) {
                         continue pollloop;
@@ -587,6 +588,12 @@ public final class RWIProcess extends Thread
                 continue; // rare case where the url is corrupted
             }
 
+            // check content domain
+            if (this.query.contentdom != Classification.ContentDomain.ALL && page.url().getContentDomain() != this.query.contentdom) {
+                this.sortout++;
+                continue;
+            }
+
             final String pageurl = page.url().toNormalform(true, true);
             final String pageauthor = page.dc_creator();
             final String pagetitle = page.dc_title().toLowerCase();
@@ -615,15 +622,6 @@ public final class RWIProcess extends Thread
             if ( (this.query.constraint != null)
                 && (this.query.constraint.get(Condenser.flag_cat_haslocation))
                 && (page.lat() == 0.0f || page.lon() == 0.0f) ) {
-                this.sortout++;
-                continue;
-            }
-
-            // check content domain
-            if ( (this.query.contentdom == ContentDomain.AUDIO && page.laudio() == 0)
-                || (this.query.contentdom == ContentDomain.VIDEO && page.lvideo() == 0)
-                || (this.query.contentdom == ContentDomain.IMAGE && page.limage() == 0)
-                || (this.query.contentdom == ContentDomain.APP && page.lapp() == 0) ) {
                 this.sortout++;
                 continue;
             }

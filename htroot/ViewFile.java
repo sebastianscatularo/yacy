@@ -53,8 +53,8 @@ import net.yacy.kelondro.data.meta.URIMetadataRow;
 import net.yacy.search.Switchboard;
 import net.yacy.search.index.Segment;
 import net.yacy.search.index.Segments;
+import de.anomic.crawler.Cache;
 import de.anomic.crawler.retrieval.Response;
-import de.anomic.http.client.Cache;
 import de.anomic.server.serverObjects;
 import de.anomic.server.serverSwitch;
 
@@ -160,7 +160,7 @@ public class ViewFile {
         }
 
         // loading the resource content as byte array
-        prop.put("error_incache", Cache.has(url) ? 1 : 0);
+        prop.put("error_incache", Cache.has(url.hash()) ? 1 : 0);
 
         Response response = null;
         try {

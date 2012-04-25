@@ -29,11 +29,11 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import net.yacy.cora.document.Classification;
 import net.yacy.cora.protocol.RequestHeader;
 import net.yacy.search.Switchboard;
 import net.yacy.search.query.SearchEventCache;
 import net.yacy.search.ranking.RankingProfile;
-import net.yacy.search.snippet.ContentDomain;
 import de.anomic.server.serverObjects;
 import de.anomic.server.serverSwitch;
 import de.anomic.tools.crypt;
@@ -77,6 +77,7 @@ public class Ranking_p {
         rankingParameters.put(RankingProfile.URLCOMPINTOPLIST, "URL Component Appears In Toplist;a higher ranking level prefers documents with words in the url path that match words in the toplist. The toplist is generated dynamically from the search results using a statistic of the most used words. The toplist is a top-10 list of the most used words in URLs and document titles.");
         rankingParameters.put(RankingProfile.DESCRCOMPINTOPLIST, "Description Comp. Appears In Toplist;a higher ranking level prefers documents with words in the document description that match words in the toplist. The toplist is generated dynamically from the search results using a statistic of the most used words. The toplist is a top-10 list of the most used words in URLs and document titles.");
         rankingParameters.put(RankingProfile.PREFER, "Application Of Prefer Pattern;a higher ranking level prefers documents where the url matches the prefer pattern given in a search request.");
+        rankingParameters.put(RankingProfile.CITATION, "Citation Rank;the more incoming links and the less outgoing links the better the ranking.");
 	}
 
     private static serverObjects defaultValues() {
@@ -150,7 +151,7 @@ public class Ranking_p {
             // we create empty entries for template strings
             final serverObjects prop = defaultValues();
             final RankingProfile ranking;
-            if (sb == null) ranking = new RankingProfile(ContentDomain.TEXT);
+            if (sb == null) ranking = new RankingProfile(Classification.ContentDomain.TEXT);
             else ranking = sb.getRanking();
             putRanking(prop, ranking, "local");
             return prop;
@@ -167,7 +168,7 @@ public class Ranking_p {
 
         if (post.containsKey("ResetRanking")) {
             sb.setConfig("rankingProfile", "");
-            final RankingProfile ranking = new RankingProfile(ContentDomain.TEXT);
+            final RankingProfile ranking = new RankingProfile(Classification.ContentDomain.TEXT);
             final serverObjects prop = defaultValues();
             //prop.putAll(ranking.toExternalMap("local"));
             putRanking(prop, ranking, "local");
