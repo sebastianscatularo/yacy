@@ -68,7 +68,7 @@ public class ResourceObserver {
     	this.normalizedMemoryFree = getNormalizedMemoryFree();
     	
     	final boolean maximumLinks = sb.peers.mySeed().getLinkCount() >= sb.getConfigLong(SwitchboardConstants.DATA_MAXLINKS, 10000000L);
-    	final boolean maximumRWI = sb.peers.mySeed().getWordCount() >= sb.getConfigLong(SwitchboardConstants.DATA_MAXRWI, 5000000L);
+    	final boolean maximumRWI = sb.peers.mySeed().getWordCount() >= sb.getConfigLong(SwitchboardConstants.DATA_MAXRWI, 1700000L); // link:word ratio of 1:6
     	
     	if (maximumLinks) log.logInfo("reached maximum Links");
     	if (maximumRWI) log.logInfo("reached maximum RWI");
