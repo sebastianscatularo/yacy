@@ -2,6 +2,7 @@ package de.anomic.data;
 
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.ConcurrentModificationException;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -152,14 +153,17 @@ public class DidYouMean {
         }
 
         final ReversibleScoreMap<StringBuilder> scored = new ClusteredScoreMap<StringBuilder>(StringBuilderComparator.CASE_INSENSITIVE_ORDER);
-        for (final StringBuilder s: preSorted) {
-            if (System.currentTimeMillis() > timelimit) {
-                break;
-            }
-            if (!(scored.sizeSmaller(2 * preSortSelection))) {
-                break;
-            }
-            scored.inc(s, this.index.count(Word.word2hash(s)));
+        try {
+	        for (final StringBuilder s: preSorted) {
+	            if (System.currentTimeMillis() > timelimit) {
+	                break;
+	            }
+	            if (!(scored.sizeSmaller(2 * preSortSelection))) {
+	                break;
+	            }
+	            scored.inc(s, this.index.count(Word.word2hash(s)));
+	        }
+        } catch (ConcurrentModificationException e) {
         }
         final SortedSet<StringBuilder> countSorted = Collections.synchronizedSortedSet(new TreeSet<StringBuilder>(new headMatchingComparator(this.word, this.INDEX_SIZE_COMPARATOR)));
         final int wc = this.index.count(Word.word2hash(this.word)); // all counts must be greater than this
@@ -175,7 +179,7 @@ public class DidYouMean {
         }
 
         // finished
-        if (countSorted.size() == 0) {
+        if (countSorted.isEmpty()) {
             Log.logInfo("DidYouMean", "found and returned " + preSorted.size() + " unsorted suggestions (2); execution time: "
                     + (System.currentTimeMillis() - startTime) + "ms");
                 return preSorted;
@@ -275,7 +279,9 @@ public class DidYouMean {
         // we take guessLib entries as long as there is any entry in it
         // to see if this is the case, we must wait for termination of the producer
         for (final Thread t: producers) {
-            try { t.join(); } catch (final InterruptedException e) {}
+            if (this.timeLimit > System.currentTimeMillis()) try {
+                t.join(Math.max(0, this.timeLimit - System.currentTimeMillis()));
+            } catch (final InterruptedException e) {}
         }
 
         // if there is not any entry in guessLib, then transfer all entries from the
@@ -297,7 +303,9 @@ public class DidYouMean {
 
         // wait for termination of consumer
         for (final Consumer c: consumers) {
-            try { c.join(); } catch (final InterruptedException e) {}
+            if (this.timeLimit > System.currentTimeMillis()) try {
+                c.join(Math.max(0, this.timeLimit - System.currentTimeMillis()));
+            } catch (final InterruptedException e) {}
         }
 
         // we don't want the given word in the result

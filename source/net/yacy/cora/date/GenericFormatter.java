@@ -31,6 +31,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+import net.yacy.cora.util.NumberTools;
+
 public class GenericFormatter extends AbstractFormatter implements DateFormatter {
 
     public static final String PATTERN_SHORT_DAY    = "yyyyMMdd";
@@ -93,6 +95,7 @@ public class GenericFormatter extends AbstractFormatter implements DateFormatter
         }
     }
 
+    @Override
     public String format() {
         if (Math.abs(System.currentTimeMillis() - this.last_time) < this.maxCacheDiff) return this.last_format;
         // threads that had been waiting here may use the cache now instead of calculating the date again
@@ -129,8 +132,8 @@ public class GenericFormatter extends AbstractFormatter implements DateFormatter
         // FIXME: This method returns an incorrect date, check callers!
         // ex: de.anomic.server.serverDate.parseShortSecond("20070101120000", "+0200").toGMTString()
         // => 1 Jan 2007 13:00:00 GMT
-        if (timeString == null || timeString.length() == 0) { return new Date(); }
-        if (UTCOffset == null || UTCOffset.length() == 0) { return new Date(); }
+        if (timeString == null || timeString.isEmpty()) { return new Date(); }
+        if (UTCOffset == null || UTCOffset.isEmpty()) { return new Date(); }
         try {
             return new Date(this.dateFormat.parse(timeString).getTime() - UTCDiff() + UTCDiff(UTCOffset));
         } catch (final Throwable e) {
@@ -145,8 +148,8 @@ public class GenericFormatter extends AbstractFormatter implements DateFormatter
         if (diffString.length() > 0 && diffString.charAt(0) == '+') ahead = true;
         else if (diffString.length() > 0 && diffString.charAt(0) == '-') ahead = false;
         else throw new IllegalArgumentException("UTC String malformed (wrong sign):" + diffString);
-        final long oh = Long.parseLong(diffString.substring(1, 3));
-        final long om = Long.parseLong(diffString.substring(3));
+        final long oh = NumberTools.parseLongDecSubstring(diffString, 1, 3);
+        final long om = NumberTools.parseLongDecSubstring(diffString, 3);
         return ((ahead) ? (long) 1 : (long) -1) * (oh * AbstractFormatter.hourMillis + om * AbstractFormatter.minuteMillis);
     }
 

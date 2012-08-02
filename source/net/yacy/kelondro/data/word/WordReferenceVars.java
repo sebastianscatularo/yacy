@@ -31,12 +31,12 @@ import java.util.Comparator;
 import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.Semaphore;
 
 import net.yacy.cora.document.ASCII;
 import net.yacy.cora.document.UTF8;
 import net.yacy.kelondro.index.Row;
 import net.yacy.kelondro.index.Row.Entry;
+import net.yacy.kelondro.logging.Log;
 import net.yacy.kelondro.order.Base64Order;
 import net.yacy.kelondro.order.Bitfield;
 import net.yacy.kelondro.order.MicroDate;
@@ -81,7 +81,6 @@ public class WordReferenceVars extends AbstractReference implements WordReferenc
             final int      posinphrase,   // position of word in its phrase
             final int      posofphrase,   // number of the phrase where word appears
             final long     lastmodified,  // last-modified time of the document where word appears
-            final long     updatetime,    // update time; this is needed to compute a TTL for the word, so it can be removed easily if the TTL is short
                   byte[]   language,      // (guessed) language of document
             final char     doctype,       // type of document
             final int      outlinksSame,  // outlinks to same domain
@@ -102,7 +101,7 @@ public class WordReferenceVars extends AbstractReference implements WordReferenc
         this.lother = outlinksOther;
         this.phrasesintext = phrasecount;
         this.positions = new LinkedBlockingQueue<Integer>();
-        if (ps.size() > 0) for (final Integer i: ps) this.positions.add(i);
+        if (!ps.isEmpty()) for (final Integer i: ps) this.positions.add(i);
         this.posinphrase = posinphrase;
         this.posofphrase = posofphrase;
         this.urlcomps = urlComps;
@@ -125,7 +124,7 @@ public class WordReferenceVars extends AbstractReference implements WordReferenc
         this.lother = e.lother();
         this.phrasesintext = e.phrasesintext();
         this.positions = new LinkedBlockingQueue<Integer>();
-        if (e.positions().size() > 0) for (final Integer i: e.positions()) this.positions.add(i);
+        if (!e.positions().isEmpty()) for (final Integer i: e.positions()) this.positions.add(i);
         this.posinphrase = e.posinphrase();
         this.posofphrase = e.posofphrase();
         this.urlcomps = e.urlcomps();
@@ -174,7 +173,6 @@ public class WordReferenceVars extends AbstractReference implements WordReferenc
                 this.posinphrase,
                 this.posofphrase,
                 this.lastModified,
-                System.currentTimeMillis(),
                 this.language,
                 this.type,
                 this.llocal,
@@ -394,9 +392,14 @@ public class WordReferenceVars extends AbstractReference implements WordReferenc
         return Base64Order.enhancedCoder.equal(this.urlHash, other.urlHash);
     }
 
+    private int hashCache = Integer.MIN_VALUE; // if this is used in a compare method many times, a cache is useful
+
     @Override
     public int hashCode() {
-        return ByteArray.hashCode(this.urlHash);
+        if (this.hashCache == Integer.MIN_VALUE) {
+            this.hashCache = ByteArray.hashCode(this.urlHash);
+        }
+        return this.hashCache;
     }
 
     @Override
@@ -419,19 +422,21 @@ public class WordReferenceVars extends AbstractReference implements WordReferenc
      * @return a blocking queue filled with WordReferenceVars that is still filled when the object is returned
      */
 
-    public static BlockingQueue<WordReferenceVars> transform(final ReferenceContainer<WordReference> container) {
+    public static BlockingQueue<WordReferenceVars> transform(final ReferenceContainer<WordReference> container, final long maxtime) {
     	final LinkedBlockingQueue<WordReferenceVars> vars = new LinkedBlockingQueue<WordReferenceVars>();
     	if (container.size() <= 100) {
     	    // transform without concurrency to omit thread creation overhead
-    	    for (final Row.Entry entry: container) try {
-                vars.put(new WordReferenceVars(new WordReferenceRow(entry)));
-            } catch (final InterruptedException e) {}
+    	    for (final Row.Entry entry: container) {
+    	        try {
+    	            vars.put(new WordReferenceVars(new WordReferenceRow(entry)));
+    	        } catch (final InterruptedException e) {}
+    	    }
             try {
                 vars.put(WordReferenceVars.poison);
             } catch (final InterruptedException e) {}
             return vars;
     	}
-    	final Thread distributor = new TransformDistributor(container, vars);
+    	final Thread distributor = new TransformDistributor(container, vars, maxtime);
     	distributor.start();
 
     	// return the resulting queue while the processing queues are still working
@@ -442,32 +447,50 @@ public class WordReferenceVars extends AbstractReference implements WordReferenc
 
     	ReferenceContainer<WordReference> container;
     	BlockingQueue<WordReferenceVars> out;
+    	long maxtime;
 
-    	public TransformDistributor(final ReferenceContainer<WordReference> container, final BlockingQueue<WordReferenceVars> out) {
+    	public TransformDistributor(final ReferenceContainer<WordReference> container, final BlockingQueue<WordReferenceVars> out, final long maxtime) {
     		this.container = container;
     		this.out = out;
+    		this.maxtime = maxtime;
     	}
 
         @Override
     	public void run() {
         	// start the transformation threads
         	final int cores0 = Math.min(cores, this.container.size() / 100) + 1;
-        	final Semaphore termination = new Semaphore(cores0);
         	final TransformWorker[] worker = new TransformWorker[cores0];
         	for (int i = 0; i < cores0; i++) {
-        		worker[i] = new TransformWorker(this.out, termination);
+        		worker[i] = new TransformWorker(this.out, this.maxtime);
         		worker[i].start();
         	}
+        	long timeout = System.currentTimeMillis() + this.maxtime;
 
         	// fill the queue
         	int p = this.container.size();
     		while (p > 0) {
     			p--;
 				worker[p % cores0].add(this.container.get(p, false));
+				if (p % 100 == 0 && System.currentTimeMillis() > timeout) {
+				    Log.logWarning("TransformDistributor", "distribution of WordReference entries to worker queues ended with timeout = " + this.maxtime);
+				    break;
+				}
             }
 
         	// insert poison to stop the queues
-        	for (int i = 0; i < cores0; i++) worker[i].add(WordReferenceRow.poisonRowEntry);
+        	for (int i = 0; i < cores0; i++) {
+        	    worker[i].add(WordReferenceRow.poisonRowEntry);
+        	}
+
+        	// wait for the worker to terminate because we want to place a poison entry into the out queue afterwards
+        	for (int i = 0; i < cores0; i++) {
+                try {
+                    worker[i].join();
+                } catch (InterruptedException e) {
+                }
+            }
+
+        	this.out.add(WordReferenceVars.poison);
     	}
     }
 
@@ -475,12 +498,12 @@ public class WordReferenceVars extends AbstractReference implements WordReferenc
 
     	BlockingQueue<Row.Entry> in;
     	BlockingQueue<WordReferenceVars> out;
-    	Semaphore termination;
+    	long maxtime;
 
-    	public TransformWorker(final BlockingQueue<WordReferenceVars> out, final Semaphore termination) {
+    	public TransformWorker(final BlockingQueue<WordReferenceVars> out, final long maxtime) {
     		this.in = new LinkedBlockingQueue<Row.Entry>();
     		this.out = out;
-    		this.termination = termination;
+    		this.maxtime = maxtime;
     	}
 
     	public void add(final Row.Entry entry) {
@@ -493,15 +516,16 @@ public class WordReferenceVars extends AbstractReference implements WordReferenc
         @Override
     	public void run() {
         	Row.Entry entry;
+        	long timeout = System.currentTimeMillis() + this.maxtime;
     		try {
-				while ((entry = this.in.take()) != WordReferenceRow.poisonRowEntry) this.out.put(new WordReferenceVars(new WordReferenceRow(entry)));
+				while ((entry = this.in.take()) != WordReferenceRow.poisonRowEntry) {
+				    this.out.put(new WordReferenceVars(new WordReferenceRow(entry)));
+				    if (System.currentTimeMillis() > timeout) {
+	                    Log.logWarning("TransformWorker", "normalization of row entries from row to vars ended with timeout = " + this.maxtime);
+				        break;
+				    }
+				}
 			} catch (final InterruptedException e) {}
-
-			// insert poison to signal the termination to next queue
-	    	try {
-	    		this.termination.acquire();
-	    		if (this.termination.availablePermits() == 0) this.out.put(WordReferenceVars.poison);
-	    	} catch (final InterruptedException e) {}
     	}
     }
 

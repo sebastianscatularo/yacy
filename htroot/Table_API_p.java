@@ -29,21 +29,21 @@ import java.util.TreeSet;
 import java.util.regex.Pattern;
 
 import net.yacy.cora.document.UTF8;
+import net.yacy.cora.protocol.Domains;
 import net.yacy.cora.protocol.RequestHeader;
+import net.yacy.cora.util.SpaceExceededException;
 import net.yacy.kelondro.blob.Tables;
-import net.yacy.kelondro.index.RowSpaceExceededException;
 import net.yacy.kelondro.logging.Log;
 import net.yacy.search.Switchboard;
 import net.yacy.search.SwitchboardConstants;
 import net.yacy.search.query.QueryParams;
-
 import de.anomic.data.WorkTables;
 import de.anomic.server.serverObjects;
 import de.anomic.server.serverSwitch;
 
 public class Table_API_p {
 
-    public static serverObjects respond(final RequestHeader header, final serverObjects post, final serverSwitch env) {
+    public static serverObjects respond(@SuppressWarnings("unused") final RequestHeader header, final serverObjects post, final serverSwitch env) {
         final Switchboard sb = (Switchboard) env;
         final serverObjects prop = new serverObjects();
 
@@ -64,7 +64,7 @@ public class Table_API_p {
             startRecord = 0;
             maximumRecords = 1000;
         }
-        final boolean inline = (post != null && post.getBoolean("inline", false));
+        final boolean inline = (post != null && post.getBoolean("inline"));
 
         prop.put("inline", (inline) ? 1 : 0);
 
@@ -73,7 +73,6 @@ public class Table_API_p {
             typefilter = Pattern.compile(post.get("filter", ".*"));
         }
 
-        String pk;
         boolean scheduleevent = false; // flag if schedule info of row changes
         String current_schedule_pk = ""; // pk of changed schedule data row
         if (post != null && post.containsKey("scheduleevent")) {
@@ -96,7 +95,7 @@ public class Table_API_p {
                     }
                 } catch (IOException e) {
                     Log.logException(e);
-                } catch (RowSpaceExceededException e) {
+                } catch (SpaceExceededException e) {
                     Log.logException(e);
                 }
             }
@@ -116,7 +115,7 @@ public class Table_API_p {
                     }
                 } catch (IOException e) {
                     Log.logException(e);
-                } catch (RowSpaceExceededException e) {
+                } catch (SpaceExceededException e) {
                     Log.logException(e);
                 }
             }
@@ -145,7 +144,7 @@ public class Table_API_p {
                     }
                 } catch (IOException e) {
                     Log.logException(e);
-                } catch (RowSpaceExceededException e) {
+                } catch (SpaceExceededException e) {
                     Log.logException(e);
                 }
             }
@@ -172,10 +171,10 @@ public class Table_API_p {
             }
 
             // now call the api URLs and store the result status
-            final Map<String, Integer> l = sb.tables.execAPICalls("localhost", (int) sb.getConfigLong("port", 8090), sb.getConfig(SwitchboardConstants.ADMIN_ACCOUNT_B64MD5, ""), pks);
+            final Map<String, Integer> l = sb.tables.execAPICalls(Domains.LOCALHOST, (int) sb.getConfigLong("port", 8090), sb.getConfig(SwitchboardConstants.ADMIN_ACCOUNT_B64MD5, ""), pks);
 
             // construct result table
-            prop.put("showexec", l.size() > 0 ? 1 : 0);
+            prop.put("showexec", l.isEmpty() ? 0 : 1);
 
             final Iterator<Map.Entry<String, Integer>> resultIterator = l.entrySet().iterator();
             Map.Entry<String, Integer> record;
@@ -255,7 +254,7 @@ public class Table_API_p {
                 prop.put("showtable_list_" + count + "_dateNextExec", date_next_exec == null ? "-" : DateFormat.getDateTimeInstance().format(date_next_exec));
                 prop.put("showtable_list_" + count + "_selectedMinutes", unit.equals("minutes") ? 1 : 0);
                 prop.put("showtable_list_" + count + "_selectedHours", unit.equals("hours") ? 1 : 0);
-                prop.put("showtable_list_" + count + "_selectedDays", (unit.length() == 0 || unit.equals("days")) ? 1 : 0);
+                prop.put("showtable_list_" + count + "_selectedDays", (unit.isEmpty() || unit.equals("days")) ? 1 : 0);
                 prop.put("showtable_list_" + count + "_repeatTime", time);
                 prop.put("showtable_list_" + count + "_type", row.get(WorkTables.TABLE_API_COL_TYPE));
                 prop.put("showtable_list_" + count + "_comment", row.get(WorkTables.TABLE_API_COL_COMMENT));

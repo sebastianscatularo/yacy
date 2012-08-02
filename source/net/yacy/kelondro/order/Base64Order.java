@@ -27,6 +27,7 @@
 
 package net.yacy.kelondro.order;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
 import net.yacy.cora.document.UTF8;
@@ -35,7 +36,9 @@ import net.yacy.cora.order.ByteOrder;
 import net.yacy.cora.order.Order;
 
 
-public class Base64Order extends AbstractOrder<byte[]> implements ByteOrder, Comparator<byte[]>, Cloneable {
+public class Base64Order extends AbstractOrder<byte[]> implements ByteOrder, Comparator<byte[]>, Cloneable, Serializable {
+
+    private static final long serialVersionUID=980647587445343851L;
 
     public  static final byte[] alpha_standard = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".getBytes();
     public  static final byte[] alpha_enhanced = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_".getBytes();
@@ -262,7 +265,7 @@ public class Base64Order extends AbstractOrder<byte[]> implements ByteOrder, Com
     }
 
     public final byte[] decode(String in) {
-        if ((in == null) || (in.length() == 0)) return new byte[0];
+        if ((in == null) || (in.isEmpty())) return new byte[0];
         try {
             int posIn = 0;
             int posOut = 0;

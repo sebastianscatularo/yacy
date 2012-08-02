@@ -37,6 +37,7 @@ import net.yacy.cora.document.MultiProtocolURI;
 import net.yacy.document.AbstractParser;
 import net.yacy.document.Document;
 import net.yacy.document.Parser;
+import net.yacy.kelondro.data.meta.DigestURI;
 import net.yacy.kelondro.io.CharBuffer;
 import net.yacy.kelondro.logging.Log;
 import net.yacy.kelondro.util.FileUtils;
@@ -67,7 +68,7 @@ public class pdfParser extends AbstractParser implements Parser {
     }
 
     @Override
-    public Document[] parse(final MultiProtocolURI location, final String mimeType, final String charset, final InputStream source) throws Parser.Failure, InterruptedException {
+    public Document[] parse(final DigestURI location, final String mimeType, final String charset, final InputStream source) throws Parser.Failure, InterruptedException {
 
         // check memory for parser
         if (!MemoryControl.request(200 * 1024 * 1024, true))
@@ -114,7 +115,7 @@ public class pdfParser extends AbstractParser implements Parser {
             docSubject = info.getSubject();
             docAuthor = info.getAuthor();
             docPublisher = info.getProducer();
-            if (docPublisher == null || docPublisher.length() == 0) docPublisher = info.getCreator();
+            if (docPublisher == null || docPublisher.isEmpty()) docPublisher = info.getCreator();
             docKeywordStr = info.getKeywords();
             // unused:
             // info.getTrapped());
@@ -122,7 +123,7 @@ public class pdfParser extends AbstractParser implements Parser {
             // info.getModificationDate();
         }
 
-        if (docTitle == null || docTitle.length() == 0) {
+        if (docTitle == null || docTitle.isEmpty()) {
             docTitle = MultiProtocolURI.unescape(location.getFileName());
         }
         final CharBuffer writer = new CharBuffer(odtParser.MAX_DOCSIZE);
@@ -141,6 +142,7 @@ public class pdfParser extends AbstractParser implements Parser {
             final Thread t = new Thread() {
                 @Override
                 public void run() {
+                    Thread.currentThread().setName("pdfParser.getText:" + location);
                     try {
                         writer.append(stripper.getText(pdfDoc));
                     } catch (final Throwable e) {}
@@ -248,7 +250,7 @@ public class pdfParser extends AbstractParser implements Parser {
                     System.out.println("\tParsed text with " + document.getTextLength() + " chars of text and " + document.getAnchors().size() + " anchors");
                     try {
                         // write file
-                        FileUtils.copy(document.getText(), new File("parsedPdf.txt"));
+                        FileUtils.copy(document.getTextStream(), new File("parsedPdf.txt"));
                     } catch (final IOException e) {
                         System.err.println("error saving parsed document");
                         Log.logException(e);

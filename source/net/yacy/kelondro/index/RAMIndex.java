@@ -27,12 +27,14 @@ package net.yacy.kelondro.index;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
 import net.yacy.cora.order.CloneableIterator;
+import net.yacy.cora.util.SpaceExceededException;
 import net.yacy.kelondro.index.Row.Entry;
 import net.yacy.kelondro.order.MergeIterator;
 import net.yacy.kelondro.order.StackIterator;
@@ -40,7 +42,7 @@ import net.yacy.kelondro.order.StackIterator;
 
 public final class RAMIndex implements Index, Iterable<Row.Entry> {
 
-    private static final TreeMap<String, RAMIndex> objectTracker = new TreeMap<String, RAMIndex>();
+    private static final Map<String, RAMIndex> objectTracker = Collections.synchronizedSortedMap(new TreeMap<String, RAMIndex>());
 
     private final String name;
     private final Row rowdef;
@@ -49,11 +51,10 @@ public final class RAMIndex implements Index, Iterable<Row.Entry> {
     private final Row.EntryComparator entryComparator;
     //private final int spread;
 
-    public RAMIndex(final String name, final Row rowdef, final int expectedspace) {
+    public RAMIndex(final String name, final Row rowdef) {
         this.name = name;
         this.rowdef = rowdef;
         this.entryComparator = new Row.EntryComparator(rowdef.objectOrder);
-        //this.spread = Math.max(10, expectedspace / 3000);
         reset();
         objectTracker.put(name, this);
     }
@@ -76,6 +77,7 @@ public final class RAMIndex implements Index, Iterable<Row.Entry> {
         return new RAMIndex(this.name + ".clone", this.rowdef, this.index0.clone(), this.index1.clone(), this.entryComparator);
     }
 
+    @Override
     public void clear() {
 		reset();
 	}
@@ -91,12 +93,13 @@ public final class RAMIndex implements Index, Iterable<Row.Entry> {
         this.index1 = null; // to show that this is the initialization phase
     }
 
-    public final synchronized void reset(final int initialspace) throws RowSpaceExceededException {
+    public final synchronized void reset(final int initialspace) throws SpaceExceededException {
         this.index0 = null; // first flush RAM to make room
         this.index0 = new RowSet(this.rowdef, initialspace);
         this.index1 = null; // to show that this is the initialization phase
     }
 
+    @Override
     public final Row row() {
         return this.index0.row();
     }
@@ -111,6 +114,7 @@ public final class RAMIndex implements Index, Iterable<Row.Entry> {
         }
     }
 
+    @Override
     public final synchronized byte[] smallestKey() {
         final byte[] b0 = this.index0.smallestKey();
         if (b0 == null) return null;
@@ -120,6 +124,7 @@ public final class RAMIndex implements Index, Iterable<Row.Entry> {
         return b1;
     }
 
+    @Override
     public final synchronized byte[] largestKey() {
         final byte[] b0 = this.index0.largestKey();
         if (b0 == null) return null;
@@ -129,6 +134,7 @@ public final class RAMIndex implements Index, Iterable<Row.Entry> {
         return b1;
     }
 
+    @Override
     public final synchronized Row.Entry get(final byte[] key, final boolean forceclone) {
         assert (key != null);
         finishInitialization();
@@ -138,6 +144,7 @@ public final class RAMIndex implements Index, Iterable<Row.Entry> {
         return this.index1.get(key, forceclone);
     }
 
+    @Override
     public Map<byte[], Row.Entry> get(final Collection<byte[]> keys, final boolean forcecopy) throws IOException, InterruptedException {
         final Map<byte[], Row.Entry> map = new TreeMap<byte[], Row.Entry>(row().objectOrder);
         Row.Entry entry;
@@ -148,6 +155,7 @@ public final class RAMIndex implements Index, Iterable<Row.Entry> {
         return map;
     }
 
+    @Override
     public final synchronized boolean has(final byte[] key) {
 		assert (key != null);
         finishInitialization();
@@ -156,7 +164,8 @@ public final class RAMIndex implements Index, Iterable<Row.Entry> {
         return this.index1.has(key);
 	}
 
-	public final synchronized Row.Entry replace(final Row.Entry entry) throws RowSpaceExceededException {
+	@Override
+    public final synchronized Row.Entry replace(final Row.Entry entry) throws SpaceExceededException {
         assert (entry != null);
         finishInitialization();
         // if the new entry is within the initialization part, just overwrite it
@@ -175,9 +184,10 @@ public final class RAMIndex implements Index, Iterable<Row.Entry> {
      * @param row a index row
      * @return true if this set did _not_ already contain the given row.
      * @throws IOException
-     * @throws RowSpaceExceededException
+     * @throws SpaceExceededException
      */
-	public final boolean put(final Row.Entry entry) throws RowSpaceExceededException {
+	@Override
+    public final boolean put(final Row.Entry entry) throws SpaceExceededException {
         assert (entry != null);
         if (entry == null) return true;
         synchronized (this) {
@@ -195,7 +205,8 @@ public final class RAMIndex implements Index, Iterable<Row.Entry> {
         }
     }
 
-    public final void addUnique(final Row.Entry entry) throws RowSpaceExceededException {
+    @Override
+    public final void addUnique(final Row.Entry entry) throws SpaceExceededException {
     	assert (entry != null);
     	if (entry == null) return;
     	synchronized (this) {
@@ -209,12 +220,12 @@ public final class RAMIndex implements Index, Iterable<Row.Entry> {
     	}
     }
 
-	public final void addUnique(final List<Entry> rows) throws RowSpaceExceededException {
+	public final void addUnique(final List<Entry> rows) throws SpaceExceededException {
 		final Iterator<Entry> i = rows.iterator();
 		while (i.hasNext()) addUnique(i.next());
 	}
 
-	public final synchronized long inc(final byte[] key, final int col, final long add, final Row.Entry initrow) throws RowSpaceExceededException {
+	public final synchronized long inc(final byte[] key, final int col, final long add, final Row.Entry initrow) throws SpaceExceededException {
         assert (key != null);
         finishInitialization();
         assert this.index0.isSorted();
@@ -223,7 +234,8 @@ public final class RAMIndex implements Index, Iterable<Row.Entry> {
         return this.index1.inc(key, col, add, initrow);
     }
 
-    public final synchronized ArrayList<RowCollection> removeDoubles() throws RowSpaceExceededException {
+    @Override
+    public final synchronized ArrayList<RowCollection> removeDoubles() throws SpaceExceededException {
 	    // finish initialization phase explicitely
         this.index0.sort();
 	    if (this.index1 == null) {
@@ -235,6 +247,7 @@ public final class RAMIndex implements Index, Iterable<Row.Entry> {
         return d0;
 	}
 
+    @Override
     public final synchronized boolean delete(final byte[] key) {
         finishInitialization();
         // if the new entry is within the initialization part, just delete it
@@ -249,6 +262,7 @@ public final class RAMIndex implements Index, Iterable<Row.Entry> {
         return b;
     }
 
+    @Override
     public final synchronized Row.Entry remove(final byte[] key) {
         finishInitialization();
         // if the new entry is within the initialization part, just delete it
@@ -267,6 +281,7 @@ public final class RAMIndex implements Index, Iterable<Row.Entry> {
         return removed;
     }
 
+    @Override
     public final synchronized Row.Entry removeOne() {
         if (this.index1 != null && !this.index1.isEmpty()) {
             return this.index1.removeOne();
@@ -277,6 +292,7 @@ public final class RAMIndex implements Index, Iterable<Row.Entry> {
         return null;
     }
 
+    @Override
     public synchronized List<Row.Entry> top(final int count) throws IOException {
         final List<Row.Entry> list = new ArrayList<Row.Entry>();
         List<Row.Entry> list0 = this.index1.top(count);
@@ -286,6 +302,7 @@ public final class RAMIndex implements Index, Iterable<Row.Entry> {
         return list;
     }
 
+    @Override
     public long mem() {
         if (this.index0 != null && this.index1 == null) {
             return this.index0.mem();
@@ -297,6 +314,7 @@ public final class RAMIndex implements Index, Iterable<Row.Entry> {
         return this.index0.mem() + this.index1.mem();
     }
 
+    @Override
     public final synchronized int size() {
         if (this.index0 != null && this.index1 == null) {
             return this.index0.size();
@@ -308,6 +326,7 @@ public final class RAMIndex implements Index, Iterable<Row.Entry> {
         return this.index0.size() + this.index1.size();
     }
 
+    @Override
     public final synchronized boolean isEmpty() {
         if (this.index0 != null && this.index1 == null) {
             return this.index0.isEmpty();
@@ -322,6 +341,7 @@ public final class RAMIndex implements Index, Iterable<Row.Entry> {
     }
 
 
+    @Override
     public final synchronized CloneableIterator<byte[]> keys(final boolean up, final byte[] firstKey) {
         // returns the key-iterator of the underlying kelondroIndex
         if (this.index1 == null) {
@@ -351,6 +371,7 @@ public final class RAMIndex implements Index, Iterable<Row.Entry> {
                 true);
     }
 
+    @Override
     public final synchronized CloneableIterator<Row.Entry> rows(final boolean up, final byte[] firstKey) {
         // returns the row-iterator of the underlying kelondroIndex
         if (this.index1 == null) {
@@ -381,10 +402,12 @@ public final class RAMIndex implements Index, Iterable<Row.Entry> {
                 true);
     }
 
+    @Override
     public final Iterator<Entry> iterator() {
         return rows();
     }
 
+    @Override
     public final synchronized CloneableIterator<Row.Entry> rows() {
         // returns the row-iterator of the underlying kelondroIndex
         if (this.index1 == null) {
@@ -406,17 +429,20 @@ public final class RAMIndex implements Index, Iterable<Row.Entry> {
         return new StackIterator<Row.Entry>(this.index0.rows(), this.index1.rows());
     }
 
+    @Override
     public final synchronized void close() {
         if (this.index0 != null) this.index0.close();
         if (this.index1 != null) this.index1.close();
         objectTracker.remove(this.name);
     }
 
-	public final String filename() {
+	@Override
+    public final String filename() {
 		return null; // this does not have a file name
 	}
 
-	public final void deleteOnExit() {
+	@Override
+    public final void deleteOnExit() {
         // do nothing, there is no file
     }
 

@@ -43,7 +43,7 @@ public class ServerSideIncludes {
         writeSSI(in, 0, out, authorization, requesthost, requestHeader);
     }
 
-    public static void writeSSI(final ByteBuffer in, int off, final OutputStream out, final String authorization, final String requesthost, final RequestHeader requestHeader) throws IOException {
+    private static void writeSSI(final ByteBuffer in, int off, final OutputStream out, final String authorization, final String requesthost, final RequestHeader requestHeader) throws IOException {
         int p = in.indexOf(ASCII.getBytes("<!--#"), off);
         int q;
         while (p >= 0) {
@@ -74,7 +74,7 @@ public class ServerSideIncludes {
         }
     }
 
-    private static void writeContent(String path, final OutputStream out, final String authorization, final String requesthost, final RequestHeader requestHeader) {
+    public static void writeContent(String path, final OutputStream out, final String authorization, final String requesthost, final RequestHeader requestHeader) {
         // check if there are arguments in path string
         String args = "";
         final int argpos = path.indexOf('?');
@@ -92,9 +92,8 @@ public class ServerSideIncludes {
         conProp.put(HeaderFramework.CONNECTION_PROP_HTTP_VER, HeaderFramework.HTTP_VERSION_0_9);
         conProp.put(HeaderFramework.CONNECTION_PROP_CLIENTIP, requesthost);
         header.put(RequestHeader.AUTHORIZATION, authorization);
-        if (requestHeader.containsKey(RequestHeader.COOKIE))
-        	header.put(RequestHeader.COOKIE, requestHeader.get(RequestHeader.COOKIE));
-        header.put(RequestHeader.REFERER, requestHeader.get(HeaderFramework.CONNECTION_PROP_PATH));
+        if (requestHeader.containsKey(RequestHeader.COOKIE)) header.put(RequestHeader.COOKIE, requestHeader.get(RequestHeader.COOKIE));
+        header.put(RequestHeader.REFERER, requestHeader.get(RequestHeader.REFERER));
         HTTPDFileHandler.doGet(conProp, header, out);
     }
 }

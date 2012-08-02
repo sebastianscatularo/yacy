@@ -43,7 +43,7 @@ import net.yacy.kelondro.order.NaturalOrder;
 import net.yacy.peers.NewsDB;
 import net.yacy.peers.NewsPool;
 import net.yacy.peers.Seed;
-import net.yacy.repository.Blacklist;
+import net.yacy.repository.Blacklist.BlacklistType;
 import net.yacy.search.Switchboard;
 import de.anomic.server.serverObjects;
 import de.anomic.server.serverSwitch;
@@ -72,7 +72,7 @@ public class Supporter {
             String hash;
             if ((post != null) && ((hash = post.get("voteNegative", null)) != null)) {
                 if (!sb.verifyAuthentication(header)) {
-                    prop.put("AUTHENTICATE", "admin log-in"); // force log-in
+                	prop.authenticationRequired();
                     return prop;
                 }
                 // make new news message with voting
@@ -86,15 +86,15 @@ public class Supporter {
             }
             if ((post != null) && ((hash = post.get("votePositive", null)) != null)) {
                 if (!sb.verifyAuthentication(header)) {
-                    prop.put("AUTHENTICATE", "admin log-in"); // force log-in
+                	prop.authenticationRequired();
                     return prop;
                 }
                 // make new news message with voting
                 final HashMap<String, String> map = new HashMap<String, String>();
                 map.put("urlhash", hash);
-                map.put("url", crypt.simpleDecode(post.get("url", ""), null));
-                map.put("title", crypt.simpleDecode(post.get("title", ""), null));
-                map.put("description", crypt.simpleDecode(post.get("description", ""), null));
+                map.put("url", crypt.simpleDecode(post.get("url", "")));
+                map.put("title", crypt.simpleDecode(post.get("title", "")));
+                map.put("description", crypt.simpleDecode(post.get("description", "")));
                 map.put("vote", "positive");
                 map.put("refid", post.get("refid", ""));
                 map.put("comment", post.get("comment", ""));
@@ -129,8 +129,10 @@ public class Supporter {
 
                 url = row.getPrimaryKeyUTF8().trim();
                 try {
-                    if (Switchboard.urlBlacklist.isListed(Blacklist.BLACKLIST_SURFTIPS, new DigestURI(url, urlhash.getBytes()))) continue;
-                } catch(final MalformedURLException e) {continue;}
+                    if (Switchboard.urlBlacklist.isListed(BlacklistType.SURFTIPS, new DigestURI(url, urlhash.getBytes()))) continue;
+                } catch (final MalformedURLException e) {
+                    continue;
+                }
                 title = row.getColUTF8(1);
                 description = row.getColUTF8(2);
                 if ((url == null) || (title == null) || (description == null)) continue;
@@ -174,7 +176,7 @@ public class Supporter {
     private static void accumulateVotes(final Switchboard sb, final HashMap<String, Integer> negativeHashes, final HashMap<String, Integer> positiveHashes, final int dbtype) {
         final int maxCount = Math.min(1000, sb.peers.newsPool.size(dbtype));
         NewsDB.Record record;
-        final Iterator<NewsDB.Record> recordIterator = sb.peers.newsPool.recordIterator(dbtype, true);
+        final Iterator<NewsDB.Record> recordIterator = sb.peers.newsPool.recordIterator(dbtype);
         int j = 0;
         while ((recordIterator.hasNext()) && (j++ < maxCount)) {
             record = recordIterator.next();
@@ -204,7 +206,7 @@ public class Supporter {
             final HashMap<String, Integer> negativeHashes, final HashMap<String, Integer> positiveHashes, final int dbtype) {
         final int maxCount = Math.min(1000, sb.peers.newsPool.size(dbtype));
         NewsDB.Record record;
-        final Iterator<NewsDB.Record> recordIterator = sb.peers.newsPool.recordIterator(dbtype, true);
+        final Iterator<NewsDB.Record> recordIterator = sb.peers.newsPool.recordIterator(dbtype);
         int j = 0;
         String url = "", urlhash;
         Row.Entry entry;

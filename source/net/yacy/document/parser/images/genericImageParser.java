@@ -43,12 +43,12 @@ import java.util.Set;
 import javax.imageio.ImageIO;
 
 import net.yacy.cora.document.MultiProtocolURI;
-import net.yacy.cora.document.UTF8;
 import net.yacy.document.AbstractParser;
 import net.yacy.document.Document;
 import net.yacy.document.Parser;
 import net.yacy.document.parser.html.ImageEntry;
 import net.yacy.document.parser.images.bmpParser.IMAGEMAP;
+import net.yacy.kelondro.data.meta.DigestURI;
 import net.yacy.kelondro.logging.Log;
 import net.yacy.kelondro.util.FileUtils;
 
@@ -87,8 +87,9 @@ public class genericImageParser extends AbstractParser implements Parser {
         super("Generic Image Parser");
     }
 
+    @Override
     public Document[] parse(
-            final MultiProtocolURI location,
+            final DigestURI location,
             final String mimeType,
             final String documentCharset,
             final InputStream sourceStream) throws Parser.Failure, InterruptedException {
@@ -156,23 +157,23 @@ public class genericImageParser extends AbstractParser implements Parser {
                         }
                     }
                     title = props.get("Image Description");
-                    if (title == null || title.length() == 0) title = props.get("Headline");
-                    if (title == null || title.length() == 0) title = props.get("Object Name");
+                    if (title == null || title.isEmpty()) title = props.get("Headline");
+                    if (title == null || title.isEmpty()) title = props.get("Object Name");
 
                     author = props.get("Artist");
-                    if (author == null || author.length() == 0) author = props.get("Writer/Editor");
-                    if (author == null || author.length() == 0) author = props.get("By-line");
-                    if (author == null || author.length() == 0) author = props.get("Credit");
-                    if (author == null || author.length() == 0) author = props.get("Make");
+                    if (author == null || author.isEmpty()) author = props.get("Writer/Editor");
+                    if (author == null || author.isEmpty()) author = props.get("By-line");
+                    if (author == null || author.isEmpty()) author = props.get("Credit");
+                    if (author == null || author.isEmpty()) author = props.get("Make");
 
                     keywords = props.get("Keywords");
-                    if (keywords == null || keywords.length() == 0) keywords = props.get("Category");
-                    if (keywords == null || keywords.length() == 0) keywords = props.get("Supplemental Category(s)");
+                    if (keywords == null || keywords.isEmpty()) keywords = props.get("Category");
+                    if (keywords == null || keywords.isEmpty()) keywords = props.get("Supplemental Category(s)");
 
                     description = props.get("Caption/Abstract");
-                    if (description == null || description.length() == 0) description = props.get("Country/Primary Location");
-                    if (description == null || description.length() == 0) description = props.get("Province/State");
-                    if (description == null || description.length() == 0) description = props.get("Copyright Notice");
+                    if (description == null || description.isEmpty()) description = props.get("Country/Primary Location");
+                    if (description == null || description.isEmpty()) description = props.get("Province/State");
+                    if (description == null || description.isEmpty()) description = props.get("Copyright Notice");
                 }
             } catch (final JpegProcessingException e) {
                 //Log.logException(e);
@@ -189,7 +190,7 @@ public class genericImageParser extends AbstractParser implements Parser {
         final String infoString = ii.info.toString();
         images.put(ii.location, new ImageEntry(location, "", ii.width, ii.height, -1));
 
-        if (title == null || title.length() == 0) title = MultiProtocolURI.unescape(location.getFileName());
+        if (title == null || title.isEmpty()) title = MultiProtocolURI.unescape(location.getFileName());
 
         return new Document[]{new Document(
              location,
@@ -204,17 +205,19 @@ public class genericImageParser extends AbstractParser implements Parser {
              new String[]{}, // sections
              description == null ? "" : description, // description
              0.0f, 0.0f, // TODO parse location
-             UTF8.getBytes(infoString), // content text
+             infoString, // content text
              anchors, // anchors
              null,
              images,
              false)}; // images
     }
 
+    @Override
     public Set<String> supportedMimeTypes() {
         return SUPPORTED_MIME_TYPES;
     }
 
+    @Override
     public Set<String> supportedExtensions() {
         return SUPPORTED_EXTENSIONS;
     }
@@ -291,9 +294,9 @@ public class genericImageParser extends AbstractParser implements Parser {
     public static void main(final String[] args) {
         final File image = new File(args[0]);
         final genericImageParser parser = new genericImageParser();
-        MultiProtocolURI uri;
+        DigestURI uri;
         try {
-            uri = new MultiProtocolURI("http://localhost/" + image.getName());
+            uri = new DigestURI("http://localhost/" + image.getName());
             final Document[] document = parser.parse(uri, "image/" + uri.getFileExtension(), "UTF-8", new FileInputStream(image));
             System.out.println(document[0].toString());
         } catch (final MalformedURLException e) {

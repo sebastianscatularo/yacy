@@ -43,6 +43,7 @@ import net.yacy.document.parser.html.CharacterCoding;
 import net.yacy.document.parser.html.ContentScraper;
 import net.yacy.document.parser.html.ScraperInputStream;
 import net.yacy.document.parser.html.TransformerWriter;
+import net.yacy.kelondro.data.meta.DigestURI;
 import net.yacy.kelondro.util.FileUtils;
 
 import com.ibm.icu.text.CharsetDetector;
@@ -51,9 +52,10 @@ import com.ibm.icu.text.CharsetDetector;
 public class htmlParser extends AbstractParser implements Parser {
 
     private static final Pattern patternUnderline = Pattern.compile("_");
+    private static final int maxLinks = 1000;
 
     public htmlParser() {
-        super("HTML Parser");
+        super("Streaming HTML Parser");
         this.SUPPORTED_EXTENSIONS.add("htm");
         this.SUPPORTED_EXTENSIONS.add("html");
         this.SUPPORTED_EXTENSIONS.add("phtml");
@@ -85,14 +87,14 @@ public class htmlParser extends AbstractParser implements Parser {
 
     @Override
     public Document[] parse(
-            final MultiProtocolURI location,
+            final DigestURI location,
             final String mimeType,
             final String documentCharset,
             final InputStream sourceStream) throws Parser.Failure, InterruptedException {
 
         try {
             // first get a document from the parsed html
-            final ContentScraper scraper = parseToScraper(location, documentCharset, sourceStream);
+            final ContentScraper scraper = parseToScraper(location, documentCharset, sourceStream, maxLinks);
             final Document document = transformScraper(location, mimeType, documentCharset, scraper);
 
             return new Document[]{document};
@@ -109,7 +111,7 @@ public class htmlParser extends AbstractParser implements Parser {
      * @param scraper
      * @return
      */
-    private static Document transformScraper(final MultiProtocolURI location, final String mimeType, final String charSet, final ContentScraper scraper) {
+    private static Document transformScraper(final DigestURI location, final String mimeType, final String charSet, final ContentScraper scraper) {
         final String[] sections = new String[
                  scraper.getHeadlines(1).length +
                  scraper.getHeadlines(2).length +
@@ -141,7 +143,6 @@ public class htmlParser extends AbstractParser implements Parser {
                 scraper.getRSS(),
                 scraper.getImages(),
                 scraper.indexingDenied());
-        //scraper.close();
         ppd.setFavicon(scraper.getFavicon());
 
         return ppd;
@@ -150,7 +151,8 @@ public class htmlParser extends AbstractParser implements Parser {
     public static ContentScraper parseToScraper(
             final MultiProtocolURI location,
             final String documentCharset,
-            InputStream sourceStream) throws Parser.Failure, IOException {
+            InputStream sourceStream,
+            final int maxLinks) throws Parser.Failure, IOException {
 
         // make a scraper
         String charset = null;
@@ -163,9 +165,10 @@ public class htmlParser extends AbstractParser implements Parser {
         // nothing found: try to find a meta-tag
         if (charset == null) {
             try {
-                final ScraperInputStream htmlFilter = new ScraperInputStream(sourceStream,documentCharset,location,null,false);
+                final ScraperInputStream htmlFilter = new ScraperInputStream(sourceStream, documentCharset, location, null, false, maxLinks);
                 sourceStream = htmlFilter;
                 charset = htmlFilter.detectCharset();
+                htmlFilter.close();
             } catch (final IOException e1) {
                 throw new Parser.Failure("Charset error:" + e1.getMessage(), location);
             }
@@ -196,8 +199,8 @@ public class htmlParser extends AbstractParser implements Parser {
         }
 
         // parsing the content
-        final ContentScraper scraper = new ContentScraper(location);
-        final TransformerWriter writer = new TransformerWriter(null,null,scraper,null,false, Math.max(4096, sourceStream.available()));
+        final ContentScraper scraper = new ContentScraper(location, maxLinks);
+        final TransformerWriter writer = new TransformerWriter(null,null,scraper,null,false, Math.max(64, Math.min(4096, sourceStream.available())));
         try {
             FileUtils.copy(sourceStream, writer, c);
         } catch (final IOException e) {
@@ -294,9 +297,9 @@ public class htmlParser extends AbstractParser implements Parser {
 
     public static void main(final String[] args) {
         // test parsing of a url
-        MultiProtocolURI url;
+        DigestURI url;
         try {
-            url = new MultiProtocolURI(args[0]);
+            url = new DigestURI(args[0]);
             final byte[] content = url.get(ClientIdentification.getUserAgent(), 3000);
             final Document[] document = new htmlParser().parse(url, "text/html", null, new ByteArrayInputStream(content));
             final String title = document[0].dc_title();

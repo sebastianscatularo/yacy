@@ -49,7 +49,7 @@ public class PerformanceMemory_p {
     private static final long MB = 1024 * KB;
     private static Map<String, String> defaultSettings = null;
 
-    public static serverObjects respond(final RequestHeader header, final serverObjects post, final serverSwitch env) {
+    public static serverObjects respond(@SuppressWarnings("unused") final RequestHeader header, final serverObjects post, final serverSwitch env) {
         // return variable that accumulates replacements
         final serverObjects prop = new serverObjects();
         if (defaultSettings == null) {
@@ -61,11 +61,12 @@ public class PerformanceMemory_p {
             if (post.containsKey("gc")) {
                 System.gc();
                 prop.put("gc", "1");
+            } else {
+                MemoryControl.setSimulatedShortStatus(post.containsKey("simulatedshortmemory"));
+                final boolean std = post.containsKey("useStandardmemoryStrategy");
+                env.setConfig("memory.standardStrategy", std);
+                MemoryControl.setStandardStrategy(std);
             }
-            MemoryControl.setSimulatedShortStatus(post.containsKey("simulatedshortmemory"));
-            final boolean std = post.containsKey("useStandardmemoryStrategy");
-            env.setConfig("memory.standardStrategy", std);
-            MemoryControl.setStandardStrategy(std);
         }
 
         prop.put("simulatedshortmemory.checked", MemoryControl.getSimulatedShortStatus() ? 1 : 0);
@@ -109,13 +110,14 @@ public class PerformanceMemory_p {
             prop.put("EcoList_" + c + "_tableIndexPath", ((p = filename.indexOf("DATA",0)) < 0) ? filename : filename.substring(p));
             prop.putNum("EcoList_" + c + "_tableSize", mapx.get(Table.StatKeys.tableSize));
 
-            assert mapx.get(Table.StatKeys.tableKeyMem) != null : mapx;
-            mem = Long.parseLong(mapx.get(Table.StatKeys.tableKeyMem));
+            String v = mapx.get(Table.StatKeys.tableKeyMem);
+            mem = v == null ? 0 : Long.parseLong(v);
             totalmem += mem;
             prop.put("EcoList_" + c + "_tableKeyMem", Formatter.bytesToString(mem));
             prop.put("EcoList_" + c + "_tableKeyChunkSize", mapx.get(Table.StatKeys.tableKeyChunkSize));
 
-            mem = Long.parseLong(mapx.get(Table.StatKeys.tableValueMem));
+            v = mapx.get(Table.StatKeys.tableValueMem);
+            mem = v == null ? 0 : Long.parseLong(v);
             totalmem += mem;
             prop.put("EcoList_" + c + "_tableValueMem", Formatter.bytesToString(mem));
             prop.put("EcoList_" + c + "_tableValueChunkSize", mapx.get(Table.StatKeys.tableValueChunkSize));
@@ -123,7 +125,7 @@ public class PerformanceMemory_p {
             c++;
         }
         prop.put("EcoList", c);
-        prop.putNum("EcoIndexTotalMem", totalmem / (1024 * 1024d));
+        prop.putNum("EcoIndexTotalMem", totalmem / (1024d * 1024d));
 
         // write object cache table
         final Iterator<Map.Entry<String, RAMIndex>> oi = RAMIndex.objects();
@@ -152,7 +154,7 @@ public class PerformanceMemory_p {
             c++;
         }
         prop.put("indexcache", c);
-        prop.putNum("indexcacheTotalMem", totalhitmem / (1024 * 1024d));
+        prop.putNum("indexcacheTotalMem", totalhitmem / (1024d * 1024d));
 
         // write object cache table
         i = Cache.filenames();
@@ -194,10 +196,10 @@ public class PerformanceMemory_p {
             c++;
         }
         prop.put("ObjectList", c);
-        prop.putNum("objectCacheStopGrow", Cache.getMemStopGrow() / (1024 * 1024d));
-        prop.putNum("objectCacheStartShrink", Cache.getMemStartShrink() / (1024 * 1024d));
-        prop.putNum("objectHitCacheTotalMem", totalhitmem / (1024 * 1024d));
-        prop.putNum("objectMissCacheTotalMem", totalmissmem / (1024 * 1024d));
+        prop.putNum("objectCacheStopGrow", Cache.getMemStopGrow() / (1024d * 1024d));
+        prop.putNum("objectCacheStartShrink", Cache.getMemStartShrink() / (1024d * 1024d));
+        prop.putNum("objectHitCacheTotalMem", totalhitmem / (1024d * 1024d));
+        prop.putNum("objectMissCacheTotalMem", totalmissmem / (1024d * 1024d));
 
         // other caching structures
         prop.putNum("namecacheHit.size", Domains.nameCacheHitSize());

@@ -45,12 +45,12 @@ import net.yacy.cora.document.UTF8;
 import net.yacy.cora.protocol.Domains;
 import net.yacy.cora.protocol.ftp.FTPClient;
 import net.yacy.kelondro.data.meta.DigestURI;
-import net.yacy.kelondro.data.meta.URIMetadataRow;
+import net.yacy.kelondro.data.meta.URIMetadata;
 import net.yacy.kelondro.logging.Log;
 import net.yacy.kelondro.order.Base64Order;
 import net.yacy.kelondro.workflow.WorkflowProcessor;
 import net.yacy.peers.SeedDB;
-import net.yacy.repository.Blacklist;
+import net.yacy.repository.Blacklist.BlacklistType;
 import net.yacy.repository.FilterEngine;
 import net.yacy.search.Switchboard;
 import net.yacy.search.index.Segment;
@@ -67,7 +67,6 @@ public final class CrawlStacker {
     private final Log log = new Log("STACKCRAWL");
 
     private final WorkflowProcessor<Request>  fastQueue, slowQueue;
-    private long                    dnsMiss;
     private final CrawlQueues       nextQueue;
     private final CrawlSwitchboard  crawler;
     private final Segment           indexSegment;
@@ -89,8 +88,6 @@ public final class CrawlStacker {
         this.crawler = cs;
         this.indexSegment = indexSegment;
         this.peers = peers;
-        //this.dnsHit = 0;
-        this.dnsMiss = 0;
         this.acceptLocalURLs = acceptLocalURLs;
         this.acceptGlobalURLs = acceptGlobalURLs;
         this.domainList = domainList;
@@ -121,7 +118,7 @@ public final class CrawlStacker {
         this.slowQueue.announceShutdown();
     }
 
-    public void close() {
+    public synchronized void close() {
         this.log.logInfo("Shutdown. waiting for remaining " + size() + " crawl stacker job entries. please wait.");
         this.fastQueue.announceShutdown();
         this.slowQueue.announceShutdown();
@@ -133,7 +130,7 @@ public final class CrawlStacker {
         clear();
     }
 
-    private boolean prefetchHost(final String host) {
+    private static boolean prefetchHost(final String host) {
         // returns true when the host was known in the dns cache.
         // If not, the host is stacked on the fetch stack and false is returned
         try {
@@ -179,16 +176,16 @@ public final class CrawlStacker {
         } else {
             try {
                 this.slowQueue.enQueue(entry);
-                this.dnsMiss++;
             } catch (final InterruptedException e) {
                 Log.logException(e);
             }
         }
     }
-    public void enqueueEntriesAsynchronous(final byte[] initiator, final String profileHandle, final Map<MultiProtocolURI, Properties> hyperlinks, final boolean replace) {
+    public void enqueueEntriesAsynchronous(final byte[] initiator, final String profileHandle, final Map<MultiProtocolURI, Properties> hyperlinks) {
         new Thread() {
             @Override
             public void run() {
+                Thread.currentThread().setName("enqueueEntriesAsynchronous");
                 enqueueEntries(initiator, profileHandle, hyperlinks, true);
             }
         }.start();
@@ -211,7 +208,7 @@ public final class CrawlStacker {
                     u = u + "/index.html";
                 }
                 try {
-                    final byte[] uh = new DigestURI(u, null).hash();
+                    final byte[] uh = new DigestURI(u).hash();
                     this.indexSegment.urlMetadata().remove(uh);
                     this.nextQueue.noticeURL.removeByURLHash(uh);
                     this.nextQueue.errorURL.remove(uh);
@@ -244,6 +241,7 @@ public final class CrawlStacker {
         new Thread() {
             @Override
             public void run() {
+                Thread.currentThread().setName("enqueueEntriesFTP");
                 BlockingQueue<FTPClient.entryInfo> queue;
                 try {
                     queue = FTPClient.sitelist(host, port);
@@ -345,7 +343,7 @@ public final class CrawlStacker {
         }
 
         long maxFileSize = Long.MAX_VALUE;
-        if (entry.size() > 0) {
+        if (!entry.isEmpty()) {
             final String protocol = entry.url().getProtocol();
             if (protocol.equals("http") || protocol.equals("https")) maxFileSize = Switchboard.getSwitchboard().getConfigLong("crawler.http.maxFileSize", HTTPLoader.DEFAULT_MAXFILESIZE);
             if (protocol.equals("ftp")) maxFileSize = Switchboard.getSwitchboard().getConfigLong("crawler.ftp.maxFileSize", FTPLoader.DEFAULT_MAXFILESIZE);
@@ -358,7 +356,8 @@ public final class CrawlStacker {
             entry.url().getContentDomain() == ContentDomain.APP  ||
             entry.url().getContentDomain() == ContentDomain.IMAGE  ||
             entry.url().getContentDomain() == ContentDomain.AUDIO  ||
-            entry.url().getContentDomain() == ContentDomain.VIDEO ) {
+            entry.url().getContentDomain() == ContentDomain.VIDEO ||
+            entry.url().getContentDomain() == ContentDomain.CTRL) {
             warning = this.nextQueue.noticeURL.push(NoticedURL.StackType.NOLOAD, entry);
             //if (warning != null) this.log.logWarning("CrawlStacker.stackCrawl of URL " + entry.url().toNormalform(true, false) + " - not pushed: " + warning);
             return null;
@@ -409,8 +408,8 @@ public final class CrawlStacker {
         }
 
         // check blacklist
-        if (Switchboard.urlBlacklist.isListed(Blacklist.BLACKLIST_CRAWLER, url)) {
-            if (this.log.isFine()) this.log.logFine("URL '" + urlstring + "' is in blacklist.");
+        if (Switchboard.urlBlacklist.isListed(BlacklistType.CRAWLER, url)) {
+            this.log.logFine("URL '" + urlstring + "' is in blacklist.");
             return "url in blacklist";
         }
 
@@ -440,17 +439,15 @@ public final class CrawlStacker {
 
         // check if the url is double registered
         final String dbocc = this.nextQueue.urlExists(url.hash()); // returns the name of the queue if entry exists
-        final URIMetadataRow oldEntry = this.indexSegment.urlMetadata().load(url.hash());
+        final URIMetadata oldEntry = this.indexSegment.urlMetadata().load(url.hash());
         if (oldEntry == null) {
             if (dbocc != null) {
                 // do double-check
-                if (this.log.isFine()) this.log.logFine("URL '" + urlstring + "' is double registered in '" + dbocc + "'.");
                 if (dbocc.equals("errors")) {
                     final ZURL.Entry errorEntry = this.nextQueue.errorURL.get(url.hash());
                     return "double in: errors (" + errorEntry.anycause() + ")";
-                } else {
-                    return "double in: " + dbocc;
                 }
+                return "double in: " + dbocc;
             }
         } else {
             final boolean recrawl = profile.recrawlIfOlder() > oldEntry.loaddate().getTime();
@@ -461,15 +458,13 @@ public final class CrawlStacker {
             } else {
                 if (dbocc == null) {
                     return "double in: LURL-DB";
-                } else {
-                    if (this.log.isInfo()) this.log.logInfo("URL '" + urlstring + "' is double registered in '" + dbocc + "'. " + "Stack processing time:");
-                    if (dbocc.equals("errors")) {
-                        final ZURL.Entry errorEntry = this.nextQueue.errorURL.get(url.hash());
-                        return "double in: errors (" + errorEntry.anycause() + ")";
-                    } else {
-                        return "double in: " + dbocc;
-                    }
                 }
+                if (this.log.isInfo()) this.log.logInfo("URL '" + urlstring + "' is double registered in '" + dbocc + "'. " + "Stack processing time:");
+                if (dbocc.equals("errors")) {
+                    final ZURL.Entry errorEntry = this.nextQueue.errorURL.get(url.hash());
+                    return "double in: errors (" + errorEntry.anycause() + ")";
+                }
+                return "double in: " + dbocc;
             }
         }
 

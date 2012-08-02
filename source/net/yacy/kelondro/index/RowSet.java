@@ -25,6 +25,7 @@
 package net.yacy.kelondro.index;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
@@ -36,14 +37,16 @@ import java.util.TreeMap;
 import net.yacy.cora.document.ASCII;
 import net.yacy.cora.document.UTF8;
 import net.yacy.cora.order.CloneableIterator;
+import net.yacy.cora.util.SpaceExceededException;
 import net.yacy.kelondro.logging.Log;
 import net.yacy.kelondro.order.Base64Order;
 import net.yacy.kelondro.order.NaturalOrder;
 import net.yacy.kelondro.util.MemoryControl;
 
 
-public class RowSet extends RowCollection implements Index, Iterable<Row.Entry> {
+public class RowSet extends RowCollection implements Index, Iterable<Row.Entry>, Serializable {
 
+    private static final long serialVersionUID=-6036029762440788566L;
     private static final int collectionReSortLimit = 3000;
 
     public RowSet(final RowSet rs) {
@@ -55,7 +58,7 @@ public class RowSet extends RowCollection implements Index, Iterable<Row.Entry> 
         assert rowdef.objectOrder != null;
     }
 
-    public RowSet(final Row rowdef, final int objectCount) throws RowSpaceExceededException {
+    public RowSet(final Row rowdef, final int objectCount) throws SpaceExceededException {
         super(rowdef, objectCount);
         assert rowdef.objectOrder != null;
     }
@@ -76,7 +79,7 @@ public class RowSet extends RowCollection implements Index, Iterable<Row.Entry> 
         assert rowdef.objectOrder != null;
     }
 
-    public final static RowSet importRowSet(final byte[] b, final Row rowdef) throws RowSpaceExceededException {
+    public final static RowSet importRowSet(final byte[] b, final Row rowdef) throws SpaceExceededException {
     	assert b.length >= exportOverheadSize : "b.length = " + b.length;
     	if (b.length < exportOverheadSize) return new RowSet(rowdef, 0);
         final int size = (int) NaturalOrder.decodeLong(b, 0, 4);
@@ -87,15 +90,15 @@ public class RowSet extends RowCollection implements Index, Iterable<Row.Entry> 
         if (orderbound < 0) return new RowSet(rowdef, 0); // error
         final long alloc = ((long) size) * ((long) rowdef.objectsize);
         assert alloc <= Integer.MAX_VALUE : "alloc = " + alloc;
-        if (alloc > Integer.MAX_VALUE) throw new RowSpaceExceededException((int) alloc, "importRowSet: alloc > Integer.MAX_VALUE");
+        if (alloc > Integer.MAX_VALUE) throw new SpaceExceededException((int) alloc, "importRowSet: alloc > Integer.MAX_VALUE");
         assert alloc == b.length - exportOverheadSize;
-        if (alloc != b.length - exportOverheadSize) throw new RowSpaceExceededException((int) alloc, "importRowSet: alloc != b.length - exportOverheadSize");
+        if (alloc != b.length - exportOverheadSize) throw new SpaceExceededException((int) alloc, "importRowSet: alloc != b.length - exportOverheadSize");
         MemoryControl.request((int) alloc, true);
         final byte[] chunkcache;
         try {
             chunkcache = new byte[(int) alloc];
         } catch (final OutOfMemoryError e) {
-            throw new RowSpaceExceededException((int) alloc, "importRowSet: OutOfMemoryError");
+            throw new SpaceExceededException((int) alloc, "importRowSet: OutOfMemoryError");
         }
         //assert b.length - exportOverheadSize == size * rowdef.objectsize : "b.length = " + b.length + ", size * rowdef.objectsize = " + size * rowdef.objectsize;
         if (b.length - exportOverheadSize != alloc) {
@@ -118,20 +121,24 @@ public class RowSet extends RowCollection implements Index, Iterable<Row.Entry> 
         super(rowdef, chunkcache, chunkcount, sortBound, lastTimeWrote);
     }
 
+    @Override
     public RowSet clone() {
         return new RowSet(super.rowdef, super.chunkcache, super.chunkcount, super.sortBound, super.lastTimeWrote);
     }
 
-	public void reset() {
+	@Override
+    public void reset() {
 		super.reset();
 	}
 
+    @Override
     public final synchronized boolean has(final byte[] key) {
         assert key.length == this.rowdef.primaryKeyLength;
         final int index = find(key, 0);
         return index >= 0;
     }
 
+    @Override
     public final synchronized Row.Entry get(final byte[] key, final boolean forcecopy) {
         assert key.length == this.rowdef.primaryKeyLength;
         final int index = find(key, 0);
@@ -139,6 +146,7 @@ public class RowSet extends RowCollection implements Index, Iterable<Row.Entry> 
         return get(index, forcecopy);
     }
 
+    @Override
     public Map<byte[], Row.Entry> get(final Collection<byte[]> keys, final boolean forcecopy) throws IOException, InterruptedException {
         final Map<byte[], Row.Entry> map = new TreeMap<byte[], Row.Entry>(row().objectOrder);
         Row.Entry entry;
@@ -154,9 +162,10 @@ public class RowSet extends RowCollection implements Index, Iterable<Row.Entry> 
      * @param row a index row
      * @return true if this set did _not_ already contain the given row.
      * @throws IOException
-     * @throws RowSpaceExceededException
+     * @throws SpaceExceededException
      */
-    public final boolean put(final Row.Entry entry) throws RowSpaceExceededException {
+    @Override
+    public final boolean put(final Row.Entry entry) throws SpaceExceededException {
         assert (entry != null);
         final byte[] key = entry.getPrimaryKeyBytes();
         assert (key != null);
@@ -167,16 +176,16 @@ public class RowSet extends RowCollection implements Index, Iterable<Row.Entry> 
             if (index < 0) {
                 super.addUnique(entry);
                 return true;
-            } else {
-                final int sb = this.sortBound; // save the sortBound, because it is not altered (we replace at the same place)
-                set(index, entry);       // this may alter the sortBound, which we will revert in the next step
-                this.sortBound = sb;     // revert a sortBound altering
-                return false;
             }
+            final int sb = this.sortBound; // save the sortBound, because it is not altered (we replace at the same place)
+            set(index, entry);       // this may alter the sortBound, which we will revert in the next step
+            this.sortBound = sb;     // revert a sortBound altering
+            return false;
         }
     }
 
-    public final Row.Entry replace(final Row.Entry entry) throws RowSpaceExceededException {
+    @Override
+    public final Row.Entry replace(final Row.Entry entry) throws SpaceExceededException {
         assert (entry != null);
         final byte[] key = entry.getPrimaryKeyBytes();
         assert (key != null);
@@ -202,7 +211,7 @@ public class RowSet extends RowCollection implements Index, Iterable<Row.Entry> 
         }
     }
 
-    public final synchronized long inc(final byte[] key, final int col, final long add, final Row.Entry initrow) throws RowSpaceExceededException {
+    public final synchronized long inc(final byte[] key, final int col, final long add, final Row.Entry initrow) throws SpaceExceededException {
         assert key.length == this.rowdef.primaryKeyLength;
         final int index = find(key, 0);
         if (index >= 0) {
@@ -227,6 +236,7 @@ public class RowSet extends RowCollection implements Index, Iterable<Row.Entry> 
      * if the entry was found, return the entry, but delete the entry from the set
      * if the entry was not found, return null.
      */
+    @Override
     public final synchronized boolean delete(final byte[] a) {
         boolean exists = false;
         int index;
@@ -235,10 +245,9 @@ public class RowSet extends RowCollection implements Index, Iterable<Row.Entry> 
             index = find(a, 0);
             if (index < 0) {
                 return exists;
-            } else {
-                exists = true;
-                super.removeRow(index, true); // keep order of collection!
             }
+            exists = true;
+            super.removeRow(index, true); // keep order of collection!
         }
     }
 
@@ -258,6 +267,7 @@ public class RowSet extends RowCollection implements Index, Iterable<Row.Entry> 
         }
     }
 
+    @Override
     public final synchronized Row.Entry remove(final byte[] a) {
         Row.Entry entry = null;
         int index;
@@ -266,10 +276,9 @@ public class RowSet extends RowCollection implements Index, Iterable<Row.Entry> 
             index = find(a, 0);
             if (index < 0) {
                 return entry;
-            } else {
-                entry = super.get(index, true);
-                super.removeRow(index, true); // keep order of collection!
             }
+            entry = super.get(index, true);
+            super.removeRow(index, true); // keep order of collection!
         }
     }
 
@@ -346,6 +355,7 @@ public class RowSet extends RowCollection implements Index, Iterable<Row.Entry> 
         return super.keys(true);
     }
 
+    @Override
     public final synchronized CloneableIterator<byte[]> keys(final boolean up, final byte[] firstKey) {
         return new keyIterator(up, firstKey);
     }
@@ -372,41 +382,48 @@ public class RowSet extends RowCollection implements Index, Iterable<Row.Entry> 
             }
         }
 
-		public final keyIterator clone(final Object second) {
+		@Override
+        public final keyIterator clone(final Object second) {
             return new keyIterator(this.up, (byte[]) second);
         }
 
+        @Override
         public final boolean hasNext() {
         	if (this.p < 0) return false;
         	if (this.p >= size()) return false;
-            if (this.up) {
-                return this.p < this.bound;
-            } else {
-                return this.p >= 0;
-            }
+            return (this.up) ? this.p < this.bound : this.p >= 0;
         }
 
+        @Override
         public final byte[] next() {
             final byte[] key = getKey(this.p);
             if (this.up) this.p++; else this.p--;
             return key;
         }
 
+        @Override
         public final void remove() {
             throw new UnsupportedOperationException();
         }
+
+        @Override
+        public void close() {
+        }
     }
 
+    @Override
     public final synchronized Iterator<Row.Entry> iterator() {
         // iterates kelondroRow.Entry - type entries
         sort();
         return super.iterator();
     }
 
+    @Override
     public final synchronized CloneableIterator<Row.Entry> rows(final boolean up, final byte[] firstKey) {
         return new rowIterator(up, firstKey);
     }
 
+    @Override
     public final synchronized CloneableIterator<Row.Entry> rows() {
         return new rowIterator(true, null);
     }
@@ -432,28 +449,32 @@ public class RowSet extends RowCollection implements Index, Iterable<Row.Entry> 
             }
         }
 
-		public final rowIterator clone(final Object second) {
+		@Override
+        public final rowIterator clone(final Object second) {
             return new rowIterator(this.up, (byte[]) second);
         }
 
+        @Override
         public final boolean hasNext() {
         	if (this.p < 0) return false;
         	if (this.p >= size()) return false;
-            if (this.up) {
-                return this.p < this.bound;
-            } else {
-                return this.p >= 0;
-            }
+            return (this.up) ? this.p < this.bound : this.p >= 0;
         }
 
+        @Override
         public final Row.Entry next() {
             final Row.Entry entry = get(this.p, true);
             if (this.up) this.p++; else this.p--;
             return entry;
         }
 
+        @Override
         public final void remove() {
             throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void close() {
         }
     }
 
@@ -464,9 +485,9 @@ public class RowSet extends RowCollection implements Index, Iterable<Row.Entry> 
      * After this merge, none of the input collections should be used, because they can be altered
      * @param c
      * @return
-     * @throws RowSpaceExceededException
+     * @throws SpaceExceededException
      */
-    public final RowSet merge(final RowSet c) throws RowSpaceExceededException {
+    public final RowSet merge(final RowSet c) throws SpaceExceededException {
         assert c != null;
         return mergeEnum(this, c);
     }
@@ -476,9 +497,9 @@ public class RowSet extends RowCollection implements Index, Iterable<Row.Entry> 
      * the current collection is not altered in any way, the returned collection is a new collection with copied content.
      * @param c
      * @return
-     * @throws RowSpaceExceededException
+     * @throws SpaceExceededException
      */
-    protected final static RowSet mergeEnum(final RowCollection c0, final RowCollection c1) throws RowSpaceExceededException {
+    protected final static RowSet mergeEnum(final RowCollection c0, final RowCollection c1) throws SpaceExceededException {
         assert c0.rowdef == c1.rowdef : c0.rowdef.toString() + " != " + c1.rowdef.toString();
         final RowSet r = new RowSet(c0.rowdef, c0.size() + c1.size());
         try {
@@ -497,7 +518,9 @@ public class RowSet extends RowCollection implements Index, Iterable<Row.Entry> 
         int c0p, c1p;
         int o;
         final int objectsize = c0.rowdef.objectsize;
-        while (c0i < c0.size() && c1i < c1.size()) {
+        final int c0s = c0.size();
+        final int c1s = c1.size();
+        while (c0i < c0s && c1i < c1s) {
             c0p = c0i * objectsize;
             c1p = c1i * objectsize;
             o = c0.rowdef.objectOrder.compare(
@@ -566,13 +589,13 @@ public class RowSet extends RowCollection implements Index, Iterable<Row.Entry> 
         for (final String element : test)
             try {
                 d.add(element.getBytes());
-            } catch (final RowSpaceExceededException e) {
+            } catch (final SpaceExceededException e) {
                 e.printStackTrace();
             }
         for (final String element : test)
             try {
                 d.add(element.getBytes());
-            } catch (final RowSpaceExceededException e) {
+            } catch (final SpaceExceededException e) {
                 e.printStackTrace();
             }
         d.sort();
@@ -609,7 +632,7 @@ public class RowSet extends RowCollection implements Index, Iterable<Row.Entry> 
             try {
                 c.put(row.newEntry(new byte[][]{w.getBytes(), "000".getBytes()}));
                 //c.add(w.getBytes());
-            } catch (final RowSpaceExceededException e) {
+            } catch (final SpaceExceededException e) {
                 e.printStackTrace();
             }
             if (k % 10000 == 0)
@@ -642,7 +665,7 @@ public class RowSet extends RowCollection implements Index, Iterable<Row.Entry> 
             key = randomHash(random);
             try {
                 c.put(c.rowdef.newEntry(new byte[][]{key, key}));
-            } catch (final RowSpaceExceededException e) {
+            } catch (final SpaceExceededException e) {
                 e.printStackTrace();
             }
             if (i % 1000 == 0) {
@@ -677,10 +700,12 @@ public class RowSet extends RowCollection implements Index, Iterable<Row.Entry> 
         return randomHash(r.nextLong(), r.nextLong());
     }
 
+    @Override
     public String filename() {
         return null;
     }
 
+    @Override
     public void deleteOnExit() {
         // do nothing, there is no file
     }

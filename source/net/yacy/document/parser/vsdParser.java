@@ -29,11 +29,10 @@ package net.yacy.document.parser;
 
 import java.io.InputStream;
 
-import net.yacy.cora.document.MultiProtocolURI;
-import net.yacy.cora.document.UTF8;
 import net.yacy.document.AbstractParser;
 import net.yacy.document.Document;
 import net.yacy.document.Parser;
+import net.yacy.kelondro.data.meta.DigestURI;
 import net.yacy.kelondro.logging.Log;
 
 import org.apache.poi.hdgf.extractor.VisioTextExtractor;
@@ -44,30 +43,30 @@ public class vsdParser extends AbstractParser implements Parser {
 
     public vsdParser() {
         super("Microsoft Visio Parser");
-        SUPPORTED_EXTENSIONS.add("vsd");
-        SUPPORTED_EXTENSIONS.add("vss");
-        SUPPORTED_EXTENSIONS.add("vst");
-        SUPPORTED_EXTENSIONS.add("vdx");
-        SUPPORTED_EXTENSIONS.add("vtx");
-        SUPPORTED_MIME_TYPES.add("application/visio");
-        SUPPORTED_MIME_TYPES.add("application/x-visio");
-        SUPPORTED_MIME_TYPES.add("application/vnd.visio");
-        SUPPORTED_MIME_TYPES.add("application/visio.drawing");
-        SUPPORTED_MIME_TYPES.add("application/vsd");
-        SUPPORTED_MIME_TYPES.add("application/x-vsd");
-        SUPPORTED_MIME_TYPES.add("image/x-vsd");
-        SUPPORTED_MIME_TYPES.add("zz-application/zz-winassoc-vsd");
+        this.SUPPORTED_EXTENSIONS.add("vsd");
+        this.SUPPORTED_EXTENSIONS.add("vss");
+        this.SUPPORTED_EXTENSIONS.add("vst");
+        this.SUPPORTED_EXTENSIONS.add("vdx");
+        this.SUPPORTED_EXTENSIONS.add("vtx");
+        this.SUPPORTED_MIME_TYPES.add("application/visio");
+        this.SUPPORTED_MIME_TYPES.add("application/x-visio");
+        this.SUPPORTED_MIME_TYPES.add("application/vnd.visio");
+        this.SUPPORTED_MIME_TYPES.add("application/visio.drawing");
+        this.SUPPORTED_MIME_TYPES.add("application/vsd");
+        this.SUPPORTED_MIME_TYPES.add("application/x-vsd");
+        this.SUPPORTED_MIME_TYPES.add("image/x-vsd");
+        this.SUPPORTED_MIME_TYPES.add("zz-application/zz-winassoc-vsd");
     }
-    
+
     /*
      * parses the source documents and returns a plasmaParserDocument containing
      * all extracted information about the parsed document
      */
-    public Document[] parse(final MultiProtocolURI location, final String mimeType, final String charset, final InputStream source)
+    public Document[] parse(final DigestURI location, final String mimeType, final String charset, final InputStream source)
             throws Parser.Failure, InterruptedException {
 
     	Document theDoc = null;
-    	
+
         try {
             String contents = "";
             SummaryInformation summary = null;
@@ -96,7 +95,7 @@ public class vsdParser extends AbstractParser implements Parser {
                           replaceAll("\n"," ").
                           replaceAll("\r"," ").
                           replaceAll("\t"," ");
-            
+
             if (title == null) {
                 title = abstrct;
             }
@@ -114,24 +113,24 @@ public class vsdParser extends AbstractParser implements Parser {
                     "",
                     null,         // an array of section headlines
                     abstrct,      // an abstract
-                    0.0f, 0.0f, 
-                    UTF8.getBytes(contents),     // the parsed document text
+                    0.0f, 0.0f,
+                    contents,     // the parsed document text
                     null,         // a map of extracted anchors
                     null,
                     null,         // a treeset of image URLs
                     false)};
-        } catch (final Exception e) { 
+        } catch (final Exception e) {
             if (e instanceof InterruptedException) throw (InterruptedException) e;
 
             // if an unexpected error occures just log the error and raise a new ParserException
             final String errorMsg = "Unable to parse the vsd document '" + location + "':" + e.getMessage();
-            this.log.logSevere(errorMsg);
+            AbstractParser.log.logSevere(errorMsg);
             throw new Parser.Failure(errorMsg, location);
         } finally {
             if (theDoc == null) {
                 // if an unexpected error occures just log the error and raise a new Parser.Failure
                 final String errorMsg = "Unable to parse the vsd document '" + location + "': possibly out of memory";
-                this.log.logSevere(errorMsg);
+                AbstractParser.log.logSevere(errorMsg);
                 throw new Parser.Failure(errorMsg, location);
             }
         }

@@ -27,8 +27,8 @@ import java.util.regex.Pattern;
 
 import net.yacy.cora.document.UTF8;
 import net.yacy.cora.protocol.RequestHeader;
+import net.yacy.cora.util.SpaceExceededException;
 import net.yacy.kelondro.blob.Tables;
-import net.yacy.kelondro.index.RowSpaceExceededException;
 import net.yacy.kelondro.logging.Log;
 import net.yacy.search.Switchboard;
 import de.anomic.server.serverObjects;
@@ -36,7 +36,7 @@ import de.anomic.server.serverSwitch;
 
 public class Tables_p {
 
-    public static serverObjects respond(final RequestHeader header, final serverObjects post, final serverSwitch env) {
+    public static serverObjects respond(@SuppressWarnings("unused") final RequestHeader header, final serverObjects post, final serverSwitch env) {
         final Switchboard sb = (Switchboard) env;
         final serverObjects prop = new serverObjects();
 
@@ -66,7 +66,7 @@ public class Tables_p {
         final String counts = post.get("count", null);
         int maxcount = (counts == null || counts.equals("all")) ? Integer.MAX_VALUE : post.getInt("count", 10);
         final String pattern = post.get("search", "");
-        final Pattern matcher = (pattern.length() == 0 || pattern.equals(".*")) ? null : Pattern.compile(".*" + pattern + ".*");
+        final Pattern matcher = (pattern.isEmpty() || pattern.equals(".*")) ? null : Pattern.compile(".*" + pattern + ".*");
         prop.put("pattern", pattern);
 
         // apply deletion requests
@@ -76,7 +76,7 @@ public class Tables_p {
         if (post.get("deleterows", "").length() > 0) {
             for (final Map.Entry<String, String> entry: post.entrySet()) {
                 if (entry.getValue().startsWith("pk_")) try {
-                    sb.tables.delete(table, entry.getValue().substring(5).getBytes());
+                    sb.tables.delete(table, entry.getValue().substring(3).getBytes());
                 } catch (final IOException e) {
                     Log.logException(e);
                 }
@@ -117,8 +117,8 @@ public class Tables_p {
                 // check if we can find a key
                 String pk = null;
                 for (final Map.Entry<String, String> entry: post.entrySet()) {
-                    if (entry.getValue().startsWith("mark_")) {
-                        pk = entry.getValue().substring(5);
+                    if (entry.getValue().startsWith("pk_")) {
+                        pk = entry.getValue().substring(3);
                         break;
                     }
                 }
@@ -128,7 +128,7 @@ public class Tables_p {
                     }
                 } catch (final IOException e) {
                     Log.logException(e);
-                } catch (final RowSpaceExceededException e) {
+                } catch (final SpaceExceededException e) {
                     Log.logException(e);
                 }
             } else if (post.containsKey("addrow")) try {
@@ -137,7 +137,7 @@ public class Tables_p {
                 setEdit(sb, prop, table, pk, columns);
             } catch (final IOException e) {
                 Log.logException(e);
-            } catch (final RowSpaceExceededException e) {
+            } catch (final SpaceExceededException e) {
                 Log.logException(e);
             } else {
                 prop.put("showtable", 1);
@@ -195,7 +195,7 @@ public class Tables_p {
         return prop;
     }
 
-    private static void setEdit(final Switchboard sb, final serverObjects prop, final String table, final String pk, final List<String> columns) throws IOException, RowSpaceExceededException {
+    private static void setEdit(final Switchboard sb, final serverObjects prop, final String table, final String pk, final List<String> columns) throws IOException, SpaceExceededException {
         prop.put("showedit", 1);
         prop.put("showedit_table", table);
         prop.put("showedit_pk", pk);

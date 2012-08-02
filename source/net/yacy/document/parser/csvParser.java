@@ -11,12 +11,12 @@
  *  modify it under the terms of the GNU Lesser General Public
  *  License as published by the Free Software Foundation; either
  *  version 2.1 of the License, or (at your option) any later version.
- *  
+ *
  *  This library is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *  Lesser General Public License for more details.
- *  
+ *
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with this program in the file lgpl21.txt
  *  If not, see <http://www.gnu.org/licenses/>.
@@ -32,10 +32,10 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.yacy.cora.document.MultiProtocolURI;
 import net.yacy.document.AbstractParser;
 import net.yacy.document.Document;
 import net.yacy.document.Parser;
+import net.yacy.kelondro.data.meta.DigestURI;
 
 /**
  * a parser for comma-separated values
@@ -46,44 +46,41 @@ public class csvParser extends AbstractParser implements Parser {
 
     public csvParser() {
         super("Comma Separated Value Parser");
-        SUPPORTED_EXTENSIONS.add("csv");
+        this.SUPPORTED_EXTENSIONS.add("csv");
     }
-    
-    public Document[] parse(MultiProtocolURI location, String mimeType, String charset, InputStream source) throws Parser.Failure, InterruptedException {
+
+    @Override
+    public Document[] parse(DigestURI location, String mimeType, String charset, InputStream source) throws Parser.Failure, InterruptedException {
         // construct a document using all cells of the document
         // the first row is used as headline
         // all lines are artificially terminated by a '.' to separate them as sentence for the condenser.
-        final List<String[]> table = getTable(location, mimeType, charset, source);
+        final List<String[]> table = getTable(charset, source);
         if (table.isEmpty()) throw new Parser.Failure("document has no lines", location);
         final StringBuilder sb = new StringBuilder();
         for (final String[] row: table) {
             sb.append(concatRow(row)).append(' ');
         }
-        try {
-            return new Document[]{new Document(
-                    location,
-                    mimeType,
-                    charset,
-                    this,
-                    null,
-                    null,
-                    concatRow(table.get(0)),
-                    "",
-                    "",
-                    null,
-                    null,
-                    0.0f, 0.0f, 
-                    sb.toString().getBytes(charset),
-                    null,
-                    null,
-                    null,
-                    false)};
-        } catch (UnsupportedEncodingException e) {
-            throw new Parser.Failure("error in csvParser, getBytes: " + e.getMessage(), location);
-        }
+        return new Document[]{new Document(
+		        location,
+		        mimeType,
+		        charset,
+		        this,
+		        null,
+		        null,
+		        concatRow(table.get(0)),
+		        "",
+		        "",
+		        null,
+		        null,
+		        0.0f, 0.0f,
+		        sb.toString(),
+		        null,
+		        null,
+		        null,
+		        false)};
     }
 
-    private String concatRow(String[] columns) {
+    private static String concatRow(String[] columns) {
         final StringBuilder sb = new StringBuilder(80);
         for (final String column : columns) {
             if (sb.length() > 0) sb.append(' ');
@@ -92,8 +89,8 @@ public class csvParser extends AbstractParser implements Parser {
         sb.append('.');
         return sb.toString();
     }
-    
-    private List<String[]> getTable(MultiProtocolURI location, String mimeType, String charset, InputStream source) {
+
+    private static List<String[]> getTable(String charset, InputStream source) {
         final List<String[]> rows = new ArrayList<String[]>();
         BufferedReader reader;
         try {
@@ -107,7 +104,7 @@ public class csvParser extends AbstractParser implements Parser {
         try {
             while ((row = reader.readLine()) != null) {
                 row = row.trim();
-                if (row.length() == 0) continue;
+                if (row.isEmpty()) continue;
                 if (separator == null) {
                     // try comma, semicolon and tab; take that one that results with more columns
                     final String[] colc = row.split(",");

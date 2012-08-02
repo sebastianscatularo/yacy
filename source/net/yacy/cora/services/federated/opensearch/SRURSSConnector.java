@@ -49,7 +49,7 @@ import org.apache.http.entity.mime.content.ContentBody;
 
 public class SRURSSConnector extends Thread implements SearchAccumulator {
 
-    private final static int recordsPerSession = 100;
+    private final static int recordsPerSession = 250;
 
     final String urlBase;
     final String query;
@@ -130,6 +130,7 @@ public class SRURSSConnector extends Thread implements SearchAccumulator {
         final Thread job = new Thread() {
             @Override
             public void run() {
+                Thread.currentThread().setName("searchSRURSS:" + urlBase);
                 int startRecord = 0;
                 RSSMessage message;
                 int maximumRecords = maximumRecordsInit;

@@ -66,6 +66,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -76,6 +77,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -97,6 +99,7 @@ import net.yacy.cora.protocol.Domains;
 import net.yacy.cora.protocol.HeaderFramework;
 import net.yacy.cora.protocol.RequestHeader;
 import net.yacy.cora.protocol.ResponseHeader;
+import net.yacy.cora.util.NumberTools;
 import net.yacy.document.parser.htmlParser;
 import net.yacy.document.parser.html.ContentScraper;
 import net.yacy.document.parser.html.ScraperInputStream;
@@ -225,7 +228,7 @@ public final class HTTPDFileHandler {
     }
 
     private static final ResponseHeader getDefaultHeaders(final String path) {
-        final ResponseHeader headers = new ResponseHeader();
+        final ResponseHeader headers = new ResponseHeader(200);
         String ext;
         int pos;
         if ((pos = path.lastIndexOf('.')) < 0) {
@@ -278,6 +281,10 @@ public final class HTTPDFileHandler {
                 return;
             }
 
+            // allow proper access to current peer via virtual directory
+            if (path.startsWith("/currentyacypeer/")) {
+            	path = path.substring(16);
+            }
 
             // cache settings
             boolean nocache = path.contains("?") || body != null;
@@ -305,25 +312,26 @@ public final class HTTPDFileHandler {
             // -2- a password is not configured; or
             final String adminAccountBase64MD5 = switchboard.getConfig(SwitchboardConstants.ADMIN_ACCOUNT_B64MD5, "");
             if (!accessGranted) {
-                accessGranted = adminAccountBase64MD5.length() == 0;
+                accessGranted = adminAccountBase64MD5.isEmpty();
             }
 
             // -3- access from localhost is granted and access comes from localhost; or
             final String refererHost = requestHeader.refererHost();
             if (!accessGranted) {
                 final boolean adminAccountForLocalhost = sb.getConfigBool("adminAccountForLocalhost", false);
-                final boolean accessFromLocalhost = Domains.isLocalhost(clientIP) && (refererHost == null || refererHost.length() == 0 || Domains.isLocalhost(refererHost));
+                final boolean accessFromLocalhost = Domains.isLocalhost(clientIP) && (refererHost == null || refererHost.isEmpty() || Domains.isLocalhost(refererHost));
                 accessGranted = adminAccountForLocalhost && accessFromLocalhost;
             }
 
             // -4- a password is configured and access comes from localhost
             //     and the realm-value of a http-authentify String is equal to the stored base64MD5; or
             String realmProp = requestHeader.get(RequestHeader.AUTHORIZATION);
-            if (realmProp != null && realmProp.length() == 0) realmProp = null;
+            if (realmProp != null && realmProp.isEmpty()) realmProp = null;
             final String realmValue = realmProp == null ? null : realmProp.substring(6);
             if (!accessGranted) {
-                final boolean accessFromLocalhost = Domains.isLocalhost(clientIP) && (refererHost == null || refererHost.length() == 0 || Domains.isLocalhost(refererHost));
+                final boolean accessFromLocalhost = Domains.isLocalhost(clientIP) && (refererHost == null || refererHost.isEmpty() || Domains.isLocalhost(refererHost));
                 accessGranted = accessFromLocalhost && realmValue != null && realmProp.length() > 6 && (adminAccountBase64MD5.equals(realmValue));
+                Log.logInfo("HTTPDFileHandler", "access from localhost blocked, clientIP=" + clientIP);
             }
 
             // -5- a password is configured and access comes with matching http-authentify
@@ -341,7 +349,7 @@ public final class HTTPDFileHandler {
                     serverCore.bfHost.put(clientIP, Integer.valueOf(attempts.intValue() + 1));
 
                 final ResponseHeader responseHeader = getDefaultHeaders(path);
-                responseHeader.put(RequestHeader.WWW_AUTHENTICATE,"Basic realm=\"admin log-in\"");
+                responseHeader.put(RequestHeader.WWW_AUTHENTICATE, "Basic realm=\"" + serverObjects.ADMIN_AUTHENTICATE_MSG + "\"");
                 final servletProperties tp=new servletProperties();
                 tp.put("returnto", path);
                 HTTPDemon.sendRespondError(conProp, out, 5, 401, "Wrong Authentication", "", new File("proxymsg/authfail.inc"), tp, null, responseHeader);
@@ -484,7 +492,7 @@ public final class HTTPDFileHandler {
                             aBuffer.append("    <li><a href=\"" + path + element + "/\">" + element + "/</a><br/></li>\n");
                         } else {
                             if (element.endsWith("html") || (element.endsWith("htm"))) {
-                                scraper = ContentScraper.parseResource(f);
+                                scraper = ContentScraper.parseResource(f, 10000);
                                 headline = scraper.getTitle();
                                 author = scraper.getAuthor();
                                 publisher = scraper.getPublisher();
@@ -519,7 +527,7 @@ public final class HTTPDFileHandler {
                     aBuffer.append("  </ul>\n</body>\n</html>\n");
 
                     // write the list to the client
-                    HTTPDemon.sendRespondHeader(conProp, out, httpVersion, 200, null, "text/html; charset=UTF-8", aBuffer.length(), new Date(targetFile.lastModified()), null, new ResponseHeader(), null, null, true);
+                    HTTPDemon.sendRespondHeader(conProp, out, httpVersion, 200, null, "text/html; charset=UTF-8", aBuffer.length(), new Date(targetFile.lastModified()), null, new ResponseHeader(200), null, null, true);
                     if (!method.equals(HeaderFramework.METHOD_HEAD)) {
                         out.write(UTF8.getBytes(aBuffer.toString()));
                     }
@@ -528,7 +536,7 @@ public final class HTTPDFileHandler {
             } else {
                     //XXX: you cannot share a .png/.gif file with a name like a class in htroot.
                     if ( !(targetFile.exists()) &&
-                            !((path.endsWith("png")||path.endsWith("gif") ||
+                            !((path.endsWith("png")||path.endsWith("gif") || path.indexOf('.') < 0 ||
                             matchesSuffix(path, switchboard.getConfig("cgi.suffixes", null)) ||
                             path.endsWith(".stream")) &&
                             targetClass!=null ) ){
@@ -539,21 +547,19 @@ public final class HTTPDFileHandler {
 
             // implement proxy via url (not in servlet, because we need binary access on ouputStream)
             if (path.equals("/proxy.html")) {
-            	final List<Pattern> urlProxyAccess = Domains.makePatterns(sb.getConfig("proxyURL.access", "127.0.0.1"));
+            	final List<Pattern> urlProxyAccess = Domains.makePatterns(sb.getConfig("proxyURL.access", Domains.LOCALHOST));
                 final UserDB.Entry user = sb.userDB.getUser(requestHeader);
                 final boolean user_may_see_proxyurl = Domains.matchesList(clientIP, urlProxyAccess) || (user!=null && user.hasRight(UserDB.AccessRight.PROXY_RIGHT));
             	if (sb.getConfigBool("proxyURL", false) && user_may_see_proxyurl) {
-            		doURLProxy(args, conProp, requestHeader, out);
+            		doURLProxy(conProp, requestHeader, out);
             		return;
             	}
-            	else {
-        			HTTPDemon.sendRespondError(conProp,out,3,403,"Access denied",null,null);
-            	}
+                HTTPDemon.sendRespondError(conProp,out,3,403,"Access denied",null,null);
             }
 
             // track all files that had been accessed so far
             if (targetFile != null && targetFile.exists()) {
-                if (args != null && args.size() > 0) sb.setConfig("server.servlets.submitted", appendPath(sb.getConfig("server.servlets.submitted", ""), path));
+                if (args != null && !args.isEmpty()) sb.setConfig("server.servlets.submitted", appendPath(sb.getConfig("server.servlets.submitted", ""), path));
             }
 
             //File targetClass = rewriteClassFile(targetFile);
@@ -564,23 +570,11 @@ public final class HTTPDFileHandler {
             if ((targetClass != null) && (path.endsWith("png"))) {
                 // call an image-servlet to produce an on-the-fly - generated image
                 Object img = null;
-                try {
-                    requestHeader.put(HeaderFramework.CONNECTION_PROP_CLIENTIP, (String) conProp.get(HeaderFramework.CONNECTION_PROP_CLIENTIP));
-                    requestHeader.put(HeaderFramework.CONNECTION_PROP_PATH, path);
-                    requestHeader.put(HeaderFramework.CONNECTION_PROP_EXT, "png");
-                    // in case that there are no args given, args = null or empty hashmap
-                    img = invokeServlet(targetClass, requestHeader, args);
-                } catch (final InvocationTargetException e) {
-                    theLogger.logSevere("INTERNAL ERROR: " + e.toString() + ":" +
-                    e.getMessage() +
-                    " target exception at " + targetClass + ": " +
-                    e.getTargetException().toString() + ":" +
-                    e.getTargetException().getMessage() +
-                    "; java.awt.graphicsenv='" + System.getProperty("java.awt.graphicsenv","") + "'");
-                    Log.logException(e);
-                    Log.logException(e.getTargetException());
-                    targetClass = null;
-                }
+                requestHeader.put(HeaderFramework.CONNECTION_PROP_CLIENTIP, (String) conProp.get(HeaderFramework.CONNECTION_PROP_CLIENTIP));
+                requestHeader.put(HeaderFramework.CONNECTION_PROP_PATH, path);
+                requestHeader.put(HeaderFramework.CONNECTION_PROP_EXT, "png");
+                // in case that there are no args given, args = null or empty hashmap
+                img = invokeServlet(targetClass, requestHeader, args, null);
                 if (img == null) {
                     // error with image generation; send file-not-found
                     HTTPDemon.sendRespondError(conProp, out, 3, 404, "File not Found", null, null);
@@ -873,18 +867,18 @@ public final class HTTPDFileHandler {
                         }
                     }
                 }
-            } else if ((targetClass != null) && (path.endsWith(".stream"))) {
+            } else if (targetClass != null && (path.endsWith(".stream") || path.indexOf('.') < 0)) {
                 // call rewrite-class
                 requestHeader.put(HeaderFramework.CONNECTION_PROP_CLIENTIP, (String) conProp.get(HeaderFramework.CONNECTION_PROP_CLIENTIP));
                 requestHeader.put(HeaderFramework.CONNECTION_PROP_PATH, path);
-                requestHeader.put(HeaderFramework.CONNECTION_PROP_EXT, "stream");
+                requestHeader.put(HeaderFramework.CONNECTION_PROP_EXT, path.endsWith(".stream") ? "stream" : "");
                 //requestHeader.put(httpHeader.CONNECTION_PROP_INPUTSTREAM, body);
                 //requestHeader.put(httpHeader.CONNECTION_PROP_OUTPUTSTREAM, out);
-
-                HTTPDemon.sendRespondHeader(conProp, out, httpVersion, 200, null);
-
-                // in case that there are no args given, args = null or empty hashmap
-                /* servletProperties tp = (servlerObjects) */ invokeServlet(targetClass, requestHeader, args);
+                ResponseHeader header = new ResponseHeader(200);
+                header.put(HeaderFramework.CONTENT_TYPE, "text/xml"); // this is a hack; the actual content type should be given by the servlet, but there is no handover process for that at this time
+                conProp.remove(HeaderFramework.CONNECTION_PROP_PERSISTENT);
+                HTTPDemon.sendRespondHeader(conProp, out, httpVersion, 200, header);
+                invokeServlet(targetClass, requestHeader, args, out);
                 forceConnectionClose(conProp);
                 return;
             } else if (targetFile.exists() && targetFile.isFile() && targetFile.canRead()) {
@@ -921,71 +915,56 @@ public final class HTTPDFileHandler {
                     // call rewrite-class
 
                     if (targetClass != null) {
-                        // CGI-class: call the class to create a property for rewriting
-                        try {
-                            requestHeader.put(HeaderFramework.CONNECTION_PROP_CLIENTIP, (String) conProp.get(HeaderFramework.CONNECTION_PROP_CLIENTIP));
-                            requestHeader.put(HeaderFramework.CONNECTION_PROP_PATH, path);
-                            final int ep = path.lastIndexOf(".");
-                            requestHeader.put(HeaderFramework.CONNECTION_PROP_EXT, path.substring(ep + 1));
-                            // in case that there are no args given, args = null or empty hashmap
-                            final Object tmp = invokeServlet(targetClass, requestHeader, args);
-                            if (tmp == null) {
-                                // if no args given, then tp will be an empty Hashtable object (not null)
-                                templatePatterns = new servletProperties();
-                            } else if (tmp instanceof servletProperties) {
-                                templatePatterns = (servletProperties) tmp;
-                            } else {
-                                templatePatterns = new servletProperties((serverObjects) tmp);
-                            }
-                            // check if the servlets requests authentication
-                            if (templatePatterns.containsKey(servletProperties.ACTION_AUTHENTICATE)) {
-                                // handle brute-force protection
-                                if (realmProp != null) {
-                                    Log.logInfo("HTTPD", "dynamic log-in for account 'admin' in http file handler for path '" + path + "' from host '" + clientIP + "'");
-                                    final Integer attempts = serverCore.bfHost.get(clientIP);
-                                    if (attempts == null)
-                                        serverCore.bfHost.put(clientIP, Integer.valueOf(1));
-                                    else
-                                        serverCore.bfHost.put(clientIP, Integer.valueOf(attempts.intValue() + 1));
-                                }
-                                // send authentication request to browser
-                                final ResponseHeader headers = getDefaultHeaders(path);
-                                headers.put(RequestHeader.WWW_AUTHENTICATE,"Basic realm=\"" + templatePatterns.get(servletProperties.ACTION_AUTHENTICATE, "") + "\"");
-                                HTTPDemon.sendRespondHeader(conProp,out,httpVersion,401,headers);
-                                return;
-                            } else if (templatePatterns.containsKey(servletProperties.ACTION_LOCATION)) {
-                                String location = templatePatterns.get(servletProperties.ACTION_LOCATION, "");
-                                if (location.length() == 0) location = path;
-
-                                final ResponseHeader headers = getDefaultHeaders(path);
-                                headers.setAdditionalHeaderProperties(templatePatterns.getOutgoingHeader().getAdditionalHeaderProperties()); //put the cookies into the new header TODO: can we put all headerlines, without trouble?
-                                headers.put(HeaderFramework.LOCATION,location);
-                                HTTPDemon.sendRespondHeader(conProp,out,httpVersion,302,headers);
-                                return;
-                            }
-                            // add the application version, the uptime and the client name to every rewrite table
-                            templatePatterns.put(servletProperties.PEER_STAT_VERSION, yacyBuildProperties.getVersion());
-                            templatePatterns.put(servletProperties.PEER_STAT_UPTIME, ((System.currentTimeMillis() -  serverCore.startupTime) / 1000) / 60); // uptime in minutes
-                            templatePatterns.putHTML(servletProperties.PEER_STAT_CLIENTNAME, sb.peers.mySeed().getName());
-                            templatePatterns.putHTML(servletProperties.PEER_STAT_CLIENTID, ((Switchboard) switchboard).peers.myID());
-                            templatePatterns.put(servletProperties.PEER_STAT_MYTIME, GenericFormatter.SHORT_SECOND_FORMATTER.format());
-                            final Seed myPeer = sb.peers.mySeed();
-                            templatePatterns.put("newpeer", myPeer.getAge() >= 1 ? 0 : 1);
-                            templatePatterns.putHTML("newpeer_peerhash", myPeer.hash);
-                            //System.out.println("respond props: " + ((tp == null) ? "null" : tp.toString())); // debug
-                        } catch (final InvocationTargetException e) {
-                            if (e.getCause() instanceof InterruptedException) {
-                                throw new InterruptedException(e.getCause().getMessage());
-                            }
-
-                            theLogger.logSevere("INTERNAL ERROR: " + e.toString() + ":" +
-                                    e.getMessage() +
-                                    " target exception at " + targetClass + ": " +
-                                    e.getTargetException().toString() + ":" +
-                                    e.getTargetException().getMessage(),e);
-                            targetClass = null;
-                            throw e;
+                        requestHeader.put(HeaderFramework.CONNECTION_PROP_CLIENTIP, (String) conProp.get(HeaderFramework.CONNECTION_PROP_CLIENTIP));
+                        requestHeader.put(HeaderFramework.CONNECTION_PROP_PATH, path);
+                        final int ep = path.lastIndexOf(".");
+                        requestHeader.put(HeaderFramework.CONNECTION_PROP_EXT, path.substring(ep + 1));
+                        // in case that there are no args given, args = null or empty hashmap
+                        final Object tmp = invokeServlet(targetClass, requestHeader, args, null);
+                        if (tmp == null) {
+                            // if no args given, then tp will be an empty Hashtable object (not null)
+                            templatePatterns = new servletProperties();
+                        } else if (tmp instanceof servletProperties) {
+                            templatePatterns = (servletProperties) tmp;
+                        } else {
+                            templatePatterns = new servletProperties((serverObjects) tmp);
                         }
+                        // check if the servlets requests authentication
+                        if (templatePatterns.containsKey(serverObjects.ACTION_AUTHENTICATE)) {
+                            // handle brute-force protection
+                            if (realmProp != null) {
+                                Log.logInfo("HTTPD", "dynamic log-in for account 'admin' in http file handler for path '" + path + "' from host '" + clientIP + "'");
+                                final Integer attempts = serverCore.bfHost.get(clientIP);
+                                if (attempts == null)
+                                    serverCore.bfHost.put(clientIP, Integer.valueOf(1));
+                                else
+                                    serverCore.bfHost.put(clientIP, Integer.valueOf(attempts.intValue() + 1));
+                            }
+                            // send authentication request to browser
+                            final ResponseHeader headers = getDefaultHeaders(path);
+                            headers.put(RequestHeader.WWW_AUTHENTICATE,"Basic realm=\"" + templatePatterns.get(serverObjects.ACTION_AUTHENTICATE, "") + "\"");
+                            HTTPDemon.sendRespondHeader(conProp,out,httpVersion,401,headers);
+                            return;
+                        } else if (templatePatterns.containsKey(serverObjects.ACTION_LOCATION)) {
+                            String location = templatePatterns.get(serverObjects.ACTION_LOCATION, "");
+                            if (location.isEmpty()) location = path;
+
+                            final ResponseHeader headers = getDefaultHeaders(path);
+                            headers.setAdditionalHeaderProperties(templatePatterns.getOutgoingHeader().getAdditionalHeaderProperties()); //put the cookies into the new header TODO: can we put all headerlines, without trouble?
+                            headers.put(HeaderFramework.LOCATION,location);
+                            HTTPDemon.sendRespondHeader(conProp,out,httpVersion,302,headers);
+                            return;
+                        }
+                        // add the application version, the uptime and the client name to every rewrite table
+                        templatePatterns.put(servletProperties.PEER_STAT_VERSION, yacyBuildProperties.getVersion());
+                        templatePatterns.put(servletProperties.PEER_STAT_UPTIME, ((System.currentTimeMillis() -  serverCore.startupTime) / 1000) / 60); // uptime in minutes
+                        templatePatterns.putHTML(servletProperties.PEER_STAT_CLIENTNAME, sb.peers.mySeed().getName());
+                        templatePatterns.putHTML(servletProperties.PEER_STAT_CLIENTID, ((Switchboard) switchboard).peers.myID());
+                        templatePatterns.put(servletProperties.PEER_STAT_MYTIME, GenericFormatter.SHORT_SECOND_FORMATTER.format());
+                        final Seed myPeer = sb.peers.mySeed();
+                        templatePatterns.put("newpeer", myPeer.getAge() >= 1 ? 0 : 1);
+                        templatePatterns.putHTML("newpeer_peerhash", myPeer.hash);
+                        //System.out.println("respond props: " + ((tp == null) ? "null" : tp.toString())); // debug
                         nocache = true;
                     }
 
@@ -1049,7 +1028,7 @@ public final class HTTPDFileHandler {
                                 // save position
                                 fis.mark(1000);
                                 // scrape document to look up charset
-                                final ScraperInputStream htmlFilter = new ScraperInputStream(fis, "UTF-8", new DigestURI("http://localhost"), null, false);
+                                final ScraperInputStream htmlFilter = new ScraperInputStream(fis, "UTF-8", new DigestURI("http://localhost"), null, false, 10);
                                 final String charset = htmlParser.patchCharsetEncoding(htmlFilter.detectCharset());
                                 htmlFilter.close();
                                 if (charset != null) mimeType = mimeType + "; charset="+charset;
@@ -1070,9 +1049,10 @@ public final class HTTPDFileHandler {
                         // apply templates
                         TemplateEngine.writeTemplate(fis, o, templatePatterns, UNRESOLVED_PATTERN);
                         fis.close();
+                        ResponseHeader rh = (templatePatterns == null) ? new ResponseHeader(200) : templatePatterns.getOutgoingHeader();
                         HTTPDemon.sendRespondHeader(conProp, out,
-                                httpVersion, 200, null, mimeType, -1,
-                                targetDate, expireDate, (templatePatterns == null) ? new ResponseHeader() : templatePatterns.getOutgoingHeader(),
+                                httpVersion, rh.getStatusCode(), null, mimeType, -1,
+                                targetDate, expireDate, rh,
                                 null, "chunked", nocache);
                         // send the content in chunked parts, see RFC 2616 section 3.6.1
                         final ChunkedOutputStream chos = new ChunkedOutputStream(out);
@@ -1102,16 +1082,17 @@ public final class HTTPDFileHandler {
                             ServerSideIncludes.writeSSI(o1, o, realmProp, clientIP, requestHeader);
                             //httpTemplate.writeTemplate(fis, o, tp, "-UNRESOLVED_PATTERN-".getBytes("UTF-8"));
                         }
+                        ResponseHeader rh = (templatePatterns == null) ? new ResponseHeader(200) : templatePatterns.getOutgoingHeader();
                         if (method.equals(HeaderFramework.METHOD_HEAD)) {
                             HTTPDemon.sendRespondHeader(conProp, out,
-                                    httpVersion, 200, null, mimeType, o.length(),
-                                    targetDate, expireDate, (templatePatterns == null) ? new ResponseHeader() : templatePatterns.getOutgoingHeader(),
+                                    httpVersion, rh.getStatusCode(), null, mimeType, o.length(),
+                                    targetDate, expireDate, rh,
                                     contentEncoding, null, nocache);
                         } else {
                             final byte[] result = o.getBytes(); // this interrupts streaming (bad idea!)
                             HTTPDemon.sendRespondHeader(conProp, out,
-                                    httpVersion, 200, null, mimeType, result.length,
-                                    targetDate, expireDate, (templatePatterns == null) ? new ResponseHeader() : templatePatterns.getOutgoingHeader(),
+                                    httpVersion, rh.getStatusCode(), null, mimeType, result.length,
+                                    targetDate, expireDate, rh,
                                     contentEncoding, null, nocache);
                             FileUtils.copy(result, out);
                         }
@@ -1120,7 +1101,7 @@ public final class HTTPDFileHandler {
 
                     int statusCode = 200;
                     int rangeStartOffset = 0;
-                    final ResponseHeader header = new ResponseHeader();
+                    final ResponseHeader header = new ResponseHeader(statusCode);
 
                     // adding the accept ranges header
                     header.put(HeaderFramework.ACCEPT_RANGES, "bytes");
@@ -1155,7 +1136,7 @@ public final class HTTPDFileHandler {
                                 final String rangesVal = rangeHeaderVal.substring("bytes=".length());
                                 final String[] ranges = rangesVal.split(",");
                                 if ((ranges.length == 1)&&(ranges[0].endsWith("-"))) {
-                                    rangeStartOffset = Integer.parseInt(ranges[0].substring(0,ranges[0].length()-1));
+                                    rangeStartOffset = NumberTools.parseIntDecSubstring(ranges[0], 0, ranges[0].length() - 1);
                                     statusCode = 206;
                                     header.put(HeaderFramework.CONTENT_RANGE, "bytes " + rangeStartOffset + "-" + (targetFile.length()-1) + "/" + targetFile.length());
                                 }
@@ -1209,6 +1190,9 @@ public final class HTTPDFileHandler {
         } catch (final Exception e) {
             try {
                 // error handling
+                if (e instanceof NullPointerException) {
+                    Log.logException(e);
+                }
                 int httpStatusCode = 400;
                 final String httpStatusText = null;
                 final StringBuilder errorMessage = new StringBuilder(2000);
@@ -1273,25 +1257,29 @@ public final class HTTPDFileHandler {
      * CGI scripts.
      * @param targetFile file to run
      * @return list of parts of command
+     * @throws FileNotFoundException
      * @throws IOException if file can not be accessed
      */
-    private static List<String> assembleCommandFromShebang(
-            final File targetFile)
-            throws IOException {
+    private static List<String> assembleCommandFromShebang(final File targetFile) throws FileNotFoundException {
         final List<String > ret = new ArrayList<String>();
-        final BufferedReader br =
-                new BufferedReader(new FileReader(targetFile), 512);
-        final String line = br.readLine();
-        if (line.startsWith("#!")) {
-            ret.addAll(Arrays.asList(line.substring(2).split(" ")));
+        final BufferedReader br = new BufferedReader(new FileReader(targetFile), 512);
+        String line;
+        try {
+            line = br.readLine();
+            if (line.startsWith("#!")) {
+                ret.addAll(Arrays.asList(line.substring(2).split(" ")));
+            }
+            ret.add(targetFile.getAbsolutePath());
+        } catch (IOException e) {
+            Log.logException(e);
+        } finally {
+            try {br.close();} catch (IOException e) {}
         }
-        ret.add(targetFile.getAbsolutePath());
-
         return ret;
     }
 
     private static final String appendPath(final String proplist, final String path) {
-        if (proplist.length() == 0) return path;
+        if (proplist.isEmpty()) return path;
         if (proplist.indexOf(path) >= 0) return proplist;
         return proplist + "," + path;
     }
@@ -1325,9 +1313,7 @@ public final class HTTPDFileHandler {
         try {
             String f = template.getCanonicalPath();
             final int p = f.lastIndexOf('.');
-            if (p < 0) return null;
-            f = f.substring(0, p) + ".class";
-            //System.out.println("constructed class path " + f);
+            f = p < 0 ? f + ".class" : f.substring(0, p) + ".class";
             final File cf = new File(f);
             if (cf.exists()) return cf;
             return null;
@@ -1353,11 +1339,20 @@ public final class HTTPDFileHandler {
             }
 
             final Class<?> c = provider.loadClass(classFile);
-            final Class<?>[] params = new Class[] {
+            Class<?>[] params = new Class[] {
                     RequestHeader.class,
                     serverObjects.class,
                     serverSwitch.class };
-            m = c.getMethod("respond", params);
+            try {
+                m = c.getMethod("respond", params);
+            } catch (NoSuchMethodException e) {
+                params = new Class[] {
+                    RequestHeader.class,
+                    serverObjects.class,
+                    serverSwitch.class,
+                    OutputStream.class};
+                m = c.getMethod("respond", params);
+            }
 
             if (MemoryControl.shortStatus()) {
                 templateMethodCache.clear();
@@ -1377,11 +1372,20 @@ public final class HTTPDFileHandler {
         return m;
     }
 
-    private static final Object invokeServlet(final File targetClass, final RequestHeader request, final serverObjects args) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+    private static final Object invokeServlet(final File targetClass, final RequestHeader request, final serverObjects args, final OutputStream os) {
         try {
-            return rewriteMethod(targetClass).invoke(null, new Object[] {request, args, switchboard});
-        } catch (final OutOfMemoryError e) {
+            if (os == null) {
+                return rewriteMethod(targetClass).invoke(null, new Object[] {request, args, switchboard});
+            }
+            return rewriteMethod(targetClass).invoke(null, new Object[] {request, args, switchboard, os});
+        } catch (final Throwable e) {
+            theLogger.logSevere("INTERNAL ERROR: " + e.toString() + ":" +
+                            e.getMessage() +
+                            " target exception at " + targetClass + ": " +
+                            "; java.awt.graphicsenv='" + System.getProperty("java.awt.graphicsenv","") + "'");
             Log.logException(e);
+            Log.logException(e.getCause());
+            if (e instanceof InvocationTargetException) Log.logException(((InvocationTargetException) e).getTargetException());
             return null;
         }
     }
@@ -1415,15 +1419,27 @@ public final class HTTPDFileHandler {
      * not in separete servlet, because we need access to binary outstream
      * @throws IOException
      */
-    private static void doURLProxy(final serverObjects args, final HashMap<String, Object> conProp, final RequestHeader requestHeader, final OutputStream out) throws IOException {
+    private static void doURLProxy(final HashMap<String, Object> conProp, final RequestHeader requestHeader, final OutputStream out) throws IOException {
         final String httpVersion = (String) conProp.get(HeaderFramework.CONNECTION_PROP_HTTP_VER);
 		URL proxyurl = null;
+		String action = "";
 
 		if(conProp != null && conProp.containsKey("ARGS")) {
-			final String strARGS = (String) conProp.get("ARGS");
+			String strARGS = (String) conProp.get("ARGS");
+			if(strARGS.startsWith("action=")) {
+				int detectnextargument = strARGS.indexOf("&");
+				action = strARGS.substring (7, detectnextargument);
+				strARGS = strARGS.substring(detectnextargument+1);
+			}
 			if(strARGS.startsWith("url=")) {
 				final String strUrl = strARGS.substring(4); // strip url=
+
+				try {
 				proxyurl = new URL(strUrl);
+				} catch (MalformedURLException e) {
+					proxyurl = new URL (URLDecoder.decode(strUrl, UTF8.charset.name()));
+
+				}
 			}
 		}
 
@@ -1451,11 +1467,14 @@ public final class HTTPDFileHandler {
 		requestHeader.remove("Connection");
 		requestHeader.put(HeaderFramework.HOST, proxyurl.getHost());
 
+		// temporarily add argument to header to pass it on to augmented browsing
+		requestHeader.put("YACYACTION", action);
+
 		final ByteArrayOutputStream o = new ByteArrayOutputStream();
 		HTTPDProxyHandler.doGet(prop, requestHeader, o);
 
 		// reparse header to extract content-length and mimetype
-		final ResponseHeader outgoingHeader = new ResponseHeader();
+		final ResponseHeader outgoingHeader = new ResponseHeader(200);
 		final InputStream in = new ByteArrayInputStream(o.toByteArray());
 		String line = readLine(in);
 		while(line != null && !line.equals("")) {
@@ -1477,19 +1496,21 @@ public final class HTTPDFileHandler {
 		if (proxyurl.getPath().lastIndexOf('/') > 0)
 			directory = proxyurl.getPath().substring(0, proxyurl.getPath().lastIndexOf('/'));
 
+		String location = "";
+
 		if (outgoingHeader.containsKey("Location")) {
 			// rewrite location header
-			String location = outgoingHeader.get("Location");
+			location = outgoingHeader.get("Location");
 			if (location.startsWith("http")) {
-				location = "/proxy.html?url=" + location;
+				location = "/proxy.html?action="+action+"&url=" + location;
 			} else {
-				location = "/proxy.html?url=http://" + proxyurl.getHost() + "/" + location;
+				location = "/proxy.html?action="+action+"&url=http://" + proxyurl.getHost() + "/" + location;
 			}
 			outgoingHeader.put("Location", location);
 		}
 
 		final String mimeType = outgoingHeader.getContentType();
-		if (mimeType.startsWith("text/html") || mimeType.startsWith("text")) {
+		if ((mimeType.startsWith("text/html") || mimeType.startsWith("text"))) {
 			final StringWriter buffer = new StringWriter();
 
 			if (outgoingHeader.containsKey(HeaderFramework.TRANSFER_ENCODING)) {
@@ -1572,16 +1593,13 @@ public final class HTTPDFileHandler {
 
 			if (outgoingHeader.containsKey(HeaderFramework.TRANSFER_ENCODING)) {
 				HTTPDemon.sendRespondHeader(conProp, out, httpVersion, httpStatus, outgoingHeader);
-
 				final ChunkedOutputStream cos = new ChunkedOutputStream(out);
-
 				cos.write(sbb);
 				cos.finish();
+				cos.close();
 			} else {
 				outgoingHeader.put(HeaderFramework.CONTENT_LENGTH, Integer.toString(sbb.length));
-
 				HTTPDemon.sendRespondHeader(conProp, out, httpVersion, httpStatus, outgoingHeader);
-
 				out.write(sbb);
 			}
 		} else {

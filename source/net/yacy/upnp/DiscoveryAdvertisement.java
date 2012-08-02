@@ -26,8 +26,8 @@
  *    prior written permission. For written permission, please contact
  *    info@sbbi.net.
  *
- * 5. Products  derived from this software may not be called 
- *    "SuperBonBon Industries", nor may "SBBI" appear in their name, 
+ * 5. Products  derived from this software may not be called
+ *    "SuperBonBon Industries", nor may "SBBI" appear in their name,
  *    without prior written permission of SuperBonBon Industries.
  *
  * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
@@ -42,7 +42,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  * This software  consists of voluntary contributions made by many individuals
- * on behalf of SuperBonBon Industries. For more information on 
+ * on behalf of SuperBonBon Industries. For more information on
  * SuperBonBon Industries, please see <http://www.sbbi.net/>.
  */
 package net.yacy.upnp;
@@ -67,7 +67,7 @@ import org.apache.commons.logging.LogFactory;
  * The listener thread is set to only accept matching device description and broadcast message sender IP to
  * avoid a security flaw with the protocol. If you are not happy with such behaviour you can set the
  * net.yacy.upnp.ddos.matchip system property to false to avoid this check.
- * 
+ *
  * @author <a href="mailto:superbonbon@sbbi.net">SuperBonBon</a>
  * @version 1.0
  */
@@ -123,7 +123,7 @@ public class DiscoveryAdvertisement implements Runnable
 
     /**
      * Registers an event category sent by UPNP devices
-     * 
+     *
      * @param notificationEvent the event type, either DiscoveryAdvertisement.EVENT_SSDP_ALIVE or
      *        DiscoveryAdvertisement.EVENT_SSDP_BYE_BYE
      * @param nt the type of device advertisement, upnp:rootdevice will return you all advertisement in
@@ -162,7 +162,7 @@ public class DiscoveryAdvertisement implements Runnable
 
     /**
      * Unregisters an event category sent by UPNP devices
-     * 
+     *
      * @param notificationEvent the event type, either DiscoveryAdvertisement.EVENT_SSDP_ALIVE or
      *        DiscoveryAdvertisement.EVENT_SSDP_BYE_BYE
      * @param nt the type of device advertisement, upnp:rootdevice will unregister all advertisement in
@@ -250,10 +250,11 @@ public class DiscoveryAdvertisement implements Runnable
             } catch ( SocketTimeoutException ex ) {
                 // ignoring
             } catch ( IOException ioEx ) {
-                log.warn("IO Exception during UPNP DiscoveryAdvertisement messages listening thread");
+                // fail silently
+                //log.warn("IO Exception during UPNP DiscoveryAdvertisement messages listening thread");
             } catch ( Exception ex ) {
-                log
-                    .warn("Fatal Error during UPNP DiscoveryAdvertisement messages listening thread, thread will exit");
+                // fail silently
+                //log.warn("Fatal Error during UPNP DiscoveryAdvertisement messages listening thread, thread will exit");
                 this.inService = false;
                 this.aliveRegistered.clear();
                 this.byeByeRegistered.clear();
@@ -290,7 +291,7 @@ public class DiscoveryAdvertisement implements Runnable
                 log.debug(received);
             }
             String ntsField = msg.getHTTPHeaderField("nts");
-            if ( ntsField == null || ntsField.trim().length() == 0 ) {
+            if ( ntsField == null || ntsField.trim().isEmpty() ) {
                 if ( log.isDebugEnabled() ) {
                     log.debug("Skipping SSDP message, missing HTTP header 'ntsField' field");
                 }
@@ -298,7 +299,7 @@ public class DiscoveryAdvertisement implements Runnable
             }
             if ( ntsField.equals(NTS_SSDP_ALIVE) ) {
                 String deviceDescrLoc = msg.getHTTPHeaderField("location");
-                if ( deviceDescrLoc == null || deviceDescrLoc.trim().length() == 0 ) {
+                if ( deviceDescrLoc == null || deviceDescrLoc.trim().isEmpty() ) {
                     if ( log.isDebugEnabled() ) {
                         log.debug("Skipping SSDP message, missing HTTP header 'location' field");
                     }
@@ -319,21 +320,21 @@ public class DiscoveryAdvertisement implements Runnable
                 }
 
                 String nt = msg.getHTTPHeaderField("nt");
-                if ( nt == null || nt.trim().length() == 0 ) {
+                if ( nt == null || nt.trim().isEmpty() ) {
                     if ( log.isDebugEnabled() ) {
                         log.debug("Skipping SSDP message, missing HTTP header 'nt' field");
                     }
                     return;
                 }
                 String maxAge = msg.getHTTPFieldElement("Cache-Control", "max-age");
-                if ( maxAge == null || maxAge.trim().length() == 0 ) {
+                if ( maxAge == null || maxAge.trim().isEmpty() ) {
                     if ( log.isDebugEnabled() ) {
                         log.debug("Skipping SSDP message, missing HTTP header 'max-age' field");
                     }
                     return;
                 }
                 String usn = msg.getHTTPHeaderField("usn");
-                if ( usn == null || usn.trim().length() == 0 ) {
+                if ( usn == null || usn.trim().isEmpty() ) {
                     if ( log.isDebugEnabled() ) {
                         log.debug("Skipping SSDP message, missing HTTP header 'usn' field");
                     }
@@ -362,14 +363,14 @@ public class DiscoveryAdvertisement implements Runnable
                 }
             } else if ( ntsField.equals(NTS_SSDP_BYE_BYE) ) {
                 String usn = msg.getHTTPHeaderField("usn");
-                if ( usn == null || usn.trim().length() == 0 ) {
+                if ( usn == null || usn.trim().isEmpty() ) {
                     if ( log.isDebugEnabled() ) {
                         log.debug("Skipping SSDP message, missing HTTP header 'usn' field");
                     }
                     return;
                 }
                 String nt = msg.getHTTPHeaderField("nt");
-                if ( nt == null || nt.trim().length() == 0 ) {
+                if ( nt == null || nt.trim().isEmpty() ) {
                     if ( log.isDebugEnabled() ) {
                         log.debug("Skipping SSDP message, missing HTTP header 'nt' field");
                     }

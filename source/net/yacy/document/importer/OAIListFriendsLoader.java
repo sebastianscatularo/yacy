@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -44,6 +45,7 @@ import net.yacy.kelondro.data.meta.DigestURI;
 import net.yacy.kelondro.logging.Log;
 import net.yacy.kelondro.util.FileUtils;
 import net.yacy.repository.LoaderDispatcher;
+import net.yacy.search.snippet.TextSnippet;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -51,7 +53,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import de.anomic.crawler.retrieval.Response;
 
-public class OAIListFriendsLoader {
+public class OAIListFriendsLoader implements Serializable {
 
     private static final long serialVersionUID = -8705115274655024604L;
 
@@ -61,7 +63,7 @@ public class OAIListFriendsLoader {
         listFriends.putAll(moreFriends);
         if (loader != null) for (final Map.Entry<String, File> oaiFriend: listFriends.entrySet()) {
             try {
-                loader.loadIfNotExistBackground(new DigestURI(oaiFriend.getKey()), oaiFriend.getValue(), Integer.MAX_VALUE);
+                loader.loadIfNotExistBackground(new DigestURI(oaiFriend.getKey()), oaiFriend.getValue(), Integer.MAX_VALUE, null, TextSnippet.snippetMinLoadDelay);
             } catch (final MalformedURLException e) {
             }
         }
@@ -86,7 +88,7 @@ public class OAIListFriendsLoader {
         Map<String, String> m;
         for (final Map.Entry<String, File> oaiFriend: listFriends.entrySet()) try {
             if (!oaiFriend.getValue().exists()) {
-                final Response response = loader == null ? null : loader.load(loader.request(new DigestURI(oaiFriend.getKey()), false, true), CacheStrategy.NOCACHE, Integer.MAX_VALUE, true);
+                final Response response = loader == null ? null : loader.load(loader.request(new DigestURI(oaiFriend.getKey()), false, true), CacheStrategy.NOCACHE, Integer.MAX_VALUE, null, TextSnippet.snippetMinLoadDelay);
                 if (response != null) FileUtils.copy(response.getContent(), oaiFriend.getValue());
             }
 
@@ -102,8 +104,22 @@ public class OAIListFriendsLoader {
         return map;
     }
 
+    private static final ThreadLocal<SAXParser> tlSax = new ThreadLocal<SAXParser>();
+    private static SAXParser getParser() throws SAXException {
+    	SAXParser parser = tlSax.get();
+    	if (parser == null) {
+    		try {
+				parser = SAXParserFactory.newInstance().newSAXParser();
+			} catch (ParserConfigurationException e) {
+				throw new SAXException(e.getMessage(), e);
+			}
+    		tlSax.set(parser);
+    	}
+    	return parser;
+    }
+
     // get a resumption token using a SAX xml parser from am input stream
-    private static class Parser extends DefaultHandler {
+    public static class Parser extends DefaultHandler {
 
         // class variables
         private final StringBuilder buffer;
@@ -114,16 +130,15 @@ public class OAIListFriendsLoader {
         private int recordCounter;
         private final TreeMap<String, String> map;
 
-        public Parser(final byte[] b) throws IOException {
+        public Parser(final byte[] b) {
             this.map = new TreeMap<String, String>();
             this.recordCounter = 0;
             this.buffer = new StringBuilder();
             this.parsingValue = false;
             this.atts = null;
-            final SAXParserFactory factory = SAXParserFactory.newInstance();
             this.stream = new ByteArrayInputStream(b);
             try {
-                this.saxParser = factory.newSAXParser();
+                this.saxParser = getParser();
                 this.saxParser.parse(this.stream, this);
             } catch (final SAXException e) {
                 Log.logException(e);
@@ -131,10 +146,6 @@ public class OAIListFriendsLoader {
             } catch (final IOException e) {
                 Log.logException(e);
                 Log.logWarning("OAIListFriendsLoader.Parser", "OAIListFriends was not parsed:\n" + UTF8.String(b));
-            } catch (final ParserConfigurationException e) {
-                Log.logException(e);
-                Log.logWarning("OAIListFriendsLoader.Parser", "OAIListFriends was not parsed:\n" + UTF8.String(b));
-                throw new IOException(e.getMessage());
             } finally {
                 try {
                     this.stream.close();
@@ -153,6 +164,11 @@ public class OAIListFriendsLoader {
          </BaseURLs>
          */
 
+        public int getCounter() {
+        	return this.recordCounter;
+        }
+
+        @Override
         public void startElement(final String uri, final String name, final String tag, final Attributes atts) throws SAXException {
             if ("baseURL".equals(tag)) {
                 this.recordCounter++;
@@ -161,6 +177,7 @@ public class OAIListFriendsLoader {
             }
         }
 
+        @Override
         public void endElement(final String uri, final String name, final String tag) {
             if (tag == null) return;
             if ("baseURL".equals(tag)) {
@@ -170,6 +187,7 @@ public class OAIListFriendsLoader {
             }
         }
 
+        @Override
         public void characters(final char ch[], final int start, final int length) {
             if (this.parsingValue) {
                 this.buffer.append(ch, start, length);

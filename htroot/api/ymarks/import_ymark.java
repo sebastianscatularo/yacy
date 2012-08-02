@@ -11,11 +11,11 @@ import java.util.regex.Pattern;
 import net.yacy.cora.document.UTF8;
 import net.yacy.cora.protocol.RequestHeader;
 import net.yacy.cora.services.federated.yacy.CacheStrategy;
+import net.yacy.cora.util.SpaceExceededException;
 import net.yacy.document.Parser.Failure;
 import net.yacy.document.content.SurrogateReader;
 import net.yacy.kelondro.blob.Tables;
 import net.yacy.kelondro.data.meta.DigestURI;
-import net.yacy.kelondro.index.RowSpaceExceededException;
 import net.yacy.kelondro.logging.Log;
 import net.yacy.search.Switchboard;
 
@@ -61,7 +61,7 @@ public class import_ymark {
         	boolean merge = false;
         	boolean empty = false;
         	final String indexing = post.get("indexing", "off");
-        	final boolean medialink = post.getBoolean("medialink", false);
+        	final boolean medialink = post.getBoolean("medialink");
 
         	if(post.containsKey("autotag") && !post.get("autotag", "off").equals("off")) {
         		autotag = true;
@@ -151,7 +151,7 @@ public class import_ymark {
                 }
         	} else if(post.containsKey("importer") && post.get("importer").equals("crawls")) {
         		if(!isAdmin) {
-        			prop.put(YMarkTables.USER_AUTHENTICATE,YMarkTables.ADMIN_AUTHENTICATE_MSG);
+        			prop.authenticationRequired();
         			return prop;
         		}
         		try {
@@ -169,7 +169,7 @@ public class import_ymark {
 				} catch (final IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				} catch (final RowSpaceExceededException e) {
+				} catch (final SpaceExceededException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (final Failure e) {
@@ -178,7 +178,7 @@ public class import_ymark {
 				}
         	} else if(post.containsKey("importer") && post.get("importer").equals("bmks")) {
         		if(!isAdmin) {
-        			prop.put(YMarkTables.USER_AUTHENTICATE,YMarkTables.ADMIN_AUTHENTICATE_MSG);
+        			prop.authenticationRequired();
         			return prop;
         		}
         		final Iterator<String> bit=sb.bookmarksDB.getBookmarksIterator(isAdmin);
@@ -206,7 +206,7 @@ public class import_ymark {
 					} catch (final IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
-					} catch (final RowSpaceExceededException e) {
+					} catch (final SpaceExceededException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
@@ -221,7 +221,7 @@ public class import_ymark {
     			}
         	}
         }  else {
-        	prop.put(YMarkTables.USER_AUTHENTICATE,YMarkTables.USER_AUTHENTICATE_MSG);
+        	prop.put(serverObjects.ACTION_AUTHENTICATE, YMarkTables.USER_AUTHENTICATE_MSG);
         }
         // return rewrite properties
         return prop;
@@ -254,7 +254,7 @@ public class import_ymark {
 			}
 		} catch (final IOException e) {
 			Log.logException(e);
-		} catch (final RowSpaceExceededException e) {
+		} catch (final SpaceExceededException e) {
 			Log.logException(e);
 		} catch (final InterruptedException e) {
 			Log.logException(e);

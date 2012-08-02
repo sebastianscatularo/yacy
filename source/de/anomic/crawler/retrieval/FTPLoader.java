@@ -41,7 +41,6 @@ import net.yacy.document.TextParser;
 import net.yacy.kelondro.data.meta.DigestURI;
 import net.yacy.kelondro.logging.Log;
 import net.yacy.search.Switchboard;
-import net.yacy.search.index.Segments;
 import de.anomic.crawler.CrawlProfile;
 import de.anomic.crawler.Latency;
 import de.anomic.crawler.ZURL.FailCategory;
@@ -111,11 +110,11 @@ public class FTPLoader {
                 }
             }
 
-            if (file.length() == 0) {
+            if (file.isEmpty()) {
                 // directory -> get list of files
                 final RequestHeader requestHeader = new RequestHeader();
                 if (request.referrerhash() != null) {
-                    final DigestURI u = this.sb.getURL(Segments.Process.LOCALCRAWLING, request.referrerhash());
+                    final DigestURI u = this.sb.getURL(request.referrerhash());
                     if (u != null) requestHeader.put(RequestHeader.REFERER, u.toNormalform(true, false));
                 }
 
@@ -124,7 +123,7 @@ public class FTPLoader {
                 if (dirList == null) {
                     response = null;
                 } else {
-                    final ResponseHeader responseHeader = new ResponseHeader();
+                    final ResponseHeader responseHeader = new ResponseHeader(200);
                     responseHeader.put(HeaderFramework.LAST_MODIFIED, HeaderFramework.formatRFC1123(new Date()));
                     responseHeader.put(HeaderFramework.CONTENT_TYPE, "text/html");
                     final CrawlProfile profile = this.sb.crawler.getActive(request.profileHandle().getBytes());
@@ -132,8 +131,8 @@ public class FTPLoader {
                             request,
                             requestHeader,
                             responseHeader,
-                            "200",
                             profile,
+                            false,
                             dirList.toString().getBytes());
                 }
             } else {
@@ -222,10 +221,10 @@ public class FTPLoader {
         // create response header
         final RequestHeader requestHeader = new RequestHeader();
         if (request.referrerhash() != null) {
-            final DigestURI refurl = this.sb.getURL(Segments.Process.LOCALCRAWLING, request.referrerhash());
+            final DigestURI refurl = this.sb.getURL(request.referrerhash());
             if (refurl != null) requestHeader.put(RequestHeader.REFERER, refurl.toNormalform(true, false));
         }
-        final ResponseHeader responseHeader = new ResponseHeader();
+        final ResponseHeader responseHeader = new ResponseHeader(200);
         responseHeader.put(HeaderFramework.LAST_MODIFIED, HeaderFramework.formatRFC1123(fileDate));
         responseHeader.put(HeaderFramework.CONTENT_TYPE, mime);
 
@@ -251,8 +250,8 @@ public class FTPLoader {
                     request,
                     requestHeader,
                     responseHeader,
-                    "200",
                     profile,
+                    false,
                     null);
             return response;
         }
@@ -266,8 +265,8 @@ public class FTPLoader {
                 request,
                 requestHeader,
                 responseHeader,
-                "200",
                 profile,
+                false,
                 b);
         return response;
     }

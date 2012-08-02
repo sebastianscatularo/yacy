@@ -38,9 +38,8 @@ import net.yacy.peers.EventChannel;
 import net.yacy.peers.Network;
 import net.yacy.peers.Protocol;
 import net.yacy.peers.Seed;
-import net.yacy.repository.Blacklist;
+import net.yacy.repository.Blacklist.BlacklistType;
 import net.yacy.search.Switchboard;
-import net.yacy.search.index.Segments;
 import de.anomic.crawler.ResultURLs;
 import de.anomic.crawler.ResultURLs.EventOrigin;
 import de.anomic.server.serverCore;
@@ -49,7 +48,7 @@ import de.anomic.server.serverSwitch;
 
 public final class transferURL {
 
-    public static serverObjects respond(final RequestHeader header, final serverObjects post, final serverSwitch env) throws InterruptedException {
+    public static serverObjects respond(@SuppressWarnings("unused") final RequestHeader header, final serverObjects post, final serverSwitch env) throws InterruptedException {
         final long start = System.currentTimeMillis();
         long freshdate = 0;
         try {freshdate = GenericFormatter.SHORT_DAY_FORMATTER.parse("20061101").getTime();} catch (final ParseException e1) {}
@@ -84,7 +83,7 @@ public final class transferURL {
         } else {
             int received = 0;
             int blocked = 0;
-            final int sizeBefore = sb.indexSegments.urlMetadata(Segments.Process.DHTIN).size();
+            final int sizeBefore = sb.index.urlMetadata().size();
             // read the urls from the other properties and store
             String urls;
             URIMetadataRow lEntry;
@@ -122,8 +121,8 @@ public final class transferURL {
                 }
 
                 // check if the entry is blacklisted
-                if ((blockBlacklist) && (Switchboard.urlBlacklist.isListed(Blacklist.BLACKLIST_DHT, lEntry.url()))) {
-                    if (Network.log.isFine()) Network.log.logFine("transferURL: blocked blacklisted URL '" + lEntry.url().toNormalform(false, true) + "' from peer " + otherPeerName);
+                if ((blockBlacklist) && (Switchboard.urlBlacklist.isListed(BlacklistType.DHT, lEntry))) {
+                    Network.log.logFine("transferURL: blocked blacklisted URL '" + lEntry.url().toNormalform(false, true) + "' from peer " + otherPeerName);
                     lEntry = null;
                     blocked++;
                     continue;
@@ -141,7 +140,7 @@ public final class transferURL {
                 // write entry to database
                 if (Network.log.isFine()) Network.log.logFine("Accepting URL " + i + "/" + urlc + " from peer " + otherPeerName + ": " + lEntry.url().toNormalform(true, false));
                 try {
-                    sb.indexSegments.urlMetadata(Segments.Process.DHTIN).store(lEntry);
+                    sb.index.urlMetadata().store(lEntry);
                     ResultURLs.stack(lEntry, iam.getBytes(), iam.getBytes(), EventOrigin.DHT_TRANSFER);
                     if (Network.log.isFine()) Network.log.logFine("transferURL: received URL '" + lEntry.url().toNormalform(false, true) + "' from peer " + otherPeerName);
                     received++;
@@ -153,7 +152,7 @@ public final class transferURL {
             sb.peers.mySeed().incRU(received);
 
             // return rewrite properties
-            final int more = sb.indexSegments.urlMetadata(Segments.Process.DHTIN).size() - sizeBefore;
+            final int more = sb.index.urlMetadata().size() - sizeBefore;
             doublevalues = Integer.toString(received - more);
             Network.log.logInfo("Received " + received + " URLs from peer " + otherPeerName + " in " + (System.currentTimeMillis() - start) + " ms, blocked " + blocked + " URLs");
             EventChannel.channels(EventChannel.DHTRECEIVE).addMessage(new RSSMessage("Received " + received + ", blocked " + blocked + " URLs from peer " + otherPeerName, "", otherPeer.hash));

@@ -58,6 +58,7 @@
   <property name="release_mac" location="${release}/MAC"/>
   <property name="git" location=".git"/>
   <property name="defaults" location="defaults"/>
+  <property name="RDFaParser" location="RDFaParser"/>
 
   <!-- pseudo default releaseNr as fallback --> 
   <property name="releaseNr" value="9000" />
@@ -155,38 +156,56 @@
     <path id="project.class.path">
         <pathelement location="${build}" />
         <pathelement location="${htroot}" />
+        <pathelement location="${lib}/J7Zip-modified.jar" />
     	<pathelement location="${lib}/activation.jar" />
         <pathelement location="${lib}/apache-mime4j-0.6.jar" />
-        <pathelement location="${lib}/apache-solr-solrj-3.5.0.jar" />
+        <pathelement location="${lib}/apache-solr-core-3.6.0.jar" />
+        <pathelement location="${lib}/apache-solr-solrj-3.6.0.jar" />
+        <pathelement location="${lib}/arq-2.8.7.jar" />
     	<pathelement location="${lib}/bcmail-jdk15-145.jar" />
     	<pathelement location="${lib}/bcprov-jdk15-145.jar" />
-    	<pathelement location="${lib}/bzip2.jar" />
     	<pathelement location="${lib}/commons-codec-1.6.jar" />
+    	<pathelement location="${lib}/commons-compress-1.4.1.jar" />
     	<pathelement location="${lib}/commons-fileupload-1.2.2.jar" />
     	<pathelement location="${lib}/commons-httpclient-3.1.jar" />
     	<pathelement location="${lib}/commons-io-2.1.jar" />
     	<pathelement location="${lib}/commons-jxpath-1.3.jar" />
+    	<pathelement location="${lib}/commons-lang-2.6.jar" />
     	<pathelement location="${lib}/commons-logging-1.1.1.jar" />
-    	<pathelement location="${lib}/fontbox-1.6.0.jar" />
+    	<pathelement location="${lib}/fontbox-1.7.0.jar" />
         <pathelement location="${lib}/geronimo-stax-api_1.0_spec-1.0.1.jar" />
-        <pathelement location="${lib}/httpclient-4.1.3.jar" />
-        <pathelement location="${lib}/httpcore-4.1.4.jar" />
-        <pathelement location="${lib}/httpmime-4.1.3.jar" />
+        <pathelement location="${lib}/guava-r05.jar" />
+        <pathelement location="${lib}/htmllexer.jar" />
+        <pathelement location="${lib}/htmlparser.jar" />
+        <pathelement location="${lib}/httpclient-4.2.1.jar" />
+        <pathelement location="${lib}/httpcore-4.2.1.jar" />
+        <pathelement location="${lib}/httpmime-4.2.1.jar" />
         <pathelement location="${lib}/icu4j-core.jar" />
-        <pathelement location="${lib}/J7Zip-modified.jar" />
+        <pathelement location="${lib}/iri-0.8.jar" />
         <pathelement location="${lib}/jakarta-oro-2.0.8.jar" />
     	<pathelement location="${lib}/jcifs-1.3.15.jar" />
     	<pathelement location="${lib}/jcl-over-slf4j-1.6.1.jar" />
-    	<pathelement location="${lib}/jempbox-1.6.0" />
+    	<pathelement location="${lib}/jempbox-1.7.0" />
+    	<pathelement location="${lib}/jena-2.6.4.jar" />
+    	<pathelement location="${lib}/jetty-6.1.26-patched-JETTY-1340.jar" />
+    	<pathelement location="${lib}/jetty-util-6.1.26-patched-JETTY-1340.jar" />
     	<pathelement location="${lib}/jsch-0.1.42.jar" />
     	<pathelement location="${lib}/json-simple-1.1.jar" />
     	<pathelement location="${lib}/log4j-1.2.16.jar" />
+    	<pathelement location="${lib}/log4j-over-slf4j-1.6.1.jar" />
+    	<pathelement location="${lib}/lucene-analyzers-3.6.0.jar" />
+    	<pathelement location="${lib}/lucene-core-3.6.0.jar" />
+    	<pathelement location="${lib}/lucene-highlighter-3.6.0.jar" />
+    	<pathelement location="${lib}/lucene-phonetic-3.6.0.jar" />
+    	<pathelement location="${lib}/lucene-spatial-3.6.0.jar" />
+    	<pathelement location="${lib}/lucene-spellchecker-3.6.0.jar" />
     	<pathelement location="${lib}/metadata-extractor-2.4.0-beta-1.jar" />
     	<pathelement location="${lib}/mysql-connector-java-5.1.12-bin.jar" />
-        <pathelement location="${lib}/pdfbox-1.6.0.jar" />
+        <pathelement location="${lib}/pdfbox-1.7.0.jar" />
     	<pathelement location="${lib}/poi-3.6-20091214.jar" />
     	<pathelement location="${lib}/poi-scratchpad-3.6-20091214.jar" />
-        <pathelement location="${lib}/servlet-api.jar" />
+    	<pathelement location="${lib}/sax-2.0.1.jar" />
+        <pathelement location="${lib}/servlet-api-2.5-20081211.jar" />
         <pathelement location="${lib}/slf4j-api-1.6.1.jar" />
         <pathelement location="${lib}/slf4j-jdk14-1.6.1.jar" />
     	<pathelement location="${lib}/webcat-0.1-swf.jar" />
@@ -194,7 +213,7 @@
     	<pathelement location="${lib}/xercesImpl.jar" />
     	<pathelement location="${lib}/xml-apis.jar" />
     </path>
-	
+
   <target name="compile-core" depends="init" description="compile YaCy core">
   	
     <!-- compile yacyBuildProperties.java -->
@@ -241,12 +260,6 @@
 
   
   <target name="compile" depends="compile-core" description="compile YaCy core and YaCy servlets">
-    <!-- defining the classpath that should be used for compiling -->
-    <path id="project.class.path">
-      <pathelement location="${build}" />
-      <pathelement location="${htroot}" />
-    </path>
-
     <!-- compile htroot, htroot/yacy and htroot/htdocsdefault -->
     <javac srcdir="${htroot}/"
     	   excludes="processing/**"
@@ -276,12 +289,10 @@
     <!-- copy configuration files -->
     <copy todir="${release_main}">
       <fileset dir=".">
-        <include name="yacy.logging"/>
         <include name="yacy.yellow"/>
         <include name="yacy.badwords.example"/>
         <include name="yacy.stopwords"/>
         <include name="yacy.parser"/>
-        <include name="httpd.mime"/>
       </fileset>
     </copy>
 
@@ -387,25 +398,8 @@
     <!-- copy searchtest -->
     <copy todir="${release_main}/bin">
       <fileset dir="bin">
-        <include name="apicall.sh"/>
-        <include name="apicat.sh"/>
-        <include name="clearall.sh"/>
-        <include name="clearcache.sh"/>
-        <include name="clearindex.sh"/>
-        <include name="deleteurl.sh"/>
-        <include name="deploy.sh"/>
-        <include name="down.sh"/>
-        <include name="dumpcheck.sh"/>
-        <include name="importmediawiki.sh"/>
-        <include name="importOAIList.sh"/>
-        <include name="importurllist.sh"/>
-        <include name="localsearch.sh"/>
+        <include name="**/*.sh"/>
         <include name="searchtest*"/>
-        <include name="surrogateCleanOut.sh"/>
-        <include name="surrogateMVin.sh"/>
-        <include name="surrogateMVtmp.sh"/>
-        <include name="surrogateRefeed.sh"/>
-        <include name="up.sh"/>
       </fileset>
     </copy>
 
@@ -521,10 +515,9 @@
 
   	<!-- copy defaults -->
 	<copy todir="${DESTDIR}/usr/share/yacy/defaults">
-  	      <fileset dir="${defaults}" 
-  	               includes="**/*"/>
-  	    </copy>
-
+  	    <fileset dir="${defaults}" includes="**/*"/>
+  	</copy>
+    
     <!-- copy locales  -->
     <copy todir="${DESTDIR}/usr/share/yacy/locales">
       <fileset dir="${locales}">
@@ -714,7 +707,7 @@
   <target name="rpm" depends="all" description="Creates the main rpm-package and another for lib">
     <mkdir dir="${release}/RPMS/noarch" />
     <mkdir dir="${release}/BUILD" />
-    <copy file="yacy-svn-4.spec" tofile="${release}/SPECS/yacy-svn.spec" overwrite="true" filtering="true" />
+    <copy file="addon/yacy-svn-4.spec" tofile="${release}/SPECS/yacy-svn.spec" overwrite="true" filtering="true" />
 
     <rpm specFile="yacy-svn.spec" topDir="${release}" />
 

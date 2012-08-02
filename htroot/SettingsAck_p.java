@@ -83,7 +83,7 @@ public class SettingsAck_p {
                 prop.put("info", "1");//error with submitted information
                 return prop;
             }
-            if (user.length() == 0) {
+            if (user.isEmpty()) {
                 prop.put("info", "2");//username must be given
                 return prop;
             }
@@ -114,7 +114,7 @@ public class SettingsAck_p {
                     final InetSocketAddress theNewAddress = theServerCore.generateSocketAddress(port);
                     final String hostName = Domains.getHostName(theNewAddress.getAddress());
                     prop.put("info_restart", "1");
-                    prop.put("info_restart_ip",(hostName.equals("0.0.0.0"))? "localhost" : hostName);
+                    prop.put("info_restart_ip",(hostName.equals("0.0.0.0"))? Domains.LOCALHOST : hostName);
                     prop.put("info_restart_port", theNewAddress.getPort());
 
                     env.setConfig("port", port);
@@ -137,7 +137,7 @@ public class SettingsAck_p {
                 return prop;
             }
 
-            if (filter.length() == 0) filter = "*";
+            if (filter.isEmpty()) filter = "*";
             else if (!filter.equals("*")){
                 // testing proxy filter
                 int patternCount = 0;
@@ -212,7 +212,7 @@ public class SettingsAck_p {
             if (staticIP.indexOf(':',0) > 0) {
                 staticIP = staticIP.substring(0, staticIP.indexOf(':',0));
             }
-            if (staticIP.length() == 0) {
+            if (staticIP.isEmpty()) {
                 serverCore.useStaticIP = false;
             } else {
                 serverCore.useStaticIP = true;
@@ -231,7 +231,7 @@ public class SettingsAck_p {
                 prop.put("info", "1");//error with submitted information
                 return prop;
             }
-           /* if (user.length() == 0) {
+           /* if (user.isEmpty()) {
                 prop.put("info", 2);//username must be given
                 return prop;
             }
@@ -239,7 +239,7 @@ public class SettingsAck_p {
                 prop.put("info", 3);//pw check failed
                 return prop;
             }*/
-            if (filter.length() == 0) filter = "*";
+            if (filter.isEmpty()) filter = "*";
             else if (!filter.equals("*")){
                 // testing proxy filter
                 int patternCount = 0;

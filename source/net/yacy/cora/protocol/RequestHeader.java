@@ -50,7 +50,7 @@ public class RequestHeader extends HeaderFramework {
 
     public static final String IF_MODIFIED_SINCE = "If-Modified-Since";
     public static final String IF_RANGE = "If-Range";
-    public static final String REFERER = "Referer";
+    public static final String REFERER = "Referer"; // a misspelling of referrer that occurs as an HTTP header field. Its defined so in the http protocol, so please don't 'fix' it!
 
     private static final long serialVersionUID = 0L;
 
@@ -116,7 +116,19 @@ public class RequestHeader extends HeaderFramework {
         path = path.toLowerCase();
         if (path.endsWith(".json")) return FileType.JSON;
         if (path.endsWith(".xml")) return FileType.XML;
+        if (path.endsWith(".rdf")) return FileType.XML;
         if (path.endsWith(".rss")) return FileType.XML;
         return FileType.HTML;
+    }
+
+
+    public boolean accessFromLocalhost() {
+        // authorization for localhost, only if flag is set to grant localhost access as admin
+        final String clientIP = this.get(HeaderFramework.CONNECTION_PROP_CLIENTIP, "");
+        if ( !Domains.isLocalhost(clientIP) ) {
+            return false;
+        }
+        final String refererHost = this.refererHost();
+        return refererHost == null || refererHost.isEmpty() || Domains.isLocalhost(refererHost);
     }
 }

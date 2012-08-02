@@ -20,13 +20,10 @@
 
 package net.yacy.document;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -40,7 +37,7 @@ import java.util.TreeMap;
 import net.yacy.cora.document.ASCII;
 import net.yacy.cora.document.Classification.ContentDomain;
 import net.yacy.cora.document.MultiProtocolURI;
-import net.yacy.cora.document.UTF8;
+import net.yacy.cora.lod.vocabulary.Tagging;
 import net.yacy.document.language.Identificator;
 import net.yacy.document.parser.html.ImageEntry;
 import net.yacy.kelondro.data.word.Word;
@@ -83,11 +80,10 @@ public final class Condenser {
     public  static final int flag_cat_hasvideo      = 22; // the page refers to (at least one) videos
     public  static final int flag_cat_hasapp        = 23; // the page refers to (at least one) application file
 
-    private final static int numlength = 5;
 
     //private Properties analysis;
     private final Map<String, Word> words; // a string (the words) to (indexWord) - relation
-    private final Set<String> tags = new HashSet<String>(); // a set of tags, discovered from Autotagging
+    private final Map<String, Set<Tagging.Metatag>> tags = new HashMap<String, Set<Tagging.Metatag>>(); // a set of tags, discovered from Autotagging
 
     //public int RESULT_NUMB_TEXT_BYTES = -1;
     public int RESULT_NUMB_WORDS = -1;
@@ -96,19 +92,29 @@ public final class Condenser {
     public int RESULT_DIFF_SENTENCES = -1;
     public Bitfield RESULT_FLAGS = new Bitfield(4);
     private final Identificator languageIdentificator;
-    private final NumberFormat intStringFormatter = NumberFormat.getIntegerInstance(); // use a new instance for each object for a better concurrency
+    /*
+    private final static int numlength = 5;
+    private static final ThreadLocal <NumberFormat> intStringFormatter =
+        new ThreadLocal <NumberFormat>() {
+          @Override protected NumberFormat initialValue() {
+              NumberFormat n = NumberFormat.getIntegerInstance();
+              n.setMinimumIntegerDigits(numlength);
+              n.setMaximumIntegerDigits(numlength);
+              return n;
+          }
+      };
+     */
 
     public Condenser(
             final Document document,
             final boolean indexText,
             final boolean indexMedia,
-            final WordCache meaningLib
+            final WordCache meaningLib,
+            final boolean doAutotagging
             ) {
         Thread.currentThread().setName("condenser-" + document.dc_identifier()); // for debugging
         // if addMedia == true, then all the media links are also parsed and added to the words
         // added media words are flagged with the appropriate media flag
-        this.intStringFormatter.setMinimumIntegerDigits(numlength);
-        this.intStringFormatter.setMaximumIntegerDigits(numlength);
         this.words = new HashMap<String, Word>();
         this.RESULT_FLAGS = new Bitfield(4);
 
@@ -121,10 +127,12 @@ public final class Condenser {
 
         this.languageIdentificator = new Identificator();
 
+        // add the URL components to the word list
+        insertTextToWords(new SentenceReader(document.dc_source().toTokens()), 0, WordReferenceRow.flag_app_dc_identifier, this.RESULT_FLAGS, false, meaningLib);
 
         Map.Entry<MultiProtocolURI, String> entry;
         if (indexText) {
-            createCondensement(document.getText(), meaningLib);
+            createCondensement(document.getTextString(), meaningLib, doAutotagging);
             // the phrase counter:
             // phrase   0 are words taken from the URL
             // phrase   1 is the MainTitle
@@ -137,16 +145,15 @@ public final class Condenser {
             // phrase  98 is taken from the embedded anchor/hyperlinks description (REMOVED!)
             // phrase  99 is taken from the media Link url and anchor description
             // phrase 100 and above are lines from the text
-
-            insertTextToWords(document.dc_title(),       1, WordReferenceRow.flag_app_dc_title, this.RESULT_FLAGS, true, meaningLib);
-            insertTextToWords(document.dc_description(), 3, WordReferenceRow.flag_app_dc_description, this.RESULT_FLAGS, true, meaningLib);
-            insertTextToWords(document.dc_creator(),     4, WordReferenceRow.flag_app_dc_creator, this.RESULT_FLAGS, true, meaningLib);
-            insertTextToWords(document.dc_publisher(),   5, WordReferenceRow.flag_app_dc_creator, this.RESULT_FLAGS, true, meaningLib);
-            insertTextToWords(document.dc_subject(' '),  6, WordReferenceRow.flag_app_dc_description, this.RESULT_FLAGS, true, meaningLib);
+            insertTextToWords(new SentenceReader(document.dc_title()),       1, WordReferenceRow.flag_app_dc_title, this.RESULT_FLAGS, true, meaningLib);
+            insertTextToWords(new SentenceReader(document.dc_description()), 3, WordReferenceRow.flag_app_dc_description, this.RESULT_FLAGS, true, meaningLib);
+            insertTextToWords(new SentenceReader(document.dc_creator()),     4, WordReferenceRow.flag_app_dc_creator, this.RESULT_FLAGS, true, meaningLib);
+            insertTextToWords(new SentenceReader(document.dc_publisher()),   5, WordReferenceRow.flag_app_dc_creator, this.RESULT_FLAGS, true, meaningLib);
+            insertTextToWords(new SentenceReader(document.dc_subject(' ')),  6, WordReferenceRow.flag_app_dc_description, this.RESULT_FLAGS, true, meaningLib);
             // missing: tags!
             final String[] titles = document.getSectionTitles();
             for (int i = 0; i < titles.length; i++) {
-                insertTextToWords(titles[i], i + 10, WordReferenceRow.flag_app_emphasized, this.RESULT_FLAGS, true, meaningLib);
+                insertTextToWords(new SentenceReader(titles[i]), i + 10, WordReferenceRow.flag_app_emphasized, this.RESULT_FLAGS, true, meaningLib);
             }
 
             // anchors: for text indexing we add only the anchor description
@@ -170,33 +177,30 @@ public final class Condenser {
             this.RESULT_DIFF_SENTENCES = 0;
         }
 
-        // add the URL components to the word list
-        insertTextToWords(document.dc_source().toNormalform(false, true), 0, WordReferenceRow.flag_app_dc_identifier, this.RESULT_FLAGS, false, meaningLib);
-
         if (indexMedia) {
             // add anchor descriptions: here, we also add the url components
             // audio
             Iterator<Map.Entry<MultiProtocolURI, String>> i = document.getAudiolinks().entrySet().iterator();
             while (i.hasNext()) {
                 entry = i.next();
-                insertTextToWords(entry.getKey().toNormalform(false, false), 99, flag_cat_hasaudio, this.RESULT_FLAGS, false, meaningLib);
-                insertTextToWords(entry.getValue(), 99, flag_cat_hasaudio, this.RESULT_FLAGS, true, meaningLib);
+                insertTextToWords(new SentenceReader(entry.getKey().toNormalform(false, false)), 99, flag_cat_hasaudio, this.RESULT_FLAGS, false, meaningLib);
+                insertTextToWords(new SentenceReader(entry.getValue()), 99, flag_cat_hasaudio, this.RESULT_FLAGS, true, meaningLib);
             }
 
             // video
             i = document.getVideolinks().entrySet().iterator();
             while (i.hasNext()) {
                 entry = i.next();
-                insertTextToWords(entry.getKey().toNormalform(false, false), 99, flag_cat_hasvideo, this.RESULT_FLAGS, false, meaningLib);
-                insertTextToWords(entry.getValue(), 99, flag_cat_hasvideo, this.RESULT_FLAGS, true, meaningLib);
+                insertTextToWords(new SentenceReader(entry.getKey().toNormalform(false, false)), 99, flag_cat_hasvideo, this.RESULT_FLAGS, false, meaningLib);
+                insertTextToWords(new SentenceReader(entry.getValue()), 99, flag_cat_hasvideo, this.RESULT_FLAGS, true, meaningLib);
             }
 
             // applications
             i = document.getApplinks().entrySet().iterator();
             while (i.hasNext()) {
                 entry = i.next();
-                insertTextToWords(entry.getKey().toNormalform(false, false), 99, flag_cat_hasapp, this.RESULT_FLAGS, false, meaningLib);
-                insertTextToWords(entry.getValue(), 99, flag_cat_hasapp, this.RESULT_FLAGS, true, meaningLib);
+                insertTextToWords(new SentenceReader(entry.getKey().toNormalform(false, false)), 99, flag_cat_hasapp, this.RESULT_FLAGS, false, meaningLib);
+                insertTextToWords(new SentenceReader(entry.getValue()), 99, flag_cat_hasapp, this.RESULT_FLAGS, true, meaningLib);
             }
 
             // images
@@ -207,8 +211,8 @@ public final class Condenser {
                 ientry = j.next();
                 url = ientry.url();
                 if (url == null) continue;
-                insertTextToWords(url.toNormalform(false, false), 99, flag_cat_hasimage, this.RESULT_FLAGS, false, meaningLib);
-                insertTextToWords(ientry.alt(), 99, flag_cat_hasimage, this.RESULT_FLAGS, true, meaningLib);
+                insertTextToWords(new SentenceReader(url.toNormalform(false, false)), 99, flag_cat_hasimage, this.RESULT_FLAGS, false, meaningLib);
+                insertTextToWords(new SentenceReader(ientry.alt()), 99, flag_cat_hasimage, this.RESULT_FLAGS, true, meaningLib);
             }
 
             // finally check all words for missing flag entry
@@ -227,12 +231,12 @@ public final class Condenser {
 
         // extend the tags in the document object with autotagging tags
         if (!this.tags.isEmpty()) {
-            document.addTags(this.tags);
+            document.addMetatags(this.tags);
         }
     }
 
     private void insertTextToWords(
-            final String text,
+            final SentenceReader text,
             final int phrase,
             final int flagpos,
             final Bitfield flagstemplate,
@@ -241,7 +245,7 @@ public final class Condenser {
         if (text == null) return;
         String word;
         Word wprop;
-        WordTokenizer wordenum = new WordTokenizer(new ByteArrayInputStream(UTF8.getBytes(text)), meaningLib);
+        WordTokenizer wordenum = new WordTokenizer(text, meaningLib);
         try {
 	        int pip = 0;
 	        while (wordenum.hasMoreElements()) {
@@ -262,11 +266,11 @@ public final class Condenser {
         }
     }
 
-    public Condenser(final InputStream text, final WordCache meaningLib) {
+    public Condenser(final String text, final WordCache meaningLib, boolean doAutotagging) {
         this.languageIdentificator = null; // we don't need that here
         // analysis = new Properties();
         this.words = new TreeMap<String, Word>();
-        createCondensement(text, meaningLib);
+        createCondensement(text, meaningLib, doAutotagging);
     }
 
     public int excludeWords(final SortedSet<String> stopwords) {
@@ -286,11 +290,14 @@ public final class Condenser {
         return this.languageIdentificator.getLanguage();
     }
 
-    private void createCondensement(final InputStream is, final WordCache meaningLib) {
-        assert is != null;
+    private void createCondensement(final String text, final WordCache meaningLib, boolean doAutotagging) {
+        assert text != null;
         final Set<String> currsentwords = new HashSet<String>();
         String word = "";
-        String k, tag;
+        String[] wordcache = new String[LibraryProvider.autotagging.getMaxWordsInTerm() - 1];
+        for (int i = 0; i < wordcache.length; i++) wordcache[i] = "";
+        String k;
+        Tagging.Metatag tag;
         int wordlen;
         Word wsp;
         final Word wsp1;
@@ -302,9 +309,10 @@ public final class Condenser {
         int wordInSentenceCounter = 1;
         boolean comb_indexof = false, last_last = false, last_index = false;
         final Map<StringBuilder, Phrase> sentences = new HashMap<StringBuilder, Phrase>(100);
+        if (LibraryProvider.autotagging.isEmpty()) doAutotagging = false;
 
         // read source
-        final WordTokenizer wordenum = new WordTokenizer(is, meaningLib);
+        final WordTokenizer wordenum = new WordTokenizer(new SentenceReader(text), meaningLib);
         try {
 	        while (wordenum.hasMoreElements()) {
 	            word = wordenum.nextElement().toString().toLowerCase(Locale.ENGLISH);
@@ -312,8 +320,34 @@ public final class Condenser {
 	            if (word.length() < wordminsize) continue;
 
 	            // get tags from autotagging
-	            tag = LibraryProvider.autotagging.getPrintTagFromWord(word);
-	            if (tag != null) this.tags.add(tag);
+	            if (doAutotagging) {
+	            	for (int wordc = 1; wordc <= wordcache.length + 1; wordc++) {
+	            		// wordc is number of words that are tested
+	            		StringBuilder sb = new StringBuilder();
+	            		if (wordc == 1) {
+	            			sb.append(word);
+	            		} else {
+	            			for (int w = 0; w < wordc - 1; w++) {
+	            				sb.append(wordcache[wordcache.length - wordc + w + 1]).append(' ');
+	            			}
+	            			sb.append(word);
+	            		}
+	            		String testterm = sb.toString().trim();
+	            		//System.out.println("Testing: " + testterm);
+		                tag = LibraryProvider.autotagging.getTagFromTerm(testterm);
+		                if (tag != null) {
+		                    Set<Tagging.Metatag> tagset = this.tags.get(tag.getVocabularyName());
+		                    if (tagset == null) {
+		                        tagset = new HashSet<Tagging.Metatag>();
+		                        this.tags.put(tag.getVocabularyName(), tagset);
+		                    }
+	                        tagset.add(tag);
+		                }
+	            	}
+	            }
+	            // shift wordcache
+	            System.arraycopy(wordcache, 1, wordcache, 0, wordcache.length - 1);
+	            wordcache[wordcache.length - 1] = word;
 
 	            // distinguish punctuation and words
 	            wordlen = word.length();
@@ -391,9 +425,7 @@ public final class Condenser {
     public static Map<String, Word> getWords(final String text, final WordCache meaningLib) {
         // returns a word/indexWord relation map
         if (text == null) return null;
-        ByteArrayInputStream buffer;
-		buffer = new ByteArrayInputStream(UTF8.getBytes(text));
-        return new Condenser(buffer, meaningLib).words();
+        return new Condenser(text, meaningLib, false).words();
     }
 
     public static void main(final String[] args) {

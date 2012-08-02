@@ -26,6 +26,7 @@ package net.yacy.kelondro.index;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -37,6 +38,7 @@ import net.yacy.cora.document.UTF8;
 import net.yacy.cora.order.ByteOrder;
 import net.yacy.cora.sorting.Array;
 import net.yacy.cora.sorting.Sortable;
+import net.yacy.cora.util.SpaceExceededException;
 import net.yacy.kelondro.index.Row.Entry;
 import net.yacy.kelondro.logging.Log;
 import net.yacy.kelondro.order.Base64Order;
@@ -46,10 +48,11 @@ import net.yacy.kelondro.util.MemoryControl;
 import net.yacy.kelondro.util.kelondroException;
 
 
-public class RowCollection implements Sortable<Row.Entry>, Iterable<Row.Entry>, Cloneable {
+public class RowCollection implements Sortable<Row.Entry>, Iterable<Row.Entry>, Cloneable, Serializable {
 
-	private static final byte[] EMPTY_CACHE = new byte[0];
-	
+    private static final long serialVersionUID=-4670634138825982705L;
+    private static final byte[] EMPTY_CACHE = new byte[0];
+
     public  static final long growfactorLarge100 = 140L;
     public  static final long growfactorSmall100 = 120L;
     private static final int isortlimit = 20;
@@ -83,7 +86,7 @@ public class RowCollection implements Sortable<Row.Entry>, Iterable<Row.Entry>, 
         this.chunkcount = 0;
     }
 
-    public RowCollection(final Row rowdef, final int objectCount) throws RowSpaceExceededException {
+    public RowCollection(final Row rowdef, final int objectCount) throws SpaceExceededException {
         this(rowdef);
         ensureSize(objectCount);
     }
@@ -134,6 +137,7 @@ public class RowCollection implements Sortable<Row.Entry>, Iterable<Row.Entry>, 
         this.lastTimeWrote = lastTimeWrote;
     }
 
+    @Override
     public RowCollection clone() {
         return new RowCollection(this.rowdef, this.chunkcache, this.chunkcount, this.sortBound, this.lastTimeWrote);
     }
@@ -166,10 +170,10 @@ public class RowCollection implements Sortable<Row.Entry>, Iterable<Row.Entry>, 
         return (int) (time / day) - 10957;
     }
 
-    private static Column exportColumn0, exportColumn1, exportColumn2, exportColumn3, exportColumn4;
+    private static Column exportColumn0, exportColumn1, exportColumn2, exportColumn3, exportColumn4, collectionColumnProducer;
 
     protected static final long exportOverheadSize = 14;
-
+    
     private static Row exportRow(final int chunkcachelength) {
         /*
         return new Row(
@@ -188,15 +192,17 @@ public class RowCollection implements Sortable<Row.Entry>, Iterable<Row.Entry>, 
         if (exportColumn2 == null) exportColumn2 = new Column("short lastwrote-2 {b256}");
         if (exportColumn3 == null) exportColumn3 = new Column("byte[] orderkey-2");
         if (exportColumn4 == null) exportColumn4 = new Column("int orderbound-4 {b256}");
+        if (collectionColumnProducer == null) collectionColumnProducer = new Column("byte[] collection-1");
         /*
          * because of a strange bug these objects cannot be initialized as normal
          * static final. If I try that, they are not initialized and are assigned null. why?
          */
-        final StringBuilder colName = new StringBuilder(30);
-        colName.append("byte[] collection-").append(Integer.toString(chunkcachelength));
+        
+        Column collectionColumn = (Column) collectionColumnProducer.clone();
+        collectionColumn.setCellwidth(chunkcachelength);
         final Row er = new Row(new Column[]{
                     exportColumn0, exportColumn1, exportColumn2, exportColumn3, exportColumn4,
-                    new Column(colName.toString())
+                    collectionColumn
                 },
                 NaturalOrder.naturalOrder
         );
@@ -248,14 +254,14 @@ public class RowCollection implements Sortable<Row.Entry>, Iterable<Row.Entry>, 
         return needed;
     }
 
-    private final void ensureSize(final int elements) throws RowSpaceExceededException {
+    private final void ensureSize(final int elements) throws SpaceExceededException {
         if (elements == 0) return;
         final long allocram = neededSpaceForEnsuredSize(elements, true);
         if (allocram == 0) return;
         assert this.chunkcache.length < elements * this.rowdef.objectsize : "wrong alloc computation (1): elements * rowdef.objectsize = " + (elements * this.rowdef.objectsize) + ", chunkcache.length = " + this.chunkcache.length;
         assert allocram > this.chunkcache.length : "wrong alloc computation (2): allocram = " + allocram + ", chunkcache.length = " + this.chunkcache.length;
         if (allocram > Integer.MAX_VALUE || !MemoryControl.request(allocram + 32, true))
-        	throw new RowSpaceExceededException(allocram + 32, "RowCollection grow");
+        	throw new SpaceExceededException(allocram + 32, "RowCollection grow");
         try {
             final byte[] newChunkcache = new byte[(int) allocram]; // increase space
             System.arraycopy(this.chunkcache, 0, newChunkcache, 0, this.chunkcache.length);
@@ -268,7 +274,7 @@ public class RowCollection implements Sortable<Row.Entry>, Iterable<Row.Entry>, 
                 System.arraycopy(this.chunkcache, 0, newChunkcache, 0, this.chunkcache.length);
                 this.chunkcache = newChunkcache;
             } catch (final OutOfMemoryError ee) {
-                throw new RowSpaceExceededException(allocram, "RowCollection grow after OutOfMemoryError " + ee.getMessage());
+                throw new SpaceExceededException(allocram, "RowCollection grow after OutOfMemoryError " + ee.getMessage());
             }
         }
     }
@@ -334,6 +340,7 @@ public class RowCollection implements Sortable<Row.Entry>, Iterable<Row.Entry>, 
         return b;
     }
 
+    @Override
     public synchronized final Row.Entry get(final int index, final boolean clone) {
         assert (index >= 0) : "get: access with index " + index + " is below zero";
         assert (index < this.chunkcount) : "get: access with index " + index + " is above chunkcount " + this.chunkcount + "; sortBound = " + this.sortBound;
@@ -348,7 +355,7 @@ public class RowCollection implements Sortable<Row.Entry>, Iterable<Row.Entry>, 
         return entry;
     }
 
-    public synchronized final void set(final int index, final Row.Entry a) throws RowSpaceExceededException {
+    public synchronized final void set(final int index, final Row.Entry a) throws SpaceExceededException {
         assert (index >= 0) : "set: access with index " + index + " is below zero";
         ensureSize(index + 1);
         final byte[] column = a.bytes();
@@ -362,7 +369,7 @@ public class RowCollection implements Sortable<Row.Entry>, Iterable<Row.Entry>, 
         this.lastTimeWrote = System.currentTimeMillis();
     }
 
-    public final void insertUnique(final int index, final Row.Entry a) throws RowSpaceExceededException {
+    public final void insertUnique(final int index, final Row.Entry a) throws SpaceExceededException {
         assert (a != null);
 
         if (index < this.chunkcount) {
@@ -375,23 +382,23 @@ public class RowCollection implements Sortable<Row.Entry>, Iterable<Row.Entry>, 
         set(index, a);
     }
 
-    public synchronized void addUnique(final Row.Entry row) throws RowSpaceExceededException {
+    public synchronized void addUnique(final Row.Entry row) throws SpaceExceededException {
         final byte[] r = row.bytes();
         addUnique(r, 0, r.length);
     }
 
-    public synchronized void addUnique(final List<Row.Entry> rows) throws RowSpaceExceededException {
+    public synchronized void addUnique(final List<Row.Entry> rows) throws SpaceExceededException {
         assert this.sortBound == 0 : "sortBound = " + this.sortBound + ", chunkcount = " + this.chunkcount;
         final Iterator<Row.Entry> i = rows.iterator();
         while (i.hasNext()) addUnique(i.next());
     }
 
-    public synchronized void add(final byte[] a) throws RowSpaceExceededException {
+    public synchronized void add(final byte[] a) throws SpaceExceededException {
         assert a.length == this.rowdef.objectsize : "a.length = " + a.length + ", objectsize = " + this.rowdef.objectsize;
         addUnique(a, 0, a.length);
     }
 
-    private final void addUnique(final byte[] a, final int astart, final int alength) throws RowSpaceExceededException {
+    private final void addUnique(final byte[] a, final int astart, final int alength) throws SpaceExceededException {
         assert (a != null);
         assert (astart >= 0) && (astart < a.length) : " astart = " + astart;
         assert (!(Log.allZero(a, astart, alength))) : "a = " + NaturalOrder.arrayList(a, astart, alength);
@@ -415,7 +422,7 @@ public class RowCollection implements Sortable<Row.Entry>, Iterable<Row.Entry>, 
         this.lastTimeWrote = System.currentTimeMillis();
     }
 
-    protected final void addSorted(final byte[] a, final int astart, final int alength) throws RowSpaceExceededException {
+    protected final void addSorted(final byte[] a, final int astart, final int alength) throws SpaceExceededException {
         assert (a != null);
         assert (astart >= 0) && (astart < a.length) : " astart = " + astart;
         assert (!(Log.allZero(a, astart, alength))) : "a = " + NaturalOrder.arrayList(a, astart, alength);
@@ -430,7 +437,7 @@ public class RowCollection implements Sortable<Row.Entry>, Iterable<Row.Entry>, 
         this.lastTimeWrote = System.currentTimeMillis();
     }
 
-    public synchronized final void addAllUnique(final RowCollection c) throws RowSpaceExceededException {
+    public synchronized final void addAllUnique(final RowCollection c) throws SpaceExceededException {
         if (c == null) return;
         assert(this.rowdef.objectsize == c.rowdef.objectsize);
         ensureSize(this.chunkcount + c.size());
@@ -478,6 +485,7 @@ public class RowCollection implements Sortable<Row.Entry>, Iterable<Row.Entry>, 
     }
 
 
+    @Override
     public final void delete(final int p) {
         removeRow(p, true);
     }
@@ -533,6 +541,7 @@ public class RowCollection implements Sortable<Row.Entry>, Iterable<Row.Entry>, 
         this.lastTimeWrote = System.currentTimeMillis();
     }
 
+    @Override
     public int size() {
         return this.chunkcount;
     }
@@ -566,14 +575,17 @@ public class RowCollection implements Sortable<Row.Entry>, Iterable<Row.Entry>, 
             this.keepOrderWhenRemoving = keepOrderWhenRemoving;
         }
 
+        @Override
         public boolean hasNext() {
             return this.p < RowCollection.this.chunkcount;
         }
 
+        @Override
         public byte[] next() {
             return getKey(this.p++);
         }
 
+        @Override
         public void remove() {
             this.p--;
             removeRow(this.p, this.keepOrderWhenRemoving);
@@ -583,6 +595,7 @@ public class RowCollection implements Sortable<Row.Entry>, Iterable<Row.Entry>, 
     /**
      * return an iterator for the row entries in this object
      */
+    @Override
     public Iterator<Row.Entry> iterator() {
         // iterates kelondroRow.Entry - type entries
         return new rowIterator();
@@ -601,14 +614,17 @@ public class RowCollection implements Sortable<Row.Entry>, Iterable<Row.Entry>, 
             this.p = 0;
         }
 
+        @Override
         public boolean hasNext() {
             return this.p < RowCollection.this.chunkcount;
         }
 
+        @Override
         public Row.Entry next() {
             return get(this.p++, true);
         }
 
+        @Override
         public void remove() {
             this.p--;
             removeRow(this.p, true);
@@ -637,6 +653,7 @@ public class RowCollection implements Sortable<Row.Entry>, Iterable<Row.Entry>, 
             this.S = S;
         }
 
+        @Override
         public Integer call() throws Exception {
             return Integer.valueOf(this.rc.partition(this.L, this.R, this.S, new byte[this.rc.rowdef.objectsize]));
         }
@@ -765,7 +782,7 @@ public class RowCollection implements Sortable<Row.Entry>, Iterable<Row.Entry>, 
         Array.uniq(this);
     }
 
-    public synchronized ArrayList<RowCollection> removeDoubles() throws RowSpaceExceededException {
+    public synchronized ArrayList<RowCollection> removeDoubles() throws SpaceExceededException {
         assert (this.rowdef.objectOrder != null);
         // removes double-occurrences of chunks
         // in contrast to uniq() this removes also the remaining, non-double entry that had a double-occurrence to the others
@@ -817,6 +834,7 @@ public class RowCollection implements Sortable<Row.Entry>, Iterable<Row.Entry>, 
         return true;
     }
 
+    @Override
     public synchronized String toString() {
         final StringBuilder s = new StringBuilder(80);
         final Iterator<Row.Entry> i = iterator();
@@ -895,7 +913,7 @@ public class RowCollection implements Sortable<Row.Entry>, Iterable<Row.Entry>, 
     		Base64Order.enhancedCoder.encodeLongSB(random.nextLong(), 4).toString();
     }
 
-    public static void test(final int testsize) throws RowSpaceExceededException {
+    public static void test(final int testsize) throws SpaceExceededException {
     	final Row r = new Row(new Column[]{
     			new Column("hash", Column.celltype_string, Column.encoder_bytes, 12, "hash")},
     			Base64Order.enhancedCoder);
@@ -1031,7 +1049,7 @@ public class RowCollection implements Sortable<Row.Entry>, Iterable<Row.Entry>, 
             //test(1000000);
             Log.shutdown();
             Array.terminate();
-        } catch (final RowSpaceExceededException e) {
+        } catch (final SpaceExceededException e) {
             e.printStackTrace();
         }
     }

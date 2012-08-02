@@ -38,9 +38,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import net.yacy.cora.document.ASCII;
 import net.yacy.cora.document.UTF8;
+import net.yacy.cora.util.SpaceExceededException;
 import net.yacy.kelondro.blob.MapHeap;
 import net.yacy.kelondro.data.meta.DigestURI;
-import net.yacy.kelondro.index.RowSpaceExceededException;
 import net.yacy.kelondro.logging.Log;
 import net.yacy.kelondro.order.NaturalOrder;
 
@@ -85,7 +85,7 @@ public class BookmarksDB {
             try {
                 bookmark = it.next();
             } catch (Throwable e) {
-                Log.logException(e);
+                //Log.logException(e);
                 continue;
             }
             if (bookmark == null) continue;
@@ -113,7 +113,7 @@ public class BookmarksDB {
     // bookmarksDB's functions for 'destructing' the class
     // -----------------------------------------------------
 
-    public void close(){
+    public synchronized void close(){
         this.bookmarks.close();
         this.tags.clear();
         this.dates.close();
@@ -124,7 +124,7 @@ public class BookmarksDB {
     // -----------------------------------------------------------
 
     public Bookmark createBookmark(final String url, final String user){
-        if (url == null || url.length() == 0) return null;
+        if (url == null || url.isEmpty()) return null;
         Bookmark bk;
         try {
             bk = new Bookmark(url);
@@ -160,11 +160,11 @@ public class BookmarksDB {
             return (map == null) ? null : new Bookmark(map);
         } catch (MalformedURLException e) {
             Log.logException(e);
-            return null;            
+            return null;
         } catch (final IOException e) {
             Log.logException(e);
             return null;
-        } catch (final RowSpaceExceededException e) {
+        } catch (final SpaceExceededException e) {
             Log.logException(e);
             return null;
         }
@@ -259,10 +259,10 @@ public class BookmarksDB {
      */
     public void putTag(final Tag tag){
     	if (tag == null) return;
-        if (tag.size() > 0) {
-            this.tags.put(tag.getTagHash(), tag);
-        } else {
+        if (tag.isEmpty()) {
             this.tags.remove(tag.getTagHash());
+        } else {
+            this.tags.put(tag.getTagHash(), tag);
         }
     }
 
@@ -460,6 +460,10 @@ public class BookmarksDB {
 
         public int size(){
             return this.urlHashes.size();
+        }
+
+        public boolean isEmpty() {
+            return this.urlHashes.isEmpty();
         }
     }
 
@@ -681,14 +685,17 @@ public class BookmarksDB {
             //this.nextEntry = null;
         }
 
+        @Override
         public boolean hasNext() {
             return this.bookmarkIter.hasNext();
         }
 
+        @Override
         public Bookmark next() {
             return getBookmark(UTF8.String(this.bookmarkIter.next()));
         }
 
+        @Override
         public void remove() {
             throw new UnsupportedOperationException();
         }
@@ -708,6 +715,7 @@ public class BookmarksDB {
             this.newestFirst = newestFirst;
         }
 
+        @Override
         public int compare(final String obj1, final String obj2) {
             final Bookmark bm1 = getBookmark(obj1);
             final Bookmark bm2 = getBookmark(obj2);
@@ -736,6 +744,7 @@ public class BookmarksDB {
          */
         private static final long serialVersionUID = 3105057490088903930L;
 
+        @Override
         public int compare(final Tag obj1, final Tag obj2){
             return obj1.getTagName().compareTo(obj2.getTagName());
     	}
@@ -749,6 +758,7 @@ public class BookmarksDB {
          */
         private static final long serialVersionUID = 4149185397646373251L;
 
+        @Override
         public int compare(final Tag obj1, final Tag obj2) {
             if (obj1.size() < obj2.size()) {
                 return 1;

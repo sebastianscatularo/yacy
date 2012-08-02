@@ -120,9 +120,9 @@ public class Network {
                 }
                 prop.put("table_my-acceptcrawl", seed.getFlagAcceptRemoteCrawl() ? 1 : 0);
                 prop.put("table_my-dhtreceive", seed.getFlagAcceptRemoteIndex() ? 1 : 0);
+                prop.put("table_my-nodestate", seed.getFlagRootNode() ? 1 : 0);
 
-
-                myppm = sb.currentPPM();
+                myppm = Switchboard.currentPPM();
                 myqph = 60d * sb.averageQPM();
                 prop.put("table_my-version", seed.get(Seed.VERSION, "-"));
                 prop.put("table_my-utc", seed.get(Seed.UTC, "-"));
@@ -190,7 +190,7 @@ public class Network {
 
                 // AUTHENTICATE
                 if (!requestHeader.containsKey(RequestHeader.AUTHORIZATION)) {
-                    prop.putHTML("AUTHENTICATE","log-in");
+                	prop.authenticationRequired();
                     return prop;
                 }
 
@@ -257,7 +257,7 @@ public class Network {
                     final HashMap<String, Map<String, String>> updatedBlog = new HashMap<String, Map<String, String>>();
                     final HashMap<String, String> isCrawling = new HashMap<String, String>();
                     NewsDB.Record record;
-                    final Iterator<NewsDB.Record> recordIterator = sb.peers.newsPool.recordIterator(NewsPool.INCOMING_DB, true);
+                    final Iterator<NewsDB.Record> recordIterator = sb.peers.newsPool.recordIterator(NewsPool.INCOMING_DB);
                     while (recordIterator.hasNext()) {
                         record = recordIterator.next();
                         if (record == null) {
@@ -361,6 +361,7 @@ public class Network {
                             }
                             prop.putHTML(STR_TABLE_LIST + conCount + "_shortname", shortname);
                             prop.putHTML(STR_TABLE_LIST + conCount + "_fullname", seed.get(Seed.NAME, "deadlink"));
+                            prop.put(STR_TABLE_LIST + conCount + "_special", (seed.getFlagRootNode() && !seed.getFlagAcceptRemoteIndex()) ? 1 : 0);
                             userAgent = null;
                             if (seed.hash != null && seed.hash.equals(sb.peers.mySeed().hash)) {
                                 userAgent = ClientIdentification.getUserAgent();
@@ -421,13 +422,17 @@ public class Network {
                                     prop.put(STR_TABLE_LIST + conCount + "_dhtreceive", 0);  // red/red; offline was off
                                 }
                             }
+                            prop.put(STR_TABLE_LIST + conCount + "_nodestate", seed.getFlagRootNode() ? 1 : 0);
+                            prop.put(STR_TABLE_LIST + conCount + "_nodestate_ip", seed.getIP() );
+                            prop.put(STR_TABLE_LIST + conCount + "_nodestate_port", seed.get(Seed.PORT, "-") );
                             if (seed.getFlagAcceptRemoteIndex()) {
                                 prop.put(STR_TABLE_LIST + conCount + "_dhtreceive_peertags", "");
                             } else {
                                 final String peertags = MapTools.set2string(seed.getPeerTags(), ",", false);
-                                prop.putHTML(STR_TABLE_LIST + conCount + "_dhtreceive_peertags", ((peertags == null) || (peertags.length() == 0)) ? "no tags given" : ("tags = " + peertags));
+                                prop.putHTML(STR_TABLE_LIST + conCount + "_dhtreceive_peertags", ((peertags == null) || (peertags.isEmpty())) ? "no tags given" : ("tags = " + peertags));
                             }
-                            prop.putHTML(STR_TABLE_LIST + conCount + "_version", yacyVersion.combined2prettyVersion(seed.get(Seed.VERSION, "0.1"), shortname));
+                            String[] yv = yacyVersion.combined2prettyVersion(seed.get(Seed.VERSION, "0.1"), shortname);
+                            prop.putHTML(STR_TABLE_LIST + conCount + "_version", yv[0] + "/" + yv[1]);
                             prop.putNum(STR_TABLE_LIST + conCount + "_lastSeen", /*seed.getLastSeenString() + " " +*/ lastseen);
                             prop.put(STR_TABLE_LIST + conCount + "_utc", seed.get(Seed.UTC, "-"));
                             prop.putHTML(STR_TABLE_LIST + conCount + "_uptime", PeerActions.formatInterval(60000 * seed.getLong(Seed.UPTIME, 0)));

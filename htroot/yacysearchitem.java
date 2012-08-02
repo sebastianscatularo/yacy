@@ -26,28 +26,27 @@
 
 import java.net.MalformedURLException;
 import java.util.Collection;
-import java.util.List;
 
 import net.yacy.cora.date.GenericFormatter;
 import net.yacy.cora.document.ASCII;
 import net.yacy.cora.document.Classification;
 import net.yacy.cora.document.Classification.ContentDomain;
+import net.yacy.cora.protocol.Domains;
 import net.yacy.cora.protocol.HeaderFramework;
 import net.yacy.cora.protocol.RequestHeader;
 import net.yacy.cora.protocol.RequestHeader.FileType;
 import net.yacy.kelondro.data.meta.DigestURI;
 import net.yacy.kelondro.logging.Log;
-import net.yacy.kelondro.util.EventTracker;
 import net.yacy.kelondro.util.Formatter;
 import net.yacy.peers.NewsPool;
 import net.yacy.peers.Seed;
 import net.yacy.peers.graphics.ProfilingGraph;
+import net.yacy.search.EventTracker;
 import net.yacy.search.Switchboard;
 import net.yacy.search.SwitchboardConstants;
 import net.yacy.search.query.QueryParams;
 import net.yacy.search.query.SearchEvent;
 import net.yacy.search.query.SearchEventCache;
-import net.yacy.search.snippet.MediaSnippet;
 import net.yacy.search.snippet.ResultEntry;
 import net.yacy.search.snippet.TextSnippet;
 import de.anomic.server.serverObjects;
@@ -63,7 +62,7 @@ public class yacysearchitem {
     private static final int MAX_NAME_LENGTH = 60;
     private static final int MAX_URL_LENGTH = 120;
 
-    private static boolean col = true;
+    //private static boolean col = true;
 
     public static serverObjects respond(final RequestHeader header, final serverObjects post, final serverSwitch env) {
         final Switchboard sb = (Switchboard) env;
@@ -72,7 +71,7 @@ public class yacysearchitem {
         final String eventID = post.get("eventID", "");
         final boolean authenticated = sb.adminAuthenticated(header) >= 2;
         final int item = post.getInt("item", -1);
-        final boolean auth = (header.get(HeaderFramework.CONNECTION_PROP_CLIENTIP, "")).equals("localhost") || sb.verifyAuthentication(header);
+        final boolean auth = Domains.isLocalhost(header.get(HeaderFramework.CONNECTION_PROP_CLIENTIP, "")) || sb.verifyAuthentication(header);
         final RequestHeader.FileType fileType = header.fileType();
 
         // default settings for blank item
@@ -92,7 +91,7 @@ public class yacysearchitem {
 
         // dynamically update count values
         final int totalcount = theSearch.getRankingResult().getLocalIndexCount() - theSearch.getRankingResult().getMissCount() - theSearch.getRankingResult().getSortOutCount() + theSearch.getRankingResult().getRemoteIndexCount();
-        final int offset = theQuery.neededResults() - theQuery.displayResults() + 1;
+        final int offset = theQuery.neededResults() - theQuery.itemsPerPage() + 1;
         prop.put("offset", offset);
         prop.put("itemscount", Formatter.number(Math.min((item < 0) ? theQuery.neededResults() : item + 1, totalcount)));
         prop.put("itemsperpage", Formatter.number(theQuery.itemsPerPage));
@@ -117,7 +116,7 @@ public class yacysearchitem {
 
             final int port = resultURL.getPort();
             DigestURI faviconURL = null;
-            if ((fileType == FileType.HTML || fileType == FileType.JSON) && !sb.isIntranetMode() && !resultURL.isLocal()) try {
+            if ((fileType == FileType.HTML || fileType == FileType.JSON) && !sb.isIntranetMode()) try {
                 faviconURL = new DigestURI(resultURL.getProtocol() + "://" + resultURL.getHost() + ((port != -1) ? (":" + port) : "") + "/favicon.ico");
             } catch (final MalformedURLException e1) {
                 Log.logException(e1);
@@ -130,27 +129,69 @@ public class yacysearchitem {
             prop.put("content_showMetadata", sb.getConfigBool("search.result.show.metadata", true) ? 1 : 0);
             prop.put("content_showParser", sb.getConfigBool("search.result.show.parser", true) ? 1 : 0);
             prop.put("content_showPictures", sb.getConfigBool("search.result.show.pictures", true) ? 1 : 0);
+            prop.put("content_showCache", sb.getConfigBool("search.result.show.cache", true) ? 1 : 0);
+            prop.put("content_showProxy", sb.getConfigBool("search.result.show.proxy", true) ? 1 : 0);
+            prop.put("content_showTags", sb.getConfigBool("search.result.show.tags", false) ? 1 : 0);
             prop.put("content_authorized", authenticated ? "1" : "0");
             final String urlhash = ASCII.String(result.hash());
             prop.put("content_authorized_bookmark", sb.tables.bookmarks.hasBookmark("admin", urlhash) ? "0" : "1");
-            prop.putHTML("content_authorized_bookmark_bookmarklink", "/yacysearch.html?query=" + theQuery.queryString.replace(' ', '+') + "&Enter=Search&count=" + theQuery.displayResults() + "&offset=" + (theQuery.neededResults() - theQuery.displayResults()) + "&order=" + crypt.simpleEncode(theQuery.ranking.toExternalString()) + "&resource=" + resource + "&time=3&bookmarkref=" + urlhash + "&urlmaskfilter=.*");
+            prop.putHTML("content_authorized_bookmark_bookmarklink", "/yacysearch.html?query=" + theQuery.queryString.replace(' ', '+') + "&Enter=Search&count=" + theQuery.itemsPerPage() + "&offset=" + (theQuery.neededResults() - theQuery.itemsPerPage()) + "&order=" + crypt.simpleEncode(theQuery.ranking.toExternalString()) + "&resource=" + resource + "&time=3&bookmarkref=" + urlhash + "&urlmaskfilter=.*");
             prop.put("content_authorized_recommend", (sb.peers.newsPool.getSpecific(NewsPool.OUTGOING_DB, NewsPool.CATEGORY_SURFTIPP_ADD, "url", resultUrlstring) == null) ? "1" : "0");
-            prop.putHTML("content_authorized_recommend_deletelink", "/yacysearch.html?query=" + theQuery.queryString.replace(' ', '+') + "&Enter=Search&count=" + theQuery.displayResults() + "&offset=" + (theQuery.neededResults() - theQuery.displayResults()) + "&order=" + crypt.simpleEncode(theQuery.ranking.toExternalString()) + "&resource=" + resource + "&time=3&deleteref=" + urlhash + "&urlmaskfilter=.*");
-            prop.putHTML("content_authorized_recommend_recommendlink", "/yacysearch.html?query=" + theQuery.queryString.replace(' ', '+') + "&Enter=Search&count=" + theQuery.displayResults() + "&offset=" + (theQuery.neededResults() - theQuery.displayResults()) + "&order=" + crypt.simpleEncode(theQuery.ranking.toExternalString()) + "&resource=" + resource + "&time=3&recommendref=" + urlhash + "&urlmaskfilter=.*");
+            prop.putHTML("content_authorized_recommend_deletelink", "/yacysearch.html?query=" + theQuery.queryString.replace(' ', '+') + "&Enter=Search&count=" + theQuery.itemsPerPage() + "&offset=" + (theQuery.neededResults() - theQuery.itemsPerPage()) + "&order=" + crypt.simpleEncode(theQuery.ranking.toExternalString()) + "&resource=" + resource + "&time=3&deleteref=" + urlhash + "&urlmaskfilter=.*");
+            prop.putHTML("content_authorized_recommend_recommendlink", "/yacysearch.html?query=" + theQuery.queryString.replace(' ', '+') + "&Enter=Search&count=" + theQuery.itemsPerPage() + "&offset=" + (theQuery.neededResults() - theQuery.itemsPerPage()) + "&order=" + crypt.simpleEncode(theQuery.ranking.toExternalString()) + "&resource=" + resource + "&time=3&recommendref=" + urlhash + "&urlmaskfilter=.*");
             prop.put("content_authorized_urlhash", urlhash);
             final String resulthashString = urlhash;
             prop.putHTML("content_title", result.title());
             prop.putXML("content_title-xml", result.title());
             prop.putJSON("content_title-json", result.title());
-            prop.putHTML("content_link", resultUrlstring);
             prop.putHTML("content_showPictures_link", resultUrlstring);
+            //prop.putHTML("content_link", resultUrlstring);
+
+// START interaction
+            String modifyURL = resultUrlstring;
+			if (sb.getConfigBool("proxyURL.useforresults", false)) {
+				// check if url is allowed to view
+				if (sb.getConfig("proxyURL.rewriteURLs", "all").equals("all")) {
+					modifyURL = "./proxy.html?url="+modifyURL;
+				}
+
+				// check if url is allowed to view
+				if (sb.getConfig("proxyURL.rewriteURLs", "all").equals("domainlist")) {
+					try {
+						if (sb.crawlStacker.urlInAcceptedDomain(new DigestURI (modifyURL)) == null) {
+							modifyURL = "./proxy.html?url="+modifyURL;
+						}
+					} catch (MalformedURLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+
+				if (sb.getConfig("proxyURL.rewriteURLs", "all").equals("yacy")) {
+					try {
+						if ((new DigestURI (modifyURL).getHost().endsWith(".yacy"))) {
+							modifyURL = "./proxy.html?url="+modifyURL;
+						}
+					} catch (MalformedURLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+            prop.putHTML("content_link", modifyURL);
+//            prop.putHTML("content_value", Interaction.TripleGet(result.urlstring(), "http://virtual.x/hasvalue", "anonymous"));
+// END interaction
+
             prop.putHTML("content_target", target);
-            if (faviconURL != null && fileType == FileType.HTML) sb.loader.loadIfNotExistBackground(faviconURL, 1024 * 1024 * 10);
+            if (faviconURL != null && fileType == FileType.HTML) sb.loader.loadIfNotExistBackground(faviconURL, 1024 * 1024 * 10, null, TextSnippet.snippetMinLoadDelay);
             prop.putHTML("content_faviconCode", sb.licensedURLs.aquireLicense(faviconURL)); // acquire license for favicon url loading
             prop.put("content_urlhash", resulthashString);
             prop.put("content_ranking", result.ranking);
             prop.put("content_showMetadata_urlhash", resulthashString);
+            prop.put("content_showCache_link", resultUrlstring);
+            prop.put("content_showProxy_link", resultUrlstring);
             prop.put("content_showParser_urlhash", resulthashString);
+            prop.put("content_showTags_urlhash", resulthashString);
             prop.put("content_urlhexhash", Seed.b64Hash2hexHash(resulthashString));
             prop.putHTML("content_urlname", nxTools.shortenURLString(result.urlname(), MAX_URL_LENGTH));
             prop.put("content_showDate_date", GenericFormatter.RFC1123_SHORT_FORMATTER.format(result.modified()));
@@ -177,7 +218,7 @@ public class yacysearchitem {
             prop.putHTML("content_former", theQuery.queryString);
             prop.putHTML("content_showPictures_former", theQuery.queryString);
             final TextSnippet snippet = result.textSnippet();
-            final String desc = (snippet == null) ? "" : snippet.getLineMarked(theQuery.fullqueryHashes);
+            final String desc = (snippet == null) ? "" : snippet.getLineMarked(theQuery.query_all_hashes);
             prop.put("content_description", desc);
             prop.putXML("content_description-xml", desc);
             prop.putJSON("content_description-json", desc);
@@ -200,13 +241,14 @@ public class yacysearchitem {
             } else {
                 prop.put("content_code", "");
             }
-            if (result.lat() == 0.0f || result.lon() == 0.0f) {
+            if (result.lat() == 0.0d || result.lon() == 0.0d) {
                 prop.put("content_loc", 0);
             } else {
                 prop.put("content_loc", 1);
                 prop.put("content_loc_lat", result.lat());
                 prop.put("content_loc_lon", result.lon());
             }
+            if (sb.getConfigBool("heuristic.searchresults",false)) sb.heuristicSearchResults(resultUrlstring);
             theQuery.transmitcount = item + 1;
             return prop;
         }
@@ -224,7 +266,7 @@ public class yacysearchitem {
                 final String target = sb.getConfig(resultUrlstring.matches(target_special_pattern) ? SwitchboardConstants.SEARCH_TARGET_SPECIAL : SwitchboardConstants.SEARCH_TARGET_DEFAULT, "_self");
 
                 final String license = sb.licensedURLs.aquireLicense(ms.url());
-                sb.loader.loadIfNotExistBackground(ms.url(), 1024 * 1024 * 10);
+                sb.loader.loadIfNotExistBackground(ms.url(), 1024 * 1024 * 10, null, TextSnippet.snippetMinLoadDelay);
                 prop.putHTML("content_item_hrefCache", (auth) ? "/ViewImage.png?url=" + resultUrlstring : resultUrlstring);
                 prop.putHTML("content_item_href", resultUrlstring);
                 prop.putHTML("content_item_target", target);
@@ -252,29 +294,20 @@ public class yacysearchitem {
             // any other media content
 
             // generate result object
-            final ResultEntry result = theSearch.oneResult(item, 500);
-            if (result == null) return prop; // no content
-
+            final ResultEntry ms = theSearch.oneResult(item, theQuery.isLocal() ? 1000 : 5000);
             prop.put("content", theQuery.contentdom.getCode() + 1); // switch on specific content
-            final List<MediaSnippet> media = result.mediaSnippets();
-            if (item == 0) col = true;
-            if (media != null) {
-                int c = 0;
-                for (final MediaSnippet ms : media) {
-                    final String resultUrlstring = ms.href.toNormalform(true, false);
-                    final String target = sb.getConfig(resultUrlstring.matches(target_special_pattern) ? SwitchboardConstants.SEARCH_TARGET_SPECIAL : SwitchboardConstants.SEARCH_TARGET_DEFAULT, "_self");
-
-                    prop.putHTML("content_items_" + c + "_href", resultUrlstring);
-                    prop.putHTML("content_items_" + c + "_hrefshort", nxTools.shortenURLString(resultUrlstring, MAX_URL_LENGTH));
-                    prop.putHTML("content_items_" + c + "_target", target);
-                    prop.putHTML("content_items_" + c + "_name", shorten(ms.name, MAX_NAME_LENGTH));
-                    prop.put("content_items_" + c + "_col", (col) ? "0" : "1");
-                    c++;
-                    col = !col;
-                }
-                prop.put("content_items", c);
+            if (ms == null) {
+                prop.put("content_item", "0");
             } else {
-                prop.put("content_items", "0");
+                final String resultUrlstring = ms.url().toNormalform(true, false);
+                final String target = sb.getConfig(resultUrlstring.matches(target_special_pattern) ? SwitchboardConstants.SEARCH_TARGET_SPECIAL : SwitchboardConstants.SEARCH_TARGET_DEFAULT, "_self");
+                prop.putHTML("content_item_href", resultUrlstring);
+                prop.putHTML("content_item_hrefshort", nxTools.shortenURLString(resultUrlstring, MAX_URL_LENGTH));
+                prop.putHTML("content_item_target", target);
+                prop.putHTML("content_item_name", shorten(ms.title(), MAX_NAME_LENGTH));
+                prop.put("content_item_col", (item % 2 == 0) ? "0" : "1");
+                prop.put("content_item_nl", (item == theQuery.offset) ? 0 : 1);
+                prop.put("content_item", 1);
             }
             theQuery.transmitcount = item + 1;
             return prop;

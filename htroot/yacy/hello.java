@@ -37,13 +37,13 @@ import net.yacy.cora.protocol.Domains;
 import net.yacy.cora.protocol.HeaderFramework;
 import net.yacy.cora.protocol.RequestHeader;
 import net.yacy.kelondro.logging.Log;
-import net.yacy.kelondro.util.EventTracker;
-import net.yacy.peers.Seed;
-import net.yacy.peers.Protocol;
 import net.yacy.peers.Network;
+import net.yacy.peers.Protocol;
+import net.yacy.peers.Seed;
 import net.yacy.peers.dht.PeerSelection;
 import net.yacy.peers.graphics.ProfilingGraph;
 import net.yacy.peers.operation.yacyVersion;
+import net.yacy.search.EventTracker;
 import net.yacy.search.Switchboard;
 import de.anomic.server.serverCore;
 import de.anomic.server.serverObjects;
@@ -91,7 +91,7 @@ public final class hello {
         }
         Seed remoteSeed;
         try {
-            remoteSeed = Seed.genRemoteSeed(seed, key, true, ias.getHostAddress());
+            remoteSeed = Seed.genRemoteSeed(seed, true, ias.getHostAddress());
         } catch (final IOException e) {
             Network.log.logInfo("hello/server: bad seed: " + e.getMessage() + ", time_dnsResolve=" + time_dnsResolve);
             prop.put("message", "bad seed: " + e.getMessage());
@@ -112,7 +112,7 @@ public final class hello {
         final String userAgent = header.get(HeaderFramework.USER_AGENT, "<unknown>");
         final String reportedip = remoteSeed.getIP();
         final String reportedPeerType = remoteSeed.get(Seed.PEERTYPE, Seed.PEERTYPE_JUNIOR);
-        final float clientversion = remoteSeed.getVersion();
+        final double clientversion = remoteSeed.getVersion();
 
         if (sb.isRobinsonMode() && !sb.isPublicRobinson()) {
         	// if we are a robinson cluster, answer only if this client is known by our network definition

@@ -41,11 +41,11 @@ import net.yacy.document.Document;
 import net.yacy.document.LibraryProvider;
 import net.yacy.document.TextParser;
 import net.yacy.kelondro.data.meta.DigestURI;
+import net.yacy.kelondro.data.meta.URIMetadata;
 import net.yacy.kelondro.data.meta.URIMetadataRow;
 import net.yacy.kelondro.logging.Log;
 import net.yacy.search.query.QueryParams;
 import net.yacy.search.query.RWIProcess;
-import net.yacy.search.query.SearchEvent;
 import net.yacy.search.ranking.RankingProfile;
 import net.yacy.search.ranking.ReferenceOrder;
 
@@ -73,9 +73,16 @@ public class DocumentIndex extends Segment
 
     static final ThreadGroup workerThreadGroup = new ThreadGroup("workerThreadGroup");
 
-    public DocumentIndex(final File segmentPath, final CallbackListener callback, final int cachesize)
+    public DocumentIndex(final File segmentPath, final File schemePath, final CallbackListener callback, final int cachesize)
         throws IOException {
-        super(new Log("DocumentIndex"), segmentPath, cachesize, targetFileSize * 4 - 1, false, false);
+        super(new Log("DocumentIndex"), segmentPath, schemePath == null ? null : new SolrConfiguration(schemePath, true));
+        super.connectRWI(cachesize, targetFileSize * 4 - 1);
+        super.connectCitation(cachesize, targetFileSize * 4 - 1);
+        super.connectUrlDb(
+                false, // useTailCache
+                false  // exceed134217727
+                );
+        super.connectLocalSolr(1000);
         final int cores = Runtime.getRuntime().availableProcessors() + 1;
         this.callback = callback;
         this.queue = new LinkedBlockingQueue<DigestURI>(cores * 300);
@@ -158,7 +165,8 @@ public class DocumentIndex extends Segment
         final URIMetadataRow[] rows = new URIMetadataRow[documents.length];
         int c = 0;
         for ( final Document document : documents ) {
-            final Condenser condenser = new Condenser(document, true, true, LibraryProvider.dymLib);
+        	if (document == null) continue;
+            final Condenser condenser = new Condenser(document, true, true, LibraryProvider.dymLib, true);
             rows[c++] =
                 super.storeDocument(
                     url,
@@ -166,6 +174,7 @@ public class DocumentIndex extends Segment
                     new Date(url.lastModified()),
                     new Date(),
                     url.length(),
+                    null,
                     document,
                     condenser,
                     null,
@@ -223,11 +232,11 @@ public class DocumentIndex extends Segment
         final QueryParams query =
             new QueryParams(querystring, count, null, this, textRankingDefault, "DocumentIndex");
         final ReferenceOrder order = new ReferenceOrder(query.ranking, UTF8.getBytes(query.targetlang));
-        final RWIProcess rankedCache = new RWIProcess(query, order, SearchEvent.max_results_preparation, false);
+        final RWIProcess rankedCache = new RWIProcess(query, order, false);
         rankedCache.start();
 
         // search is running; retrieve results
-        URIMetadataRow row;
+        URIMetadata row;
         final ArrayList<DigestURI> files = new ArrayList<DigestURI>();
         while ( (row = rankedCache.takeURL(false, 1000)) != null ) {
             files.add(row.url());
@@ -243,7 +252,7 @@ public class DocumentIndex extends Segment
      * close the index. This terminates all worker threads and then closes the segment.
      */
     @Override
-    public void close() {
+    public synchronized void close() {
         // send termination signal to worker threads
         for ( @SuppressWarnings("unused")
         final Worker element : this.worker ) {
@@ -298,7 +307,7 @@ public class DocumentIndex extends Segment
         try {
             if ( args[1].equals("add") ) {
                 final DigestURI f = new DigestURI(args[2]);
-                final DocumentIndex di = new DocumentIndex(segmentPath, callback, 100000);
+                final DocumentIndex di = new DocumentIndex(segmentPath, null, callback, 100000);
                 di.addConcurrent(f);
                 di.close();
             } else {
@@ -307,7 +316,7 @@ public class DocumentIndex extends Segment
                     query += args[i];
                 }
                 query.trim();
-                final DocumentIndex di = new DocumentIndex(segmentPath, callback, 100000);
+                final DocumentIndex di = new DocumentIndex(segmentPath, null, callback, 100000);
                 final ArrayList<DigestURI> results = di.find(query, 100);
                 for ( final DigestURI f : results ) {
                     if ( f != null ) {

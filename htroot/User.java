@@ -42,7 +42,7 @@ import de.anomic.server.servletProperties;
 
 public class User{
 
-    public static servletProperties respond(final RequestHeader requestHeader, final serverObjects post, final serverSwitch env) {
+    public static servletProperties respond(final RequestHeader requestHeader, final serverObjects post, @SuppressWarnings("unused") final serverSwitch env) {
         final servletProperties prop = new servletProperties();
         final Switchboard sb = Switchboard.getSwitchboard();
         UserDB.Entry entry=null;
@@ -112,7 +112,7 @@ public class User{
                 cookie=sb.userDB.getAdminCookie();
 
             if(entry != null || staticAdmin){
-                final ResponseHeader outgoingHeader=new ResponseHeader();
+                final ResponseHeader outgoingHeader=new ResponseHeader(200);
                 outgoingHeader.setCookie("login", cookie);
                 prop.setOutgoingHeader(outgoingHeader);
 
@@ -157,7 +157,7 @@ public class User{
             }
             //XXX: This should not be needed anymore, because of isLoggedout
             if(! (requestHeader.get(RequestHeader.AUTHORIZATION, "xxxxxx")).equals("xxxxxx")){
-                prop.put("AUTHENTICATE","admin log-in");
+            	prop.authenticationRequired();
             }
             if(post.containsKey("returnto")){
                 prop.put("LOCATION", post.get("returnto"));

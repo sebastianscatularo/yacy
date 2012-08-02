@@ -27,6 +27,8 @@
 
 package net.yacy.kelondro.index;
 
+import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -40,6 +42,7 @@ import net.yacy.cora.document.UTF8;
 import net.yacy.cora.order.AbstractOrder;
 import net.yacy.cora.order.ByteOrder;
 import net.yacy.cora.order.Order;
+import net.yacy.cora.util.NumberTools;
 import net.yacy.kelondro.logging.Log;
 import net.yacy.kelondro.order.Base64Order;
 import net.yacy.kelondro.order.Bitfield;
@@ -48,9 +51,10 @@ import net.yacy.kelondro.util.ByteBuffer;
 import net.yacy.kelondro.util.kelondroException;
 
 
-public final class Row {
+public final class Row implements Serializable {
 
     //private final static Pattern commaPattern = Pattern.compile(",");
+    private static final long serialVersionUID=-148412365988669116L;
 
     protected final Column[]        row;
     public final int[]              colstart;
@@ -153,31 +157,24 @@ public final class Row {
 
     public final Entry newEntry(final byte[] rowinstance) {
         if (rowinstance == null) return null;
-        //assert (rowinstance[0] != 0);
-        if (!(this.objectOrder.wellformed(rowinstance, 0, this.primaryKeyLength))) {
-            Log.logWarning("kelondroRow", "row not well-formed: rowinstance[0] = " + UTF8.String(rowinstance, 0, this.primaryKeyLength) + " / " + NaturalOrder.arrayList(rowinstance, 0, this.primaryKeyLength));
-            return null;
-        }
-        return new Entry(rowinstance, false);
+        assert (this.objectOrder.wellformed(rowinstance, 0, this.primaryKeyLength)) :  "row not well-formed: rowinstance[0] = " + UTF8.String(rowinstance, 0, this.primaryKeyLength) + " / " + NaturalOrder.arrayList(rowinstance, 0, this.primaryKeyLength);
+        return new Entry(rowinstance, 0, false);
     }
 
     public final Entry newEntry(final Entry oldrow, final int fromColumn) {
         if (oldrow == null) return null;
         assert (oldrow.getColBytes(0, false)[0] != 0);
         assert (this.objectOrder.wellformed(oldrow.getPrimaryKeyBytes(), 0, this.primaryKeyLength));
-        return new Entry(oldrow, fromColumn, false);
+        return new Entry(oldrow.rowinstance, oldrow.offset + oldrow.colstart(fromColumn), false);
     }
 
     public final Entry newEntry(final byte[] rowinstance, final int start, final boolean clone) {
         if (rowinstance == null) return null;
-        //assert (rowinstance[0] != 0);
-        final boolean wellformed = this.objectOrder.wellformed(rowinstance, start, this.primaryKeyLength);
         try {
-            assert (wellformed) : "rowinstance = " + UTF8.String(rowinstance);
+            assert (this.objectOrder.wellformed(rowinstance, start, this.primaryKeyLength)) : "rowinstance = " + UTF8.String(rowinstance);
         } catch (final Throwable e) {
             Log.logException(e);
         }
-        if (!wellformed) return null;
         // this method offers the option to clone the content
         // this is necessary if it is known that the underlying byte array may change and therefore
         // the reference to the byte array does not contain the original content
@@ -210,33 +207,41 @@ public final class Row {
             this.base = baseOrder;
         }
 
+        @Override
         public int compare(final Entry a, final Entry b) {
             return a.compareTo(b);
         }
 
+        @Override
         public boolean equal(final Entry a, final Entry b) {
             return a.equals(b);
         }
 
+        @Override
         public Order<Entry> clone() {
             return new EntryComparator(this.base);
         }
 
+        @Override
         public long cardinal(final Entry key) {
             return this.base.cardinal(key.bytes(), 0, key.getPrimaryKeyLength());
         }
 
+        @Override
         public String signature() {
             return this.base.signature();
         }
 
+        @Override
         public boolean wellformed(final Entry a) {
             return this.base.wellformed(a.getPrimaryKeyBytes());
         }
 
     }
 
-    public class Entry implements Comparable<Entry>, Comparator<Entry>, Cloneable {
+    public class Entry implements Comparable<Entry>, Comparator<Entry>, Cloneable, Serializable {
+
+        private static final long serialVersionUID=-2576312347345553495L;
 
         private byte[] rowinstance;
         private int offset; // the offset where the row starts within rowinstance
@@ -247,18 +252,10 @@ public final class Row {
             this.offset = 0;
         }
 
-        public Entry(final byte[] newrow, final boolean forceclone) {
-            this(newrow, 0, forceclone);
-        }
-
-        public Entry(final Entry oldrow, final int fromColumn, final boolean forceclone) {
-            this(oldrow.rowinstance, oldrow.offset + oldrow.colstart(fromColumn), forceclone);
-        }
-
         public Entry(final byte[] newrow, final int start, final boolean forceclone) {
             if (forceclone || newrow.length - start < Row.this.objectsize) {
                 this.rowinstance = new byte[Row.this.objectsize];
-                System.arraycopy(newrow, start, this.rowinstance, 0, Row.this.objectsize);
+                System.arraycopy(newrow, start, this.rowinstance, 0, Math.min(newrow.length, Row.this.objectsize));
                 this.offset = 0;
             } else {
                 this.rowinstance = newrow;
@@ -289,7 +286,7 @@ public final class Row {
 
         public Entry(String external, final boolean decimalCardinal) {
             // parse external form
-            if (external.length() > 0 && external.charAt(0) == '{') external = external.substring(1, external.length() - 1);
+            if (!external.isEmpty() && external.charAt(0) == '{') external = external.substring(1, external.length() - 1);
             //final String[] elts = commaPattern.split(external);
             final StringTokenizer st = new StringTokenizer(external, ",");
             if (Row.this.nickref == null) genNickRef();
@@ -313,7 +310,7 @@ public final class Row {
                     } else {
                         if ((decimalCardinal) && (col.celltype == Column.celltype_cardinal)) {
                             try {
-                                setCol(col.encoder, this.offset + clstrt, col.cellwidth,  Long.parseLong(token.substring(p + 1).trim()));
+                                setCol(col.encoder, this.offset + clstrt, col.cellwidth, NumberTools.parseLongDecSubstring(token, p + 1));
                             } catch (final NumberFormatException e) {
                                 Log.logSevere("kelondroRow", "NumberFormatException for celltype_cardinal, celltype = " + col.celltype + ", encoder = " + col.encoder + ", value = '" + token.substring(p + 1).trim() + "'");
                                 setCol(col.encoder, this.offset + clstrt, col.cellwidth, 0);
@@ -321,7 +318,7 @@ public final class Row {
                         } else if ((decimalCardinal) && (col.celltype == Column.celltype_binary)) {
                             assert col.cellwidth == 1;
                             try {
-                                setCol(clstrt, col.cellwidth, new byte[]{(byte) Integer.parseInt(token.substring(p + 1).trim())});
+                                setCol(clstrt, col.cellwidth, new byte[]{(byte) NumberTools.parseIntDecSubstring(token, p + 1)});
                             } catch (final NumberFormatException e) {
                                 Log.logSevere("kelondroRow", "NumberFormatException for celltype_binary, celltype = " + col.celltype + ", encoder = " + col.encoder + ", value = '" + token.substring(p + 1).trim() + "'");
                                 setCol(clstrt, col.cellwidth, new byte[]{0});
@@ -344,6 +341,7 @@ public final class Row {
             return Row.this.row[column].cellwidth;
         }
 
+        @Override
         public final int compareTo(final Entry o) {
             // compares only the content of the primary key
             if (Row.this.objectOrder == null) throw new kelondroException("objects cannot be compared, no order given");
@@ -351,6 +349,7 @@ public final class Row {
             return Row.this.objectOrder.compare(bytes(), o.bytes(), Row.this.primaryKeyLength);
         }
 
+        @Override
         public int compare(final Entry o1, final Entry o2) {
             return o1.compareTo(o2);
         }
@@ -457,6 +456,8 @@ public final class Row {
                 break;
             case Column.encoder_bytes:
                 throw new kelondroException("ROW", "setColLong of celltype bytes not applicable");
+            default:
+                throw new kelondroException("ROW", "setColLong has celltype none, no encoder given");
             }
         }
 
@@ -474,8 +475,9 @@ public final class Row {
                 l = c + NaturalOrder.decodeLong(this.rowinstance, this.offset + colstrt, cellwidth);
                 NaturalOrder.encodeLong(l, this.rowinstance, this.offset + colstrt, cellwidth);
                 return l;
+            default:
+                throw new kelondroException("ROW", "addCol did not find appropriate encoding");
             }
-            throw new kelondroException("ROW", "addCol did not find appropriate encoding");
         }
 
         public final byte[] getPrimaryKeyBytes() {
@@ -561,8 +563,9 @@ public final class Row {
                 return NaturalOrder.decodeLong(this.rowinstance, this.offset + clstrt, length);
             case Column.encoder_bytes:
                 throw new kelondroException("ROW", "getColLong of celltype bytes not applicable");
+            default:
+                throw new kelondroException("ROW", "getColLong did not find appropriate encoding");
             }
-            throw new kelondroException("ROW", "getColLong did not find appropriate encoding");
         }
 
         public final byte getColByte(final int column) {
@@ -621,7 +624,9 @@ public final class Row {
             }
             if (includeBraces) bb.append('}');
             //System.out.println("DEBUG-ROW " + bb.toString());
-            return bb.toString();
+            String bbs = bb.toString();
+            try {bb.close();} catch (IOException e) {}
+            return bbs;
         }
 
         @Override
@@ -631,10 +636,13 @@ public final class Row {
 
     }
 
-    public final class EntryIndex extends Entry {
+    public final class EntryIndex extends Entry implements Serializable {
+
+        private static final long serialVersionUID=153069052590699231L;
+
         private final int index;
         public EntryIndex(final byte[] row, final int i) {
-            super(row, false);
+            super(row, 0, false);
             this.index = i;
         }
         public int index() {

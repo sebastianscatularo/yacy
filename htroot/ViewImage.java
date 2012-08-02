@@ -32,6 +32,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.Map;
 
+import net.yacy.cora.protocol.Domains;
 import net.yacy.cora.protocol.HeaderFramework;
 import net.yacy.cora.protocol.RequestHeader;
 import net.yacy.cora.services.federated.yacy.CacheStrategy;
@@ -41,7 +42,9 @@ import net.yacy.kelondro.data.meta.DigestURI;
 import net.yacy.kelondro.logging.Log;
 import net.yacy.kelondro.util.FileUtils;
 import net.yacy.kelondro.util.MemoryControl;
+import net.yacy.repository.Blacklist.BlacklistType;
 import net.yacy.search.Switchboard;
+import de.anomic.crawler.CrawlQueues;
 import de.anomic.server.serverObjects;
 import de.anomic.server.serverSwitch;
 
@@ -67,7 +70,7 @@ public class ViewImage {
 
         String urlString = post.get("url", "");
         final String urlLicense = post.get("code", "");
-        final boolean auth = (header.get(HeaderFramework.CONNECTION_PROP_CLIENTIP, "")).equals("localhost") || sb.verifyAuthentication(header); // handle access rights
+        final boolean auth = Domains.isLocalhost(header.get(HeaderFramework.CONNECTION_PROP_CLIENTIP, "")) || sb.verifyAuthentication(header); // handle access rights
 
         DigestURI url = null;
         if ((urlString.length() > 0) && (auth)) try {
@@ -94,7 +97,7 @@ public class ViewImage {
         if (image == null) {
             byte[] resourceb = null;
             if (url != null) try {
-                resourceb = sb.loader.loadContent(sb.loader.request(url, false, true), CacheStrategy.IFEXIST);
+                resourceb = sb.loader.loadContent(sb.loader.request(url, false, true), CacheStrategy.IFEXIST, BlacklistType.SEARCH, CrawlQueues.queuedMinLoadDelay);
             } catch (final IOException e) {
                 Log.logFine("ViewImage", "cannot load: " + e.getMessage());
             }

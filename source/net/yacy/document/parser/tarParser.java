@@ -39,6 +39,7 @@ import net.yacy.document.AbstractParser;
 import net.yacy.document.Document;
 import net.yacy.document.Parser;
 import net.yacy.document.TextParser;
+import net.yacy.kelondro.data.meta.DigestURI;
 import net.yacy.kelondro.util.FileUtils;
 
 import org.apache.tools.tar.TarEntry;
@@ -60,7 +61,7 @@ public class tarParser extends AbstractParser implements Parser {
     }
 
     @Override
-    public Document[] parse(final MultiProtocolURI url, final String mimeType, final String charset, InputStream source) throws Parser.Failure, InterruptedException {
+    public Document[] parse(final DigestURI url, final String mimeType, final String charset, InputStream source) throws Parser.Failure, InterruptedException {
 
         final List<Document> docacc = new ArrayList<Document>();
         Document[] subDocs = null;
@@ -89,16 +90,16 @@ public class tarParser extends AbstractParser implements Parser {
                 try {
                     tmp = FileUtils.createTempFile(this.getClass(), name);
                     FileUtils.copy(tis, tmp, entry.getSize());
-                    subDocs = TextParser.parseSource(MultiProtocolURI.newURL(url,"#" + name), mime, null, tmp);
+                    subDocs = TextParser.parseSource(new DigestURI(MultiProtocolURI.newURL(url,"#" + name)), mime, null, tmp);
                     if (subDocs == null) continue;
                     for (final Document d: subDocs) docacc.add(d);
                 } catch (final Parser.Failure e) {
-                    this.log.logWarning("tar parser entry " + name + ": " + e.getMessage());
+                    AbstractParser.log.logWarning("tar parser entry " + name + ": " + e.getMessage());
                 } finally {
                     if (tmp != null) FileUtils.deletedelete(tmp);
                 }
             } catch (final IOException e) {
-                this.log.logWarning("tar parser:" + e.getMessage());
+                AbstractParser.log.logWarning("tar parser:" + e.getMessage());
                 break;
             }
         }
@@ -107,8 +108,9 @@ public class tarParser extends AbstractParser implements Parser {
 
     public final static boolean isTar(File f) {
         if (!f.exists() || f.length() < 0x105) return false;
+        RandomAccessFile raf = null;
         try {
-            RandomAccessFile raf = new RandomAccessFile(f, "r");
+            raf = new RandomAccessFile(f, "r");
             raf.seek(0x101);
             byte[] b = new byte[5];
             raf.read(b);
@@ -117,6 +119,8 @@ public class tarParser extends AbstractParser implements Parser {
             return false;
         } catch (IOException e) {
             return false;
+        } finally {
+            if (raf != null) try {raf.close();} catch (IOException e) {}
         }
     }
 }

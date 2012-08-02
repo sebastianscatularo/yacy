@@ -73,7 +73,7 @@ public class DigestURI extends MultiProtocolURI implements Serializable {
         }
         return (url == null) ? null : ASCII.String(url.hash(), 6, 6);
     }
-    
+
     /**
      * from a given list of hosts make a list of host hashes
      * the list is separated by comma
@@ -86,16 +86,16 @@ public class DigestURI extends MultiProtocolURI implements Serializable {
         for (String h: hs) {
             if (h == null) continue;
             h = h.trim();
-            if (h.length() == 0) continue;
+            if (h.isEmpty()) continue;
             h = hosthash(h);
             if (h == null || h.length() != 6) continue;
             sb.append(h);
         }
         return sb.toString();
     }
-    
+
     public static Set<String> hosthashess(String hosthashes) {
-        if (hosthashes == null || hosthashes.length() == 0) return null;
+        if (hosthashes == null || hosthashes.isEmpty()) return null;
         HashSet<String> h = new HashSet<String>();
         assert hosthashes.length() % 6 == 0;
         for (int i = 0; i < hosthashes.length(); i = i + 6) {
@@ -103,7 +103,7 @@ public class DigestURI extends MultiProtocolURI implements Serializable {
         }
         return h;
     }
-    
+
 
     /**
      * DigestURI from File
@@ -116,7 +116,8 @@ public class DigestURI extends MultiProtocolURI implements Serializable {
      * DigestURI from URI string
      */
     public DigestURI(final String url) throws MalformedURLException {
-        this(url, null);
+        super(url);
+        this.hash = null;
     }
 
     /**
@@ -159,12 +160,14 @@ public class DigestURI extends MultiProtocolURI implements Serializable {
         this.hash = null;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#hashCode()
-     */
+    private int hashCache = Integer.MIN_VALUE; // if this is used in a compare method many times, a cache is useful
+
     @Override
     public int hashCode() {
-        return ByteArray.hashCode(hash());
+        if (this.hashCache == Integer.MIN_VALUE) {
+            this.hashCache = ByteArray.hashCode(hash());
+        }
+        return this.hashCache;
     }
 
     public static final int flagTypeID(final String hash) {
@@ -185,12 +188,7 @@ public class DigestURI extends MultiProtocolURI implements Serializable {
      */
     public final byte[] hash() {
         // in case that the object was initialized without a known url hash, compute it now
-        if (this.hash == null) {
-            // we check the this.hash value twice to avoid synchronization where possible
-            synchronized (this.protocol) {
-                if (this.hash == null) this.hash = urlHashComputation();
-            }
-        }
+        if (this.hash == null) this.hash = urlHashComputation();
         return this.hash;
     }
 
@@ -224,7 +222,7 @@ public class DigestURI extends MultiProtocolURI implements Serializable {
         // find rootpath
         int rootpathStart = 0;
         int rootpathEnd = this.path.length() - 1;
-        if (this.path.length() > 0 && this.path.charAt(0) == '/')
+        if (!this.path.isEmpty() && this.path.charAt(0) == '/')
             rootpathStart = 1;
         if (this.path.endsWith("/"))
             rootpathEnd = this.path.length() - 2;
@@ -244,7 +242,7 @@ public class DigestURI extends MultiProtocolURI implements Serializable {
         final StringBuilder hashs = new StringBuilder(12);
         assert hashs.length() == 0;
         // form the 'local' part of the hash
-        final String normalform = toNormalform(true, true, false, true);
+        final String normalform = toNormalform(true, true, true);
         final String b64l = Base64Order.enhancedCoder.encode(Digest.encodeMD5Raw(normalform));
         if (b64l.length() < 5) return null;
         hashs.append(b64l.substring(0, 5)); // 5 chars
@@ -297,11 +295,10 @@ public class DigestURI extends MultiProtocolURI implements Serializable {
     private static final String hosthash5(final String protocol, final String host, final int port) {
         if (host == null) {
             return Base64Order.enhancedCoder.encode(Digest.encodeMD5Raw(protocol)).substring(0, 5);
-        } else {
-            final StringBuilder sb = new StringBuilder(host.length() + 15);
-            sb.append(protocol).append(':').append(host).append(':').append(Integer.toString(port));
-            return Base64Order.enhancedCoder.encode(Digest.encodeMD5Raw(sb.toString())).substring(0, 5);
         }
+        final StringBuilder sb = new StringBuilder(host.length() + 15);
+        sb.append(protocol).append(':').append(host).append(':').append(Integer.toString(port));
+        return Base64Order.enhancedCoder.encode(Digest.encodeMD5Raw(sb.toString())).substring(0, 5);
     }
 
     /**
@@ -349,8 +346,9 @@ public class DigestURI extends MultiProtocolURI implements Serializable {
             return 14;
         case 3:
             return 20;
+        default:
+            return 20;
         }
-        return 20;
     }
 
     public static int domLengthNormalized(final byte[] urlHashBytes) {
@@ -375,11 +373,7 @@ public class DigestURI extends MultiProtocolURI implements Serializable {
     @Override
     public final boolean isLocal() {
         if (this.isFile()) return true;
-        if (this.hash == null) synchronized (this.protocol) {
-            // this is synchronized because another thread may also call the same method in between
-            // that is the reason that this.hash is checked again
-            if (this.hash == null) this.hash = urlHashComputation();
-        }
+        if (this.hash == null) this.hash = urlHashComputation();
         return domDomain(this.hash) == 7;
     }
 

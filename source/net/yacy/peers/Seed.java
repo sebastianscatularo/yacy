@@ -65,8 +65,8 @@ import net.yacy.cora.document.UTF8;
 import net.yacy.cora.protocol.Domains;
 import net.yacy.cora.sorting.ClusteredScoreMap;
 import net.yacy.cora.sorting.ScoreMap;
+import net.yacy.cora.storage.HandleSet;
 import net.yacy.kelondro.data.word.Word;
-import net.yacy.kelondro.index.HandleSet;
 import net.yacy.kelondro.order.Base64Order;
 import net.yacy.kelondro.order.Digest;
 import net.yacy.kelondro.util.MapTools;
@@ -167,6 +167,7 @@ public class Seed implements Cloneable, Comparable<Seed>, Comparator<Seed>
     private static final int FLAG_DIRECT_CONNECT = 0;
     private static final int FLAG_ACCEPT_REMOTE_CRAWL = 1;
     private static final int FLAG_ACCEPT_REMOTE_INDEX = 2;
+    private static final int FLAG_ROOT_NODE = 3;
 
     public static final String DFLT_NETWORK_UNIT = "freeworld";
     public static final String DFLT_NETWORK_GROUP = "";
@@ -246,7 +247,7 @@ public class Seed implements Cloneable, Comparable<Seed>, Comparator<Seed>
 
     /**
      * check the peer name: protect against usage as XSS hack
-     * 
+     *
      * @param id
      * @return a checked name without "<" and ">"
      */
@@ -259,7 +260,7 @@ public class Seed implements Cloneable, Comparable<Seed>, Comparator<Seed>
 
     /**
      * generate a default peer name
-     * 
+     *
      * @return
      */
     private static String defaultPeerName() {
@@ -273,7 +274,7 @@ public class Seed implements Cloneable, Comparable<Seed>, Comparator<Seed>
 
     /**
      * Checks for the static fragments of a generated default peer name, such as the string 'dpn'
-     * 
+     *
      * @see #makeDefaultPeerName()
      * @param name the peer name to check for default peer name compliance
      * @return whether the given peer name may be a default generated peer name
@@ -300,17 +301,17 @@ public class Seed implements Cloneable, Comparable<Seed>, Comparator<Seed>
 
     /**
      * try to get the IP<br>
-     * 
+     *
      * @return the IP or null
      */
     public final String getIP() {
-        final String ip = get(Seed.IP, "127.0.0.1");
-        return (ip == null || ip.length() == 0) ? "127.0.0.1" : ip;
+        final String ip = get(Seed.IP, Domains.LOCALHOST);
+        return (ip == null || ip.isEmpty()) ? Domains.LOCALHOST : ip;
     }
 
     /**
      * try to get the peertype<br>
-     * 
+     *
      * @return the peertype or null
      */
     public final String getPeerType() {
@@ -319,7 +320,7 @@ public class Seed implements Cloneable, Comparable<Seed>, Comparator<Seed>
 
     /**
      * try to get the peertype<br>
-     * 
+     *
      * @return the peertype or "virgin"
      */
     public final String orVirgin() {
@@ -328,7 +329,7 @@ public class Seed implements Cloneable, Comparable<Seed>, Comparator<Seed>
 
     /**
      * try to get the peertype<br>
-     * 
+     *
      * @return the peertype or "junior"
      */
     public final String orJunior() {
@@ -337,7 +338,7 @@ public class Seed implements Cloneable, Comparable<Seed>, Comparator<Seed>
 
     /**
      * try to get the peertype<br>
-     * 
+     *
      * @return the peertype or "senior"
      */
     public final String orSenior() {
@@ -346,7 +347,7 @@ public class Seed implements Cloneable, Comparable<Seed>, Comparator<Seed>
 
     /**
      * try to get the peertype<br>
-     * 
+     *
      * @return the peertype or "principal"
      */
     public final String orPrincipal() {
@@ -355,7 +356,7 @@ public class Seed implements Cloneable, Comparable<Seed>, Comparator<Seed>
 
     /**
      * Get a value from the peer's DNA (its set of peer defining values, e.g. IP, name, version, ...)
-     * 
+     *
      * @param key the key for the value to fetch
      * @param dflt the default value
      */
@@ -502,7 +503,7 @@ public class Seed implements Cloneable, Comparable<Seed>, Comparator<Seed>
      * Cause: the natural order of octal hashes are the same as the b64-order of b64Hashes. a hexhash cannot
      * be used in such cases, and b64Hashes are not appropriate for file names
      * </p>
-     * 
+     *
      * @param b64Hash a base64 hash
      * @return the octal representation of the given base64 hash
      */
@@ -512,7 +513,7 @@ public class Seed implements Cloneable, Comparable<Seed>, Comparator<Seed>
 
     /**
      * <code>12 * 6 bit = 72 bit = 18</code> characters hex-hash
-     * 
+     *
      * @param b64Hash a base64 hash
      * @return the hexadecimal representation of the given base64 hash
      */
@@ -534,21 +535,21 @@ public class Seed implements Cloneable, Comparable<Seed>, Comparator<Seed>
 
     /**
      * The returned version follows this pattern: <code>MAJORVERSION . MINORVERSION 0 SVN REVISION</code>
-     * 
+     *
      * @return the YaCy version of this peer as a float or <code>0</code> if no valid value could be retrieved
      *         from this yacySeed object
      */
-    public final float getVersion() {
+    public final Double getVersion() {
         try {
-            return Float.parseFloat(get(Seed.VERSION, Seed.ZERO));
+            return Double.parseDouble(get(Seed.VERSION, Seed.ZERO));
         } catch ( final NumberFormatException e ) {
-            return 0;
+            return 0.0d;
         }
     }
 
     /**
      * get the SVN version of the peer
-     * 
+     *
      * @return
      */
     public final int getRevision() {
@@ -562,7 +563,7 @@ public class Seed implements Cloneable, Comparable<Seed>, Comparator<Seed>
     public final String getPublicAddress() {
         String ip = getIP();
         if ( ip == null || ip.length() < 8 || ip.length() > 60 ) {
-            ip = "127.0.0.1";
+            ip = Domains.LOCALHOST;
         }
 
         final String port = this.dna.get(Seed.PORT);
@@ -581,7 +582,7 @@ public class Seed implements Cloneable, Comparable<Seed>, Comparator<Seed>
      * If this seed is part of a cluster, the peer has probably the {@linkplain #alternativeIP} object set to
      * a local IP. If this is present and the public IP of this peer is identical to the public IP of the own
      * seed, construct an address using this IP; otherwise return the public address
-     * 
+     *
      * @see #getPublicAddress()
      * @return the alternative IP:port if present, else the public address
      */
@@ -653,7 +654,7 @@ public class Seed implements Cloneable, Comparable<Seed>, Comparator<Seed>
 
     /**
      * test if the lastSeen time of the seed has a time-out
-     * 
+     *
      * @param milliseconds the maximum age of the last-seen value
      * @return true, if the time between the last-seen time and now is greater then the given time-out
      */
@@ -740,7 +741,7 @@ public class Seed implements Cloneable, Comparable<Seed>, Comparator<Seed>
 
     private boolean getFlag(final int flag) {
         final String flags = get(Seed.FLAGS, Seed.FLAGSZERO);
-        return (new bitfield(UTF8.getBytes(flags))).get(flag);
+        return (new bitfield(ASCII.getBytes(flags))).get(flag);
     }
 
     private void setFlag(final int flag, final boolean value) {
@@ -748,7 +749,7 @@ public class Seed implements Cloneable, Comparable<Seed>, Comparator<Seed>
         if ( flags.length() != 4 ) {
             flags = Seed.FLAGSZERO;
         }
-        final bitfield f = new bitfield(UTF8.getBytes(flags));
+        final bitfield f = new bitfield(ASCII.getBytes(flags));
         f.set(flag, value);
         this.dna.put(Seed.FLAGS, UTF8.String(f.getBytes()));
     }
@@ -765,24 +766,34 @@ public class Seed implements Cloneable, Comparable<Seed>, Comparator<Seed>
         setFlag(FLAG_ACCEPT_REMOTE_INDEX, value);
     }
 
+    public final void setFlagRootNode(final boolean value) {
+        setFlag(FLAG_ROOT_NODE, value);
+    }
+
     public final boolean getFlagDirectConnect() {
-        return getFlag(0);
+        return getFlag(FLAG_DIRECT_CONNECT);
     }
 
     public final boolean getFlagAcceptRemoteCrawl() {
         //if (getVersion() < 0.300) return false;
         //if (getVersion() < 0.334) return true;
-        return getFlag(1);
+        return getFlag(FLAG_ACCEPT_REMOTE_CRAWL);
     }
 
     public final boolean getFlagAcceptRemoteIndex() {
         //if (getVersion() < 0.335) return false;
-        return getFlag(2);
+        return getFlag(FLAG_ACCEPT_REMOTE_INDEX);
+    }
+
+    public final boolean getFlagRootNode() {
+        double v = getVersion();
+        if (v < 1.02009142d) return false;
+        return getFlag(FLAG_ROOT_NODE);
     }
 
     public final void setUnusedFlags() {
         for ( int i = 4; i < 24; i++ ) {
-            setFlag(i, true);
+            setFlag(i, false);
         }
     }
 
@@ -945,7 +956,6 @@ public class Seed implements Cloneable, Comparable<Seed>, Comparator<Seed>
 
     public static Seed genRemoteSeed(
         final String seedStr,
-        final String key,
         final boolean ownSeed,
         final String patchIP) throws IOException {
         // this method is used to convert the external representation of a seed into a seed object
@@ -955,15 +965,15 @@ public class Seed implements Cloneable, Comparable<Seed>, Comparator<Seed>
         if ( seedStr == null ) {
             throw new IOException("seedStr == null");
         }
-        if ( seedStr.length() == 0 ) {
-            throw new IOException("seedStr.length() == 0");
+        if ( seedStr.isEmpty() ) {
+            throw new IOException("seedStr.isEmpty()");
         }
-        final String seed = crypt.simpleDecode(seedStr, key);
+        final String seed = crypt.simpleDecode(seedStr);
         if ( seed == null ) {
             throw new IOException("seed == null");
         }
-        if ( seed.length() == 0 ) {
-            throw new IOException("seed.length() == 0");
+        if ( seed.isEmpty() ) {
+            throw new IOException("seed.isEmpty()");
         }
 
         // extract hash
@@ -1030,16 +1040,14 @@ public class Seed implements Cloneable, Comparable<Seed>, Comparator<Seed>
 
         // seedURL
         final String seedURL = this.dna.get(SEEDLISTURL);
-        if ( seedURL != null && seedURL.length() > 0 ) {
+        if ( seedURL != null && !seedURL.isEmpty() ) {
             if ( !seedURL.startsWith("http://") && !seedURL.startsWith("https://") ) {
                 return "wrong protocol for seedURL";
             }
             try {
                 final URL url = new URL(seedURL);
                 final String host = url.getHost();
-                if ( host.equals("localhost")
-                    || host.startsWith("127.")
-                    || (host.startsWith("0:0:0:0:0:0:0:1")) ) {
+                if (Domains.isLocalhost(host)) {
                     return "seedURL in localhost rejected";
                 }
             } catch ( final MalformedURLException e ) {
@@ -1054,7 +1062,7 @@ public class Seed implements Cloneable, Comparable<Seed>, Comparator<Seed>
         if ( ipString == null ) {
             return ipString + " -> IP is null";
         }
-        if ( ipString.length() > 0 && ipString.length() < 8 ) {
+        if ( !ipString.isEmpty() && ipString.length() < 8 ) {
             return ipString + " -> IP is too short: ";
         }
         if ( Switchboard.getSwitchboard().isAllIPMode() ) {
@@ -1083,11 +1091,7 @@ public class Seed implements Cloneable, Comparable<Seed>, Comparator<Seed>
         final String b = crypt.simpleEncode(r, key, 'b');
         // the compressed string may be longer that the uncompressed if there is too much overhead for compression meta-info
         // take simply that string that is shorter
-        if ( b.length() < z.length() ) {
-            return b;
-        } else {
-            return z;
-        }
+        return ( b.length() < z.length() ) ? b : z;
     }
 
     public final void save(final File f) throws IOException {
@@ -1102,7 +1106,7 @@ public class Seed implements Cloneable, Comparable<Seed>, Comparator<Seed>
         final char[] b = new char[(int) f.length()];
         fr.read(b, 0, b.length);
         fr.close();
-        final Seed mySeed = genRemoteSeed(new String(b), null, true, null);
+        final Seed mySeed = genRemoteSeed(new String(b), true, null);
         assert mySeed != null; // in case of an error, an IOException is thrown
         mySeed.dna.put(Seed.IP, ""); // set own IP as unknown
         return mySeed;

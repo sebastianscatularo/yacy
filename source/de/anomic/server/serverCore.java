@@ -169,9 +169,9 @@ public final class serverCore extends AbstractBusyThread implements BusyThread {
 
     public static String clientAddress(final Socket s) {
         final InetAddress uAddr = s.getInetAddress();
-        if (uAddr.isAnyLocalAddress()) return "127.0.0.1";
+        if (uAddr.isAnyLocalAddress()) return Domains.LOCALHOST;
         String cIP = uAddr.getHostAddress();
-        if (Domains.isLocal(cIP, null)) cIP = "127.0.0.1";
+        if (Domains.isLocal(cIP, null)) cIP = Domains.LOCALHOST;
         return cIP;
     }
 
@@ -298,15 +298,18 @@ public final class serverCore extends AbstractBusyThread implements BusyThread {
         : new InetSocketAddress(bindIP, bindPort);
     }
 
+    @Override
     public void open() {
         this.log.logConfig("* server started on " + Domains.myPublicLocalIP() + ":" + this.extendedPort);
     }
 
+    @Override
     public void freemem() {
         // FIXME: can we something here to flush memory? Idea: Reduce the size of some of our various caches.
     }
 
     // class body
+    @Override
     public boolean job() throws Exception {
         try {
             // prepare for new connection
@@ -407,6 +410,7 @@ public final class serverCore extends AbstractBusyThread implements BusyThread {
         }
     }
 
+    @Override
     public synchronized void close() {
         // consuming the isInterrupted Flag. Otherwise we could not properly close the session pool
         Thread.interrupted();
@@ -441,7 +445,7 @@ public final class serverCore extends AbstractBusyThread implements BusyThread {
         this.log.logConfig("* terminated");
     }
 
-    public List<Session> getJobList() {
+    public static List<Session> getJobList() {
         final Thread[] threadList = new Thread[sessionThreadGroup.activeCount()];
         serverCore.sessionThreadGroup.enumerate(threadList, false);
         final ArrayList<Session> l = new ArrayList<Session>();
@@ -456,6 +460,7 @@ public final class serverCore extends AbstractBusyThread implements BusyThread {
         return l;
     }
 
+    @Override
     public int getJobCount() {
         final Thread[] threadList = new Thread[sessionThreadGroup.activeCount()];
         serverCore.sessionThreadGroup.enumerate(threadList, false);
@@ -472,7 +477,7 @@ public final class serverCore extends AbstractBusyThread implements BusyThread {
     }
 
     // idle sensor: the thread is idle if there are no sessions running
-    public boolean idle() {
+    public static boolean idle() {
         // idleThreadCheck();
         final Thread[] threadList = new Thread[sessionThreadGroup.activeCount()];
         serverCore.sessionThreadGroup.enumerate(threadList, false);
@@ -527,6 +532,7 @@ public final class serverCore extends AbstractBusyThread implements BusyThread {
             sessionCounter++;
         }
 
+        @Override
         public int hashCode() {
             // return a hash code so it is possible to store objects of httpc objects in a HashSet
             return this.hashIndex;
@@ -560,7 +566,7 @@ public final class serverCore extends AbstractBusyThread implements BusyThread {
             return this.stopped;
         }
 
-        public void close() {
+        public synchronized void close() {
             // closing the socket to the client
             if (this.controlSocket != null) try {
                 this.controlSocket.close();
@@ -619,6 +625,7 @@ public final class serverCore extends AbstractBusyThread implements BusyThread {
          *
          * @see java.lang.Thread#run()
          */
+        @Override
         public void run()  {
             this.runningsession = true;
 
@@ -707,7 +714,7 @@ public final class serverCore extends AbstractBusyThread implements BusyThread {
                     try {
                         // if we can not determine the proper command string we try to call function emptyRequest
                         // of the commandObject
-                        if (this.request.trim().length() == 0) this.request = "EMPTY";
+                        if (this.request.trim().isEmpty()) this.request = "EMPTY";
 
                         parameter = new Object[2];
 
@@ -804,6 +811,7 @@ public final class serverCore extends AbstractBusyThread implements BusyThread {
                     } catch (final InvocationTargetException e) {
                         serverCore.this.log.logSevere("command execution, target exception " + e.getMessage() + " for client " + this.userAddress.getHostAddress(), e);
                         // we extract a target exception
+                        writeLine(this.commandObj.error(e.getCause()));
                         writeLine(this.commandObj.error(e.getTargetException()));
                         break;
                     } catch (final NoSuchMethodException e) {
@@ -958,6 +966,7 @@ public final class serverCore extends AbstractBusyThread implements BusyThread {
         public Restarter(final int delay) {
             this.delay = delay;
         }
+        @Override
         public void run() {
             // waiting for a while
             try {
@@ -997,7 +1006,7 @@ public final class serverCore extends AbstractBusyThread implements BusyThread {
                 final PKCS12Tool pkcsTool = new PKCS12Tool(pkcs12ImportFile,pkcs12ImportPwd);
 
                 // creating a new keystore file
-                if (keyStoreFileName.length() == 0) {
+                if (keyStoreFileName.isEmpty()) {
                     // using the default keystore name
                     keyStoreFileName = "DATA/SETTINGS/myPeerKeystore";
 
@@ -1025,7 +1034,7 @@ public final class serverCore extends AbstractBusyThread implements BusyThread {
             } catch (final Exception e) {
                 this.log.logSevere("Unable to import certificate from import file '" + pkcs12ImportFile + "'.",e);
             }
-        } else if (keyStoreFileName.length() == 0) return null;
+        } else if (keyStoreFileName.isEmpty()) return null;
 
 
         // get the ssl context
@@ -1077,7 +1086,8 @@ public final class serverCore extends AbstractBusyThread implements BusyThread {
 
             sslsock.addHandshakeCompletedListener(
                     new HandshakeCompletedListener() {
-                       public void handshakeCompleted(
+                       @Override
+                    public void handshakeCompleted(
                           final HandshakeCompletedEvent event) {
                           System.out.println("Handshake finished!");
                           System.out.println(

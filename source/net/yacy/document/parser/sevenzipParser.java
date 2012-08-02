@@ -38,6 +38,7 @@ import net.yacy.document.AbstractParser;
 import net.yacy.document.Document;
 import net.yacy.document.Parser;
 import net.yacy.document.TextParser;
+import net.yacy.kelondro.data.meta.DigestURI;
 import net.yacy.kelondro.logging.Log;
 import net.yacy.kelondro.util.FileUtils;
 import SevenZip.ArchiveExtractCallback;
@@ -54,7 +55,7 @@ public class sevenzipParser extends AbstractParser implements Parser {
         this.SUPPORTED_MIME_TYPES.add("application/x-7z-compressed");
     }
 
-    public Document parse(final MultiProtocolURI location, final String mimeType, final String charset, final IInStream source) throws Parser.Failure, InterruptedException {
+    public Document parse(final DigestURI location, final String mimeType, final String charset, final IInStream source) throws Parser.Failure, InterruptedException {
         final Document doc = new Document(
                 location,
                 mimeType,
@@ -74,15 +75,14 @@ public class sevenzipParser extends AbstractParser implements Parser {
                 null,
                 false);
         Handler archive;
-        super.log.logFine("opening 7zip archive...");
+        AbstractParser.log.logFine("opening 7zip archive...");
         try {
             archive = new Handler(source);
         } catch (final IOException e) {
             throw new Parser.Failure("error opening 7zip archive: " + e.getMessage(), location);
         }
-        final SZParserExtractCallback aec = new SZParserExtractCallback(super.log, archive,
-                doc, location.getFile());
-        super.log.logFine("processing archive contents...");
+        final SZParserExtractCallback aec = new SZParserExtractCallback(AbstractParser.log, archive, doc, location.getFile());
+        AbstractParser.log.logFine("processing archive contents...");
         try {
             archive.Extract(null, -1, 0, aec);
             return doc;
@@ -99,13 +99,16 @@ public class sevenzipParser extends AbstractParser implements Parser {
         }
     }
 
+    public Document parse(final DigestURI location, final String mimeType, final String charset, final byte[] source) throws Parser.Failure, InterruptedException {
+        return parse(location, mimeType, charset, new ByteArrayIInStream(source));
+    }
+
     @Override
-    public Document[] parse(final MultiProtocolURI location, final String mimeType, final String charset,
-            final InputStream source) throws Parser.Failure, InterruptedException {
+    public Document[] parse(final DigestURI location, final String mimeType, final String charset, final InputStream source) throws Parser.Failure, InterruptedException {
         try {
             final ByteArrayOutputStream cfos = new ByteArrayOutputStream();
             FileUtils.copy(source, cfos);
-            return parse(location, mimeType, charset, new ByteArrayInputStream(cfos.toByteArray()));
+            return new Document[]{parse(location, mimeType, charset, cfos.toByteArray())};
         } catch (final IOException e) {
             throw new Parser.Failure("error processing 7zip archive: " + e.getMessage(), location);
         }
@@ -165,7 +168,7 @@ public class sevenzipParser extends AbstractParser implements Parser {
                      Document[] theDocs;
                      // workaround for relative links in file, normally '#' shall be used behind the location, see
                      // below for reversion of the effects
-                     final MultiProtocolURI url = MultiProtocolURI.newURL(this.doc.dc_source(), this.prefix + "/" + super.filePath);
+                     final DigestURI url = new DigestURI(MultiProtocolURI.newURL(this.doc.dc_source(), this.prefix + "/" + super.filePath));
                      final String mime = TextParser.mimeOf(super.filePath.substring(super.filePath.lastIndexOf('.') + 1));
                      theDocs = TextParser.parseSource(url, mime, null, this.cfos.toByteArray());
 
@@ -191,4 +194,44 @@ public class sevenzipParser extends AbstractParser implements Parser {
          }
      }
 
+     private static class SeekableByteArrayInputStream extends ByteArrayInputStream {
+         public SeekableByteArrayInputStream(final byte[] buf) { super(buf); }
+         public SeekableByteArrayInputStream(final byte[] buf, final int off, final int len) { super(buf, off, len); }
+
+         public int getPosition() { return super.pos; }
+         public void seekRelative(final int offset) { seekAbsolute(super.pos + offset); }
+         public void seekAbsolute(final int offset) {
+             if (offset > super.count)
+                 throw new IndexOutOfBoundsException(Integer.toString(offset));
+             super.pos = offset;
+         }
+     }
+
+     private static class ByteArrayIInStream extends IInStream {
+
+         private final SeekableByteArrayInputStream sbais;
+
+         public ByteArrayIInStream(final byte[] buffer) {
+             this.sbais = new SeekableByteArrayInputStream(buffer);
+         }
+
+         @Override
+        public long Seek(final long offset, final int origin) {
+             switch (origin) {
+                 case STREAM_SEEK_SET: this.sbais.seekAbsolute((int)offset); break;
+                 case STREAM_SEEK_CUR: this.sbais.seekRelative((int)offset); break;
+             }
+             return this.sbais.getPosition();
+         }
+
+         @Override
+        public int read() throws IOException {
+             return this.sbais.read();
+         }
+
+         @Override
+        public int read(final byte[] b, final int off, final int len) throws IOException {
+             return this.sbais.read(b, off, len);
+         }
+     }
 }

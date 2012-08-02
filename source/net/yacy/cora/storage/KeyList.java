@@ -63,7 +63,7 @@ public class KeyList implements Iterable<String> {
             String l;
             try {
                 while ((l = reader.readLine()) != null) {
-                    if (l.length() == 0 || l.charAt(0) == '#') continue;
+                    if (l.isEmpty() || l.charAt(0) == '#') continue;
                     l = l.trim().toLowerCase();
                     this.keys.put(l, _obj);
                 }
@@ -74,6 +74,10 @@ public class KeyList implements Iterable<String> {
 
         this.raf = new RandomAccessFile(file, "rw");
 
+    }
+
+    public int size() {
+        return this.keys.size();
     }
 
     public boolean contains(final String key) {
@@ -91,7 +95,7 @@ public class KeyList implements Iterable<String> {
         }
     }
 
-    public void close() throws IOException {
+    public synchronized void close() throws IOException {
         synchronized (this.raf) {
             this.raf.close();
         }

@@ -9,7 +9,6 @@ import net.yacy.kelondro.rwi.ReferenceContainerCache;
 import net.yacy.kelondro.util.MemoryControl;
 import net.yacy.peers.graphics.WebStructureGraph.HostReference;
 import net.yacy.search.Switchboard;
-import net.yacy.search.SwitchboardConstants;
 import net.yacy.search.index.MetadataRepository;
 import net.yacy.search.index.MetadataRepository.HostStat;
 import net.yacy.search.index.Segment;
@@ -22,13 +21,13 @@ public class YBRFetch_p
 {
 
     public static servletProperties respond(
-        final RequestHeader requestHeader,
+        @SuppressWarnings("unused") final RequestHeader requestHeader,
         final serverObjects post,
         final serverSwitch env) {
         final servletProperties prop = new servletProperties();
         final Switchboard sb = (Switchboard) env;
 
-        if ( post == null || !post.containsKey("ghrt4") || MemoryControl.available() < 1024 * 1024 * 1024 ) {
+        if ( post == null || !post.containsKey("ghrt4") || MemoryControl.available() < 1024L * 1024L * 1024L ) {
             return prop;
         }
         final File hostIndexFile = new File(sb.queuesRoot, "hostIndex.blob");
@@ -42,8 +41,7 @@ public class YBRFetch_p
         }
 
         // use an index segment to find hosts for given host hashes
-        final String segmentName = sb.getConfig(SwitchboardConstants.SEGMENT_PUBLIC, "default");
-        final Segment segment = sb.indexSegments.segment(segmentName);
+        final Segment segment = sb.index;
         final MetadataRepository metadata = segment.urlMetadata();
         Map<String, HostStat> hostHashResolver;
         try {

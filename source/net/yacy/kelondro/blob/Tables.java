@@ -43,7 +43,7 @@ import java.util.regex.Pattern;
 
 import net.yacy.cora.date.GenericFormatter;
 import net.yacy.cora.document.UTF8;
-import net.yacy.kelondro.index.RowSpaceExceededException;
+import net.yacy.cora.util.SpaceExceededException;
 import net.yacy.kelondro.logging.Log;
 import net.yacy.kelondro.util.ByteArray;
 import net.yacy.kelondro.util.ByteBuffer;
@@ -70,13 +70,29 @@ public class Tables implements Iterable<String> {
         this.keymaxlen = keymaxlen;
         this.tables = new ConcurrentHashMap<String, BEncodedHeap>();
         final String[] files = this.location.list();
-        String tablename;
         File file;
+        // lazy initialization: do not open the database files here
         for (final String f: files) {
             if (f.endsWith(suffix)) {
                 file = new File(this.location, f);
                 if (file.length() == 0) {
                     file.delete();
+                    continue;
+                }
+            }
+        }
+    }
+
+    @Override
+    public Iterator<String> iterator() {
+        // we did a lazy initialization, but here we must discover all actually existing tables
+        String tablename;
+        File file;
+        final String[] files = this.location.list();
+        for (final String f: files) {
+            if (f.endsWith(suffix)) {
+                file = new File(this.location, f);
+                if (file.length() == 0) {
                     continue;
                 }
                 tablename = f.substring(0, f.length() - suffix.length());
@@ -86,10 +102,7 @@ public class Tables implements Iterable<String> {
                 }
             }
         }
-    }
-
-    @Override
-    public Iterator<String> iterator() {
+        // now the list of tables is enriched, return an iterator
         return this.tables.keySet().iterator();
     }
 
@@ -99,7 +112,7 @@ public class Tables implements Iterable<String> {
         heap.close();
     }
 
-    public void close() {
+    public synchronized void close() {
         for (final BEncodedHeap heap: this.tables.values()) heap.close();
         this.tables.clear();
     }
@@ -154,7 +167,7 @@ public class Tables implements Iterable<String> {
         return heap.size();
     }
 
-    private byte[] ukey(final String tablename) throws IOException, RowSpaceExceededException {
+    private byte[] ukey(final String tablename) throws IOException, SpaceExceededException {
         Row row = select(system_table_pkcounter, UTF8.getBytes(tablename));
         if (row == null) {
             // table counter entry in pkcounter table does not exist: make a new table entry
@@ -188,11 +201,11 @@ public class Tables implements Iterable<String> {
      * insert a map into a table using a new unique key
      * @param tablename
      * @param map
-     * @throws RowSpaceExceededException
+     * @throws SpaceExceededException
      * @throws IOException
-     * @throws RowSpaceExceededException
+     * @throws SpaceExceededException
      */
-    public byte[] insert(final String tablename, final Map<String, byte[]> map) throws IOException, RowSpaceExceededException {
+    public byte[] insert(final String tablename, final Map<String, byte[]> map) throws IOException, SpaceExceededException {
         final byte[] uk = ukey(tablename);
         update(tablename, uk, map);
         final BEncodedHeap heap = getHeap(system_table_pkcounter);
@@ -204,7 +217,7 @@ public class Tables implements Iterable<String> {
         final BEncodedHeap heap = getHeap(table);
         try {
             heap.insert(pk, map);
-        } catch (final RowSpaceExceededException e) {
+        } catch (final SpaceExceededException e) {
             throw new IOException(e.getMessage());
         }
     }
@@ -213,7 +226,7 @@ public class Tables implements Iterable<String> {
         final BEncodedHeap heap = getHeap(table);
         try {
             heap.insert(row.pk, row);
-        } catch (final RowSpaceExceededException e) {
+        } catch (final SpaceExceededException e) {
             throw new IOException(e.getMessage());
         }
     }
@@ -222,7 +235,7 @@ public class Tables implements Iterable<String> {
         final BEncodedHeap heap = getHeap(table);
         try {
             heap.update(pk, map);
-        } catch (final RowSpaceExceededException e) {
+        } catch (final SpaceExceededException e) {
             throw new IOException(e.getMessage());
         }
     }
@@ -231,16 +244,16 @@ public class Tables implements Iterable<String> {
         final BEncodedHeap heap = getHeap(table);
         try {
             heap.update(row.pk, row);
-        } catch (final RowSpaceExceededException e) {
+        } catch (final SpaceExceededException e) {
             throw new IOException(e.getMessage());
         }
     }
 
-    public byte[] createRow(final String table) throws IOException, RowSpaceExceededException {
+    public byte[] createRow(final String table) throws IOException, SpaceExceededException {
         return this.insert(table, new ConcurrentHashMap<String, byte[]>());
     }
 
-    public Row select(final String table, final byte[] pk) throws IOException, RowSpaceExceededException {
+    public Row select(final String table, final byte[] pk) throws IOException, SpaceExceededException {
         final BEncodedHeap heap = getHeap(table);
         if (heap.containsKey(pk)) return new Row(pk, heap.get(pk));
         return null;
@@ -356,7 +369,7 @@ public class Tables implements Iterable<String> {
         public RowIterator(final String table, final String whereColumn, final Pattern wherePattern) throws IOException {
             this.whereColumn = whereColumn;
             this.whereValue = null;
-            this.wherePattern = wherePattern == null || wherePattern.toString().length() == 0 ? null : wherePattern;
+            this.wherePattern = wherePattern == null || wherePattern.toString().isEmpty() ? null : wherePattern;
             final BEncodedHeap heap = getHeap(table);
             this.i = heap.iterator();
         }
@@ -371,11 +384,12 @@ public class Tables implements Iterable<String> {
         public RowIterator(final String table, final Pattern pattern) throws IOException {
             this.whereColumn = null;
             this.whereValue = null;
-            this.wherePattern = pattern == null || pattern.toString().length() == 0 ? null : pattern;
+            this.wherePattern = pattern == null || pattern.toString().isEmpty() ? null : pattern;
             final BEncodedHeap heap = getHeap(table);
             this.i = heap.iterator();
         }
 
+        @Override
         protected Row next0() {
         	Row r;
             while (this.i.hasNext()) {

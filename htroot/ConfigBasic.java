@@ -67,7 +67,7 @@ public class ConfigBasic {
         final int authentication = sb.adminAuthenticated(header);
         if (authentication < 2) {
             // must authenticate
-            prop.put("AUTHENTICATE", "admin log-in");
+        	prop.authenticationRequired();
             return prop;
         }
 
@@ -78,7 +78,7 @@ public class ConfigBasic {
 
         //boolean doPeerPing = false;
         if ((sb.peers.mySeed().isVirgin()) || (sb.peers.mySeed().isJunior())) {
-            InstantBusyThread.oneTimeJob(sb.yc, "peerPing", null, 0);
+            InstantBusyThread.oneTimeJob(sb.yc, "peerPing", 0);
             //doPeerPing = true;
         }
 

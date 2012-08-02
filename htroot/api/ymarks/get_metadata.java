@@ -47,7 +47,7 @@ public class get_metadata {
 			}
 
         	try {
-				final YMarkMetadata meta = new YMarkMetadata(new DigestURI(url), sb.indexSegments);
+				final YMarkMetadata meta = new YMarkMetadata(new DigestURI(url), sb.index);
 				final Document document = meta.loadDocument(sb.loader);
 				final EnumMap<YMarkMetadata.METADATA, String> metadata = meta.loadMetadata();
 
@@ -84,7 +84,7 @@ public class get_metadata {
 				prop.put("status", "error");
 			}
         } else {
-        	prop.put(YMarkTables.USER_AUTHENTICATE,YMarkTables.USER_AUTHENTICATE_MSG);
+        	prop.put(serverObjects.ACTION_AUTHENTICATE, YMarkTables.USER_AUTHENTICATE_MSG);
         }
         // return rewrite properties
         return prop;

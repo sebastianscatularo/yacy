@@ -24,6 +24,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+import net.yacy.cora.protocol.Domains;
 import net.yacy.cora.protocol.RequestHeader;
 import net.yacy.search.Switchboard;
 import net.yacy.search.SwitchboardConstants;
@@ -39,11 +40,11 @@ public class opensearchdescription {
         String promoteSearchPageGreeting = env.getConfig(SwitchboardConstants.GREETING, "");
         if (env.getConfigBool(SwitchboardConstants.GREETING_NETWORK_NAME, false)) promoteSearchPageGreeting = env.getConfig("network.unit.description", "");
 
-        String thisaddress = header.get("Host", "127.0.0.1");
+        String thisaddress = header.get("Host", Domains.LOCALHOST);
         if (thisaddress.indexOf(':',0) == -1) thisaddress += ":" + serverCore.getPortNr(env.getConfig("port", "8090"));
 
         int compareyacy = 0;
-        if (post != null && post.getBoolean("compare_yacy", false))
+        if (post != null && post.getBoolean("compare_yacy"))
 		compareyacy = 1;
 
         final serverObjects prop = new serverObjects();

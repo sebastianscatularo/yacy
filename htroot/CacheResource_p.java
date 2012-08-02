@@ -1,4 +1,4 @@
-// CacheResource_p.java 
+// CacheResource_p.java
 // -----------------------
 // (C) by Michael Peter Christen; mc@yacy.net
 // first published on http://www.anomic.de
@@ -30,7 +30,6 @@ import net.yacy.cora.protocol.ResponseHeader;
 import net.yacy.document.ImageParser;
 import net.yacy.kelondro.data.meta.DigestURI;
 import net.yacy.kelondro.logging.Log;
-
 import de.anomic.crawler.Cache;
 import de.anomic.server.serverObjects;
 import de.anomic.server.serverSwitch;
@@ -38,12 +37,12 @@ import de.anomic.server.servletProperties;
 
 public class CacheResource_p {
 
-    public static Object respond(final RequestHeader header, final serverObjects post, final serverSwitch env) {
+    public static Object respond(final RequestHeader header, final serverObjects post, @SuppressWarnings("unused") final serverSwitch env) {
         final servletProperties prop = new servletProperties();
         prop.put("resource", new byte[0]);
-        
+
         if (post == null) return prop;
-        
+
         final String u = post.get("url", "");
         DigestURI url;
         try {
@@ -52,27 +51,26 @@ public class CacheResource_p {
             Log.logException(e);
             return prop;
         }
-        
+
         byte[] resource = Cache.getContent(url.hash());
         if (resource == null) return prop;
-        
+
         // check request type
         if (header.get("EXT", "html").equals("png")) {
             // a png was requested
             return ImageParser.parse(u, resource);
-        } else {
-            // get response header and set mime type
-            ResponseHeader responseHeader = Cache.getResponseHeader(url.hash());
-            String resMime = responseHeader == null ? null : responseHeader.mime();
-            if (resMime != null) {
-                final ResponseHeader outgoingHeader = new ResponseHeader();
-                outgoingHeader.put(HeaderFramework.CONTENT_TYPE, resMime);
-                prop.setOutgoingHeader(outgoingHeader);
-            }        
-    
-            // add resource
-            prop.put("resource", resource);
-            return prop;
         }
+        // get response header and set mime type
+        ResponseHeader responseHeader = Cache.getResponseHeader(url.hash());
+        String resMime = responseHeader == null ? null : responseHeader.mime();
+        if (resMime != null) {
+            final ResponseHeader outgoingHeader = new ResponseHeader(200);
+            outgoingHeader.put(HeaderFramework.CONTENT_TYPE, resMime);
+            prop.setOutgoingHeader(outgoingHeader);
+        }
+
+        // add resource
+        prop.put("resource", resource);
+        return prop;
     }
 }

@@ -84,7 +84,7 @@ import net.yacy.kelondro.data.meta.DigestURI;
 import net.yacy.kelondro.io.ByteCountOutputStream;
 import net.yacy.kelondro.logging.Log;
 import net.yacy.kelondro.util.FileUtils;
-import net.yacy.repository.Blacklist;
+import net.yacy.repository.Blacklist.BlacklistType;
 import net.yacy.search.Switchboard;
 import net.yacy.search.SwitchboardConstants;
 import de.anomic.crawler.Cache;
@@ -350,7 +350,7 @@ public final class HTTPDProxyHandler {
             // respond a 404 for all AGIS ("all you get is shit") servers
             final String hostlow = host.toLowerCase();
             if (args != null) { path = path + "?" + args; }
-            if (Switchboard.urlBlacklist.isListed(Blacklist.BLACKLIST_PROXY, hostlow, path)) {
+            if (Switchboard.urlBlacklist.isListed(BlacklistType.PROXY, hostlow, path)) {
                 log.logInfo("AGIS blocking of host '" + hostlow + "'");
                 HTTPDemon.sendRespondError(conProp,countedRespond,4,403,null,
                         "URL '" + hostlow + "' blocked by yacy proxy (blacklisted)",null);
@@ -403,8 +403,8 @@ public final class HTTPDProxyHandler {
                 		request,
                         requestHeader,
                         cachedResponseHeader,
-                        "200 OK",
-                        sb.crawler.defaultProxyProfile
+                        sb.crawler.defaultProxyProfile,
+                        true
                 );
                 final byte[] cacheContent = Cache.getContent(url.hash());
                 if (cacheContent != null && response.isFreshForProxy()) {
@@ -444,10 +444,11 @@ public final class HTTPDProxyHandler {
 
     private static void fulfillRequestFromWeb(final HashMap<String, Object> conProp, final DigestURI url, final RequestHeader requestHeader, final ResponseHeader cachedResponseHeader, final OutputStream respond) {
         try {
+        	final boolean proxyAugmentation = sb.getConfigBool("proxyAugmentation", false);
             final int reqID = requestHeader.hashCode();
 
             String host =    (String) conProp.get(HeaderFramework.CONNECTION_PROP_HOST);
-            final String path =    (String) conProp.get(HeaderFramework.CONNECTION_PROP_PATH);     // always starts with leading '/'
+            String path =    (String) conProp.get(HeaderFramework.CONNECTION_PROP_PATH);     // always starts with leading '/'
             final String args =    (String) conProp.get(HeaderFramework.CONNECTION_PROP_ARGS);     // may be null if no args were given
             final String ip =      (String) conProp.get(HeaderFramework.CONNECTION_PROP_CLIENTIP); // the ip from the connecting peer
             final String httpVer = (String) conProp.get(HeaderFramework.CONNECTION_PROP_HTTP_VER); // the ip from the connecting peer
@@ -458,6 +459,13 @@ public final class HTTPDProxyHandler {
             } else {
                 port = Integer.parseInt(host.substring(pos + 1));
                 host = host.substring(0, pos);
+            }
+
+            // point virtual directory to my peer
+            if (path.startsWith("/currentyacypeer/")) {
+            	host = sb.peers.myIP();
+            	port = sb.peers.myPort();
+            	path = path.substring(16);
             }
 
             // resolve yacy and yacyh domains
@@ -477,6 +485,8 @@ public final class HTTPDProxyHandler {
             final String connectHost = hostPart(host, port, yAddress);
             final String getUrl = "http://"+ connectHost + remotePath;
 
+            requestHeader.remove(HeaderFramework.HOST);
+
             final HTTPClient client = setupHttpClient(requestHeader, connectHost);
 
             // send request
@@ -485,13 +495,20 @@ public final class HTTPDProxyHandler {
                 if (log.isFinest()) log.logFinest(reqID +"    response status: "+ client.getHttpResponse().getStatusLine());
                 conProp.put(HeaderFramework.CONNECTION_PROP_CLIENT_REQUEST_HEADER, requestHeader);
 
-                final ResponseHeader responseHeader = new ResponseHeader(client.getHttpResponse().getAllHeaders());
+                int statusCode = client.getHttpResponse().getStatusLine().getStatusCode();
+                final ResponseHeader responseHeader = new ResponseHeader(statusCode, client.getHttpResponse().getAllHeaders());
                 // determine if it's an internal error of the httpc
                 if (responseHeader.isEmpty()) {
                 	throw new Exception(client.getHttpResponse().getStatusLine().toString());
                 }
 
-                final ChunkedOutputStream chunkedOut = setTransferEncoding(conProp, responseHeader, client.getHttpResponse().getStatusLine().getStatusCode(), respond);
+                if (proxyAugmentation && AugmentedHtmlStream.supportsMime(responseHeader.mime())) {
+                    // enable chunk encoding, because we don't know the length after annotating
+                    responseHeader.remove(HeaderFramework.CONTENT_LENGTH);
+                    responseHeader.put(HeaderFramework.TRANSFER_ENCODING, "chunked");
+                }
+
+                ChunkedOutputStream chunkedOut = setTransferEncoding(conProp, responseHeader, statusCode, respond);
 
                 // the cache does either not exist or is (supposed to be) stale
                 long sizeBeforeDelete = -1;
@@ -526,6 +543,11 @@ public final class HTTPDProxyHandler {
 //                prepareResponseHeader(responseHeader, res.getHttpVer());
                 prepareResponseHeader(responseHeader, client.getHttpResponse().getProtocolVersion().toString());
 
+                if(proxyAugmentation && AugmentedHtmlStream.supportsMime(responseHeader.mime())) {
+                	// chunked encoding disables somewhere, add it again
+                    responseHeader.put(HeaderFramework.TRANSFER_ENCODING, "chunked");
+                }
+
                 // sending the respond header back to the client
                 if (chunkedOut != null) {
                     responseHeader.put(HeaderFramework.TRANSFER_ENCODING, "chunked");
@@ -536,23 +558,27 @@ public final class HTTPDProxyHandler {
                         conProp,
                         respond,
                         httpVer,
-                        client.getHttpResponse().getStatusLine().getStatusCode(),
+                        statusCode,
                         client.getHttpResponse().getStatusLine().toString(), // status text
                         responseHeader);
 
                 if (hasBody(client.getHttpResponse().getStatusLine().getStatusCode())) {
 
-                    final OutputStream outStream = chunkedOut != null ? chunkedOut : respond;
+                    OutputStream outStream = chunkedOut != null ? chunkedOut : respond;
                     final Response response = new Response(
                             request,
                             requestHeader,
                             responseHeader,
-                            Integer.toString(client.getHttpResponse().getStatusLine().getStatusCode()),
-                            sb.crawler.defaultProxyProfile
+                            sb.crawler.defaultProxyProfile,
+                            true
                     );
                     final String storeError = response.shallStoreCacheForProxy();
                     final boolean storeHTCache = response.profile().storeHTCache();
                     final String supportError = TextParser.supports(response.url(), response.getMimeType());
+
+                    if(proxyAugmentation && AugmentedHtmlStream.supportsMime(responseHeader.mime())) {
+                        outStream = new AugmentedHtmlStream(outStream, responseHeader.getCharSet(), url, requestHeader);
+                    }
                     if (
                             /*
                              * Now we store the response into the htcache directory if
@@ -621,6 +647,8 @@ public final class HTTPDProxyHandler {
                         conProp.put(HeaderFramework.CONNECTION_PROP_PROXY_RESPOND_CODE,"TCP_MISS");
                     }
 
+                    outStream.close();
+
                     if (chunkedOut != null) {
                         chunkedOut.finish();
                         chunkedOut.flush();
@@ -670,7 +698,7 @@ public final class HTTPDProxyHandler {
             final RequestHeader requestHeader,
             final ResponseHeader cachedResponseHeader,
             final byte[] cacheEntry,
-            final OutputStream respond
+            OutputStream respond
     ) throws IOException {
 
         final String httpVer = (String) conProp.get(HeaderFramework.CONNECTION_PROP_HTTP_VER);
@@ -707,6 +735,11 @@ public final class HTTPDProxyHandler {
                 HTTPDemon.sendRespondHeader(conProp,respond,httpVer,203,cachedResponseHeader);
                 //respondHeader(respond, "203 OK", cachedResponseHeader); // respond with 'non-authoritative'
 
+                if(sb.getConfigBool("proxyAugmentation", false)
+                		&& AugmentedHtmlStream.supportsMime(cachedResponseHeader.mime())) {
+                    respond = new AugmentedHtmlStream(respond, cachedResponseHeader.getCharSet(), url, requestHeader);
+                }
+
                 // send also the complete body now from the cache
                 // simply read the file and transfer to out socket
                 FileUtils.copy(cacheEntry, respond);
@@ -722,7 +755,7 @@ public final class HTTPDProxyHandler {
                 HTTPDemon.sendRespondError(conProp,respond,4,503,"socket error: " + e.getMessage(),"socket error: " + e.getMessage(), e);
             }
         } finally {
-            try { respond.flush(); } catch (final Exception e) {}
+            try { respond.flush(); respond.close(); } catch (final Exception e) {}
         }
         return;
     }
@@ -773,7 +806,7 @@ public final class HTTPDProxyHandler {
             // re-calc the url path
             final String remotePath = (args == null) ? path : (path + "?" + args);
 
-            if (Switchboard.urlBlacklist.isListed(Blacklist.BLACKLIST_PROXY, hostlow, remotePath)) {
+            if (Switchboard.urlBlacklist.isListed(BlacklistType.PROXY, hostlow, remotePath)) {
                 HTTPDemon.sendRespondError(conProp,respond,4,403,null,
                         "URL '" + hostlow + "' blocked by yacy proxy (blacklisted)",null);
                 log.logInfo("AGIS blocking of host '" + hostlow + "'");
@@ -812,7 +845,8 @@ public final class HTTPDProxyHandler {
 //            if (responseHeader.isEmpty()) {
 //                throw new Exception(res.getStatusLine());
 //            }
-            final ResponseHeader responseHeader = new ResponseHeader(client.getHttpResponse().getAllHeaders());
+            int statusCode = client.getHttpResponse().getStatusLine().getStatusCode();
+            final ResponseHeader responseHeader = new ResponseHeader(statusCode, client.getHttpResponse().getAllHeaders());
             if (responseHeader.isEmpty()) {
                 throw new Exception(client.getHttpResponse().getStatusLine().toString());
             }
@@ -827,7 +861,7 @@ public final class HTTPDProxyHandler {
             		conProp,
             		respond,
             		httpVer,
-            		client.getHttpResponse().getStatusLine().getStatusCode(),
+            		statusCode,
             		client.getHttpResponse().getStatusLine().toString(),
             		responseHeader);
             respond.flush();
@@ -918,7 +952,8 @@ public final class HTTPDProxyHandler {
 	            client.POST(getUrl, body, contentLength);
 	            if (log.isFinest()) log.logFinest(reqID +"    response status: "+ client.getHttpResponse().getStatusLine());
 
-	            final ResponseHeader responseHeader = new ResponseHeader(client.getHttpResponse().getAllHeaders());
+                int statusCode = client.getHttpResponse().getStatusLine().getStatusCode();
+	            final ResponseHeader responseHeader = new ResponseHeader(statusCode, client.getHttpResponse().getAllHeaders());
 	            // determine if it's an internal error of the httpc
 	            if (responseHeader.isEmpty()) {
 	            	throw new Exception(client.getHttpResponse().getStatusLine().toString());
@@ -938,7 +973,7 @@ public final class HTTPDProxyHandler {
 	            HTTPDemon.sendRespondHeader(conProp,
                         countedRespond,
                         httpVer,
-                        client.getHttpResponse().getStatusLine().getStatusCode(),
+                        statusCode,
                         client.getHttpResponse().getStatusLine().toString(), // status text
                         responseHeader);
 
@@ -1202,7 +1237,7 @@ public final class HTTPDProxyHandler {
         // blacklist idea inspired by [AS]:
         // respond a 404 for all AGIS ("all you get is shit") servers
         final String hostlow = host.toLowerCase();
-        if (Switchboard.urlBlacklist.isListed(Blacklist.BLACKLIST_PROXY, hostlow, path)) {
+        if (Switchboard.urlBlacklist.isListed(BlacklistType.PROXY, hostlow, path)) {
             HTTPDemon.sendRespondError(conProp,clientOut,4,403,null,
                     "URL '" + hostlow + "' blocked by yacy proxy (blacklisted)",null);
             log.logInfo("AGIS blocking of host '" + hostlow + "'");
@@ -1216,11 +1251,12 @@ public final class HTTPDProxyHandler {
 
             try {
             	remoteProxy.HEADResponse("http://" + host + ":" + port);
-            	final ResponseHeader header = new ResponseHeader(remoteProxy.getHttpResponse().getAllHeaders());
+                int statusCode = remoteProxy.getHttpResponse().getStatusLine().getStatusCode();
+            	final ResponseHeader header = new ResponseHeader(statusCode, remoteProxy.getHttpResponse().getAllHeaders());
 
                 // outputs a logline to the serverlog with the current status
             	log.logInfo("CONNECT-RESPONSE: status=" + remoteProxy.getHttpResponse().getStatusLine() + ", header=" + header.toString());
-            	final boolean success = remoteProxy.getHttpResponse().getStatusLine().getStatusCode() >= 200 && remoteProxy.getHttpResponse().getStatusLine().getStatusCode() <= 399;
+            	final boolean success = statusCode >= 200 && statusCode <= 399;
                 if (success) {
                     // replace connection details
                     host = ProxySettings.host;

@@ -37,7 +37,7 @@ import java.util.regex.Pattern;
 import net.yacy.cora.date.GenericFormatter;
 import net.yacy.cora.document.ASCII;
 import net.yacy.cora.document.UTF8;
-import net.yacy.document.LibraryProvider;
+import net.yacy.cora.lod.vocabulary.Tagging;
 import net.yacy.kelondro.data.word.WordReferenceRow;
 import net.yacy.kelondro.data.word.WordReferenceVars;
 import net.yacy.kelondro.index.Row;
@@ -123,7 +123,7 @@ public class URIMetadataRow implements URIMetadata {
             final String dc_creator,
             final String dc_subject,
             final String dc_publisher,
-            final float lon, final float lat, // decimal degrees as in WGS84; if unknown both values may be 0.0f;
+            final double lon, final double lat, // decimal degrees as in WGS84; if unknown both values may be 0.0d;
             final Date mod,
             final Date load,
             final Date fresh,
@@ -172,7 +172,7 @@ public class URIMetadataRow implements URIMetadata {
 		// TODO to be implemented
 		return null;
 	}
-	
+
     private void encodeDate(final int col, final Date d) {
         // calculates the number of days since 1.1.1970 and returns this as 4-byte array
         // 86400000 is the number of milliseconds in one day
@@ -194,8 +194,8 @@ public class URIMetadataRow implements URIMetadata {
             final String dc_creator,
             final String dc_subject,
             final String dc_publisher,
-            final float lat,
-            final float lon) {
+            final double lat,
+            final double lon) {
         final CharBuffer s = new CharBuffer(3600, 360);
         s.append(url.toNormalform(false, true)).appendLF();
         s.append(dc_title).appendLF();
@@ -205,8 +205,10 @@ public class URIMetadataRow implements URIMetadata {
         s.appendLF();
         if (dc_publisher.length() > 80) s.append(dc_publisher, 0, 80); else s.append(dc_publisher);
         s.appendLF();
-        if (lon == 0.0f && lat == 0.0f) s.appendLF(); else s.append(Float.toString(lat)).append(',').append(Float.toString(lon)).appendLF();
-		return UTF8.getBytes(s.toString());
+        if (lon == 0.0f && lat == 0.0f) s.appendLF(); else s.append(Double.toString(lat)).append(',').append(Double.toString(lon)).appendLF();
+        String s0 = s.toString();
+        s.close();
+		return UTF8.getBytes(s0);
     }
 
     public URIMetadataRow(final Row.Entry entry, final WordReferenceVars searchedWord, final long ranking) {
@@ -223,17 +225,17 @@ public class URIMetadataRow implements URIMetadata {
         //System.out.println("DEBUG-ENTRY: prop=" + prop.toString());
         DigestURI url;
         try {
-            url = new DigestURI(crypt.simpleDecode(prop.getProperty("url", ""), null), ASCII.getBytes(prop.getProperty("hash")));
+            url = new DigestURI(crypt.simpleDecode(prop.getProperty("url", "")));
         } catch (final MalformedURLException e) {
             url = null;
         }
-        String descr = crypt.simpleDecode(prop.getProperty("descr", ""), null); if (descr == null) descr = "";
-        String dc_creator = crypt.simpleDecode(prop.getProperty("author", ""), null); if (dc_creator == null) dc_creator = "";
-        String tags = crypt.simpleDecode(prop.getProperty("tags", ""), null); if (tags == null) tags = "";
-        tags = LibraryProvider.autotagging.cleanTagFromAutotagging(tags);
-        String dc_publisher = crypt.simpleDecode(prop.getProperty("publisher", ""), null); if (dc_publisher == null) dc_publisher = "";
-        String lons = crypt.simpleDecode(prop.getProperty("lon", "0.0"), null); if (lons == null) lons = "0.0";
-        String lats = crypt.simpleDecode(prop.getProperty("lat", "0.0"), null); if (lats == null) lats = "0.0";
+        String descr = crypt.simpleDecode(prop.getProperty("descr", "")); if (descr == null) descr = "";
+        String dc_creator = crypt.simpleDecode(prop.getProperty("author", "")); if (dc_creator == null) dc_creator = "";
+        String tags = crypt.simpleDecode(prop.getProperty("tags", "")); if (tags == null) tags = "";
+        tags = Tagging.cleanTagFromAutotagging(tags);
+        String dc_publisher = crypt.simpleDecode(prop.getProperty("publisher", "")); if (dc_publisher == null) dc_publisher = "";
+        String lons = crypt.simpleDecode(prop.getProperty("lon", "0.0")); if (lons == null) lons = "0.0";
+        String lats = crypt.simpleDecode(prop.getProperty("lat", "0.0")); if (lats == null) lats = "0.0";
 
         this.entry = rowdef.newEntry();
         this.entry.setCol(col_hash, url.hash()); // FIXME potential null pointer access
@@ -262,7 +264,7 @@ public class URIMetadataRow implements URIMetadata {
         this.entry.setCol(col_size, Integer.parseInt(prop.getProperty("size", "0")));
         this.entry.setCol(col_wc, Integer.parseInt(prop.getProperty("wc", "0")));
         final String dt = prop.getProperty("dt", "t");
-        this.entry.setCol(col_dt, dt.length() > 0 ? new byte[]{(byte) dt.charAt(0)} : new byte[]{(byte) 't'});
+        this.entry.setCol(col_dt, dt.isEmpty() ? new byte[]{(byte) 't'} : new byte[]{(byte) dt.charAt(0)});
         final String flags = prop.getProperty("flags", "AAAAAA");
         this.entry.setCol(col_flags, (flags.length() > 6) ? QueryParams.empty_constraint.bytes() : (new Bitfield(4, flags)).bytes());
         this.entry.setCol(col_lang, UTF8.getBytes(prop.getProperty("lang", "uk")));
@@ -272,7 +274,7 @@ public class URIMetadataRow implements URIMetadata {
         this.entry.setCol(col_laudio, Integer.parseInt(prop.getProperty("laudio", "0")));
         this.entry.setCol(col_lvideo, Integer.parseInt(prop.getProperty("lvideo", "0")));
         this.entry.setCol(col_lapp, Integer.parseInt(prop.getProperty("lapp", "0")));
-        this.snippet = crypt.simpleDecode(prop.getProperty("snippet", ""), null);
+        this.snippet = crypt.simpleDecode(prop.getProperty("snippet", ""));
         this.word = null;
         if (prop.containsKey("word")) throw new kelondroException("old database structure is not supported");
         if (prop.containsKey("wi")) {
@@ -283,7 +285,7 @@ public class URIMetadataRow implements URIMetadata {
     }
 
     public static URIMetadataRow importEntry(final String propStr) {
-        if (propStr == null || (propStr.length() > 0 && propStr.charAt(0) != '{') || !propStr.endsWith("}")) {
+        if (propStr == null || (!propStr.isEmpty() && propStr.charAt(0) != '{') || !propStr.endsWith("}")) {
             return null;
         }
         try {
@@ -313,7 +315,7 @@ public class URIMetadataRow implements URIMetadata {
             assert (s.toString().indexOf(0) < 0);
             s.append(",author=").append(crypt.simpleEncode(metadata.dc_creator()));
             assert (s.toString().indexOf(0) < 0);
-            s.append(",tags=").append(crypt.simpleEncode(LibraryProvider.autotagging.cleanTagFromAutotagging(metadata.dc_subject())));
+            s.append(",tags=").append(crypt.simpleEncode(Tagging.cleanTagFromAutotagging(metadata.dc_subject())));
             assert (s.toString().indexOf(0) < 0);
             s.append(",publisher=").append(crypt.simpleEncode(metadata.dc_publisher()));
             assert (s.toString().indexOf(0) < 0);
@@ -375,6 +377,7 @@ public class URIMetadataRow implements URIMetadata {
         return this.entry;
     }
 
+    @Override
     public byte[] hash() {
         // return a url-hash, based on the md5 algorithm
         // the result is a String of 12 bytes within a 72-bit space
@@ -390,39 +393,48 @@ public class URIMetadataRow implements URIMetadata {
         return this.hostHash;
     }
 
+    @Override
     public long ranking() {
     	return this.ranking;
     }
 
+    @Override
     public boolean matches(final Pattern matcher) {
         return this.metadata().matches(matcher);
     }
 
+    @Override
     public DigestURI url() {
         return this.metadata().url();
     }
 
+    @Override
     public String  dc_title()  {
         return this.metadata().dc_title();
     }
 
+    @Override
     public String  dc_creator() {
         return this.metadata().dc_creator();
     }
 
+    @Override
     public String  dc_publisher() {
         return this.metadata().dc_publisher();
     }
 
+    @Override
     public String  dc_subject()   {
         return this.metadata().dc_subject();
     }
 
-    public float lat() {
+    @Override
+    public double lat() {
         return this.metadata().lat();
     }
 
-    public float lon() {
+    @Override
+    public double lon() {
         return this.metadata().lon();
     }
 
@@ -443,14 +455,17 @@ public class URIMetadataRow implements URIMetadata {
         return this.comp;
     }
 
+    @Override
     public Date moddate() {
         return decodeDate(col_mod);
     }
 
+    @Override
     public Date loaddate() {
         return decodeDate(col_load);
     }
 
+    @Override
     public Date freshdate() {
         return decodeDate(col_fresh);
     }
@@ -468,15 +483,18 @@ public class URIMetadataRow implements URIMetadata {
         return r;
     }
 
+    @Override
     public String md5() {
         // returns the md5 in hex representation
         return Digest.encodeHex(this.entry.getColBytes(col_md5, true));
     }
 
+    @Override
     public char doctype() {
         return (char) this.entry.getColByte(col_dt);
     }
 
+    @Override
     public byte[] language() {
         byte[] b = this.entry.getColBytes(col_lang, true);
         if (b == null || b[0] == (byte)'[') {
@@ -487,52 +505,64 @@ public class URIMetadataRow implements URIMetadata {
         return b;
     }
 
+    @Override
     public int size() {
         return (int) this.entry.getColLong(col_size);
     }
 
+    @Override
     public Bitfield flags() {
         return new Bitfield(this.entry.getColBytes(col_flags, true));
     }
 
+    @Override
     public int wordCount() {
         return (int) this.entry.getColLong(col_wc);
     }
 
+    @Override
     public int llocal() {
         return (int) this.entry.getColLong(col_llocal);
     }
 
+    @Override
     public int lother() {
         return (int) this.entry.getColLong(col_lother);
     }
 
+    @Override
     public int limage() {
         return (int) this.entry.getColLong(col_limage);
     }
 
+    @Override
     public int laudio() {
         return (int) this.entry.getColLong(col_laudio);
     }
 
+    @Override
     public int lvideo() {
         return (int) this.entry.getColLong(col_lvideo);
     }
 
+    @Override
     public int lapp() {
         return (int) this.entry.getColLong(col_lapp);
     }
 
+    @Override
     public String snippet() {
         // the snippet may appear here if the url was transported in a remote search
         // it will not be saved anywhere, but can only be requested here
         return this.snippet;
     }
 
+    @Override
     public WordReferenceVars word() {
         return this.word;
     }
 
+    @Override
     public boolean isOlder(final URIMetadata other) {
         if (other == null) return false;
         final Date tmoddate = moddate();
@@ -547,6 +577,7 @@ public class URIMetadataRow implements URIMetadata {
         return false;
     }
 
+    @Override
     public String toString(final String snippet) {
         // add information needed for remote transport
         final StringBuilder core = corePropList();
@@ -638,15 +669,15 @@ public class URIMetadataRow implements URIMetadata {
         public String  dc_creator() { return this.dc_creator; }
         public String  dc_publisher() { return this.dc_publisher; }
         public String  dc_subject()   { return this.dc_subject; }
-        public float lat() {
-            if (this.latlon == null || this.latlon.length() == 0) return 0.0f;
+        public double lat() {
+            if (this.latlon == null || this.latlon.isEmpty()) return 0.0d;
             final int p = this.latlon.indexOf(',');
-            return p < 0 ? 0.0f : Float.parseFloat(this.latlon.substring(0, p));
+            return p < 0 ? 0.0f : Double.parseDouble(this.latlon.substring(0, p));
         }
-        public float lon() {
-            if (this.latlon == null || this.latlon.length() == 0) return 0.0f;
+        public double lon() {
+            if (this.latlon == null || this.latlon.isEmpty()) return 0.0d;
             final int p = this.latlon.indexOf(',');
-            return p < 0 ? 0.0f : Float.parseFloat(this.latlon.substring(p + 1));
+            return p < 0 ? 0.0f : Double.parseDouble(this.latlon.substring(p + 1));
         }
     }
 

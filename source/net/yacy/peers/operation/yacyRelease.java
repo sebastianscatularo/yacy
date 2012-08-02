@@ -52,6 +52,7 @@ import net.yacy.cora.protocol.RequestHeader;
 import net.yacy.cora.protocol.ResponseHeader;
 import net.yacy.cora.protocol.http.HTTPClient;
 import net.yacy.cora.services.federated.yacy.CacheStrategy;
+import net.yacy.cora.storage.Files;
 import net.yacy.document.Document;
 import net.yacy.document.parser.tarParser;
 import net.yacy.kelondro.data.meta.DigestURI;
@@ -62,6 +63,7 @@ import net.yacy.kelondro.util.FileUtils;
 import net.yacy.kelondro.util.OS;
 import net.yacy.peers.Network;
 import net.yacy.search.Switchboard;
+import de.anomic.crawler.CrawlQueues;
 import de.anomic.server.serverCore;
 import de.anomic.tools.CryptoLib;
 import de.anomic.tools.SignatureOutputStream;
@@ -143,7 +145,7 @@ public final class yacyRelease extends yacyVersion {
             // return a dev-release or a main-release
             if ((latestdev != null) &&
                 ((latestmain == null) || (latestdev.compareTo(latestmain) > 0)) &&
-                (!(Float.toString(latestdev.getReleaseNr()).matches(blacklist)))) {
+                (!(Double.toString(latestdev.getReleaseNr()).matches(blacklist)))) {
                 // consider a dev-release
                 if (latestdev.compareTo(thisVersion()) <= 0) {
                     Network.log.logInfo(
@@ -155,7 +157,7 @@ public final class yacyRelease extends yacyVersion {
             }
             if (latestmain != null) {
                 // consider a main release
-                if ((Float.toString(latestmain.getReleaseNr()).matches(blacklist))) {
+                if ((Double.toString(latestmain.getReleaseNr()).matches(blacklist))) {
                     Network.log.logInfo(
                             "rulebasedUpdateInfo: latest dev " + (latestdev == null ? "null" : latestdev.getName()) +
                             " matches with blacklist '" + blacklist + "'");
@@ -172,7 +174,7 @@ public final class yacyRelease extends yacyVersion {
         }
         if ((concept.equals("main")) && (latestmain != null)) {
             // return a main-release
-            if ((Float.toString(latestmain.getReleaseNr()).matches(blacklist))) {
+            if ((Double.toString(latestmain.getReleaseNr()).matches(blacklist))) {
                 Network.log.logInfo(
                         "rulebasedUpdateInfo: latest main " + latestmain.getName() +
                         " matches with blacklist'" + blacklist + "'");
@@ -239,7 +241,7 @@ public final class yacyRelease extends yacyVersion {
         try {
             final DigestURI uri = location.getLocationURL();
             Thread.currentThread().setName("allReleaseFrom - host " + uri.getHost()); // makes it more easy to see which release blocks process in thread dump
-            scraper = Switchboard.getSwitchboard().loader.loadDocument(uri, CacheStrategy.NOCACHE);
+            scraper = Switchboard.getSwitchboard().loader.loadDocument(uri, CacheStrategy.NOCACHE, null, CrawlQueues.queuedMinLoadDelay);
         } catch (final IOException e) {
             return null;
         }
@@ -308,7 +310,8 @@ public final class yacyRelease extends yacyVersion {
             }
             client.setTimout(120000);
             client.GET(getUrl().toString());
-            final ResponseHeader header = new ResponseHeader(client.getHttpResponse().getAllHeaders());
+            int statusCode = client.getHttpResponse().getStatusLine().getStatusCode();
+            final ResponseHeader header = new ResponseHeader(statusCode, client.getHttpResponse().getAllHeaders());
 
             final boolean unzipped = header.gzip() && (header.mime().toLowerCase().equals("application/x-tar")); // if true, then the httpc has unzipped the file
             if (unzipped && name.endsWith(".tar.gz")) {
@@ -495,7 +498,7 @@ public final class yacyRelease extends yacyVersion {
                 final File InfoPlistSource = new File(sb.getDataPath(), "DATA/RELEASE/yacy/addon/YaCy.app/Contents/Info.plist");
                 final File InfoPlistDestination = new File(sb.getAppPath(), "addon/YaCy.app/Contents/Info.plist");
                 if (InfoPlistSource.exists() && InfoPlistDestination.exists()) {
-                    FileUtils.copy(InfoPlistSource, InfoPlistDestination);
+                    Files.copy(InfoPlistSource, InfoPlistDestination);
                     Log.logInfo("UPDATE", "replaced Info.plist");
                 }
             }

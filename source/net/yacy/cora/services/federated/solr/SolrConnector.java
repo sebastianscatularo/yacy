@@ -25,24 +25,30 @@
 package net.yacy.cora.services.federated.solr;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 
-import net.yacy.cora.protocol.ResponseHeader;
-import net.yacy.document.Document;
-import net.yacy.kelondro.data.meta.DigestURI;
-
+import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrException;
-import org.apache.solr.common.SolrInputDocument;
 
 public interface SolrConnector {
 
     /**
-     * with a scheme the fields of a SolrDocument can be translated to actual data values
-     * @return the solr scheme that can translate the SolrDocument
+     * get the solr autocommit delay
+     * @return the maximum waiting time after a solr command until it is transported to the server
      */
-    public SolrScheme getScheme();
+    public int getCommitWithinMs();
 
+    /**
+     * set the solr autocommit delay
+     * @param c the maximum waiting time after a solr command until it is transported to the server
+     */
+    public void setCommitWithinMs(int c);
+
+    /**
+     * close the server connection
+     */
     public void close();
 
     /**
@@ -74,31 +80,21 @@ public interface SolrConnector {
     public boolean exists(final String id) throws IOException;
 
     /**
-     * add a YaCy document. This calls the scheme processor to add the document as solr document
-     * @param id the url hash of the entry
-     * @param header the http response header
-     * @param doc the YaCy document
-     * @throws IOException
-     */
-    public void add(final String id, final ResponseHeader header, final Document doc) throws IOException;
-
-    /**
      * add a solr input document
      * @param solrdoc
      * @throws IOException
      * @throws SolrException
      */
-    public void add(final SolrInputDocument solrdoc) throws IOException, SolrException;
+    public void add(final SolrDoc solrdoc) throws IOException, SolrException;
+    public void add(final Collection<SolrDoc> solrdocs) throws IOException, SolrException;
 
     /**
-     * register an entry as error document
-     * @param digestURI
-     * @param failReason
-     * @param httpstatus
+     * get a document from solr by given id
+     * @param id
+     * @return one result or null if no result exists
      * @throws IOException
      */
-    public void err(final DigestURI digestURI, final String failReason, final int httpstatus) throws IOException;
-
+    public SolrDocument get(final String id) throws IOException;
 
     /**
      * get a query result from solr
@@ -106,7 +102,7 @@ public interface SolrConnector {
      * @param querystring
      * @throws IOException
      */
-    public SolrDocumentList get(final String querystring, final int offset, final int count) throws IOException;
+    public SolrDocumentList query(final String querystring, final int offset, final int count) throws IOException;
 
     /**
      * get the size of the index

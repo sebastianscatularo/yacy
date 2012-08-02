@@ -25,6 +25,7 @@
 
 package net.yacy.kelondro.blob;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -38,7 +39,7 @@ import net.yacy.kelondro.order.NaturalOrder;
 /**
  * a mapping from a column name to maps with the value of the columns to the primary keys where the entry exist in the table
  */
-public class MapColumnIndex {
+public class MapColumnIndex implements Serializable {
 
     private static final long serialVersionUID=-424741536889467566L;
 
@@ -74,7 +75,7 @@ public class MapColumnIndex {
             line = table.next();
             String value = line.getValue().get(whereKey);
             if (value == null) continue; // we don't need to remember that
-            indexupdate(line.getKey(), valueIdxMap, value);
+            indexupdate(line.getKey(), valueIdxMap, value.toLowerCase()); // add the entry lowercase (needed for seedDB.lookupByName)
         }
     }
 
@@ -92,7 +93,7 @@ public class MapColumnIndex {
         }
     }
 
-    private void indexupdate(final byte[] primarykey, final Map<String, Collection<byte[]>> valueIdxMap, final String value) {
+    private static void indexupdate(final byte[] primarykey, final Map<String, Collection<byte[]>> valueIdxMap, final String value) {
         Collection<byte[]> indexes = valueIdxMap.get(value);
         if (indexes == null) {
             // create a new index entry
@@ -119,7 +120,7 @@ public class MapColumnIndex {
         }
     }
 
-    private void indexdelete(final byte[] index, final Map<String, Collection<byte[]>> valueIdxMap) {
+    private static void indexdelete(final byte[] index, final Map<String, Collection<byte[]>> valueIdxMap) {
         Iterator<Map.Entry<String, Collection<byte[]>>> i = valueIdxMap.entrySet().iterator();
         Map.Entry<String, Collection<byte[]>> ref;
         while (i.hasNext()) {

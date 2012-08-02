@@ -36,6 +36,7 @@ import net.yacy.cora.document.UTF8;
 import net.yacy.cora.protocol.HeaderFramework;
 import net.yacy.cora.protocol.RequestHeader;
 import net.yacy.cora.protocol.ResponseHeader;
+import net.yacy.cora.util.NumberTools;
 import net.yacy.document.Document;
 import net.yacy.document.Parser;
 import net.yacy.document.TextParser;
@@ -62,10 +63,10 @@ public class Response {
     private final  Request            request;
     private final  RequestHeader      requestHeader;
     private final  ResponseHeader     responseHeader;
-    private final  String             responseStatus;
     private final  CrawlProfile       profile;
     private        byte[]             content;
     private        int                status;          // tracker indexing status, see status defs below
+    private final  boolean            fromCache;
 
     // doctype calculation
     public static char docType(final MultiProtocolURI url) {
@@ -149,17 +150,17 @@ public class Response {
             final Request request,
             final RequestHeader requestHeader,
             final ResponseHeader responseHeader,
-            final String responseStatus,
             final CrawlProfile profile,
+            final boolean fromCache,
             final byte[] content) {
         this.request = request;
         // request and response headers may be zero in case that we process surrogates
         this.requestHeader = requestHeader;
         this.responseHeader = responseHeader;
-        this.responseStatus = responseStatus;
         this.profile = profile;
         this.status = QUEUE_STATE_FRESH;
         this.content = content;
+        this.fromCache = fromCache;
     }
 
     /**
@@ -172,22 +173,22 @@ public class Response {
         this.request = request;
         // request and response headers may be zero in case that we process surrogates
         this.requestHeader = new RequestHeader();
-        this.responseHeader = new ResponseHeader();
+        this.responseHeader = new ResponseHeader(200);
         this.responseHeader.put(HeaderFramework.CONTENT_TYPE, "text/plain"); // tell parser how to handle the content
-        if (request.size() > 0) this.responseHeader.put(HeaderFramework.CONTENT_LENGTH, Long.toString(request.size()));
-        this.responseStatus = "200";
+        if (!request.isEmpty()) this.responseHeader.put(HeaderFramework.CONTENT_LENGTH, Long.toString(request.size()));
         this.profile = profile;
         this.status = QUEUE_STATE_FRESH;
         this.content = request.name().length() > 0 ? request.name().getBytes() : request.url().toTokens().getBytes();
+        this.fromCache = true;
     }
 
     public Response(
             final Request request,
             final RequestHeader requestHeader,
             final ResponseHeader responseHeader,
-            final String responseStatus,
-            final CrawlProfile profile) {
-        this(request, requestHeader, responseHeader, responseStatus, profile, null);
+            final CrawlProfile profile,
+            final boolean fromCache) {
+        this(request, requestHeader, responseHeader, profile, fromCache, null);
     }
 
     public void updateStatus(final int newStatus) {
@@ -196,6 +197,10 @@ public class Response {
 
     public ResponseHeader getResponseHeader() {
         return this.responseHeader;
+    }
+
+    public boolean fromCache() {
+        return this.fromCache;
     }
 
     public int getStatus() {
@@ -340,7 +345,7 @@ public class Response {
                     final Date date = this.responseHeader.date();
                     if (date == null) return "stale_no_date_given_in_response";
                     try {
-                        final long ttl = 1000 * Long.parseLong(cacheControl.substring(8)); // milliseconds to live
+                        final long ttl = 1000 * NumberTools.parseLongDecSubstring(cacheControl, 8); // milliseconds to live
                         if (GenericFormatter.correctedUTCTime() - date.getTime() > ttl) {
                             //System.out.println("***not indexed because cache-control");
                             return "stale_expired";
@@ -361,7 +366,7 @@ public class Response {
 
         // check status code
         if (!validResponseStatus()) {
-            return "bad_status_" + this.responseStatus;
+            return "bad_status_" + this.responseHeader.getStatusCode();
         }
 
         if (this.requestHeader != null) {
@@ -508,7 +513,7 @@ public class Response {
                     // we need also the load date
                     if (date == null) { return false; }
                     try {
-                        final long ttl = 1000 * Long.parseLong(cacheControl.substring(8)); // milliseconds to live
+                        final long ttl = 1000 * NumberTools.parseLongDecSubstring(cacheControl, 8); // milliseconds to live
                         if (GenericFormatter.correctedUTCTime() - date.getTime() > ttl) {
                             return false;
                         }
@@ -654,7 +659,7 @@ public class Response {
                         return "Stale_(no_date_given_in_response)";
                     }
                     try {
-                        final long ttl = 1000 * Long.parseLong(cacheControl.substring(8)); // milliseconds to live
+                        final long ttl = 1000 * NumberTools.parseLongDecSubstring(cacheControl,8); // milliseconds to live
                         if (GenericFormatter.correctedUTCTime() - date.getTime() > ttl) {
                             //System.out.println("***not indexed because cache-control");
                             return "Stale_(expired_by_cache-control)";
@@ -777,7 +782,7 @@ public class Response {
     public byte[] referrerHash() {
         if (this.requestHeader == null) return null;
         final String u = this.requestHeader.get(RequestHeader.REFERER, "");
-        if (u == null || u.length() == 0) return null;
+        if (u == null || u.isEmpty()) return null;
         try {
             return new DigestURI(u).hash();
         } catch (final Exception e) {
@@ -786,7 +791,8 @@ public class Response {
     }
 
     public boolean validResponseStatus() {
-        return (this.responseStatus == null) ? false : this.responseStatus.startsWith("200") || this.responseStatus.startsWith("203");
+        int status = this.responseHeader.getStatusCode();
+        return status == 200 || status == 203;
     }
 
     public Date ifModifiedSince() {

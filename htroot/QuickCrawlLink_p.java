@@ -33,13 +33,14 @@ import java.net.MalformedURLException;
 import java.util.Date;
 
 import net.yacy.cora.document.UTF8;
+import net.yacy.cora.protocol.Domains;
 import net.yacy.cora.protocol.HeaderFramework;
 import net.yacy.cora.protocol.RequestHeader;
 import net.yacy.cora.services.federated.yacy.CacheStrategy;
+import net.yacy.cora.util.NumberTools;
 import net.yacy.kelondro.data.meta.DigestURI;
 import net.yacy.search.Switchboard;
 import net.yacy.search.index.Segment;
-import net.yacy.search.index.Segments;
 import de.anomic.crawler.CrawlProfile;
 import de.anomic.crawler.retrieval.Request;
 import de.anomic.server.serverObjects;
@@ -61,16 +62,7 @@ public class QuickCrawlLink_p {
         final Switchboard sb = (Switchboard) env;
 
         // get segment
-        Segment indexSegment = null;
-        if (post != null && post.containsKey("segment")) {
-            final String segmentName = post.get("segment");
-            if (sb.indexSegments.segmentExist(segmentName)) {
-                indexSegment = sb.indexSegments.segment(segmentName);
-            }
-        } else {
-            // take default segment
-            indexSegment = sb.indexSegments.segment(Segments.Process.PUBLIC);
-        }
+        Segment indexSegment = sb.index;
 
         if (post == null) {
             // send back usage example
@@ -83,11 +75,11 @@ public class QuickCrawlLink_p {
             int port = 80;
             final int pos = hostSocket.indexOf(':',0);
             if (pos != -1) {
-                port = Integer.parseInt(hostSocket.substring(pos + 1));
+                port = NumberTools.parseIntDecSubstring(hostSocket, pos + 1);
                 //host = hostSocket.substring(0, pos);
             }
 
-            prop.put("mode_host", "localhost");
+            prop.put("mode_host", Domains.LOCALHOST);
             prop.put("mode_port", port);
 
             return prop;

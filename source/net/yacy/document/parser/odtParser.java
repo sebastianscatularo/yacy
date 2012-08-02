@@ -35,18 +35,21 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import net.yacy.cora.document.MultiProtocolURI;
 import net.yacy.cora.document.UTF8;
 import net.yacy.document.AbstractParser;
 import net.yacy.document.Document;
 import net.yacy.document.Parser;
 import net.yacy.document.parser.xml.ODContentHandler;
 import net.yacy.document.parser.xml.ODMetaHandler;
+import net.yacy.kelondro.data.meta.DigestURI;
 import net.yacy.kelondro.io.CharBuffer;
 import net.yacy.kelondro.util.FileUtils;
+
+import org.xml.sax.SAXException;
 
 public class odtParser extends AbstractParser implements Parser {
 
@@ -87,8 +90,21 @@ public class odtParser extends AbstractParser implements Parser {
         this.SUPPORTED_MIME_TYPES.add("application/OOo-writer");
     }
 
-    private Document[] parse(final MultiProtocolURI location, final String mimeType,
-            final String charset, final File dest)
+    private static final ThreadLocal<SAXParser> tlSax = new ThreadLocal<SAXParser>();
+    private static SAXParser getParser() throws SAXException {
+    	SAXParser parser = tlSax.get();
+    	if (parser == null) {
+    		try {
+				parser = SAXParserFactory.newInstance().newSAXParser();
+			} catch (ParserConfigurationException e) {
+				throw new SAXException(e.getMessage(), e);
+			}
+    		tlSax.set(parser);
+    	}
+    	return parser;
+    }
+
+    private Document[] parse(final DigestURI location, final String mimeType, @SuppressWarnings("unused") final String charset, final File dest)
             throws Parser.Failure, InterruptedException {
 
         CharBuffer writer = null;
@@ -103,7 +119,6 @@ public class odtParser extends AbstractParser implements Parser {
             // opening the file as zip file
             final ZipFile zipFile = new ZipFile(dest);
             final Enumeration<? extends ZipEntry> zipEnum = zipFile.entries();
-            final SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
 
             // looping through all containing files
             while (zipEnum.hasMoreElements()) {
@@ -121,7 +136,7 @@ public class odtParser extends AbstractParser implements Parser {
 	                    // extract data
 	                    final InputStream zipFileEntryStream = zipFile.getInputStream(zipEntry);
 	                    try {
-		                    final SAXParser saxParser = saxParserFactory.newSAXParser();
+		                    final SAXParser saxParser = getParser();
 		                    saxParser.parse(zipFileEntryStream, new ODContentHandler(writer));
 	                    } finally {
 		                    // close readers and writers
@@ -133,7 +148,7 @@ public class odtParser extends AbstractParser implements Parser {
                 } else if (entryName.equals("meta.xml")) {
                     //  meta.xml contains metadata about the document
                     final InputStream zipFileEntryStream = zipFile.getInputStream(zipEntry);
-                    final SAXParser saxParser = saxParserFactory.newSAXParser();
+                    final SAXParser saxParser = getParser();
                     final ODMetaHandler metaData = new ODMetaHandler();
                     saxParser.parse(zipFileEntryStream, metaData);
                     docDescription = metaData.getDescription();
@@ -194,7 +209,7 @@ public class odtParser extends AbstractParser implements Parser {
     }
 
     @Override
-    public Document[] parse(final MultiProtocolURI location, final String mimeType, final String charset, final InputStream source) throws Parser.Failure, InterruptedException {
+    public Document[] parse(final DigestURI location, final String mimeType, final String charset, final InputStream source) throws Parser.Failure, InterruptedException {
         File dest = null;
         try {
             // creating a tempfile

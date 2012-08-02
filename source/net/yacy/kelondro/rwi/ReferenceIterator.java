@@ -32,9 +32,9 @@ import java.util.Map;
 
 import net.yacy.cora.document.UTF8;
 import net.yacy.cora.order.CloneableIterator;
+import net.yacy.cora.util.SpaceExceededException;
 import net.yacy.kelondro.blob.HeapReader;
 import net.yacy.kelondro.index.RowSet;
-import net.yacy.kelondro.index.RowSpaceExceededException;
 import net.yacy.kelondro.logging.Log;
 import net.yacy.kelondro.util.LookAheadIterator;
 
@@ -71,7 +71,7 @@ public class ReferenceIterator <ReferenceType extends Reference> extends LookAhe
                     continue; // thats a fail but not as REALLY bad if the whole method would crash here
                 }
                 return new ReferenceContainer<ReferenceType>(this.factory, entry.getKey(), row);
-            } catch (final RowSpaceExceededException e) {
+            } catch (final SpaceExceededException e) {
                 Log.logSevere("ReferenceIterator", "lost entry '" + UTF8.String(entry.getKey()) + "' because of too low memory: " + e.toString());
                 continue;
             } catch (final Throwable e) {
@@ -83,7 +83,7 @@ public class ReferenceIterator <ReferenceType extends Reference> extends LookAhe
         return null;
     }
 
-    public void close() {
+    public synchronized void close() {
         if (this.blobs != null) this.blobs.close();
         this.blobs = null;
     }

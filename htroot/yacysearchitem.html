@@ -27,8 +27,12 @@
   #(showDate)#::#[date]##(/showDate)#
   #(showSize)#::&nbsp;|&nbsp;#[sizename]##(/showSize)#
   #(showMetadata)#::&nbsp;|&nbsp;<a href="api/yacydoc.html?urlhash=#[urlhash]#" target="_blank" onclick="return hs.htmlExpand(this, { objectType: 'ajax'} )">Metadata</a>#(/showMetadata)#
-  #(showParser)#::&nbsp;|&nbsp;<a href="ViewFile.html?urlHash=#[urlhash]#&amp;words=#[words]#&amp" target="_blank">Parser</a>#(/showParser)#
-  #(showPictures)#::&nbsp;|&nbsp;<a href="yacysearch.html?cat=image&amp;url=#[link]#&amp;query=#[former]#">Pictures</a></p>#(/showPictures)#
+  #(showParser)#::&nbsp;|&nbsp;<a href="ViewFile.html?urlHash=#[urlhash]#&amp;words=#[words]#" target="_blank">Parser</a>#(/showParser)#
+  #(showPictures)#::&nbsp;|&nbsp;<a href="yacysearch.html?cat=image&amp;url=#[link]#&amp;query=#[former]#">Pictures</a>#(/showPictures)#
+  #(showCache)#::&nbsp;|&nbsp;<a href="CacheResource_p.html?url=#[link]#" target="_blank">Cache</a>#(/showCache)#
+  #(showProxy)#::&nbsp;|&nbsp;<a href="proxy.html?url=#[link]#" target="_blank">Augmented Browsing</a>#(/showProxy)#
+  #(showTags)#::<br/><!--#include virtual="/currentyacypeer/interaction_elements/Tag_part.html?hash=#[urlhash]#&amp;url=#[url]#" -->#(/showTags)#
+  </p>
   </div>
   ::
   #(item)#::<div class="thumbcontainer">
@@ -42,17 +46,11 @@
     -->
   </div>#(/item)#
   ::
-  #{items}#
-  <tr class="#(col)#TableCellLight::TableCellDark#(/col)#"><td>#[name]#</td><td><a href="#[href]#" target="#[target]#">#[hrefshort]#</a></tr>
-  #{/items}#
+  #(item)#::<tr class="#(col)#TableCellLight::TableCellDark#(/col)#"><td>#[name]#</td><td><a href="#[href]#" target="#[target]#">#[hrefshort]#</a></tr>#(/item)#
   ::
-  #{items}#
-  <tr class="#(col)#TableCellLight::TableCellDark#(/col)#"><td>#[name]#</td><td><a href="#[href]#" target="#[target]#">#[hrefshort]#</a></tr>
-  #{/items}#
+  #(item)#::<tr class="#(col)#TableCellLight::TableCellDark#(/col)#"><td>#[name]#</td><td><a href="#[href]#" target="#[target]#">#[hrefshort]#</a></tr>#(/item)#
   ::
-  #{items}#
-  <tr class="#(col)#TableCellLight::TableCellDark#(/col)#"><td>#[name]#</td><td><a href="#[href]#" target="#[target]#">#[hrefshort]#</a></tr>
-  #{/items}#
+  #(item)#::<tr class="#(col)#TableCellLight::TableCellDark#(/col)#"><td>#[name]#</td><td><a href="#[href]#" target="#[target]#">#[hrefshort]#</a></tr>#(/item)#
 #(/content)#
 
 <script type="text/javascript">

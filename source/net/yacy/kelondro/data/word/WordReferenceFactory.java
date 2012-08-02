@@ -9,7 +9,7 @@
 // $LastChangedBy$
 //
 // LICENSE
-// 
+//
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
@@ -26,9 +26,12 @@
 
 package net.yacy.kelondro.data.word;
 
+import java.io.Serializable;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -39,13 +42,15 @@ import net.yacy.kelondro.rwi.ReferenceContainer;
 import net.yacy.kelondro.rwi.ReferenceFactory;
 import net.yacy.kelondro.util.ByteBuffer;
 
-public class WordReferenceFactory implements ReferenceFactory<WordReference> {
+public class WordReferenceFactory implements ReferenceFactory<WordReference>, Serializable {
+
+    private static final long serialVersionUID=-7168706947127349876L;
 
     @Override
     public WordReference produceSlow(final Entry e) {
         return new WordReferenceRow(e);
     }
-    
+
     @Override
     public WordReference produceFast(final WordReference r) {
         if (r instanceof WordReferenceVars) return r;
@@ -113,40 +118,39 @@ public class WordReferenceFactory implements ReferenceFactory<WordReference> {
      * decompress an index abstract that was generated from a word index and transmitted over a network connection
      * @param ci
      * @param peerhash
-     * @return
+     * @return a urlhash -> peerlist map: this shows in which peers an url is stored
      */
-    public static final SortedMap<String, StringBuilder> decompressIndex(ByteBuffer ci, final String peerhash) {
-        SortedMap<String, StringBuilder> target = Collections.synchronizedSortedMap(new TreeMap<String, StringBuilder>());
+    public static final SortedMap<String, Set<String>> decompressIndex(ByteBuffer ci, final String peerhash) {
+        SortedMap<String, Set<String>> target = Collections.synchronizedSortedMap(new TreeMap<String, Set<String>>());
         // target is a mapping from url-hashes to a string of peer-hashes
         if (ci.byteAt(0) != '{' || ci.byteAt(ci.length() - 1) != '}') return target;
         //System.out.println("DEBUG-DECOMPRESS: input is " + ci.toString());
         ci = ci.trim(1, ci.length() - 2);
         String dom, url;
-        StringBuilder peers;
+        Set<String> peers;
         StringBuilder urlsb;
-        while ((ci.length() >= 13) && (ci.byteAt(6) == ':')) {
+        while (ci.length() >= 13 && ci.byteAt(6) == ':') {
             assert ci.length() >= 6 : "ci.length() = " + ci.length();
             dom = ci.toStringBuilder(0, 6, 6).toString();
             ci.trim(7);
-            while ((ci.length() > 0) && (ci.byteAt(0) != ',')) {
+            while (!ci.isEmpty() && ci.byteAt(0) != ',') {
                 assert ci.length() >= 6 : "ci.length() = " + ci.length();
                 urlsb = ci.toStringBuilder(0, 6, 12);
                 urlsb.append(dom);
                 url = urlsb.toString();
                 ci.trim(6);
-                
+
                 peers = target.get(url);
                 if (peers == null) {
-                    peers = new StringBuilder(24);
-                    peers.append(peerhash);
+                    peers = new HashSet<String>();
                     target.put(url, peers);
-                } else {
-                    peers.append(peerhash);
                 }
+                peers.add(peerhash);
                 //System.out.println("DEBUG-DECOMPRESS: " + url + ":" + target.get(url));
             }
             if (ci.byteAt(0) == ',') ci.trim(1);
         }
+        //System.out.println("DEBUG-DECOMPRESS: " + target);
         return target;
     }
 }

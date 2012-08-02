@@ -1,5 +1,5 @@
 /**
- *  oad_RSS_p
+ *  Load_RSS_p
  *  Copyright 2010 by Michael Peter Christen, mc@yacy.net, Frankfurt am Main, Germany
  *  First released 20.08.2010 at http://yacy.net
  *
@@ -26,6 +26,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import net.yacy.cora.document.Hit;
 import net.yacy.cora.document.RSSFeed;
@@ -34,14 +35,15 @@ import net.yacy.cora.document.RSSReader;
 import net.yacy.cora.document.UTF8;
 import net.yacy.cora.protocol.RequestHeader;
 import net.yacy.cora.services.federated.yacy.CacheStrategy;
+import net.yacy.cora.util.SpaceExceededException;
 import net.yacy.document.Parser.Failure;
 import net.yacy.kelondro.blob.Tables;
 import net.yacy.kelondro.blob.Tables.Row;
 import net.yacy.kelondro.data.meta.DigestURI;
-import net.yacy.kelondro.index.RowSpaceExceededException;
 import net.yacy.kelondro.logging.Log;
+import net.yacy.repository.Blacklist.BlacklistType;
 import net.yacy.search.Switchboard;
-import net.yacy.search.index.Segments;
+import de.anomic.crawler.CrawlQueues;
 import de.anomic.crawler.RSSLoader;
 import de.anomic.crawler.retrieval.Response;
 import de.anomic.data.WorkTables;
@@ -50,7 +52,7 @@ import de.anomic.server.serverSwitch;
 
 public class Load_RSS_p {
 
-    public static serverObjects respond(final RequestHeader header, final serverObjects post, final serverSwitch env) {
+    public static serverObjects respond(@SuppressWarnings("unused") final RequestHeader header, final serverObjects post, final serverSwitch env) {
 
         final serverObjects prop = new serverObjects();
         final Switchboard sb = (Switchboard)env;
@@ -80,10 +82,10 @@ public class Load_RSS_p {
                 row = plainIterator.next();
                 if (row == null) continue;
                 messageurl = row.get("url", "");
-                if (messageurl.length() == 0) continue;
+                if (messageurl.isEmpty()) continue;
                 final byte[] api_pk = row.get("api_pk");
                 final Row r = api_pk == null ? null : sb.tables.select("api", api_pk);
-                if (r == null || !r.get("comment", "").matches(".*\\Q" + messageurl + "\\E.*")) {
+                if (r == null || !r.get("comment", "").matches(".*" + Pattern.quote(messageurl) + ".*")) {
                     d.add(row.getPK());
                 }
             }
@@ -92,7 +94,7 @@ public class Load_RSS_p {
             }
         } catch (final IOException e) {
             Log.logException(e);
-        } catch (final RowSpaceExceededException e) {
+        } catch (final SpaceExceededException e) {
             Log.logException(e);
         }
 
@@ -107,7 +109,7 @@ public class Load_RSS_p {
                     sb.tables.insert("rss", pk, rssRow);
                 } catch (final IOException e) {
                     Log.logException(e);
-                } catch (final RowSpaceExceededException e) {
+                } catch (final SpaceExceededException e) {
                     Log.logException(e);
                 }
             }
@@ -122,10 +124,10 @@ public class Load_RSS_p {
                 row = plainIterator.next();
                 if (row == null) continue;
                 messageurl = row.get("url", "");
-                if (messageurl.length() == 0) continue;
+                if (messageurl.isEmpty()) continue;
                 final byte[] api_pk = row.get("api_pk");
                 final Row r = api_pk == null ? null : sb.tables.select("api", api_pk);
-                if (r != null && r.get("comment", "").matches(".*\\Q" + messageurl + "\\E.*")) {
+                if (r != null && r.get("comment", "").matches(".*" + Pattern.quote(messageurl) + ".*")) {
                     d.add(row.getPK());
                 }
             }
@@ -138,7 +140,7 @@ public class Load_RSS_p {
             }
         } catch (final IOException e) {
             Log.logException(e);
-        } catch (final RowSpaceExceededException e) {
+        } catch (final SpaceExceededException e) {
             Log.logException(e);
         }
 
@@ -152,7 +154,7 @@ public class Load_RSS_p {
                     } catch (final IOException e) {
                         Log.logException(e);
                         continue;
-                    } catch (final RowSpaceExceededException e) {
+                    } catch (final SpaceExceededException e) {
                         Log.logException(e);
                         continue;
                     }
@@ -188,13 +190,13 @@ public class Load_RSS_p {
                     row = plainIterator.next();
                     if (row == null) continue;
                     messageurl = row.get("url", "");
-                    if (messageurl.length() == 0) continue;
+                    if (messageurl.isEmpty()) continue;
                     // get referrer
-                    final DigestURI referrer = sb.getURL(Segments.Process.LOCALCRAWLING, row.get("referrer", "").getBytes());
+                    final DigestURI referrer = sb.getURL(row.get("referrer", "").getBytes());
                     // check if feed is registered in scheduler
                     final byte[] api_pk = row.get("api_pk");
                     final Row r = api_pk == null ? null : sb.tables.select("api", api_pk);
-                    if (r != null && r.get("comment", "").matches(".*\\Q" + messageurl + "\\E.*")) {
+                    if (r != null && r.get("comment", "").matches(".*" + Pattern.quote(messageurl) + ".*")) {
                         // this is a recorded entry
                         final Date date_next_exec = r.get(WorkTables.TABLE_API_COL_DATE_NEXT_EXEC, (Date) null);
                         prop.put("showscheduledfeeds_list_" + apic + "_pk", UTF8.String(row.getPK()));
@@ -229,7 +231,7 @@ public class Load_RSS_p {
                 prop.put("shownewfeeds", newc > 0 ? 1 : 0);
             } catch (final IOException e) {
                 Log.logException(e);
-            } catch (final RowSpaceExceededException e) {
+            } catch (final SpaceExceededException e) {
                 Log.logException(e);
             }
 
@@ -255,7 +257,7 @@ public class Load_RSS_p {
         RSSReader rss = null;
         if (url != null) try {
             prop.put("url", url.toNormalform(true, false));
-            final Response response = sb.loader.load(sb.loader.request(url, true, false), CacheStrategy.NOCACHE, Integer.MAX_VALUE, true);
+            final Response response = sb.loader.load(sb.loader.request(url, true, false), CacheStrategy.NOCACHE, Integer.MAX_VALUE, BlacklistType.CRAWLER, CrawlQueues.queuedMinLoadDelay);
             final byte[] resource = response == null ? null : response.getContent();
             rss = resource == null ? null : RSSReader.parse(RSSFeed.DEFAULT_MAXSIZE, resource);
         } catch (final IOException e) {
@@ -270,7 +272,7 @@ public class Load_RSS_p {
                     final RSSMessage message = feed.getMessage(entry.getValue().substring(5));
                     final DigestURI messageurl = new DigestURI(message.getLink());
                     if (RSSLoader.indexTriggered.containsKey(messageurl.hash())) continue loop;
-                    if (sb.urlExists(Segments.Process.LOCALCRAWLING, messageurl.hash()) != null) continue loop;
+                    if (sb.urlExists(messageurl.hash()) != null) continue loop;
                     sb.addToIndex(messageurl, null, null);
                     RSSLoader.indexTriggered.insertIfAbsent(messageurl.hash(), new Date());
                 } catch (final IOException e) {
@@ -299,7 +301,7 @@ public class Load_RSS_p {
             final RSSMessage channel = feed.getChannel();
             prop.putHTML("showitems_title", channel == null ? "" : channel.getTitle());
             String author = channel == null ? "" : channel.getAuthor();
-            if (author == null || author.length() == 0) author = channel == null ? "" : channel.getCopyright();
+            if (author == null || author.isEmpty()) author = channel == null ? "" : channel.getCopyright();
             Date pubDate = channel == null ? null : channel.getPubDate();
             prop.putHTML("showitems_author", author == null ? "" : author);
             prop.putHTML("showitems_description", channel == null ? "" : channel.getDescription());
@@ -315,7 +317,7 @@ public class Load_RSS_p {
                     author = item.getAuthor();
                     if (author == null) author = item.getCopyright();
                     pubDate = item.getPubDate();
-                    prop.put("showitems_item_" + i + "_state", sb.urlExists(Segments.Process.LOCALCRAWLING, messageurl.hash()) != null ? 2 : RSSLoader.indexTriggered.containsKey(messageurl.hash()) ? 1 : 0);
+                    prop.put("showitems_item_" + i + "_state", sb.urlExists(messageurl.hash()) != null ? 2 : RSSLoader.indexTriggered.containsKey(messageurl.hash()) ? 1 : 0);
                     prop.put("showitems_item_" + i + "_state_count", i);
                     prop.putHTML("showitems_item_" + i + "_state_guid", item.getGuid());
                     prop.putHTML("showitems_item_" + i + "_author", author == null ? "" : author);

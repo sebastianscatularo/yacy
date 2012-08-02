@@ -13,10 +13,10 @@ import javax.imageio.ImageIO;
 
 import net.yacy.cora.document.UTF8;
 import net.yacy.cora.order.CloneableIterator;
+import net.yacy.cora.util.SpaceExceededException;
 import net.yacy.kelondro.index.Index;
 import net.yacy.kelondro.index.Row;
 import net.yacy.kelondro.index.RowSet;
-import net.yacy.kelondro.index.RowSpaceExceededException;
 import net.yacy.kelondro.logging.Log;
 import net.yacy.kelondro.order.Base64Order;
 import net.yacy.kelondro.order.NaturalOrder;
@@ -71,7 +71,7 @@ public class dbtest {
 
         public boolean isValid() {
             final String s = UTF8.String(this.value).trim();
-            if (s.length() == 0) return false;
+            if (s.isEmpty()) return false;
             final long source = Long.parseLong(s);
             return ByteBuffer.equals(this.key, randomHash(source, source));
         }
@@ -110,6 +110,7 @@ public class dbtest {
             return this.table_reference;
         }
 
+        @Override
         public abstract void run();
 
         public long getSource() {
@@ -122,6 +123,7 @@ public class dbtest {
             super(table_test, table_reference, aSource);
         }
 
+        @Override
         public void run() {
             final STEntry entry = new STEntry(getSource());
             System.out.println("write:  " + NaturalOrder.arrayList(entry.getKey(), 0, entry.getKey().length));
@@ -132,7 +134,7 @@ public class dbtest {
                 System.err.println(e);
                 Log.logException(e);
                 System.exit(0);
-            } catch (final RowSpaceExceededException e) {
+            } catch (final SpaceExceededException e) {
                 System.err.println(e);
                 Log.logException(e);
                 System.exit(0);
@@ -145,6 +147,7 @@ public class dbtest {
             super(table_test, table_reference, aSource);
         }
 
+        @Override
         public void run() {
             final STEntry entry = new STEntry(getSource());
             System.out.println("remove: " + NaturalOrder.arrayList(entry.getKey(), 0, entry.getKey().length));
@@ -164,6 +167,7 @@ public class dbtest {
             super(table_test, table_reference, aSource);
         }
 
+        @Override
         public void run() {
             final STEntry entry = new STEntry(getSource());
             try {

@@ -35,11 +35,15 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import net.yacy.cora.document.MultiProtocolURI;
 import net.yacy.cora.document.UTF8;
+import net.yacy.kelondro.data.meta.DigestURI;
 
 /*
  * A class for Parsing robots.txt files.
@@ -96,6 +100,35 @@ public final class RobotsTxtParser {
         }
     }
 
+
+    public static RobotsTxtParser getRobots(String homepage) {
+        DigestURI theURL;
+        try {
+            theURL = new DigestURI(homepage);
+        } catch (MalformedURLException e1) {
+            return null;
+        }
+
+        final String urlHostPort = RobotsTxt.getHostPort(theURL);
+        MultiProtocolURI robotsURL = null;
+        try {
+            robotsURL = new MultiProtocolURI("http://" + urlHostPort + "/robots.txt");
+        } catch (final MalformedURLException e) {
+            return null;
+        }
+
+        Object[] result;
+        try {
+            result = RobotsTxt.downloadRobotsTxt(robotsURL, 0, null);
+        } catch (Exception e) {
+            return null;
+        }
+
+        final byte[] robotsTxt = (byte[]) result[RobotsTxt.DOWNLOAD_ROBOTS_TXT];
+        RobotsTxtParser parserResult = new RobotsTxtParser(new HashSet<String>(), robotsTxt);
+        return parserResult;
+    }
+
     private void parse(final BufferedReader reader) {
         final ArrayList<String> deny4AllAgents = new ArrayList<String>();
         final ArrayList<String> deny4ThisAgents = new ArrayList<String>();
@@ -116,7 +149,7 @@ public final class RobotsTxtParser {
                 lineUpper = line.toUpperCase();
 
                 // parse empty line
-                if (line.length() == 0) {
+                if (line.isEmpty()) {
                     // we have reached the end of the rule block
                     if (rule4ThisAgentsFound) {
                         // stop here because other robot blocks are either not for YaCy
@@ -134,7 +167,7 @@ public final class RobotsTxtParser {
 
                 // parse sitemap; if there are several sitemaps then take the first url
                 // TODO: support for multiple sitemaps
-                if (lineUpper.startsWith(ROBOTS_SITEMAP) && (this.sitemap == null || this.sitemap.length() == 0)) {
+                if (lineUpper.startsWith(ROBOTS_SITEMAP) && (this.sitemap == null || this.sitemap.isEmpty())) {
                     pos = line.indexOf(' ');
                     if (pos != -1) {
                         this.sitemap = line.substring(pos).trim();

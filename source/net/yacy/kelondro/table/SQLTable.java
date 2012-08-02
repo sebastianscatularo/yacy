@@ -34,7 +34,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -108,23 +107,28 @@ public class SQLTable implements Index, Iterable<Row.Entry> {
 
     }
 
+    @Override
     public long mem() {
         return 0;
     }
 
+    @Override
     public byte[] smallestKey() {
         return null;
     }
 
+    @Override
     public byte[] largestKey() {
         return null;
     }
 
+    @Override
     public String filename() {
         return "dbtest." + this.theDBConnection.hashCode();
     }
 
-    public void close() {
+    @Override
+    public synchronized void close() {
         if (this.theDBConnection != null) try {
             this.theDBConnection.close();
         } catch (final SQLException e) {
@@ -133,6 +137,7 @@ public class SQLTable implements Index, Iterable<Row.Entry> {
         this.theDBConnection = null;
     }
 
+    @Override
     public int size() {
         int size = -1;
         try {
@@ -155,14 +160,17 @@ public class SQLTable implements Index, Iterable<Row.Entry> {
         }
     }
 
+    @Override
     public boolean isEmpty() {
         return size() == 0;
     }
 
+    @Override
     public Row row() {
         return this.rowdef;
     }
 
+    @Override
     public boolean has(final byte[] key) {
         try {
             return (get(key, false) != null);
@@ -171,10 +179,12 @@ public class SQLTable implements Index, Iterable<Row.Entry> {
         }
     }
 
+    @Override
     public ArrayList<RowCollection> removeDoubles() {
         return new ArrayList<RowCollection>();
     }
 
+    @Override
     public Row.Entry get(final byte[] key, final boolean forcecopy) throws IOException {
         try {
             final String sqlQuery = "SELECT value from test where hash = ?";
@@ -199,6 +209,7 @@ public class SQLTable implements Index, Iterable<Row.Entry> {
         }
     }
 
+    @Override
     public Map<byte[], Row.Entry> get(final Collection<byte[]> keys, final boolean forcecopy) throws IOException, InterruptedException {
         final Map<byte[], Row.Entry> map = new TreeMap<byte[], Row.Entry>(row().objectOrder);
         Row.Entry entry;
@@ -209,6 +220,7 @@ public class SQLTable implements Index, Iterable<Row.Entry> {
         return map;
     }
 
+    @Override
     public Row.Entry replace(final Row.Entry row) throws IOException {
         try {
             final Row.Entry oldEntry = remove(row.getPrimaryKeyBytes());
@@ -231,6 +243,7 @@ public class SQLTable implements Index, Iterable<Row.Entry> {
         }
     }
 
+    @Override
     public boolean put(final Row.Entry row) throws IOException {
         try {
             final String sqlQuery = "INSERT INTO test (" +
@@ -252,18 +265,12 @@ public class SQLTable implements Index, Iterable<Row.Entry> {
         }
     }
 
+    @Override
     public synchronized void addUnique(final Row.Entry row) throws IOException {
         throw new UnsupportedOperationException();
     }
 
-    public synchronized void addUnique(final Row.Entry row, final Date entryDate) {
-        throw new UnsupportedOperationException();
-    }
-
-    public synchronized void addUnique(final List<Row.Entry> rows) {
-        throw new UnsupportedOperationException();
-    }
-
+    @Override
     public Row.Entry remove(final byte[] key) throws IOException {
         PreparedStatement sqlStatement = null;
         try {
@@ -292,23 +299,28 @@ public class SQLTable implements Index, Iterable<Row.Entry> {
         }
     }
 
+    @Override
     public boolean delete(final byte[] key) throws IOException {
         return remove(key) != null;
     }
 
+    @Override
     public Row.Entry removeOne() {
         return null;
     }
 
+    @Override
     public List<Row.Entry> top(final int count) throws IOException {
         return null;
     }
 
+    @Override
     public CloneableIterator<Row.Entry> rows(final boolean up, final byte[] startKey) throws IOException {
         // Objects are of type kelondroRow.Entry
         return null;
     }
 
+    @Override
     public Iterator<Entry> iterator() {
         try {
             return rows();
@@ -317,21 +329,18 @@ public class SQLTable implements Index, Iterable<Row.Entry> {
         }
     }
 
+    @Override
     public CloneableIterator<Row.Entry> rows() throws IOException {
         return null;
     }
 
+    @Override
     public CloneableIterator<byte[]> keys(final boolean up, final byte[] startKey) {
         // Objects are of type byte[]
         return null;
     }
 
     public int columns() {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
-    public int columnSize(final int column) {
         // TODO Auto-generated method stub
         return 0;
     }
@@ -362,10 +371,12 @@ public class SQLTable implements Index, Iterable<Row.Entry> {
         return new int[]{0,0,0,0,0,0,0,0,0,0};
     }
 
+    @Override
     public void clear() {
         // do nothing
     }
 
+    @Override
     public void deleteOnExit() {
         // do nothing
     }

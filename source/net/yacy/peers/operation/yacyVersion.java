@@ -9,11 +9,11 @@ import net.yacy.search.Switchboard;
 
 public class yacyVersion implements Comparator<yacyVersion>, Comparable<yacyVersion> {
 
-    public static final float YACY_SUPPORTS_PORT_FORWARDING = (float) 0.383;
-    public static final float YACY_SUPPORTS_GZIP_POST_REQUESTS_CHUNKED = (float) 0.58204761;
-    public static final float YACY_HANDLES_COLLECTION_INDEX = (float) 0.486;
-    public static final float YACY_POVIDES_REMOTECRAWL_LISTS = (float) 0.550;
-    public static final float YACY_STANDARDREL_IS_PRO = (float) 0.557;
+    public static final double YACY_SUPPORTS_PORT_FORWARDING = (float) 0.383;
+    public static final double YACY_SUPPORTS_GZIP_POST_REQUESTS_CHUNKED = (float) 0.58204761;
+    public static final double YACY_HANDLES_COLLECTION_INDEX = (float) 0.486;
+    public static final double YACY_POVIDES_REMOTECRAWL_LISTS = (float) 0.550;
+    public static final double YACY_STANDARDREL_IS_PRO = (float) 0.557;
     private static yacyVersion thisVersion = null;
 
     /**
@@ -21,7 +21,7 @@ public class yacyVersion implements Comparator<yacyVersion>, Comparable<yacyVers
      * this value is overwritten when a peer with later version appears*/
     public static double latestRelease = 0.1; //
 
-    private float releaseNr;
+    private double releaseNr;
     private final String dateStamp;
     private int svn;
     private final boolean mainRelease;
@@ -58,9 +58,9 @@ public class yacyVersion implements Comparator<yacyVersion>, Comparable<yacyVers
             throw new RuntimeException("release file name '" + release + "' is not valid, 3 information parts expected");
         }
         try {
-            this.releaseNr = Float.parseFloat(comp[0]);
+            this.releaseNr = Double.parseDouble(comp[0]);
         } catch (final NumberFormatException e) {
-            throw new RuntimeException("release file name '" + release + "' is not valid, '" + comp[0] + "' should be a float number");
+            throw new RuntimeException("release file name '" + release + "' is not valid, '" + comp[0] + "' should be a double number");
         }
         this.mainRelease = ((int) (getReleaseNr() * 100)) % 10 == 0 || (host != null && host.endsWith("yacy.net"));
         //System.out.println("Release version " + this.releaseNr + " is " + ((this.mainRelease) ? "main" : "std"));
@@ -99,6 +99,7 @@ public class yacyVersion implements Comparator<yacyVersion>, Comparable<yacyVers
      * returns 0 if this object is equal to the obj, -1 if this is smaller
      * than obj and 1 if this is greater than obj
      */
+    @Override
     public int compareTo(final yacyVersion obj) {
         return compare(this, obj);
     }
@@ -108,22 +109,25 @@ public class yacyVersion implements Comparator<yacyVersion>, Comparable<yacyVers
      * must be implemented to make it possible to put this object into
      * a ordered structure, like TreeSet or TreeMap
      */
+    @Override
     public int compare(final yacyVersion v0, final yacyVersion v1) {
-        int r = (Float.valueOf(v0.getReleaseNr())).compareTo(Float.valueOf(v1.getReleaseNr()));
+        int r = (Double.valueOf(v0.getReleaseGitNr())).compareTo(Double.valueOf(v1.getReleaseGitNr()));
         if (r != 0) return r;
         r = v0.getDateStamp().compareTo(v1.getDateStamp());
         if (r != 0) return r;
         return (Integer.valueOf(v0.getSvn())).compareTo(Integer.valueOf(v1.getSvn()));
     }
 
+    @Override
     public boolean equals(final Object obj) {
         if (obj instanceof yacyVersion) {
             final yacyVersion v = (yacyVersion) obj;
-            return (getReleaseNr() == v.getReleaseNr()) && (getSvn() == v.getSvn()) && (getName().equals(v.getName()));
+            return (getReleaseGitNr() == v.getReleaseGitNr()) && (getSvn() == v.getSvn()) && (getName().equals(v.getName()));
         }
         return false;
     }
 
+    @Override
     public int hashCode() {
         return getName().hashCode();
     }
@@ -137,21 +141,21 @@ public class yacyVersion implements Comparator<yacyVersion>, Comparable<yacyVers
      *         If the major version is &gt;= 0.11 - major version is replaced by "dev" and separated SVN-version by '/', e.g."dev/01818" <br>
      *         "dev/00000" - If the input does not matcht the regular expression above
      */
-    public static String combined2prettyVersion(final String ver) {
+    public static String[] combined2prettyVersion(final String ver) {
          return combined2prettyVersion(ver, "");
      }
 
-    public static String combined2prettyVersion(final String ver, final String computerName) {
+    public static String[] combined2prettyVersion(final String ver, final String computerName) {
         final Matcher matcher = yacyBuildProperties.versionMatcher.matcher(ver);
          if (!matcher.find()) {
              Log.logWarning("STARTUP", "Peer '"+computerName+"': wrong format of version-string: '" + ver + "'. Using default string 'dev/00000' instead");
-             return "dev/00000";
+             return new String[]{"dev", "0000"};
          }
 
-         final String mainversion = (Float.parseFloat(matcher.group(1)) < 0.11 ? "dev" : matcher.group(1));
+         final String mainversion = (Double.parseDouble(matcher.group(1)) < 0.11 ? "dev" : matcher.group(1));
         String revision = matcher.group(2);
         for(int i=revision.length();i<5;++i) revision += "0";
-        return mainversion+"/"+revision;
+        return new String[]{mainversion, revision};
     }
 
     public static int revision(final String ver) {
@@ -197,13 +201,17 @@ public class yacyVersion implements Comparator<yacyVersion>, Comparable<yacyVers
     }
 
     /**
-     * release number as float (e. g. 7.04)
+     * release number as Double (e. g. 7.04)
      * @return
      */
-    public float getReleaseNr() {
+    public double getReleaseNr() {
         return this.releaseNr;
     }
 
+    public double getReleaseGitNr() {
+        // combine release number with git number
+        return this.getReleaseNr() + ((getSvn()) / 10000000.0d);
+    }
 
     public String getName() {
         return this.name;

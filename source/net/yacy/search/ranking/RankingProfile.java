@@ -32,6 +32,7 @@ import java.util.Map;
 
 import net.yacy.cora.document.Classification;
 import net.yacy.cora.document.Classification.ContentDomain;
+import net.yacy.cora.util.NumberTools;
 import net.yacy.kelondro.logging.Log;
 
 public class RankingProfile {
@@ -145,7 +146,7 @@ public class RankingProfile {
                     p = e.indexOf('=');
                     if (p < 0) System.out.println("DEBUG: bug in plasmaSearchRankingProfile: e = " + e);
                     if ((p > 0) && (e.length() > p + 1)) try {
-                        coeff.put(e.substring(s, p), Integer.valueOf(Integer.parseInt(e.substring(p + 1))));
+                        coeff.put(e.substring(s, p), Integer.valueOf(NumberTools.parseIntDecSubstring(e, p + 1)));
                     } catch (final NumberFormatException e1) {
                         System.out.println("wrong parameter: " + e.substring(s, p) + "=" + e.substring(p + 1));
                         Log.logException(e1);
@@ -209,7 +210,7 @@ public class RankingProfile {
 
     public Map<String, String> preToExternalMap(final String prefix) {
         final Map<String, String> ext = new LinkedHashMap<String, String>(40);
-        if (prefix.length() == 0) {
+        if (prefix.isEmpty()) {
             ext.put(APPEMPH, Integer.toString(this.coeff_appemph));
             ext.put(APPURL, Integer.toString(this.coeff_appurl));
             ext.put(APP_DC_CREATOR, Integer.toString(this.coeff_app_dc_creator));
@@ -275,7 +276,7 @@ public class RankingProfile {
 
     public Map<String, String> postToExternalMap(final String prefix) {
     	final Map<String, String> ext = new LinkedHashMap<String, String>();
-        if (prefix.length() == 0) {
+        if (prefix.isEmpty()) {
             ext.put(URLCOMPINTOPLIST, Integer.toString(this.coeff_urlcompintoplist));
             ext.put(DESCRCOMPINTOPLIST, Integer.toString(this.coeff_descrcompintoplist));
             ext.put(PREFER, Integer.toString(this.coeff_prefer));

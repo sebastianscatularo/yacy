@@ -32,7 +32,6 @@ import java.io.Writer;
 import java.net.MalformedURLException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -47,6 +46,9 @@ import javax.swing.event.EventListenerList;
 
 import net.yacy.cora.document.MultiProtocolURI;
 import net.yacy.cora.sorting.ClusteredScoreMap;
+import net.yacy.cora.storage.SizeLimitedMap;
+import net.yacy.cora.storage.SizeLimitedSet;
+import net.yacy.cora.util.NumberTools;
 import net.yacy.document.SentenceReader;
 import net.yacy.document.parser.htmlParser;
 import net.yacy.document.parser.html.Evaluation.Element;
@@ -54,19 +56,19 @@ import net.yacy.kelondro.io.CharBuffer;
 import net.yacy.kelondro.logging.Log;
 import net.yacy.kelondro.util.FileUtils;
 import net.yacy.kelondro.util.ISO639;
-import net.yacy.kelondro.util.MemoryControl;
 
 
 public class ContentScraper extends AbstractScraper implements Scraper {
-	private static final String EMPTY_STRING = new String();
 	public static final int MAX_DOCSIZE = 40 * 1024 * 1024;
 
     private final char degree = '\u00B0';
     private final char[] minuteCharsHTML = "&#039;".toCharArray();
 
     // statics: for initialization of the HTMLFilterAbstractScraper
-    private static final Set<String> linkTags0 = new HashSet<String>(9,0.99f);
-    private static final Set<String> linkTags1 = new HashSet<String>(7,0.99f);
+    private static final Set<String> linkTags0 = new HashSet<String>(12,0.99f);
+    private static final Set<String> linkTags1 = new HashSet<String>(15,0.99f);
+
+    private static final Pattern LB = Pattern.compile("\n");
 
     public enum TagType {
         singleton, pair;
@@ -84,6 +86,7 @@ public class ContentScraper extends AbstractScraper implements Scraper {
         link(TagType.singleton),
         embed(TagType.singleton), //added by [MN]
         param(TagType.singleton), //added by [MN]
+        iframe(TagType.singleton), // scraped as singleton to get such iframes that have no closing tag
 
         a(TagType.pair),
         h1(TagType.pair),
@@ -97,8 +100,8 @@ public class ContentScraper extends AbstractScraper implements Scraper {
         strong(TagType.pair),
         i(TagType.pair),
         li(TagType.pair),
-        iframe(TagType.pair),
-        script(TagType.pair);
+        script(TagType.pair),
+        style(TagType.pair);
 
         public TagType type;
         private Tag(final TagType type) {
@@ -119,6 +122,7 @@ public class ContentScraper extends AbstractScraper implements Scraper {
     private final Map<MultiProtocolURI, Properties> anchors;
     private final Map<MultiProtocolURI, String> rss, css;
     private final Set<MultiProtocolURI> script, frames, iframes;
+    private final Map<MultiProtocolURI, EmbedEntry> embeds; // urlhash/embed relation
     private final Map<MultiProtocolURI, ImageEntry> images; // urlhash/image relation
     private final Map<String, String> metas;
     private String title;
@@ -128,8 +132,9 @@ public class ContentScraper extends AbstractScraper implements Scraper {
     private final List<String> li;
     private final CharBuffer content;
     private final EventListenerList htmlFilterEventListeners;
-    private float lon, lat;
+    private double lon, lat;
     private MultiProtocolURI canonical;
+    private final int maxLinks;
 
 
     /**
@@ -148,21 +153,23 @@ public class ContentScraper extends AbstractScraper implements Scraper {
     private final Evaluation evaluationScores;
 
     @SuppressWarnings("unchecked")
-    public ContentScraper(final MultiProtocolURI root) {
+    public ContentScraper(final MultiProtocolURI root, int maxLinks) {
         // the root value here will not be used to load the resource.
         // it is only the reference for relative links
         super(linkTags0, linkTags1);
         assert root != null;
         this.root = root;
+        this.maxLinks = maxLinks;
         this.evaluationScores = new Evaluation();
-        this.rss = new HashMap<MultiProtocolURI, String>();
-        this.css = new HashMap<MultiProtocolURI, String>();
-        this.anchors = new HashMap<MultiProtocolURI, Properties>();
-        this.images = new HashMap<MultiProtocolURI, ImageEntry>();
-        this.frames = new HashSet<MultiProtocolURI>();
-        this.iframes = new HashSet<MultiProtocolURI>();
-        this.metas = new HashMap<String, String>();
-        this.script = new HashSet<MultiProtocolURI>();
+        this.rss = new SizeLimitedMap<MultiProtocolURI, String>(maxLinks);
+        this.css = new SizeLimitedMap<MultiProtocolURI, String>(maxLinks);
+        this.anchors = new SizeLimitedMap<MultiProtocolURI, Properties>(maxLinks);
+        this.images = new SizeLimitedMap<MultiProtocolURI, ImageEntry>(maxLinks);
+        this.embeds = new SizeLimitedMap<MultiProtocolURI, EmbedEntry>(maxLinks);
+        this.frames = new SizeLimitedSet<MultiProtocolURI>(maxLinks);
+        this.iframes = new SizeLimitedSet<MultiProtocolURI>(maxLinks);
+        this.metas = new SizeLimitedMap<String, String>(maxLinks);
+        this.script = new SizeLimitedSet<MultiProtocolURI>(maxLinks);
         this.title = EMPTY_STRING;
         this.headlines = new ArrayList[6];
         for (int i = 0; i < this.headlines.length; i++) this.headlines[i] = new ArrayList<String>();
@@ -171,8 +178,8 @@ public class ContentScraper extends AbstractScraper implements Scraper {
         this.li = new ArrayList<String>();
         this.content = new CharBuffer(MAX_DOCSIZE, 1024);
         this.htmlFilterEventListeners = new EventListenerList();
-        this.lon = 0.0f;
-        this.lat = 0.0f;
+        this.lon = 0.0d;
+        this.lat = 0.0d;
         this.evaluationScores.match(Element.url, root.toNormalform(false, false));
         this.canonical = null;
     }
@@ -198,6 +205,7 @@ public class ContentScraper extends AbstractScraper implements Scraper {
     @Override
     public void scrapeText(final char[] newtext, final String insideTag) {
         // System.out.println("SCRAPE: " + UTF8.String(newtext));
+        if (insideTag != null && ("script".equals(insideTag) || "style".equals(insideTag))) return;
         int p, pl, q, s = 0;
 
         // match evaluation pattern
@@ -224,29 +232,29 @@ public class ContentScraper extends AbstractScraper implements Scraper {
                     r--;
                     if (newtext[r] == 'N') {
                         this.lat =  Float.parseFloat(new String(newtext, r + 2, p - r - 2)) +
-                                    Float.parseFloat(new String(newtext, p + pl + 1, q - p - pl - 1)) / 60.0f;
-                        if (this.lon != 0.0f) break location;
+                                    Float.parseFloat(new String(newtext, p + pl + 1, q - p - pl - 1)) / 60.0d;
+                        if (this.lon != 0.0d) break location;
                         s = q + 6;
                         continue location;
                     }
                     if (newtext[r] == 'S') {
                         this.lat = -Float.parseFloat(new String(newtext, r + 2, p - r - 2)) -
-                                    Float.parseFloat(new String(newtext, p + pl + 1, q - p - pl - 1)) / 60.0f;
-                        if (this.lon != 0.0f) break location;
+                                    Float.parseFloat(new String(newtext, p + pl + 1, q - p - pl - 1)) / 60.0d;
+                        if (this.lon != 0.0d) break location;
                         s = q + 6;
                         continue location;
                     }
                     if (newtext[r] == 'E') {
                         this.lon =  Float.parseFloat(new String(newtext, r + 2, p - r - 2)) +
-                                    Float.parseFloat(new String(newtext, p + pl + 1, q - p - pl - 1)) / 60.0f;
-                        if (this.lat != 0.0f) break location;
+                                    Float.parseFloat(new String(newtext, p + pl + 1, q - p - pl - 1)) / 60.0d;
+                        if (this.lat != 0.0d) break location;
                         s = q + 6;
                         continue location;
                     }
                     if (newtext[r] == 'W') {
                         this.lon = -Float.parseFloat(new String(newtext, r + 2, p - r - 2)) -
-                                    Float.parseFloat(new String(newtext, p + 2, q - p - pl - 1)) / 60.0f;
-                        if (this.lat != 0.0f) break location;
+                                    Float.parseFloat(new String(newtext, p + 2, q - p - pl - 1)) / 60.0d;
+                        if (this.lat != 0.0d) break location;
                         s = q + 6;
                         continue location;
                     }
@@ -317,11 +325,11 @@ public class ContentScraper extends AbstractScraper implements Scraper {
         if (tagname.equalsIgnoreCase("img")) {
             final String src = tagopts.getProperty("src", EMPTY_STRING);
             try {
-                final int width = Integer.parseInt(tagopts.getProperty("width", "-1"));
-                final int height = Integer.parseInt(tagopts.getProperty("height", "-1"));
                 if (src.length() > 0) {
                     final MultiProtocolURI url = absolutePath(src);
                     if (url != null) {
+                        final int width = Integer.parseInt(tagopts.getProperty("width", "-1"));
+                        final int height = Integer.parseInt(tagopts.getProperty("height", "-1"));
                         final ImageEntry ie = new ImageEntry(url, tagopts.getProperty("alt", EMPTY_STRING), width, height, -1);
                         addImage(this.images, ie);
                     }
@@ -334,6 +342,7 @@ public class ContentScraper extends AbstractScraper implements Scraper {
             } catch (final MalformedURLException e) {}
         } else if (tagname.equalsIgnoreCase("frame")) {
             final MultiProtocolURI src = absolutePath(tagopts.getProperty("src", EMPTY_STRING));
+            tagopts.put("src", src.toNormalform(true, false));
             mergeAnchors(src, tagopts /* with property "name" */);
             this.frames.add(src);
             this.evaluationScores.match(Element.framepath, src.toNormalform(true, false));
@@ -348,7 +357,7 @@ public class ContentScraper extends AbstractScraper implements Scraper {
             final String content = tagopts.getProperty("content", EMPTY_STRING);
             if (name.length() > 0) {
                 this.metas.put(name.toLowerCase(), CharacterCoding.html2unicode(content));
-                if (name.equals("generator")) {
+                if (name.toLowerCase().equals("generator")) {
                     this.evaluationScores.match(Element.metagenerator, content);
                 }
             } else {
@@ -358,16 +367,21 @@ public class ContentScraper extends AbstractScraper implements Scraper {
                 }
             }
         } else if (tagname.equalsIgnoreCase("area")) {
-            final String areatitle = cleanLine(tagopts.getProperty("title",EMPTY_STRING));
+            final String areatitle = cleanLine(tagopts.getProperty("title", EMPTY_STRING));
             //String alt   = tagopts.getProperty("alt",EMPTY_STRING);
             final String href  = tagopts.getProperty("href", EMPTY_STRING);
-            tagopts.put("nme", areatitle);
-            if (href.length() > 0) mergeAnchors(absolutePath(href), tagopts);
+            if (href.length() > 0) {
+                tagopts.put("nme", areatitle);
+                MultiProtocolURI url = absolutePath(href);
+                tagopts.put("href", url.toNormalform(true, false));
+                mergeAnchors(url, tagopts);
+            }
         } else if (tagname.equalsIgnoreCase("link")) {
             final String href = tagopts.getProperty("href", EMPTY_STRING);
             final MultiProtocolURI newLink = absolutePath(href);
 
             if (newLink != null) {
+                tagopts.put("href", newLink.toNormalform(true, false));
                 final String rel = tagopts.getProperty("rel", EMPTY_STRING);
                 final String linktitle = tagopts.getProperty("title", EMPTY_STRING);
                 final String type = tagopts.getProperty("type", EMPTY_STRING);
@@ -391,12 +405,33 @@ public class ContentScraper extends AbstractScraper implements Scraper {
                 }
             }
         } else if(tagname.equalsIgnoreCase("embed")) {
-            mergeAnchors(absolutePath(tagopts.getProperty("src", EMPTY_STRING)), tagopts /* with property "name" */);
+            final String src = tagopts.getProperty("src", EMPTY_STRING);
+            try {
+                if (src.length() > 0) {
+                    final MultiProtocolURI url = absolutePath(src);
+                    if (url != null) {
+                        final int width = Integer.parseInt(tagopts.getProperty("width", "-1"));
+                        final int height = Integer.parseInt(tagopts.getProperty("height", "-1"));
+                        tagopts.put("src", url.toNormalform(true, false));
+                        final EmbedEntry ie = new EmbedEntry(url, width, height, tagopts.getProperty("type", EMPTY_STRING), tagopts.getProperty("pluginspage", EMPTY_STRING));
+                        this.embeds.put(url, ie);
+                        mergeAnchors(url, tagopts);
+                    }
+                }
+            } catch (final NumberFormatException e) {}
         } else if(tagname.equalsIgnoreCase("param")) {
             final String name = tagopts.getProperty("name", EMPTY_STRING);
             if (name.equalsIgnoreCase("movie")) {
-                mergeAnchors(absolutePath(tagopts.getProperty("value", EMPTY_STRING)), tagopts /* with property "name" */);
+                MultiProtocolURI url = absolutePath(tagopts.getProperty("value", EMPTY_STRING));
+                tagopts.put("value", url.toNormalform(true, false));
+                mergeAnchors(url, tagopts /* with property "name" */);
             }
+        } else if (tagname.equalsIgnoreCase("iframe")) {
+            final MultiProtocolURI src = absolutePath(tagopts.getProperty("src", EMPTY_STRING));
+            tagopts.put("src", src.toNormalform(true, false));
+            mergeAnchors(src, tagopts /* with property "name" */);
+            this.iframes.add(src);
+            this.evaluationScores.match(Element.iframepath, src.toNormalform(true, false));
         }
 
         // fire event
@@ -404,7 +439,7 @@ public class ContentScraper extends AbstractScraper implements Scraper {
     }
 
     @Override
-    public void scrapeTag1(final String tagname, final Properties tagopts, final char[] text) {
+    public void scrapeTag1(final String tagname, final Properties tagopts, char[] text) {
         // System.out.println("ScrapeTag1: tagname=" + tagname + ", opts=" + tagopts.toString() + ", text=" + UTF8.String(text));
         if (tagname.equalsIgnoreCase("a") && text.length < 2048) {
             final String href = tagopts.getProperty("href", EMPTY_STRING);
@@ -419,6 +454,7 @@ public class ContentScraper extends AbstractScraper implements Scraper {
                     addImage(this.images, ie);
                 } else {
                     tagopts.put("text", recursiveParse(text));
+                    tagopts.put("href", url.toNormalform(true, false)); // we must assign this because the url may have resolved backpaths and may not be absolute
                     mergeAnchors(url, tagopts);
                 }
             }
@@ -458,18 +494,13 @@ public class ContentScraper extends AbstractScraper implements Scraper {
         } else if ((tagname.equalsIgnoreCase("li")) && (text.length < 1024)) {
             h = recursiveParse(text);
             if (h.length() > 0) this.li.add(h);
-        } else if (tagname.equalsIgnoreCase("iframe")) {
-            final MultiProtocolURI src = absolutePath(tagopts.getProperty("src", EMPTY_STRING));
-            mergeAnchors(src, tagopts /* with property "name" */);
-            this.iframes.add(src);
-            this.evaluationScores.match(Element.iframepath, src.toNormalform(true, false));
         } else if (tagname.equalsIgnoreCase("script")) {
             final String src = tagopts.getProperty("src", EMPTY_STRING);
             if (src.length() > 0) {
                 this.script.add(absolutePath(src));
                 this.evaluationScores.match(Element.scriptpath, src);
             } else {
-                this.evaluationScores.match(Element.scriptcode, text);
+                this.evaluationScores.match(Element.scriptcode, LB.matcher(new String(text)).replaceAll(" "));
             }
         }
 
@@ -480,7 +511,7 @@ public class ContentScraper extends AbstractScraper implements Scraper {
 
     @Override
     public void scrapeComment(final char[] comment) {
-        this.evaluationScores.match(Element.comment, comment);
+        this.evaluationScores.match(Element.comment, LB.matcher(new String(comment)).replaceAll(" "));
     }
 
     private String recursiveParse(final char[] inlineHtml) {
@@ -488,7 +519,7 @@ public class ContentScraper extends AbstractScraper implements Scraper {
 
         // start a new scraper to parse links inside this text
         // parsing the content
-        final ContentScraper scraper = new ContentScraper(this.root);
+        final ContentScraper scraper = new ContentScraper(this.root, this.maxLinks);
         final TransformerWriter writer = new TransformerWriter(null, null, scraper, null, false);
         try {
             FileUtils.copy(new CharArrayReader(inlineHtml), writer);
@@ -509,26 +540,6 @@ public class ContentScraper extends AbstractScraper implements Scraper {
         String line = cleanLine(super.stripAll(scraper.content.getChars()));
         scraper.close();
         return line;
-    }
-
-    private final static String cleanLine(final String s) {
-        if (!MemoryControl.request(s.length() * 2, false)) return EMPTY_STRING;
-        final StringBuilder sb = new StringBuilder(s.length());
-        char l = ' ';
-        char c;
-        for (int i = 0; i < s.length(); i++) {
-            c = s.charAt(i);
-            if (c < ' ') c = ' ';
-            if (c == ' ') {
-                if (l != ' ') sb.append(c);
-            } else {
-                sb.append(c);
-            }
-            l = c;
-        }
-
-        // return result
-        return sb.toString().trim();
     }
 
     public String getTitle() {
@@ -556,7 +567,7 @@ public class ContentScraper extends AbstractScraper implements Scraper {
 
         // take description tag
         s = getDescription();
-        if (s.length() > 0) return s;
+        if (!s.isEmpty()) return s;
 
         // extract headline from file name
         return MultiProtocolURI.unescape(this.root.getFileName());
@@ -597,6 +608,17 @@ public class ContentScraper extends AbstractScraper implements Scraper {
         return this.li.toArray(new String[this.li.size()]);
     }
 
+    public MultiProtocolURI[] getFlash() {
+        String ext;
+        ArrayList<MultiProtocolURI> f = new ArrayList<MultiProtocolURI>();
+        for (final MultiProtocolURI url: this.anchors.keySet()) {
+            ext = url.getFileExtension();
+            if (ext == null) continue;
+            if (ext.equals("swf")) f.add(url);
+        }
+        return f.toArray(new MultiProtocolURI[f.size()]);
+    }
+
     public boolean containsFlash() {
         String ext;
         for (final MultiProtocolURI url: this.anchors.keySet()) {
@@ -607,12 +629,12 @@ public class ContentScraper extends AbstractScraper implements Scraper {
         return false;
     }
 
-    public byte[] getText() {
+    public String getText() {
         try {
-            return this.content.getBytes();
+            return this.content.toString();
         } catch (final OutOfMemoryError e) {
             Log.logException(e);
-            return new byte[0];
+            return "";
         }
     }
 
@@ -654,8 +676,11 @@ public class ContentScraper extends AbstractScraper implements Scraper {
      * @return a map of <urlhash, ImageEntry>
      */
     public Map<MultiProtocolURI, ImageEntry> getImages() {
-        // this resturns a String(absolute url)/htmlFilterImageEntry - relation
         return this.images;
+    }
+
+    public Map<MultiProtocolURI, EmbedEntry> getEmbeds() {
+        return this.embeds;
     }
 
     public Map<String, String> getMetas() {
@@ -738,8 +763,8 @@ public class ContentScraper extends AbstractScraper implements Scraper {
         String s = this.metas.get("keywords");
         if (s == null) s = this.metas.get("dc.description");
         if (s == null) s = EMPTY_STRING;
-        if (s.length() == 0) {
-            return MultiProtocolURI.splitpattern.split(getTitle().toLowerCase());
+        if (s.isEmpty()) {
+            return new String[0];
         }
         if (s.contains(",")) return commaSepPattern.split(s);
         if (s.contains(";")) return semicSepPattern.split(s);
@@ -752,7 +777,7 @@ public class ContentScraper extends AbstractScraper implements Scraper {
         try {
             final int pos = s.indexOf(';');
             if (pos < 0) return 9999;
-            final int i = Integer.parseInt(s.substring(0, pos));
+            final int i = NumberTools.parseIntDecSubstring(s, 0, pos);
             return i;
         } catch (final NumberFormatException e) {
             return 9999;
@@ -765,7 +790,7 @@ public class ContentScraper extends AbstractScraper implements Scraper {
 
         final int pos = s.indexOf(';');
         if (pos < 0) return EMPTY_STRING;
-        s = s.substring(pos + 1);
+        s = s.substring(pos + 1).trim();
         if (s.toLowerCase().startsWith("url=")) return s.substring(4).trim();
         return EMPTY_STRING;
     }
@@ -774,34 +799,34 @@ public class ContentScraper extends AbstractScraper implements Scraper {
     // <meta NAME="ICBM" CONTENT="38.90551492, 1.454004505" />
     // <meta NAME="geo.position" CONTENT="38.90551492;1.454004505" />
 
-    public float getLon() {
-        if (this.lon != 0.0f) return this.lon;
+    public double getLon() {
+        if (this.lon != 0.0d) return this.lon;
         String s = this.metas.get("ICBM"); // InterContinental Ballistic Missile (abbrev. supposed to be a joke: http://www.jargon.net/jargonfile/i/ICBMaddress.html), see http://geourl.org/add.html#icbm
         if (s != null) {
             int p = s.indexOf(';');
             if (p < 0) p = s.indexOf(',');
             if (p < 0) p = s.indexOf(' ');
             if (p > 0) {
-                this.lat = Float.parseFloat(s.substring(0, p).trim());
-                this.lon = Float.parseFloat(s.substring(p + 1).trim());
+                this.lat = Double.parseDouble(s.substring(0, p).trim());
+                this.lon = Double.parseDouble(s.substring(p + 1).trim());
             }
         }
-        if (this.lon != 0.0f) return this.lon;
+        if (this.lon != 0.0d) return this.lon;
         s = this.metas.get("geo.position"); // http://geotags.com/geobot/add-tags.html
         if (s != null) {
             int p = s.indexOf(';');
             if (p < 0) p = s.indexOf(',');
             if (p < 0) p = s.indexOf(' ');
             if (p > 0) {
-                this.lat = Float.parseFloat(s.substring(0, p).trim());
-                this.lon = Float.parseFloat(s.substring(p + 1).trim());
+                this.lat = Double.parseDouble(s.substring(0, p).trim());
+                this.lon = Double.parseDouble(s.substring(p + 1).trim());
             }
         }
         return this.lon;
     }
 
-    public float getLat() {
-        if (this.lat != 0.0f) return this.lat;
+    public double getLat() {
+        if (this.lat != 0.0d) return this.lat;
         getLon(); // parse with getLon() method which creates also the lat value
         return this.lat;
     }
@@ -842,9 +867,18 @@ public class ContentScraper extends AbstractScraper implements Scraper {
         // free resources
         super.close();
         this.anchors.clear();
+        this.rss.clear();
+        this.css.clear();
+        this.script.clear();
+        this.frames.clear();
+        this.iframes.clear();
+        this.embeds.clear();
         this.images.clear();
+        this.metas.clear();
         this.title = null;
         this.headlines = null;
+        this.bold.clear();
+        this.italic.clear();
         this.content.clear();
         this.root = null;
     }
@@ -860,12 +894,14 @@ public class ContentScraper extends AbstractScraper implements Scraper {
         System.out.println("TEXT     :" + this.content.toString());
     }
 
+    @Override
     public void registerHtmlFilterEventListener(final ScraperListener listener) {
         if (listener != null) {
             this.htmlFilterEventListeners.add(ScraperListener.class, listener);
         }
     }
 
+    @Override
     public void deregisterHtmlFilterEventListener(final ScraperListener listener) {
         if (listener != null) {
             this.htmlFilterEventListeners.remove(ScraperListener.class, listener);
@@ -890,19 +926,19 @@ public class ContentScraper extends AbstractScraper implements Scraper {
         }
     }
 
-    public static ContentScraper parseResource(final File file) throws IOException {
+    public static ContentScraper parseResource(final File file, final int maxLinks) throws IOException {
         // load page
         final byte[] page = FileUtils.read(file);
         if (page == null) throw new IOException("no content in file " + file.toString());
 
         // scrape document to look up charset
-        final ScraperInputStream htmlFilter = new ScraperInputStream(new ByteArrayInputStream(page),"UTF-8", new MultiProtocolURI("http://localhost"),null,false);
+        final ScraperInputStream htmlFilter = new ScraperInputStream(new ByteArrayInputStream(page),"UTF-8", new MultiProtocolURI("http://localhost"),null,false, maxLinks);
         String charset = htmlParser.patchCharsetEncoding(htmlFilter.detectCharset());
         htmlFilter.close();
         if (charset == null) charset = Charset.defaultCharset().toString();
 
         // scrape content
-        final ContentScraper scraper = new ContentScraper(new MultiProtocolURI("http://localhost"));
+        final ContentScraper scraper = new ContentScraper(new MultiProtocolURI("http://localhost"), maxLinks);
         final Writer writer = new TransformerWriter(null, null, scraper, null, false);
         FileUtils.copy(new ByteArrayInputStream(page), writer, Charset.forName(charset));
         writer.close();

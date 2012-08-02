@@ -46,8 +46,9 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import net.yacy.cora.document.UTF8;
+import net.yacy.cora.protocol.Domains;
+import net.yacy.cora.util.SpaceExceededException;
 import net.yacy.kelondro.blob.MapHeap;
-import net.yacy.kelondro.index.RowSpaceExceededException;
 import net.yacy.kelondro.logging.Log;
 import net.yacy.kelondro.order.Base64Order;
 import net.yacy.kelondro.order.NaturalOrder;
@@ -81,7 +82,7 @@ public class BlogBoardComments {
         return this.database.size();
     }
 
-    public void close() {
+    public synchronized void close() {
         this.database.close();
     }
 
@@ -137,12 +138,12 @@ public class BlogBoardComments {
         } catch (final IOException e) {
             Log.logException(e);
             record = null;
-        } catch (final RowSpaceExceededException e) {
+        } catch (final SpaceExceededException e) {
             Log.logException(e);
             record = null;
         }
         return (record == null) ?
-            newEntry(copyOfKey, new byte[0], UTF8.getBytes("anonymous"), "127.0.0.1", new Date(), new byte[0]) :
+            newEntry(copyOfKey, new byte[0], UTF8.getBytes("anonymous"), Domains.LOCALHOST, new Date(), new byte[0]) :
             new CommentEntry(copyOfKey, record);
     }
 
@@ -319,14 +320,14 @@ public class BlogBoardComments {
             return author_byte;
         }
         private void setIp(String ip) {
-            if ((ip == null) || (ip.length() == 0))
+            if ((ip == null) || (ip.isEmpty()))
                 ip = "";
             this.record.put("ip", ip);
         }
         public String getIp() {
             final String ip = this.record.get("ip");
             if (ip == null)
-                return "127.0.0.1";
+                return Domains.LOCALHOST;
             return ip;
         }
         private void setPage(final byte[] page) {

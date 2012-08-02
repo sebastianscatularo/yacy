@@ -1,9 +1,12 @@
 #!/bin/bash
 
-# add in /etc/crontab
-# 0 *	* * *	yacy    cd /home/yacy/production/bin && ./checkalive.sh
+# for a production environment with high-availability requirement,
+# (and if you are using the debian version of yacy)
+# add the following line in /etc/crontab
+# 0 *	* * *	root    cd /usr/share/yacy/bin && ./checkalive.sh
 
-RESULT=`wget -t 1 --spider http://localhost:8090/Status.html 2>&1`
+port=$(grep ^port= ../DATA/SETTINGS/yacy.conf |cut -d= -f2)
+RESULT=`wget -t 1 --spider http://localhost:$port/Status.html 2>&1`
 FLAG=0
 
 for x in $RESULT; do

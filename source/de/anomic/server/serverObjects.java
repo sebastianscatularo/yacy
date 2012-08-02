@@ -63,8 +63,15 @@ import net.yacy.document.parser.html.CharacterCoding;
 import net.yacy.kelondro.util.Formatter;
 import net.yacy.search.Switchboard;
 
+import org.apache.solr.common.params.MultiMapSolrParams;
+import org.apache.solr.common.params.SolrParams;
+
 
 public class serverObjects extends HashMap<String, String> implements Cloneable {
+
+    public static final String ACTION_AUTHENTICATE = "AUTHENTICATE";
+    public static final String ACTION_LOCATION = "LOCATION";
+	public final static String ADMIN_AUTHENTICATE_MSG = "admin log-in. If you don't know the password, set it with {yacyhome}/bin/passwd.sh {newpassword}";
 
     private final static Pattern patternNewline = Pattern.compile("\n");
     private final static Pattern patternDoublequote = Pattern.compile("\"");
@@ -91,8 +98,12 @@ public class serverObjects extends HashMap<String, String> implements Cloneable 
         super(input);
     }
 
+    public void authenticationRequired() {
+    	this.put(ACTION_AUTHENTICATE, ADMIN_AUTHENTICATE_MSG);
+    }
+
     private static final String removeByteOrderMark(final String s) {
-        if (s == null || s.length() == 0) return s;
+        if (s == null || s.isEmpty()) return s;
         if (s.charAt(0) == BOM) return s.substring(1);
         return s;
     }
@@ -116,6 +127,20 @@ public class serverObjects extends HashMap<String, String> implements Cloneable 
             return super.remove(key);
         } else {
             return super.put(key, value);
+        }
+    }
+
+    public String put(final String key, final String[] values) {
+        if (key == null) {
+            // this does nothing
+            return null;
+        } else if (values == null) {
+            // assigning the null value creates the same effect like removing the element
+            return super.remove(key);
+        } else {
+            StringBuilder sb = new StringBuilder(10 + values.length * 8);
+            for (String s: values) sb.append(s).append(' ');
+            return put(key, sb.toString().trim());
         }
     }
 
@@ -159,6 +184,10 @@ public class serverObjects extends HashMap<String, String> implements Cloneable 
      */
     public double put(final String key, final float value) {
         return (null == this.put(key, Float.toString(value))) ? Float.NaN : value;
+    }
+
+    public double put(final String key, final double value) {
+        return (null == this.put(key, Double.toString(value))) ? Double.NaN : value;
     }
 
     /**
@@ -337,9 +366,19 @@ public class serverObjects extends HashMap<String, String> implements Cloneable 
         }
     }
 
-    public boolean getBoolean(final String key, final boolean dflt) {
-        String s = removeByteOrderMark(super.get(key));
+    public double getDouble(final String key, final double dflt) {
+        final String s = removeByteOrderMark(super.get(key));
         if (s == null) return dflt;
+        try {
+            return Double.parseDouble(s);
+        } catch (final NumberFormatException e) {
+            return dflt;
+        }
+    }
+
+    public boolean getBoolean(final String key) {
+        String s = removeByteOrderMark(super.get(key));
+        if (s == null) return false;
         s = s.toLowerCase();
         return s.equals("true") || s.equals("on") || s.equals("1");
     }
@@ -426,6 +465,15 @@ public class serverObjects extends HashMap<String, String> implements Cloneable 
         }
         param.setLength(param.length() - 1);
         return param.toString();
+    }
+
+    public SolrParams toSolrParams() {
+        Map<String,String[]> m = new HashMap<String, String[]>();
+        for (Map.Entry<String, String> e: this.entrySet()) {
+            m.put(e.getKey(), new String[]{e.getValue()});
+        }
+        final SolrParams solrParams = new MultiMapSolrParams(m);
+        return solrParams;
     }
 
     public static void main(final String[] args) {

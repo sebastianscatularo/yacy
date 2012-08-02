@@ -55,8 +55,14 @@ import net.yacy.cora.date.ISO8601Formatter;
 import net.yacy.cora.document.Classification;
 import net.yacy.cora.document.MultiProtocolURI;
 import net.yacy.cora.document.UTF8;
+import net.yacy.cora.lod.JenaTripleStore;
+import net.yacy.cora.lod.vocabulary.DCTerms;
+import net.yacy.cora.lod.vocabulary.Owl;
+import net.yacy.cora.lod.vocabulary.Tagging;
+import net.yacy.cora.lod.vocabulary.YaCyMetadata;
 import net.yacy.document.parser.html.ContentScraper;
 import net.yacy.document.parser.html.ImageEntry;
+import net.yacy.kelondro.data.meta.DigestURI;
 import net.yacy.kelondro.logging.Log;
 import net.yacy.kelondro.util.ByteBuffer;
 import net.yacy.kelondro.util.FileUtils;
@@ -65,7 +71,7 @@ import de.anomic.crawler.retrieval.Request;
 
 public class Document {
 
-    private final MultiProtocolURI source;      // the source url
+    private final DigestURI source;      // the source url
     private final String mimeType;              // mimeType as taken from http header
     private final String charset;               // the charset of the document
     private final List<String> keywords;        // most resources provide a keyword field
@@ -87,15 +93,15 @@ public class Document {
     private boolean resorted;
     private final Set<String> languages;
     private final boolean indexingDenied;
-    private final float lon, lat;
+    private final double lon, lat;
     private final Object parserObject; // the source object that was used to create the Document
 
-    public Document(final MultiProtocolURI location, final String mimeType, final String charset,
+    public Document(final DigestURI location, final String mimeType, final String charset,
                     final Object parserObject,
                     final Set<String> languages,
                     final String[] keywords, final String title, final String author, final String publisher,
                     final String[] sections, final String abstrct,
-                    final float lon, final float lat,
+                    final double lon, final double lat,
                     final Object text,
                     final Map<MultiProtocolURI, Properties> anchors,
                     final Map<MultiProtocolURI, String> rss,
@@ -127,7 +133,7 @@ public class Document {
         this.outboundlinks = null;
         this.languages = languages;
         this.indexingDenied = indexingDenied;
-        this.text = text == null ? new ByteArrayOutputStream() : text;
+        this.text = text == null ? "" : text;
     }
 
     public Object getParserObject() {
@@ -205,6 +211,34 @@ dc_rights
         }
     }
 
+    /**
+     * add the given words to the set of keywords.
+     * These keywords will appear in dc_subject
+     * @param tags
+     */
+    public void addMetatags(Map<String, Set<Tagging.Metatag>> tags) {
+        String subject = YaCyMetadata.hashURI(this.source.hash());
+        //for (String s: this.keywords) {
+        //    tags.remove(s);
+        //}
+        for (Map.Entry<String, Set<Tagging.Metatag>> e: tags.entrySet()) {
+            Tagging vocabulary = LibraryProvider.autotagging.getVocabulary(e.getKey());
+            if (vocabulary == null) continue;
+            String objectspace = vocabulary.getObjectspace();
+            StringBuilder sb = new StringBuilder(e.getValue().size() * 20);
+            for (Tagging.Metatag s: e.getValue()) {
+                sb.append(',').append(s.getObject());
+                String objectlink = vocabulary.getObjectlink(s.getObject());
+                if ((objectspace != null && objectspace.length() > 0) || (objectlink != null && objectlink.length() > 0)) {
+                    JenaTripleStore.addTriple(subject, DCTerms.references.getPredicate(), objectlink == null || objectlink.isEmpty() ? objectspace + s.getObject() + "#" + s.getObject() : objectlink + "#" + s.getObject());
+                }
+            }
+            // put to triplestore
+            JenaTripleStore.addTriple(subject, vocabulary.getPredicate(), sb.substring(1));
+            JenaTripleStore.addTriple(subject, Owl.SameAs.getPredicate(), this.source.toNormalform(true, false));
+        }
+    }
+
     public String[] dc_subject() {
         // sort out doubles and empty words
         final TreeSet<String> hs = new TreeSet<String>();
@@ -212,7 +246,7 @@ dc_rights
         for (int i = 0; i < this.keywords.size(); i++) {
             if (this.keywords.get(i) == null) continue;
             s = (this.keywords.get(i)).trim();
-            if (s.length() > 0) hs.add(s);
+            if (!s.isEmpty()) hs.add(s);
         }
         final String[] t = new String[hs.size()];
         int i = 0;
@@ -265,7 +299,7 @@ dc_rights
         return this.sections.toArray(new String[this.sections.size()]);
     }
 
-    public InputStream getText() {
+    public InputStream getTextStream() {
         try {
             if (this.text == null) return new ByteArrayInputStream(UTF8.getBytes(""));
             if (this.text instanceof String) {
@@ -288,26 +322,26 @@ dc_rights
         return new ByteArrayInputStream(UTF8.getBytes(""));
     }
 
-    public byte[] getTextBytes() {
+    public String getTextString() {
         try {
-            if (this.text == null) return new byte[0];
+            if (this.text == null) return "";
             if (this.text instanceof String) {
-                return UTF8.getBytes((String) this.text);
+                return (String) this.text;
             } else if (this.text instanceof InputStream) {
-                return FileUtils.read((InputStream) this.text);
+                return UTF8.String(FileUtils.read((InputStream) this.text));
             } else if (this.text instanceof File) {
-                return FileUtils.read((File) this.text);
+                return UTF8.String(FileUtils.read((File) this.text));
             } else if (this.text instanceof byte[]) {
-                return (byte[]) this.text;
+                return UTF8.String((byte[]) this.text);
             } else if (this.text instanceof ByteArrayOutputStream) {
-                return ((ByteArrayOutputStream) this.text).toByteArray();
+                return UTF8.String(((ByteArrayOutputStream) this.text).toByteArray());
             }
             assert false : this.text.getClass().toString();
             return null;
         } catch (final Exception e) {
             Log.logException(e);
         }
-        return new byte[0];
+        return "";
     }
 
     public long getTextLength() {
@@ -333,16 +367,10 @@ dc_rights
     }
 
     public List<StringBuilder> getSentences(final boolean pre) {
-        return getSentences(pre, getText());
-    }
-
-    public static List<StringBuilder> getSentences(final boolean pre, final InputStream text) {
-        if (text == null) return null;
-        final SentenceReader e = new SentenceReader(text);
-        e.pre(pre);
-        final List<StringBuilder> sentences = new ArrayList<StringBuilder>();
-        while (e.hasNext()) {
-            sentences.add(e.next());
+        final SentenceReader sr = new SentenceReader(getTextString(), pre);
+        List<StringBuilder> sentences = new ArrayList<StringBuilder>();
+        while (sr.hasNext()) {
+            sentences.add(sr.next());
         }
         return sentences;
     }
@@ -400,11 +428,11 @@ dc_rights
         return this.emaillinks;
     }
 
-    public float lon() {
+    public double lon() {
         return this.lon;
     }
 
-    public float lat() {
+    public double lat() {
         return this.lat;
     }
 
@@ -604,7 +632,7 @@ dc_rights
             if (!(this.text instanceof ByteArrayOutputStream)) {
                 this.text = new ByteArrayOutputStream();
             }
-            FileUtils.copy(doc.getText(), (ByteArrayOutputStream) this.text);
+            FileUtils.copy(doc.getTextStream(), (ByteArrayOutputStream) this.text);
 
             this.anchors.putAll(doc.getAnchors());
             this.rss.putAll(doc.getRSS());
@@ -624,16 +652,6 @@ dc_rights
      */
     public void setFavicon(final MultiProtocolURI faviconURL) {
     	this.favicon = faviconURL;
-    }
-
-    public int inboundLinkCount() {
-        if (this.inboundlinks == null) resortLinks();
-        return (this.inboundlinks == null) ? 0 : this.inboundlinks.size();
-    }
-
-    public int outboundLinkCount() {
-        if (this.outboundlinks == null) resortLinks();
-        return (this.outboundlinks == null) ? 0 : this.outboundlinks.size();
     }
 
     public int inboundLinkNofollowCount() {
@@ -683,11 +701,7 @@ dc_rights
         if (subject != null && subject.length() > 0) os.write("<dc:subject><![CDATA[" + subject + "]]></dc:subject>\n");
         if (this.text != null) {
             os.write("<dc:description><![CDATA[");
-            final byte[] buffer = new byte[1000];
-            int c = 0;
-            final InputStream is = getText();
-            while ((c = is.read(buffer)) > 0) os.write(UTF8.String(buffer, 0, c));
-            is.close();
+            os.write(getTextString());
             os.write("]]></dc:description>\n");
         }
         final String language = dc_language();
@@ -712,7 +726,7 @@ dc_rights
         }
     }
 
-    public void close() {
+    public synchronized void close() {
         if (this.text == null) return;
 
         // try close the output stream
@@ -735,7 +749,7 @@ dc_rights
      * @param docs
      * @return
      */
-    public static Document mergeDocuments(final MultiProtocolURI location,
+    public static Document mergeDocuments(final DigestURI location,
             final String globalMime, final Document[] docs)
     {
         if (docs == null || docs.length == 0) return null;
@@ -753,10 +767,11 @@ dc_rights
         final Map<MultiProtocolURI, Properties> anchors = new HashMap<MultiProtocolURI, Properties>();
         final Map<MultiProtocolURI, String> rss = new HashMap<MultiProtocolURI, String>();
         final Map<MultiProtocolURI, ImageEntry> images = new HashMap<MultiProtocolURI, ImageEntry>();
-        float lon = 0.0f, lat = 0.0f;
+        double lon = 0.0d, lat = 0.0d;
 
         for (final Document doc: docs) {
 
+        	if (doc == null) continue;
             final String author = doc.dc_creator();
             if (author.length() > 0) {
                 if (authors.length() > 0) authors.append(",");
@@ -786,7 +801,7 @@ dc_rights
             if (doc.getTextLength() > 0) {
                 if (docTextLength > 0) content.write('\n');
                 try {
-                    docTextLength += FileUtils.copy(doc.getText(), content);
+                    docTextLength += FileUtils.copy(doc.getTextStream(), content);
                 } catch (final IOException e) {
                     Log.logException(e);
                 }
@@ -796,6 +811,17 @@ dc_rights
             ContentScraper.addAllImages(images, doc.getImages());
             if (doc.lon() != 0.0f && doc.lat() != 0.0f) { lon = doc.lon(); lat = doc.lat(); }
         }
+
+        // clean up parser data
+        for (final Document doc: docs) {
+            Object parserObject = doc.getParserObject();
+            if (parserObject instanceof ContentScraper) {
+                final ContentScraper html = (ContentScraper) parserObject;
+                html.close();
+            }
+        }
+
+        // return consolidation
         return new Document(
                 location,
                 globalMime,
@@ -866,7 +892,7 @@ dc_rights
     }
 
     private static final String description(Document d, String tagname) {
-        if (tagname == null || tagname.length() == 0) {
+        if (tagname == null || tagname.isEmpty()) {
             tagname = d.source.toTokens();
         }
         StringBuilder sb = new StringBuilder(60);

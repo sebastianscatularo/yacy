@@ -26,10 +26,10 @@
 
 package net.yacy.search.query;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import net.yacy.cora.document.ASCII;
 import net.yacy.cora.document.Classification;
@@ -41,18 +41,21 @@ import net.yacy.cora.sorting.ScoreMap;
 import net.yacy.cora.sorting.WeakPriorityBlockingQueue;
 import net.yacy.cora.sorting.WeakPriorityBlockingQueue.Element;
 import net.yacy.cora.sorting.WeakPriorityBlockingQueue.ReverseElement;
+import net.yacy.cora.storage.HandleSet;
+import net.yacy.cora.util.SpaceExceededException;
 import net.yacy.document.Condenser;
-import net.yacy.kelondro.data.meta.URIMetadataRow;
+import net.yacy.kelondro.data.meta.URIMetadata;
 import net.yacy.kelondro.data.word.Word;
-import net.yacy.kelondro.index.HandleSet;
-import net.yacy.kelondro.index.RowSpaceExceededException;
+import net.yacy.kelondro.index.RowHandleSet;
 import net.yacy.kelondro.logging.Log;
-import net.yacy.kelondro.util.EventTracker;
 import net.yacy.kelondro.util.MemoryControl;
 import net.yacy.peers.SeedDB;
 import net.yacy.peers.graphics.ProfilingGraph;
 import net.yacy.repository.LoaderDispatcher;
+import net.yacy.search.EventTracker;
 import net.yacy.search.Switchboard;
+import net.yacy.search.index.Segment;
+import net.yacy.search.index.SolrField;
 import net.yacy.search.snippet.MediaSnippet;
 import net.yacy.search.snippet.ResultEntry;
 import net.yacy.search.snippet.TextSnippet;
@@ -64,6 +67,10 @@ import de.anomic.crawler.Cache;
 import de.anomic.data.WorkTables;
 
 public class SnippetProcess {
+
+	public static Log log = new Log("SEARCH");
+
+    private final static int SNIPPET_WORKER_THREADS = Math.max(4, Runtime.getRuntime().availableProcessors() * 2);
 
     // input values
     final RWIProcess  rankingProcess; // ordered search results, grows dynamically as all the query threads enrich this container
@@ -105,26 +112,26 @@ public class SnippetProcess {
 
         this.urlRetrievalAllTime = 0;
         this.snippetComputationAllTime = 0;
-        this.result = new WeakPriorityBlockingQueue<ResultEntry>(-1); // this is the result, enriched with snippets, ranked and ordered by ranking
-        this.images = new WeakPriorityBlockingQueue<MediaSnippet>(-1);
+        this.result = new WeakPriorityBlockingQueue<ResultEntry>(Math.max(1000, 10 * query.itemsPerPage()), true); // this is the result, enriched with snippets, ranked and ordered by ranking
+        this.images = new WeakPriorityBlockingQueue<MediaSnippet>(Math.max(1000, 10 * query.itemsPerPage()), true);
 
         // snippets do not need to match with the complete query hashes,
         // only with the query minus the stopwords which had not been used for the search
         HandleSet filtered;
         try {
-            filtered = HandleSet.joinConstructive(query.queryHashes, Switchboard.stopwordHashes);
-        } catch (final RowSpaceExceededException e) {
+            filtered = RowHandleSet.joinConstructive(query.query_include_hashes, Switchboard.stopwordHashes);
+        } catch (final SpaceExceededException e) {
             Log.logException(e);
-            filtered = new HandleSet(query.queryHashes.row().primaryKeyLength, query.queryHashes.comparator(), 0);
+            filtered = new RowHandleSet(query.query_include_hashes.keylen(), query.query_include_hashes.comparator(), 0);
         }
-        this.snippetFetchWordHashes = query.queryHashes.clone();
+        this.snippetFetchWordHashes = query.query_include_hashes.clone();
         if (filtered != null && !filtered.isEmpty()) {
             this.snippetFetchWordHashes.excludeDestructive(Switchboard.stopwordHashes);
         }
 
         // start worker threads to fetch urls and snippets
         this.workerThreads = null;
-        deployWorker(Math.min(10, query.itemsPerPage), query.neededResults());
+        deployWorker(Math.min(SNIPPET_WORKER_THREADS, query.itemsPerPage), query.neededResults());
         EventTracker.update(EventTracker.EClass.SEARCH, new ProfilingGraph.EventSearch(query.id(true), SearchEvent.Type.SNIPPETFETCH_START, ((this.workerThreads == null) ? "no" : this.workerThreads.length) + " online snippet fetch threads started", 0, 0), false);
     }
 
@@ -191,8 +198,8 @@ public class SnippetProcess {
 
             // deploy worker to get more results
             if (!anyWorkerAlive()) {
-                final int neededInclPrefetch = this.query.neededResults() + ((MemoryControl.available() > 100 * 1024 * 1024) ? this.query.itemsPerPage : 0);
-                deployWorker(Math.min(20, this.query.itemsPerPage), neededInclPrefetch);
+                final int neededInclPrefetch = this.query.neededResults() + ((MemoryControl.available() > 100 * 1024 * 1024 && SNIPPET_WORKER_THREADS >= 8) ? this.query.itemsPerPage : 0);
+                deployWorker(Math.min(SNIPPET_WORKER_THREADS, this.query.itemsPerPage), neededInclPrefetch);
             }
 
             try {entry = this.result.element(item, 50);} catch (final InterruptedException e) {break;}
@@ -204,13 +211,12 @@ public class SnippetProcess {
         // finally, if there is something, return the result
         if (entry == null) {
             EventTracker.update(EventTracker.EClass.SEARCH, new ProfilingGraph.EventSearch(this.query.id(true), SearchEvent.Type.ONERESULT, "not found, item = " + item + ", available = " + this.result.sizeAvailable(), 0, 0), false);
-            //Log.logInfo("SnippetProcess", "NO ENTRY computed; anyWorkerAlive=" + anyWorkerAlive() + "; this.rankingProcess.isAlive() = " + this.rankingProcess.isAlive() + "; this.rankingProcess.feedingIsFinished() = " + this.rankingProcess.feedingIsFinished() + "; this.result.sizeAvailable() = " + this.result.sizeAvailable() + ", this.rankingProcess.sizeQueue() = " + this.rankingProcess.sizeQueue());
+            //Log.logInfo("SnippetProcess", "NO ENTRY computed (possible timeout); anyWorkerAlive=" + anyWorkerAlive() + "; this.rankingProcess.isAlive() = " + this.rankingProcess.isAlive() + "; this.rankingProcess.feedingIsFinished() = " + this.rankingProcess.feedingIsFinished() + "; this.result.sizeAvailable() = " + this.result.sizeAvailable() + ", this.rankingProcess.sizeQueue() = " + this.rankingProcess.sizeQueue());
             return null;
         }
         final ResultEntry re = entry.getElement();
         EventTracker.update(EventTracker.EClass.SEARCH, new ProfilingGraph.EventSearch(this.query.id(true), SearchEvent.Type.ONERESULT, "retrieved, item = " + item + ", available = " + this.result.sizeAvailable() + ": " + re.urlstring(), 0, 0), false);
-        if (item == this.query.offset + this.query.itemsPerPage - 1)
-         {
+        if (item == this.query.offset + this.query.itemsPerPage - 1) {
             stopAllWorker(); // we don't need more
         }
         return re;
@@ -218,7 +224,7 @@ public class SnippetProcess {
 
     private int resultCounter = 0;
     public ResultEntry nextResult() {
-        final ResultEntry re = oneResult(this.resultCounter, 3000);
+        final ResultEntry re = oneResult(this.resultCounter, Math.max(3000, this.query.timeout - System.currentTimeMillis()));
         this.resultCounter++;
         return re;
     }
@@ -331,7 +337,7 @@ public class SnippetProcess {
         // apply query-in-result matching
         final HandleSet urlcomph = Word.words2hashesHandles(urlcomps);
         final HandleSet descrcomph = Word.words2hashesHandles(descrcomps);
-        final Iterator<byte[]> shi = this.query.queryHashes.iterator();
+        final Iterator<byte[]> shi = this.query.query_include_hashes.iterator();
         byte[] queryhash;
         while (shi.hasNext()) {
             queryhash = shi.next();
@@ -356,13 +362,13 @@ public class SnippetProcess {
         Worker worker;
         if (this.workerThreads == null) {
             this.workerThreads = new Worker[deployCount];
-            synchronized(this.workerThreads) {
+            synchronized(this.workerThreads) {try {
                 for (int i = 0; i < this.workerThreads.length; i++) {
                     if (this.result.sizeAvailable() >= neededResults ||
                         (this.rankingProcess.feedingIsFinished() && this.rankingProcess.sizeQueue() == 0)) {
                         break;
                     }
-                    worker = new Worker(i, 10000, this.query.snippetCacheStrategy, this.query.snippetMatcher, neededResults);
+                    worker = new Worker(this.query.maxtime, this.query.snippetCacheStrategy, neededResults);
                     worker.start();
                     this.workerThreads[i] = worker;
                     if (this.rankingProcess.expectMoreRemoteReferences()) {
@@ -372,7 +378,7 @@ public class SnippetProcess {
                         }
                     }
                 }
-            }
+            } catch (OutOfMemoryError e) {}}
         } else {
             // there are still worker threads running, but some may be dead.
             // if we find dead workers, reanimate them
@@ -384,7 +390,7 @@ public class SnippetProcess {
                         break;
                     }
                     if (this.workerThreads[i] == null || !this.workerThreads[i].isAlive()) {
-                        worker = new Worker(i, 10000, this.query.snippetCacheStrategy, this.query.snippetMatcher, neededResults);
+                        worker = new Worker(this.query.maxtime, this.query.snippetCacheStrategy, neededResults);
                         worker.start();
                         this.workerThreads[i] = worker;
                         deployCount--;
@@ -434,14 +440,12 @@ public class SnippetProcess {
         private long lastLifeSign; // when the last time the run()-loop was executed
         private final CacheStrategy cacheStrategy;
         private final int neededResults;
-        private final Pattern snippetPattern;
         private boolean shallrun;
         private final SolrConnector solr;
 
-        public Worker(final int id, final long maxlifetime, final CacheStrategy cacheStrategy, final Pattern snippetPattern, final int neededResults) {
+        public Worker(final long maxlifetime, final CacheStrategy cacheStrategy, final int neededResults) {
             this.cacheStrategy = cacheStrategy;
             this.lastLifeSign = System.currentTimeMillis();
-            this.snippetPattern = snippetPattern;
             this.timeout = System.currentTimeMillis() + Math.max(1000, maxlifetime);
             this.neededResults = neededResults;
             this.shallrun = true;
@@ -452,13 +456,12 @@ public class SnippetProcess {
         public void run() {
 
             // start fetching urls and snippets
-            URIMetadataRow page;
+        	URIMetadata page;
             ResultEntry resultEntry;
             //final int fetchAhead = snippetMode == 0 ? 0 : 10;
             final boolean nav_topics = SnippetProcess.this.query.navigators.equals("all") || SnippetProcess.this.query.navigators.indexOf("topics",0) >= 0;
             try {
                 //System.out.println("DEPLOYED WORKER " + id + " FOR " + this.neededResults + " RESULTS, timeoutd = " + (this.timeout - System.currentTimeMillis()));
-                int loops = 0;
                 while (this.shallrun && System.currentTimeMillis() < this.timeout) {
                     //Log.logInfo("SnippetProcess", "***** timeleft = " + (this.timeout - System.currentTimeMillis()));
                     this.lastLifeSign = System.currentTimeMillis();
@@ -497,16 +500,22 @@ public class SnippetProcess {
                     String solrContent = null;
                     if (this.solr != null) {
                         SolrDocument sd = null;
-                        final SolrDocumentList sdl = this.solr.get("id:" + ASCII.String(page.hash()), 0, 1);
-                        if (sdl.size() > 0) {
+                        StringBuilder querystring = new StringBuilder(17);
+                        querystring.append(SolrField.id.getSolrFieldName()).append(':').append('"').append(ASCII.String(page.hash())).append('"');
+                        SolrDocumentList sdl = null;
+                        try {
+                            sdl = this.solr.query(querystring.toString(), 0, 1);
+                        } catch (IOException e) {
+                            Log.logException(e);
+                        }
+                        if (sdl != null && !sdl.isEmpty()) {
                             sd = sdl.get(0);
                         }
                         if (sd != null) {
-                            solrContent = this.solr.getScheme().solrGetText(sd);
+                            solrContent = Switchboard.getSwitchboard().index.getSolrScheme().solrGetText(sd);
                         }
                     }
 
-                    loops++;
                     resultEntry = fetchSnippet(page, solrContent, this.cacheStrategy); // does not fetch snippets if snippetMode == 0
                     if (resultEntry == null)
                      {
@@ -530,10 +539,11 @@ public class SnippetProcess {
                         SnippetProcess.this.rankingProcess.addTopics(resultEntry);
                     }
                 }
+                if (System.currentTimeMillis() >= this.timeout) {
+                    Log.logWarning("SnippetProcess", "worker ended with timeout");
+                }
                 //System.out.println("FINISHED WORKER " + id + " FOR " + this.neededResults + " RESULTS, loops = " + loops);
-            } catch (final Exception e) {
-                Log.logException(e);
-            }
+            } catch (final Exception e) { Log.logException(e); }
             //Log.logInfo("SEARCH", "resultWorker thread " + this.id + " terminated");
         }
 
@@ -550,7 +560,7 @@ public class SnippetProcess {
         }
     }
 
-    protected ResultEntry fetchSnippet(final URIMetadataRow page, final String solrText, final CacheStrategy cacheStrategy) {
+    protected ResultEntry fetchSnippet(final URIMetadata page, final String solrText, final CacheStrategy cacheStrategy) {
         // Snippet Fetching can has 3 modes:
         // 0 - do not fetch snippets
         // 1 - fetch snippets offline only
@@ -571,16 +581,16 @@ public class SnippetProcess {
                     solrText,
                     page,
                     this.snippetFetchWordHashes,
+                    //this.query.queryString,
                     null,
                     ((this.query.constraint != null) && (this.query.constraint.get(Condenser.flag_cat_indexof))),
                     220,
-                    Integer.MAX_VALUE,
                     !this.query.isLocal());
             return new ResultEntry(page, this.query.getSegment(), this.peers, snippet, null, dbRetrievalTime, 0); // result without snippet
         }
 
         // load snippet
-        if (page.url().getContentDomain() == Classification.ContentDomain.TEXT) {
+        if (page.url().getContentDomain() == Classification.ContentDomain.TEXT || page.url().getContentDomain() == Classification.ContentDomain.ALL) {
             // attach text snippet
             startTime = System.currentTimeMillis();
             final TextSnippet snippet = new TextSnippet(
@@ -591,10 +601,9 @@ public class SnippetProcess {
                     cacheStrategy,
                     ((this.query.constraint != null) && (this.query.constraint.get(Condenser.flag_cat_indexof))),
                     180,
-                    Integer.MAX_VALUE,
                     !this.query.isLocal());
             final long snippetComputationTime = System.currentTimeMillis() - startTime;
-            Log.logInfo("SEARCH", "text snippet load time for " + page.url() + ": " + snippetComputationTime + ", " + (!snippet.getErrorCode().fail() ? "snippet found" : ("no snippet found (" + snippet.getError() + ")")));
+            log.logInfo("text snippet load time for " + page.url() + ": " + snippetComputationTime + ", " + (!snippet.getErrorCode().fail() ? "snippet found" : ("no snippet found (" + snippet.getError() + ")")));
 
             if (!snippet.getErrorCode().fail()) {
                 // we loaded the file and found the snippet
@@ -605,17 +614,19 @@ public class SnippetProcess {
                 return new ResultEntry(page, this.query.getSegment(), this.peers, null, null, dbRetrievalTime, snippetComputationTime); // result without snippet
             } else {
                 // problems with snippet fetch
+            	if (this.snippetFetchWordHashes.has(Segment.catchallHash)) {
+            		// we accept that because the word cannot be on the page
+            		return new ResultEntry(page, this.query.getSegment(), this.peers, null, null, dbRetrievalTime, 0);
+            	}
                 final String reason = "no text snippet; errorCode = " + snippet.getErrorCode();
                 if (this.deleteIfSnippetFail) {
-                    this.workTables.failURLsRegisterMissingWord(this.query.getSegment().termIndex(), page.url(), this.query.queryHashes, reason);
+                    this.workTables.failURLsRegisterMissingWord(this.query.getSegment().termIndex(), page.url(), this.query.query_include_hashes, reason);
                 }
-                Log.logInfo("SEARCH", "sorted out url " + page.url().toNormalform(true, false) + " during search: " + reason);
+                log.logInfo("sorted out url " + page.url().toNormalform(true, false) + " during search: " + reason);
                 return null;
             }
-        } else {
-            return new ResultEntry(page, this.query.getSegment(), this.peers, null, null, dbRetrievalTime, 0); // result without snippet
         }
-        // finished, no more actions possible here
+        return new ResultEntry(page, this.query.getSegment(), this.peers, null, null, dbRetrievalTime, 0); // result without snippet
     }
 
     /**

@@ -34,11 +34,10 @@ import java.util.Map;
 import java.util.Properties;
 
 import net.yacy.cora.document.MultiProtocolURI;
-import net.yacy.cora.document.UTF8;
 import net.yacy.document.AbstractParser;
 import net.yacy.document.Document;
 import net.yacy.document.Parser;
-import net.yacy.kelondro.logging.Log;
+import net.yacy.kelondro.data.meta.DigestURI;
 import pt.tumba.parser.swf.SWF2HTML;
 
 public class swfParser extends AbstractParser implements Parser {
@@ -56,7 +55,8 @@ public class swfParser extends AbstractParser implements Parser {
      * parses the source documents and returns a plasmaParserDocument containing
      * all extracted information about the parsed document
      */
-    public Document[] parse(final MultiProtocolURI location, final String mimeType,
+    @Override
+    public Document[] parse(final DigestURI location, final String mimeType,
             final String charset, final InputStream source)
             throws Parser.Failure, InterruptedException
     {
@@ -71,7 +71,6 @@ public class swfParser extends AbstractParser implements Parser {
             } catch (final IOException e) {
                 throw new Parser.Failure(e.getMessage(), location);
             } catch (final Exception e) {
-                Log.logException(e);
                 throw new Parser.Failure(e.getMessage(), location);
             }
             String url = null;
@@ -121,7 +120,7 @@ public class swfParser extends AbstractParser implements Parser {
                     sections,     // an array of section headlines
                     abstrct,     // an abstract
                     0.0f, 0.0f,
-                    UTF8.getBytes(contents),     // the parsed document text
+                    contents,     // the parsed document text
                     anchors,      // a map of extracted anchors
                     null,
                     null,
@@ -131,7 +130,7 @@ public class swfParser extends AbstractParser implements Parser {
 
             // if an unexpected error occures just log the error and raise a new Parser.Failure
             final String errorMsg = "Unable to parse the swf document '" + location + "':" + e.getMessage();
-            this.log.logSevere(errorMsg);
+            AbstractParser.log.logSevere(errorMsg);
             throw new Parser.Failure(errorMsg, location);
         }
     }

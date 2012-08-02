@@ -25,8 +25,11 @@
 
 package de.anomic.crawler;
 
+import java.text.DateFormat;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
@@ -38,6 +41,7 @@ import net.yacy.kelondro.data.word.Word;
 import net.yacy.kelondro.logging.Log;
 import net.yacy.kelondro.order.Base64Order;
 import net.yacy.kelondro.order.Digest;
+import de.anomic.server.serverObjects;
 
 public class CrawlProfile extends ConcurrentHashMap<String, String> implements Map<String, String> {
 
@@ -345,7 +349,7 @@ public class CrawlProfile extends ConcurrentHashMap<String, String> implements M
     public String[] countryMustMatchList() {
         String countryMustMatch = get(FILTER_COUNTRY_MUSTMATCH);
         if (countryMustMatch == null) countryMustMatch = "";
-        if (countryMustMatch.length() == 0) return new String[0];
+        if (countryMustMatch.isEmpty()) return new String[0];
         String[] list = countryMustMatch.split(",");
         if (list.length == 1 && list.length == 0) list = new String[0];
         return list;
@@ -489,10 +493,68 @@ public class CrawlProfile extends ConcurrentHashMap<String, String> implements M
             final String host = crawlingStartURL.getHost();
             if (host.startsWith("www.")) {
                 return "https?://" + crawlingStartURL.getHost() + ".*";
-            } else {
-                // if the www is not given we accept that also
-                return "https?://(?:www.)?" + crawlingStartURL.getHost() + ".*";
             }
+            // if the www is not given we accept that also
+            return "https?://(?:www.)?" + crawlingStartURL.getHost() + ".*";
         }
+    }
+
+
+    public static final Set<String> ignoreNames = new HashSet<String>();
+    static {
+        ignoreNames.add(CrawlSwitchboard.CRAWL_PROFILE_PROXY);
+        ignoreNames.add(CrawlSwitchboard.CRAWL_PROFILE_REMOTE);
+        ignoreNames.add(CrawlSwitchboard.CRAWL_PROFILE_SNIPPET_GLOBAL_MEDIA);
+        ignoreNames.add(CrawlSwitchboard.CRAWL_PROFILE_SNIPPET_GLOBAL_TEXT);
+        ignoreNames.add(CrawlSwitchboard.CRAWL_PROFILE_SNIPPET_LOCAL_MEDIA);
+        ignoreNames.add(CrawlSwitchboard.CRAWL_PROFILE_SNIPPET_LOCAL_TEXT);
+        ignoreNames.add(CrawlSwitchboard.CRAWL_PROFILE_SURROGATE);
+        ignoreNames.add(CrawlSwitchboard.DBFILE_ACTIVE_CRAWL_PROFILES);
+        ignoreNames.add(CrawlSwitchboard.DBFILE_PASSIVE_CRAWL_PROFILES);
+    }
+
+    public void putProfileEntry(
+    		final String CRAWL_PROFILE_PREFIX,
+            final serverObjects prop,
+            final boolean active,
+            final boolean dark,
+            final int count,
+            final int domlistlength) {
+
+        prop.put(CRAWL_PROFILE_PREFIX + count + "_dark", dark ? "1" : "0");
+        prop.put(CRAWL_PROFILE_PREFIX + count + "_name", this.name());
+        prop.put(CRAWL_PROFILE_PREFIX + count + "_terminateButton", (!active || ignoreNames.contains(this.name())) ? "0" : "1");
+        prop.put(CRAWL_PROFILE_PREFIX + count + "_terminateButton_handle", this.handle());
+        prop.put(CRAWL_PROFILE_PREFIX + count + "_deleteButton", (active) ? "0" : "1");
+        prop.put(CRAWL_PROFILE_PREFIX + count + "_deleteButton_handle", this.handle());
+        prop.putXML(CRAWL_PROFILE_PREFIX + count + "_startURL", this.startURL());
+        prop.put(CRAWL_PROFILE_PREFIX + count + "_handle", this.handle());
+        prop.put(CRAWL_PROFILE_PREFIX + count + "_depth", this.depth());
+        prop.put(CRAWL_PROFILE_PREFIX + count + "_mustmatch", this.urlMustMatchPattern().toString());
+        prop.put(CRAWL_PROFILE_PREFIX + count + "_mustnotmatch", this.urlMustNotMatchPattern().toString());
+        prop.put(CRAWL_PROFILE_PREFIX + count + "_crawlingIfOlder", (this.recrawlIfOlder() == 0L) ? "no re-crawl" : DateFormat.getDateTimeInstance().format(this.recrawlIfOlder()));
+        prop.put(CRAWL_PROFILE_PREFIX + count + "_crawlingDomFilterDepth", "inactive");
+
+        int i = 0;
+        if (active && this.domMaxPages() > 0
+                && this.domMaxPages() != Integer.MAX_VALUE) {
+        String item;
+        while (i <= domlistlength && !(item = this.domName(true, i)).isEmpty()){
+            if (i == domlistlength) {
+                item += " ...";
+            }
+            prop.putHTML(CRAWL_PROFILE_PREFIX + count + "_crawlingDomFilterContent_" + i + "_item", item);
+            i++;
+        }
+        }
+
+        prop.put(CRAWL_PROFILE_PREFIX+count+"_crawlingDomFilterContent", i);
+
+        prop.put(CRAWL_PROFILE_PREFIX + count + "_crawlingDomMaxPages", (this.domMaxPages() == Integer.MAX_VALUE) ? "unlimited" : Integer.toString(this.domMaxPages()));
+        prop.put(CRAWL_PROFILE_PREFIX + count + "_withQuery", (this.crawlingQ()) ? "1" : "0");
+        prop.put(CRAWL_PROFILE_PREFIX + count + "_storeCache", (this.storeHTCache()) ? "1" : "0");
+        prop.put(CRAWL_PROFILE_PREFIX + count + "_indexText", (this.indexText()) ? "1" : "0");
+        prop.put(CRAWL_PROFILE_PREFIX + count + "_indexMedia", (this.indexMedia()) ? "1" : "0");
+        prop.put(CRAWL_PROFILE_PREFIX + count + "_remoteIndexing", (this.remoteIndexing()) ? "1" : "0");
     }
 }

@@ -38,12 +38,12 @@ import java.util.TreeSet;
 import java.util.regex.Pattern;
 
 import net.yacy.cora.document.ASCII;
+import net.yacy.cora.util.SpaceExceededException;
 import net.yacy.document.Document;
 import net.yacy.document.Parser.Failure;
 import net.yacy.kelondro.blob.Tables;
 import net.yacy.kelondro.blob.Tables.Row;
 import net.yacy.kelondro.data.meta.DigestURI;
-import net.yacy.kelondro.index.RowSpaceExceededException;
 import net.yacy.repository.LoaderDispatcher;
 import de.anomic.data.WorkTables;
 
@@ -87,13 +87,9 @@ public class YMarkTables {
     public final static String FOLDERS_ROOT = "/";
     public final static String BOOKMARKS_LOG = "BOOKMARKS";
     public final static String USER_ADMIN = "admin";
-	public final static String USER_AUTHENTICATE = "AUTHENTICATE";
 	public final static String USER_AUTHENTICATE_MSG = "Bookmark user authentication required!";
-	public final static String ADMIN_AUTHENTICATE_MSG = "Admin authentication required!";
 
     public final static String p1 = "(?:^|.*,)";
-    public final static String p2 = "\\Q";
-    public final static String p3 = "\\E";
     public final static String p4 = "(?:,.*|$)";
     public final static String p5 = "((?:";
     public final static String p6 = ")(?:,.*|$)){";
@@ -108,7 +104,7 @@ public class YMarkTables {
     	this.worktables = (WorkTables)wt;
     }
 
-    public void deleteBookmark(final String bmk_user, final byte[] urlHash) throws IOException, RowSpaceExceededException {
+    public void deleteBookmark(final String bmk_user, final byte[] urlHash) throws IOException, SpaceExceededException {
         final String bmk_table = TABLES.BOOKMARKS.tablename(bmk_user);
     	Tables.Row bmk_row = null;
         bmk_row = this.worktables.select(bmk_table, urlHash);
@@ -117,7 +113,7 @@ public class YMarkTables {
         }
     }
 
-    public void deleteBookmark(final String bmk_user, final String url) throws IOException, RowSpaceExceededException {
+    public void deleteBookmark(final String bmk_user, final String url) throws IOException, SpaceExceededException {
     	this.deleteBookmark(bmk_user, YMarkUtil.getBookmarkId(url));
     }
 
@@ -194,9 +190,7 @@ public class YMarkTables {
     	patternBuilder.setLength(0);
     	patternBuilder.append(p1);
     	patternBuilder.append('(');
-    	patternBuilder.append(p2);
-		patternBuilder.append(folder);
-		patternBuilder.append(p3);
+		patternBuilder.append(Pattern.quote(folder));
 		patternBuilder.append(')');
 		patternBuilder.append(p4);
     	final Pattern p = Pattern.compile(patternBuilder.toString());
@@ -210,9 +204,7 @@ public class YMarkTables {
     	patternBuilder.append(p1);
     	patternBuilder.append(p5);
     	for (final String tag : tagArray) {
-        	patternBuilder.append(p2);
-    		patternBuilder.append(tag);
-    		patternBuilder.append(p3);
+    		patternBuilder.append(Pattern.quote(tag));
         	patternBuilder.append('|');
 		}
     	patternBuilder.deleteCharAt(patternBuilder.length()-1);
@@ -236,7 +228,7 @@ public class YMarkTables {
         return sortList;
     }
 
-    public void addTags(final String bmk_user, final String url, final String tagString, final boolean merge) throws IOException, RowSpaceExceededException {
+    public void addTags(final String bmk_user, final String url, final String tagString, final boolean merge) throws IOException, SpaceExceededException {
     	if(!tagString.isEmpty()) {
         	// do not set defaults as we only want to update tags
     		final YMarkEntry bmk = new YMarkEntry(false);
@@ -246,8 +238,8 @@ public class YMarkTables {
     	}
     }
 
-    public void replaceTags(final Iterator<Row> rowIterator, final String bmk_user, final String tagString, final String replaceString) throws IOException, RowSpaceExceededException {        
-    	final HashSet<String> remove = YMarkUtil.keysStringToSet(YMarkUtil.cleanTagsString(tagString.toLowerCase()));       
+    public void replaceTags(final Iterator<Row> rowIterator, final String bmk_user, final String tagString, final String replaceString) throws IOException {
+    	final HashSet<String> remove = YMarkUtil.keysStringToSet(YMarkUtil.cleanTagsString(tagString.toLowerCase()));
         final StringBuilder t = new StringBuilder(200);
     	HashSet<String> tags;
         Row row;
@@ -265,7 +257,7 @@ public class YMarkTables {
         }
     }
 
-    public void addFolder(final String bmk_user, final String url, final String folder) throws IOException, RowSpaceExceededException {
+    public void addFolder(final String bmk_user, final String url, final String folder) throws IOException, SpaceExceededException {
     	if(!folder.isEmpty()) {
         	// do not set defaults as we only want to add a folder
     		final YMarkEntry bmk = new YMarkEntry(false);
@@ -275,7 +267,7 @@ public class YMarkTables {
     	}
     }
 
-    public void visited(final String bmk_user, final String url) throws IOException, RowSpaceExceededException {
+    public void visited(final String bmk_user, final String url) throws IOException, SpaceExceededException {
     	// do not set defaults
 		final YMarkEntry bmk = new YMarkEntry(false);
     	bmk.put(YMarkEntry.BOOKMARK.URL.key(), url);
@@ -283,11 +275,11 @@ public class YMarkTables {
     	addBookmark(bmk_user, bmk, true, true);
     }
 
-    public void createBookmark(final LoaderDispatcher loader, final String url, final String bmk_user, final boolean autotag, final String tagsString, final String foldersString) throws IOException, Failure, RowSpaceExceededException {
+    public void createBookmark(final LoaderDispatcher loader, final String url, final String bmk_user, final boolean autotag, final String tagsString, final String foldersString) throws IOException, Failure, SpaceExceededException {
     	createBookmark(loader, new DigestURI(url), bmk_user, autotag, tagsString, foldersString);
     }
 
-    public void createBookmark(final LoaderDispatcher loader, final DigestURI url, final String bmk_user, final boolean autotag, final String tagsString, final String foldersString) throws IOException, Failure, RowSpaceExceededException {
+    public void createBookmark(final LoaderDispatcher loader, final DigestURI url, final String bmk_user, final boolean autotag, final String tagsString, final String foldersString) throws IOException, Failure, SpaceExceededException {
 
     	final YMarkEntry bmk_entry = new YMarkEntry(false);
         final YMarkMetadata meta = new YMarkMetadata(url);
@@ -327,7 +319,7 @@ public class YMarkTables {
         }
     }
 
-	public void addBookmark(final String bmk_user, final YMarkEntry bmk, final boolean mergeTags, final boolean mergeFolders) throws IOException, RowSpaceExceededException {
+	public void addBookmark(final String bmk_user, final YMarkEntry bmk, final boolean mergeTags, final boolean mergeFolders) throws IOException, SpaceExceededException {
 		final String bmk_table = TABLES.BOOKMARKS.tablename(bmk_user);
         final String date = String.valueOf(System.currentTimeMillis());
 		final byte[] urlHash = YMarkUtil.getBookmarkId(bmk.get(YMarkEntry.BOOKMARK.URL.key()));

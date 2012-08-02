@@ -20,6 +20,7 @@
 
 package net.yacy.kelondro.data.citation;
 
+import java.io.Serializable;
 import java.util.Collection;
 
 import net.yacy.cora.document.ASCII;
@@ -33,9 +34,11 @@ import net.yacy.kelondro.order.MicroDate;
 import net.yacy.kelondro.rwi.Reference;
 import net.yacy.kelondro.util.ByteArray;
 
-public class CitationReference implements Reference /*, Cloneable*/ {
+public class CitationReference implements Reference, Serializable {
 
     // this object stores citation attributes to URL references
+
+    private static final long serialVersionUID=1920200210928897131L;
 
     public static final Row citationRow = new Row(new Column[]{
             new Column("h", Column.celltype_string,    Column.encoder_bytes, Word.commonHashLength, "urlhash"),
@@ -130,9 +133,14 @@ public class CitationReference implements Reference /*, Cloneable*/ {
         return false;
     }
 
+    private int hashCache = Integer.MIN_VALUE; // if this is used in a compare method many times, a cache is useful
+
     @Override
     public int hashCode() {
-        return ByteArray.hashCode(this.urlhash());
+        if (this.hashCache == Integer.MIN_VALUE) {
+            this.hashCache = ByteArray.hashCode(this.urlhash());
+        }
+        return this.hashCache;
     }
 
     @Override
@@ -164,7 +172,7 @@ public class CitationReference implements Reference /*, Cloneable*/ {
         throw new UnsupportedOperationException();
     }
 
-    public int position(int p) {
+    public int position(@SuppressWarnings("unused") int p) {
         throw new UnsupportedOperationException();
     }
 

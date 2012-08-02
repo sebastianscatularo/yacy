@@ -80,6 +80,9 @@ public class NetworkGraph {
     private static final String COL_NORMAL_TEXT    = "000000";
     private static final String COL_LOAD_BG        = "F7F7F7";
 
+    /** Private constructor to avoid instantiation of utility class. */
+    private NetworkGraph() { }
+
     public static class CircleThreadPiece {
         private final String pieceName;
         private final Color color;
@@ -113,10 +116,6 @@ public class NetworkGraph {
     private static BufferedImage peerloadPicture = null;
     private static long          peerloadPictureDate = 0;
 
-    private static RasterPlotter bannerPicture = null;
-    private static BufferedImage logo = null;
-    private static long          bannerPictureDate = 0;
-
     public static RasterPlotter getSearchEventPicture(final SeedDB seedDB, final String eventID, final int coronaangle, final int cyc) {
         final SearchEvent event = SearchEventCache.getEvent(eventID);
         if (event == null) return null;
@@ -125,7 +124,7 @@ public class NetworkGraph {
         if (primarySearches == null) return null; // this was a local search and there are no threads
 
         // get a copy of a recent network picture
-        final RasterPlotter eventPicture = getNetworkPicture(seedDB, 120000, 640, 480, 300, 300, 9000, coronaangle, -1, Switchboard.getSwitchboard().getConfig(SwitchboardConstants.NETWORK_NAME, "unspecified"), Switchboard.getSwitchboard().getConfig("network.unit.description", "unspecified"), COL_BACKGROUND, cyc);
+        final RasterPlotter eventPicture = getNetworkPicture(seedDB, 640, 480, 300, 300, 9000, coronaangle, -1, Switchboard.getSwitchboard().getConfig(SwitchboardConstants.NETWORK_NAME, "unspecified"), Switchboard.getSwitchboard().getConfig("network.unit.description", "unspecified"), COL_BACKGROUND, cyc);
         //if (eventPicture instanceof ymageMatrix) eventPicture = (ymageMatrix) eventPicture; //new ymageMatrix((ymageMatrix) eventPicture);
         // TODO: fix cloning of ymageMatrix pictures
 
@@ -157,7 +156,7 @@ public class NetworkGraph {
 
         // draw in the search target
         final QueryParams query = event.getQuery();
-        final Iterator<byte[]> i = query.queryHashes.iterator();
+        final Iterator<byte[]> i = query.query_include_hashes.iterator();
         eventPicture.setColor(RasterPlotter.GREY);
         while (i.hasNext()) {
             final long[] positions = seedDB.scheme.dhtPositions(i.next());
@@ -170,7 +169,7 @@ public class NetworkGraph {
         return eventPicture;
     }
 
-    public static RasterPlotter getNetworkPicture(final SeedDB seedDB, final long maxAge, final int width, final int height, final int passiveLimit, final int potentialLimit, final int maxCount, final int coronaangle, final long communicationTimeout, final String networkName, final String networkTitle, final String bgcolor, final int cyc) {
+    public static RasterPlotter getNetworkPicture(final SeedDB seedDB, final int width, final int height, final int passiveLimit, final int potentialLimit, final int maxCount, final int coronaangle, final long communicationTimeout, final String networkName, final String networkTitle, final String bgcolor, final int cyc) {
         return drawNetworkPicture(seedDB, width, height, passiveLimit, potentialLimit, maxCount, coronaangle, communicationTimeout, networkName, networkTitle, bgcolor, cyc);
     }
 
@@ -325,12 +324,12 @@ public class NetworkGraph {
 
     private static class drawNetworkPicturePeerJob {
 
-        private RasterPlotter img;
-        private int centerX, centerY, innerradius, outerradius, coronaangle;
-        private Seed seed;
-        private String colorDot, colorLine, colorText;
-        private double cyc;
-        public drawNetworkPicturePeerJob() {} // used to produce a poison pill
+        private final RasterPlotter img;
+        private final int centerX, centerY, innerradius, outerradius, coronaangle;
+        private final Seed seed;
+        private final String colorDot, colorLine, colorText;
+        private final double cyc;
+        //public drawNetworkPicturePeerJob() {} // used to produce a poison pill
         public drawNetworkPicturePeerJob(
                         final RasterPlotter img, final int centerX, final int centerY,
                         final int innerradius, final int outerradius,
@@ -457,106 +456,6 @@ public class NetworkGraph {
 
     	g.setColor(Color.decode("0x"+COL_NORMAL_TEXT));
     	g.drawChars(caption.toCharArray(), 0, caption.length(), x+LEGEND_BOX_SIZE+5,y);
-    }
-
-    public static RasterPlotter getBannerPicture(final long maxAge, final int width, final int height, final String bgcolor, final String textcolor, final String bordercolor, final String name, final long links, final long words, final String type, final int ppm, final String network, final int peers, final long nlinks, final long nwords, final double nqph, final long nppm) {
-        if ((bannerPicture == null) || ((System.currentTimeMillis() - bannerPictureDate) > maxAge)) {
-            drawBannerPicture(width, height, bgcolor, textcolor, bordercolor, name, links, words, type, ppm, network, peers, nlinks, nwords, nqph, nppm, logo);
-        }
-        return bannerPicture;
-    }
-
-    public static RasterPlotter getBannerPicture(final long maxAge, final int width, final int height, final String bgcolor, final String textcolor, final String bordercolor, final String name, final long links, final long words, final String type, final int ppm, final String network, final int peers, final long nlinks, final long nwords, final double nqph, final long nppm, final BufferedImage newLogo) {
-        if ((bannerPicture == null) || ((System.currentTimeMillis() - bannerPictureDate) > maxAge)) {
-            drawBannerPicture(width, height, bgcolor, textcolor, bordercolor, name, links, words, type, ppm, network, peers, nlinks, nwords, nqph, nppm, newLogo);
-        }
-        return bannerPicture;
-    }
-
-    private static void drawBannerPicture(final int width, final int height, final String bgcolor, final String textcolor, final String bordercolor, final String name, final long links, final long words, final String type, final int ppm, final String network, final int peers, final long nlinks, final long nwords, final double nqph, final long nppm, final BufferedImage newLogo) {
-
-        final int exprlength = 19;
-        logo = newLogo;
-        bannerPicture = new RasterPlotter(width, height, RasterPlotter.DrawMode.MODE_REPLACE, bgcolor);
-
-        // draw description
-        bannerPicture.setColor(textcolor);
-        PrintTool.print(bannerPicture, 100, 12, 0, "PEER:  " + addTrailingBlanks(name, exprlength), -1);
-        PrintTool.print(bannerPicture, 100, 22, 0, "LINKS: " + addBlanksAndDots(links, exprlength), -1);
-        PrintTool.print(bannerPicture, 100, 32, 0, "WORDS: " + addBlanksAndDots(words, exprlength), -1);
-        PrintTool.print(bannerPicture, 100, 42, 0, "TYPE:  " + addTrailingBlanks(type, exprlength), -1);
-        PrintTool.print(bannerPicture, 100, 52, 0, "SPEED: " + addTrailingBlanks(ppm + " PAGES/MINUTE", exprlength), -1);
-
-        PrintTool.print(bannerPicture, 285, 12, 0, "NETWORK: " + addTrailingBlanks(network + " [" + peers + "]", exprlength), -1);
-        PrintTool.print(bannerPicture, 285, 22, 0, "LINKS:   " + addBlanksAndDots(nlinks, exprlength), -1);
-        PrintTool.print(bannerPicture, 285, 32, 0, "WORDS:   " + addBlanksAndDots(nwords, exprlength), -1);
-        PrintTool.print(bannerPicture, 285, 42, 0, "QUERIES: " + addTrailingBlanks(nqph + " QUERIES/HOUR", exprlength), -1);
-        PrintTool.print(bannerPicture, 285, 52, 0, "SPEED:   " + addTrailingBlanks(nppm + " PAGES/MINUTE", exprlength), -1);
-
-        if (logo != null) {
-            final int x = (100/2 - logo.getWidth()/2);
-            final int y = (height/2 - logo.getHeight()/2);
-            bannerPicture.insertBitmap(logo, x, y, 0, 0, RasterPlotter.FilterMode.FILTER_ANTIALIASING);
-        }
-
-        if (!bordercolor.equals("")) {
-            bannerPicture.setColor(bordercolor);
-            bannerPicture.line(0, 0, 0, height-1, 100);
-            bannerPicture.line(0, 0, width-1, 0, 100);
-            bannerPicture.line(width-1, 0, width-1, height-1, 100);
-            bannerPicture.line(0, height-1, width-1, height-1, 100);
-        }
-
-        // set timestamp
-         bannerPictureDate = System.currentTimeMillis();
-    }
-
-    public static boolean logoIsLoaded() {
-        if (logo == null) {
-            return false;
-        }
-        return true;
-    }
-
-    private static String addBlanksAndDots(final long input, final int length) {
-        return addBlanksAndDots(Long.toString(input), length);
-    }
-
-    private static String addBlanksAndDots(String input, final int length) {
-        input = addDots(input);
-        input = addTrailingBlanks(input,length);
-        return input;
-    }
-
-    private static String addDots(String word) {
-        String tmp = "";
-        int len = word.length();
-        if (len > 3) {
-            while(len > 3) {
-                if(tmp.equals("")) {
-                    tmp = word.substring(len-3,len);
-                } else {
-                    tmp = word.substring(len-3,len) + "." + tmp;
-                }
-                word = word.substring(0,len-3);
-                len = word.length();
-            }
-            word = word + "." + tmp;
-        }
-        return word;
-    }
-
-    private static String addTrailingBlanks(String word, int length) {
-        if (length > word.length()) {
-            String blanks = "";
-            length = length - word.length();
-            int i = 0;
-            while(i++ < length) {
-                blanks += " ";
-            }
-            word = blanks + word;
-        }
-        return word;
     }
 
 }

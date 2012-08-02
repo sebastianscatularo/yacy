@@ -47,6 +47,7 @@ import java.io.Writer;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -63,6 +64,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import net.yacy.cora.document.UTF8;
+import net.yacy.cora.storage.Files;
 import net.yacy.kelondro.index.Row;
 import net.yacy.kelondro.index.RowSet;
 import net.yacy.kelondro.logging.Log;
@@ -279,41 +281,6 @@ public final class FileUtils
         }
     }
 
-    /**
-     * Copies a File to a File.
-     *
-     * @param source File
-     * @param dest File
-     * @param count the amount of bytes to copy
-     * @throws IOException
-     * @see #copy(InputStream source, OutputStream dest)
-     * @see #copy(InputStream source, File dest)
-     * @see #copyRange(File source, OutputStream dest, int start)
-     * @see #copy(File source, OutputStream dest)
-     */
-    public static void copy(final File source, final File dest) throws IOException {
-        FileInputStream fis = null;
-        FileOutputStream fos = null;
-        try {
-            fis = new FileInputStream(source);
-            fos = new FileOutputStream(dest);
-            copy(fis, fos, -1);
-        } finally {
-            if ( fis != null ) {
-                try {
-                    fis.close();
-                } catch ( final Exception e ) {
-                }
-            }
-            if ( fos != null ) {
-                try {
-                    fos.close();
-                } catch ( final Exception e ) {
-                }
-            }
-        }
-    }
-
     public static void copy(final byte[] source, final OutputStream dest) throws IOException {
         dest.write(source, 0, source.length);
         dest.flush();
@@ -506,6 +473,14 @@ public final class FileUtils
         }
     }
 
+    public static ConcurrentHashMap<String, byte[]> loadMapB(final File f) {
+        ConcurrentHashMap<String, String> m = loadMap(f);
+        if (m == null) return null;
+        ConcurrentHashMap<String, byte[]> mb = new ConcurrentHashMap<String, byte[]>();
+        for (Map.Entry<String, String> e: m.entrySet()) mb.put(e.getKey(), UTF8.getBytes(e.getValue()));
+        return mb;
+    }
+
     public static void saveMap(final File file, final Map<String, String> props, final String comment) {
         PrintWriter pw = null;
         final File tf = new File(file.toString() + "." + (System.currentTimeMillis() % 1000));
@@ -543,6 +518,12 @@ public final class FileUtils
         }
     }
 
+    public static void saveMapB(final File file, final Map<String, byte[]> props, final String comment) {
+        HashMap<String, String> m = new HashMap<String, String>();
+        for (Map.Entry<String, byte[]> e: props.entrySet()) m.put(e.getKey(), UTF8.String(e.getValue()));
+        saveMap(file, m, comment);
+    }
+
     public static Set<String> loadSet(final File file, final int chunksize, final boolean tree)
         throws IOException {
         final Set<String> set =
@@ -566,8 +547,7 @@ public final class FileUtils
         return set;
     }
 
-    public static void saveSet(final File file, final String format, final Set<byte[]> set, final String sep)
-        throws IOException {
+    public static void saveSet(final File file, final String format, final Set<byte[]> set, final String sep) throws IOException {
         final File tf = new File(file.toString() + ".prt" + (System.currentTimeMillis() % 1000));
         OutputStream os = null;
         if ( (format == null) || (format.equals("plain")) ) {
@@ -575,6 +555,7 @@ public final class FileUtils
         } else if ( format.equals("gzip") ) {
             os = new GZIPOutputStream(new FileOutputStream(tf));
         } else if ( format.equals("zip") ) {
+            @SuppressWarnings("resource")
             final ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(file));
             String name = file.getName();
             if ( name.endsWith(".zip") ) {
@@ -583,7 +564,8 @@ public final class FileUtils
             zos.putNextEntry(new ZipEntry(name + ".txt"));
             os = zos;
         }
-        if ( os != null ) {
+        IOException ex = null;
+        if ( os != null ) try {
             for ( final byte[] b : set ) {
                 os.write(b);
                 if ( sep != null ) {
@@ -591,12 +573,16 @@ public final class FileUtils
                 }
             }
             os.close();
+        } catch (IOException e) {
+            ex = e;
+        } finally {
+            os.close();
         }
+        if (ex != null) throw ex;
         forceMove(tf, file);
     }
 
-    public static void saveSet(final File file, final String format, final RowSet set, final String sep)
-        throws IOException {
+    public static void saveSet(final File file, final String format, final RowSet set, final String sep) throws IOException {
         final File tf = new File(file.toString() + ".prt" + (System.currentTimeMillis() % 1000));
         OutputStream os = null;
         if ( (format == null) || (format.equals("plain")) ) {
@@ -604,6 +590,7 @@ public final class FileUtils
         } else if ( format.equals("gzip") ) {
             os = new GZIPOutputStream(new FileOutputStream(tf));
         } else if ( format.equals("zip") ) {
+            @SuppressWarnings("resource")
             final ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(file));
             String name = file.getName();
             if ( name.endsWith(".zip") ) {
@@ -612,7 +599,8 @@ public final class FileUtils
             zos.putNextEntry(new ZipEntry(name + ".txt"));
             os = zos;
         }
-        if ( os != null ) {
+        IOException ex = null;
+        if ( os != null ) try {
             final Iterator<Row.Entry> i = set.iterator();
             if ( i.hasNext() ) {
                 os.write(i.next().getPrimaryKeyBytes());
@@ -623,8 +611,12 @@ public final class FileUtils
                 }
                 os.write(i.next().getPrimaryKeyBytes());
             }
+        } catch (IOException e) {
+            ex = e;
+        } finally {
             os.close();
         }
+        if (ex != null) throw ex;
         forceMove(tf, file);
     }
 
@@ -645,7 +637,7 @@ public final class FileUtils
         while ( li.hasNext() ) {
             int pos = 0;
             line = li.next().trim();
-            if ( line.length() > 0 && line.charAt(0) == '#' ) {
+            if ( !line.isEmpty() && line.charAt(0) == '#' ) {
                 continue; // exclude comments
             }
             do {
@@ -759,7 +751,7 @@ public final class FileUtils
             // Read the List
             String line = "";
             while ( (line = br.readLine()) != null ) {
-                if ( line.length() == 0 ) {
+                if ( line.isEmpty() ) {
                     continue;
                 }
                 if ( line.charAt(0) != '#' || withcomments ) {
@@ -907,7 +899,7 @@ public final class FileUtils
             if (this.reader != null) try {
                 while ( (this.nextLine = this.reader.readLine()) != null ) {
                     this.nextLine = this.nextLine.trim();
-                    if ( this.nextLine.length() > 0 ) {
+                    if ( !this.nextLine.isEmpty() ) {
                         break;
                     }
                 }
@@ -942,7 +934,7 @@ public final class FileUtils
     private static void forceMove(final File from, final File to) throws IOException {
         if ( !(to.delete() && from.renameTo(to)) ) {
             // do it manually
-            copy(from, to);
+            Files.copy(from, to);
             FileUtils.deletedelete(from);
         }
     }
@@ -1011,7 +1003,7 @@ public final class FileUtils
         final File tempFile =
             File.createTempFile(
                 parserClassName + "_" + ((idx > -1) ? fileName.substring(0, idx) : fileName),
-                (fileExt.length() > 0) ? "." + fileExt : fileExt);
+                (!fileExt.isEmpty()) ? "." + fileExt : fileExt);
         return tempFile;
     }
 

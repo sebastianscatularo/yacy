@@ -51,6 +51,7 @@ import java.util.concurrent.TimeoutException;
 import java.util.zip.GZIPInputStream;
 
 import net.yacy.cora.document.UTF8;
+import net.yacy.cora.util.NumberTools;
 import net.yacy.document.Document;
 import net.yacy.document.Parser;
 import net.yacy.document.TextParser;
@@ -59,7 +60,7 @@ import net.yacy.kelondro.data.meta.DigestURI;
 import net.yacy.kelondro.logging.Log;
 import net.yacy.kelondro.util.ByteBuffer;
 
-import org.apache.tools.bzip2.CBZip2InputStream;
+import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 
 import de.anomic.data.wiki.WikiCode;
 import de.anomic.data.wiki.WikiParser;
@@ -150,10 +151,16 @@ public class MediawikiImporter extends Thread implements Importer {
             InputStream is = new BufferedInputStream(new FileInputStream(this.sourcefile), 1024 * 1024);
             if (this.sourcefile.getName().endsWith(".bz2")) {
                 int b = is.read();
-                if (b != 'B') throw new IOException("Invalid bz2 content.");
+                if (b != 'B') {
+                    try {is.close();} catch (IOException e) {}
+                    throw new IOException("Invalid bz2 content.");
+                }
                 b = is.read();
-                if (b != 'Z') throw new IOException("Invalid bz2 content.");
-                is = new CBZip2InputStream(is);
+                if (b != 'Z') {
+                    try {is.close();} catch (IOException e) {}
+                    throw new IOException("Invalid bz2 content.");
+                }
+                is = new BZip2CompressorInputStream(is);
             } else if (this.sourcefile.getName().endsWith(".gz")) {
                 is = new GZIPInputStream(is);
             }
@@ -216,9 +223,8 @@ public class MediawikiImporter extends Thread implements Importer {
                             }
                             sb = new StringBuilder(200);
                             continue;
-                        } else {
-                            sb.append(t.substring(q + 1));
                         }
+                        sb.append(t.substring(q + 1));
                     }
                     continue;
                 }
@@ -564,7 +570,7 @@ public class MediawikiImporter extends Thread implements Importer {
             return this.bb.getBytes();
         }
 
-        public void close() {
+        public synchronized void close() {
             try {
                 this.is.close();
             } catch (final IOException e) {
@@ -611,13 +617,13 @@ public class MediawikiImporter extends Thread implements Importer {
                 p += 7;
                 int q = s.indexOf('"', p + 1);
                 if (q < 0) return null;
-                start = Long.parseLong(s.substring(p, q));
+                start = NumberTools.parseLongDecSubstring(s, p, q);
                 p = s.indexOf("length=\"", q);
                 if (p < 0) return null;
                 p += 8;
                 q = s.indexOf('"', p + 1);
                 if (q < 0) return null;
-                final int length = Integer.parseInt(s.substring(p, q));
+                final int length = NumberTools.parseIntDecSubstring(s, p, q);
                 //Log.logInfo("WIKITRANSLATION", "start = " + start + ", length = " + length);
                 return new wikisourcerecord(title, start, start + length);
             }

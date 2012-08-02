@@ -47,10 +47,10 @@ import net.yacy.cora.protocol.Domains;
 import net.yacy.cora.protocol.HeaderFramework;
 import net.yacy.cora.protocol.RequestHeader;
 import net.yacy.cora.protocol.http.HTTPClient;
+import net.yacy.cora.util.SpaceExceededException;
 import net.yacy.kelondro.blob.MapDataMining;
 import net.yacy.kelondro.data.meta.DigestURI;
 import net.yacy.kelondro.data.word.Word;
-import net.yacy.kelondro.index.RowSpaceExceededException;
 import net.yacy.kelondro.logging.Log;
 import net.yacy.kelondro.order.Base64Order;
 import net.yacy.kelondro.util.FileUtils;
@@ -164,8 +164,6 @@ public final class SeedDB implements AlternativeDomainNames {
         final String peername = myName();
         this.mySeed = null; // my own seed
         this.myOwnSeedFile = new File(newNetworkRoot, SeedDB.DBFILE_OWN_SEED);
-        initMySeed();
-        this.mySeed.setName(peername);
 
         this.netRedundancy = redundancy;
         this.scheme = new VerticalWordPartitionScheme(partitionExponent);
@@ -174,6 +172,9 @@ public final class SeedDB implements AlternativeDomainNames {
         this.seedActiveDB = openSeedTable(this.seedActiveDBFile);
         this.seedPassiveDB = openSeedTable(this.seedPassiveDBFile);
         this.seedPotentialDB = openSeedTable(this.seedPotentialDBFile);
+
+        initMySeed();
+        this.mySeed.setName(peername);
 
         // check if we are in the seedCaches: this can happen if someone else published our seed
         removeMySeed();
@@ -245,7 +246,7 @@ public final class SeedDB implements AlternativeDomainNames {
             if (sizeConnected() == 0) try {Thread.sleep(5000);} catch (final InterruptedException e) {} // wait for init
             initMySeed();
             // check if my seed has an IP assigned
-            if (myIP() == null || myIP().length() == 0) {
+            if (myIP() == null || myIP().isEmpty()) {
                 this.mySeed.setIP(Domains.myPublicLocalIP().getHostAddress());
             }
         }
@@ -305,19 +306,19 @@ public final class SeedDB implements AlternativeDomainNames {
         return sizeConnected() <= dhtActivityMagic;
     }
 
-    private synchronized MapDataMining openSeedTable(final File seedDBFile) {
+    private synchronized static MapDataMining openSeedTable(final File seedDBFile) {
         final File parentDir = new File(seedDBFile.getParent());
         if (!parentDir.exists()) {
 			if(!parentDir.mkdirs())
 				Log.logWarning("yacySeedDB", "could not create directories for "+ seedDBFile.getParent());
 		}
         try {
-            return new MapDataMining(seedDBFile, Word.commonHashLength, Base64Order.enhancedCoder, 1024 * 512, 500, sortFields, longaccFields, doubleaccFields, this);
+            return new MapDataMining(seedDBFile, Word.commonHashLength, Base64Order.enhancedCoder, 1024 * 512, 500, sortFields, longaccFields, doubleaccFields);
         } catch (final Exception e) {
             // try again
             FileUtils.deletedelete(seedDBFile);
             try {
-                return new MapDataMining(seedDBFile, Word.commonHashLength, Base64Order.enhancedCoder, 1024 * 512, 500, sortFields, longaccFields, doubleaccFields, this);
+                return new MapDataMining(seedDBFile, Word.commonHashLength, Base64Order.enhancedCoder, 1024 * 512, 500, sortFields, longaccFields, doubleaccFields);
             } catch (final IOException e1) {
                 Log.logException(e1);
                 System.exit(-1);
@@ -375,7 +376,7 @@ public final class SeedDB implements AlternativeDomainNames {
     	// address has therefore the form
     	// address    ::= (<peername>'.yacy'|<peerhexhash>'.yacyh'){'='<ip>{':'<port}}
     	// clusterdef ::= {address}{','address}*
-    	final String[] addresses = (clusterdefinition.length() == 0) ? new String[0] : clusterdefinition.split(",");
+    	final String[] addresses = (clusterdefinition.isEmpty()) ? new String[0] : clusterdefinition.split(",");
     	final TreeMap<byte[], String> clustermap = new TreeMap<byte[], String>(Base64Order.enhancedCoder);
     	Seed seed;
     	String hash, yacydom, ipport;
@@ -413,17 +414,17 @@ public final class SeedDB implements AlternativeDomainNames {
     	return clustermap;
     }
 
-    public Iterator<Seed> seedsConnected(final boolean up, final boolean rot, final byte[] firstHash, final float minVersion) {
+    public Iterator<Seed> seedsConnected(final boolean up, final boolean rot, final byte[] firstHash, final double minVersion) {
         // enumerates seed-type objects: all seeds sequentially without order
         return new seedEnum(up, rot, (firstHash == null) ? null : firstHash, null, this.seedActiveDB, minVersion);
     }
 
-    private Iterator<Seed> seedsDisconnected(final boolean up, final boolean rot, final byte[] firstHash, final float minVersion) {
+    private Iterator<Seed> seedsDisconnected(final boolean up, final boolean rot, final byte[] firstHash, final double minVersion) {
         // enumerates seed-type objects: all seeds sequentially without order
         return new seedEnum(up, rot, (firstHash == null) ? null : firstHash, null, this.seedPassiveDB, minVersion);
     }
 
-    public Seed anySeedVersion(final float minVersion) {
+    public Seed anySeedVersion(final double minVersion) {
         // return just any seed that has a specific minimum version number
         final Iterator<Seed> e = seedsConnected(true, true, Seed.randomHash(), minVersion);
         return e.next();
@@ -556,7 +557,7 @@ public final class SeedDB implements AlternativeDomainNames {
     }
 
     private Seed get(final String hash, final MapDataMining database) {
-        if (hash == null || hash.length() == 0) return null;
+        if (hash == null || hash.isEmpty()) return null;
         if ((this.mySeed != null) && (hash.equals(this.mySeed.hash))) return this.mySeed;
         final ConcurrentHashMap<String, String> entry = new ConcurrentHashMap<String, String>();
         try {
@@ -566,7 +567,7 @@ public final class SeedDB implements AlternativeDomainNames {
         } catch (final IOException e) {
             Log.logException(e);
             return null;
-        } catch (final RowSpaceExceededException e) {
+        } catch (final SpaceExceededException e) {
             Log.logException(e);
             return null;
         }
@@ -655,7 +656,7 @@ public final class SeedDB implements AlternativeDomainNames {
 
     public Seed lookupByIP(
             final InetAddress peerIP,
-            final int port,
+            final int port,                 /* port may be -1 if not significant */
             final boolean lookupConnected,
             final boolean lookupDisconnected,
             final boolean lookupPotential
@@ -679,7 +680,7 @@ public final class SeedDB implements AlternativeDomainNames {
                 for (byte[] pk: idx) {
                     seed = this.getConnected(ASCII.String(pk));
                     if (seed == null) continue;
-                    if (seed.getPort() != port) continue;
+                    if ((port >= 0) && (seed.getPort() != port)) continue;
                     //System.out.println("*** found lookupByIP in connected: " + peerIP.toString() + " -> " + seed.getName());
                     return seed;
                 }
@@ -693,7 +694,7 @@ public final class SeedDB implements AlternativeDomainNames {
                 for (byte[] pk: idx) {
                     seed = this.getDisconnected(ASCII.String(pk));
                     if (seed == null) continue;
-                    if (seed.getPort() != port) continue;
+                    if ((port >= 0) && (seed.getPort() != port)) continue;
                     //System.out.println("*** found lookupByIP in disconnected: " + peerIP.toString() + " -> " + seed.getName());
                     return seed;
                 }
@@ -707,7 +708,7 @@ public final class SeedDB implements AlternativeDomainNames {
                 for (byte[] pk: idx) {
                     seed = this.getPotential(ASCII.String(pk));
                     if (seed == null) continue;
-                    if (seed.getPort() != port) continue;
+                    if ((port >= 0) && (seed.getPort() != port)) continue;
                     //System.out.println("*** found lookupByIP in potential: " + peerIP.toString() + " -> " + seed.getName());
                     return seed;
                 }
@@ -720,7 +721,7 @@ public final class SeedDB implements AlternativeDomainNames {
         String s = this.mySeed.getIP();
         if (s == null || !ipString.equals(s)) return null;
         int p = this.mySeed.getPort();
-        if (p != port) return null;
+        if ((port >= 0) && (p != port)) return null;
         //System.out.println("*** found lookupByIP as my seed: " + peerIP.toString() + " -> " + this.mySeed.getName());
         return this.mySeed;
     }
@@ -786,15 +787,15 @@ public final class SeedDB implements AlternativeDomainNames {
             // create a seed file which for uploading ...
             seedFile = File.createTempFile("seedFile",".txt", seedDB.myOwnSeedFile.getParentFile());
             seedFile.deleteOnExit();
-            if (Log.isFine("YACY")) Log.logFine("YACY", "SaveSeedList: Storing seedlist into tempfile " + seedFile.toString());
+            if (Network.log.isFine()) Network.log.logFine("SaveSeedList: Storing seedlist into tempfile " + seedFile.toString());
             final ArrayList<String> uv = storeSeedList(seedFile, true);
 
             // uploading the seed file
-            if (Log.isFine("YACY")) Log.logFine("YACY", "SaveSeedList: Trying to upload seed-file, " + seedFile.length() + " bytes, " + uv.size() + " entries.");
+            if (Network.log.isFine()) Network.log.logFine("SaveSeedList: Trying to upload seed-file, " + seedFile.length() + " bytes, " + uv.size() + " entries.");
             log = uploader.uploadSeedFile(sb, seedFile);
 
             // test download
-            if (Log.isFine("YACY")) Log.logFine("YACY", "SaveSeedList: Trying to download seed-file '" + seedURL + "'.");
+            if (Network.log.isFine()) Network.log.logFine("SaveSeedList: Trying to download seed-file '" + seedURL + "'.");
             final Iterator<String> check = downloadSeedFile(seedURL);
 
             // Comparing if local copy and uploaded copy are equal
@@ -816,7 +817,7 @@ public final class SeedDB implements AlternativeDomainNames {
         return log;
     }
 
-    private Iterator<String> downloadSeedFile(final DigestURI seedURL) throws IOException {
+    private static Iterator<String> downloadSeedFile(final DigestURI seedURL) throws IOException {
         // Configure http headers
         final RequestHeader reqHeader = new RequestHeader();
         reqHeader.put(HeaderFramework.PRAGMA, "no-cache");
@@ -849,13 +850,13 @@ public final class SeedDB implements AlternativeDomainNames {
         }
     }
 
-    private String checkCache(final ArrayList<String> uv, final Iterator<String> check) {
+    private static String checkCache(final ArrayList<String> uv, final Iterator<String> check) {
         if ((check == null) || (uv == null)) {
-            if (Log.isFine("YACY")) Log.logFine("YACY", "SaveSeedList: Local and uploades seed-list are different");
+            if (Network.log.isFine()) Network.log.logFine("SaveSeedList: Local and uploades seed-list are different");
             return "Entry count is different: uv.size() = " + ((uv == null) ? "null" : Integer.toString(uv.size()));
         }
 
-        if (Log.isFine("YACY")) Log.logFine("YACY", "SaveSeedList: Comparing local and uploades seed-list entries ...");
+        if (Network.log.isFine()) Network.log.logFine("SaveSeedList: Comparing local and uploades seed-list entries ...");
         int i = 0;
         while (check.hasNext() && i < uv.size()) {
         	if (!((uv.get(i)).equals(check.next()))) return "Element at position " + i + " is different.";
@@ -869,6 +870,7 @@ public final class SeedDB implements AlternativeDomainNames {
     /**
      * resolve a yacy address
      */
+    @Override
     public String resolve(String host) {
         Seed seed;
         int p;
@@ -938,14 +940,14 @@ public final class SeedDB implements AlternativeDomainNames {
         private Iterator<Map.Entry<byte[], Map<String, String>>> it;
         private Seed nextSeed;
         private final MapDataMining database;
-        private float minVersion;
+        private double minVersion;
 
-        private seedEnum(final boolean up, final boolean rot, final byte[] firstKey, final byte[] secondKey, final MapDataMining database, final float minVersion) {
+        private seedEnum(final boolean up, final boolean rot, final byte[] firstKey, final byte[] secondKey, final MapDataMining database, final double minVersion) {
             this.database = database;
             this.minVersion = minVersion;
             try {
                 this.it = (firstKey == null) ? database.entries(up, rot) : database.entries(up, rot, firstKey, secondKey);
-                float version;
+                double version;
                 while (true) {
                     this.nextSeed = internalNext();
                     if (this.nextSeed == null) break;
@@ -982,6 +984,7 @@ public final class SeedDB implements AlternativeDomainNames {
             }
         }
 
+        @Override
         public boolean hasNext() {
             return (this.nextSeed != null);
         }
@@ -1021,9 +1024,10 @@ public final class SeedDB implements AlternativeDomainNames {
             }
         }
 
+        @Override
         public Seed next() {
             final Seed seed = this.nextSeed;
-            float version;
+            double version;
             try {while (true) {
                 this.nextSeed = internalNext();
                 if (this.nextSeed == null) break;
@@ -1040,6 +1044,7 @@ public final class SeedDB implements AlternativeDomainNames {
             return seed;
         }
 
+        @Override
         public void remove() {
             throw new UnsupportedOperationException();
         }

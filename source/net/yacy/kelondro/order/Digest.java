@@ -56,14 +56,22 @@ public class Digest {
 
 	public static BlockingQueue<MessageDigest> digestPool = new LinkedBlockingDeque<MessageDigest>();
 
-    private static final int md5CacheSize = Math.max(200000, Math.min(10000000, (int) (MemoryControl.available() / 20000L)));
+    private static final int md5CacheSize = Math.max(1000, Math.min(1000000, (int) (MemoryControl.available() / 50000L)));
     private static ARC<String, byte[]> md5Cache = null;
     static {
         try {
-            md5Cache = new ConcurrentARC<String, byte[]>(md5CacheSize, Math.max(32, 4 * Runtime.getRuntime().availableProcessors()));
+            Log.logInfo("Digest", "creating hash cache of size " + md5CacheSize);
+            md5Cache = new ConcurrentARC<String, byte[]>(md5CacheSize, Math.max(8, 2 * Runtime.getRuntime().availableProcessors()));
         } catch (final OutOfMemoryError e) {
-            md5Cache = new ConcurrentARC<String, byte[]>(1000, Math.max(8, 2 * Runtime.getRuntime().availableProcessors()));
+            md5Cache = new ConcurrentARC<String, byte[]>(1000, Math.max(2, Runtime.getRuntime().availableProcessors()));
         }
+    }
+
+    /**
+     * clean the md5 cache
+     */
+    public static void cleanup() {
+    	md5Cache.clear();
     }
 
     public static String encodeHex(final long in, final int length) {
@@ -153,7 +161,7 @@ public class Digest {
     }
 
     public static byte[] encodeMD5Raw(final File file) throws IOException {
-        FileInputStream  in;
+        FileInputStream in = null;
         try {
             in = new FileInputStream(file);
         } catch (final java.io.FileNotFoundException e) {
@@ -178,11 +186,12 @@ public class Digest {
                 if (c.n <= 0) break;
                 md5consumer.consume(c);
             }
-            in.close();
         } catch (final IOException e) {
             Log.logSevere("Digest", "file error with " + file.toString() + ": " + e.getMessage());
             md5consumer.consume(md5FilechunkConsumer.poison);
             throw e;
+        } finally {
+            try {in.close();} catch (IOException e) {}
         }
         // put in poison into queue to tell the consumer to stop
         md5consumer.consume(md5FilechunkConsumer.poison);

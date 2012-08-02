@@ -32,24 +32,31 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 import net.yacy.cora.document.MultiProtocolURI;
-import net.yacy.document.geolocalization.GeonamesLocalization;
-import net.yacy.document.geolocalization.OpenGeoDBLocalization;
-import net.yacy.document.geolocalization.OverarchingLocalization;
+import net.yacy.cora.lod.JenaTripleStore;
+import net.yacy.cora.lod.vocabulary.Tagging;
+import net.yacy.cora.lod.vocabulary.Tagging.SOTuple;
+import net.yacy.cora.storage.Files;
+import net.yacy.document.geolocation.GeonamesLocation;
+import net.yacy.document.geolocation.OpenGeoDBLocation;
+import net.yacy.document.geolocation.OverarchingLocation;
 import net.yacy.kelondro.logging.Log;
 import net.yacy.kelondro.util.FileUtils;
 
-public class LibraryProvider
-{
+import com.hp.hpl.jena.rdf.model.Resource;
 
-    public static final char tagPrefix = '$';
+public class LibraryProvider {
+
     public static final String path_to_source_dictionaries = "source";
     public static final String path_to_did_you_mean_dictionaries = "didyoumean";
     public static final String path_to_autotagging_dictionaries = "autotagging";
@@ -57,8 +64,8 @@ public class LibraryProvider
     public static final String disabledExtension = ".disabled";
 
     public static WordCache dymLib = new WordCache(null);
-    public static Autotagging autotagging = new Autotagging(null, tagPrefix);
-    public static OverarchingLocalization geoLoc = new OverarchingLocalization();
+    public static Autotagging autotagging = null;
+    public static OverarchingLocation geoLoc = new OverarchingLocation();
     private static File dictSource = null;
     private static File dictRoot = null;
 
@@ -68,7 +75,10 @@ public class LibraryProvider
             "http://downloads.sourceforge.net/project/opengeodb/Data/0.2.5a/opengeodb-0.2.5a-UTF8-sql.gz" ),
         GEODB1( "geo1", "http://fa-technik.adfc.de/code/opengeodb/dump/opengeodb-02624_2011-10-17.sql.gz" ),
         GEON0( "geon0", "http://download.geonames.org/export/dump/cities1000.zip" ),
-        DRW0( "drw0", "http://www.ids-mannheim.de/kl/derewo/derewo-v-100000t-2009-04-30-0.1.zip" );
+        GEON1( "geon1", "http://download.geonames.org/export/dump/cities5000.zip" ),
+        GEON2( "geon2", "http://download.geonames.org/export/dump/cities15000.zip" ),
+        DRW0( "drw0", "http://www.ids-mannheim.de/kl/derewo/derewo-v-100000t-2009-04-30-0.1.zip" ),
+        PND0( "pnd0", "http://downloads.dbpedia.org/3.7-i18n/de/pnd_de.nt.bz2" );
 
         public String nickname, url, filename;
 
@@ -107,14 +117,17 @@ public class LibraryProvider
         dictRoot = rootPath;
 
         // initialize libraries
-        integrateDeReWo();
+        initAutotagging();
+        activateDeReWo();
         initDidYouMean();
         integrateOpenGeoDB();
-        integrateGeonames();
-        initAutotagging(tagPrefix);
+        integrateGeonames0(-1);
+        integrateGeonames1(-1);
+        integrateGeonames2(100000);
+        activatePND();
         Set<String> allTags = new HashSet<String>() ;
         allTags.addAll(autotagging.allTags()); // we must copy this into a clone to prevent circularity
-        autotagging.addLocalization(geoLoc);
+        autotagging.addPlaces(geoLoc);
         //autotagging.addDictionaries(dymLib.getDictionaries()); // strange results with this: normal word lists are 'too full'
         WordCache.learn(allTags);
     }
@@ -126,19 +139,33 @@ public class LibraryProvider
             if ( geo0.exists() ) {
                 geo0.renameTo(Dictionary.GEODB0.fileDisabled());
             }
-            geoLoc.addLocalization(Dictionary.GEODB1.nickname, new OpenGeoDBLocalization(geo1, false));
+            geoLoc.activateLocation(Dictionary.GEODB1.nickname, new OpenGeoDBLocation(geo1, dymLib));
             return;
         }
         if ( geo0.exists() ) {
-            geoLoc.addLocalization(Dictionary.GEODB0.nickname, new OpenGeoDBLocalization(geo0, false));
+            geoLoc.activateLocation(Dictionary.GEODB0.nickname, new OpenGeoDBLocation(geo0, dymLib));
             return;
         }
     }
 
-    public static void integrateGeonames() {
+    public static void integrateGeonames0(long minPopulation) {
         final File geon = Dictionary.GEON0.file();
         if ( geon.exists() ) {
-            geoLoc.addLocalization(Dictionary.GEON0.nickname, new GeonamesLocalization(geon));
+            geoLoc.activateLocation(Dictionary.GEON0.nickname, new GeonamesLocation(geon, dymLib, minPopulation));
+            return;
+        }
+    }
+    public static void integrateGeonames1(long minPopulation) {
+        final File geon = Dictionary.GEON1.file();
+        if ( geon.exists() ) {
+            geoLoc.activateLocation(Dictionary.GEON1.nickname, new GeonamesLocation(geon, dymLib, minPopulation));
+            return;
+        }
+    }
+    public static void integrateGeonames2(long minPopulation) {
+        final File geon = Dictionary.GEON2.file();
+        if ( geon.exists() ) {
+            geoLoc.activateLocation(Dictionary.GEON2.nickname, new GeonamesLocation(geon, dymLib, minPopulation));
             return;
         }
     }
@@ -151,22 +178,15 @@ public class LibraryProvider
         dymLib = new WordCache(dymDict);
     }
 
-    public static void initAutotagging(char prefix) {
+    public static void initAutotagging() {
         final File autotaggingPath = new File(dictRoot, path_to_autotagging_dictionaries);
         if ( !autotaggingPath.exists() ) {
             autotaggingPath.mkdirs();
         }
-        autotagging = new Autotagging(autotaggingPath, prefix);
+        autotagging = new Autotagging(autotaggingPath);
     }
 
-    public static void removeDeReWo() {
-        final File dymDict = new File(dictRoot, path_to_did_you_mean_dictionaries);
-        final File derewoInput = LibraryProvider.Dictionary.DRW0.file();
-        final File derewoOutput = new File(dymDict, derewoInput.getName() + ".words");
-        FileUtils.deletedelete(derewoOutput);
-    }
-
-    public static void integrateDeReWo() {
+    public static void activateDeReWo() {
         // translate input files (once..)
         final File dymDict = new File(dictRoot, path_to_did_you_mean_dictionaries);
         if ( !dymDict.exists() ) {
@@ -183,6 +203,67 @@ public class LibraryProvider
                 Log.logException(e);
             }
         }
+    }
+
+    public static void deactivateDeReWo() {
+        final File dymDict = new File(dictRoot, path_to_did_you_mean_dictionaries);
+        final File derewoInput = LibraryProvider.Dictionary.DRW0.file();
+        final File derewoOutput = new File(dymDict, derewoInput.getName() + ".words");
+        FileUtils.deletedelete(derewoOutput);
+    }
+
+    public static void activatePND() {
+        // translate input files (once..)
+        final File dymDict = new File(dictRoot, path_to_did_you_mean_dictionaries);
+        if ( !dymDict.exists() ) {
+            dymDict.mkdirs();
+        }
+        // read the pnd file and store it into the triplestore
+        final File dictInput = LibraryProvider.Dictionary.PND0.file();
+        if ( dictInput.exists() ) {
+            try {
+            	JenaTripleStore.LoadNTriples(Files.read(dictInput));
+            } catch ( final IOException e ) {
+                Log.logException(e);
+            }
+        }
+        // read the triplestore and generate a vocabulary
+        Map<String, SOTuple> map = new HashMap<String, SOTuple>();
+        Log.logInfo("LibraryProvider", "retrieving PND data from triplestore");
+        Iterator<Resource> i = JenaTripleStore.getSubjects("http://dbpedia.org/ontology/individualisedPnd");
+        Log.logInfo("LibraryProvider", "creating vocabulary map from PND triplestore");
+        String objectspace = "";
+        while (i.hasNext()) {
+        	Resource resource = i.next();
+        	String subject = resource.toString();
+
+        	// prepare a proper term from the subject uri
+        	int p = subject.lastIndexOf('/');
+        	if (p < 0) continue;
+        	String term = subject.substring(p + 1);
+        	objectspace = subject.substring(0, p + 1);
+        	p = term.indexOf('(');
+        	if (p >= 0) term = term.substring(0, p);
+        	term = term.replaceAll("_", " ").trim();
+        	if (term.isEmpty()) continue;
+        	if (term.indexOf(' ') < 0) continue; // accept only names that have at least two parts
+
+        	// store the term into the vocabulary map
+        	map.put(term, new SOTuple(Tagging.normalizeTerm(term), subject));
+        }
+        if (!map.isEmpty()) try {
+            Log.logInfo("LibraryProvider", "adding vocabulary to autotagging");
+			Tagging pndVoc = new Tagging("Persons", null, objectspace, map);
+			autotagging.addVocabulary(pndVoc);
+            Log.logInfo("LibraryProvider", "added pnd vocabulary to autotagging");
+		} catch (IOException e) {
+		}
+    }
+
+    public static void deactivatePND() {
+        // remove the PND Triples from the triplestore
+    	JenaTripleStore.deleteObjects(null, "http://dbpedia.org/ontology/individualisedPnd");
+    	autotagging.deleteVocabulary("Persons");
     }
 
     /*
@@ -233,13 +314,6 @@ public class LibraryProvider
         InputStream derewoTxtEntry;
         try {
             final ZipFile zip = new ZipFile(file);
-            /*
-            final Enumeration<? extends ZipEntry> i = zip.entries();
-            while (i.hasMoreElements()) {
-                final ZipEntry e = i.nextElement();
-                System.out.println("loadDeReWo: " + e.getName());
-            }
-            */
             derewoTxtEntry = zip.getInputStream(zip.getEntry("derewo-v-100000t-2009-04-30-0.1"));
         } catch ( final ZipException e ) {
             Log.logException(e);

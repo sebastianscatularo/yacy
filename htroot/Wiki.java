@@ -39,6 +39,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import net.yacy.cora.document.UTF8;
+import net.yacy.cora.protocol.Domains;
 import net.yacy.cora.protocol.HeaderFramework;
 import net.yacy.cora.protocol.RequestHeader;
 import net.yacy.kelondro.util.ByteBuffer;
@@ -73,7 +74,7 @@ public class Wiki {
 
         String access = sb.getConfig("WikiAccess", "admin");
         final String pagename = get(post, "page", "start");
-        final String ip = get(post, HeaderFramework.CONNECTION_PROP_CLIENTIP, "127.0.0.1");
+        final String ip = get(post, HeaderFramework.CONNECTION_PROP_CLIENTIP, Domains.LOCALHOST);
         String author = get(post, "author", ANONYMOUS);
         if (author.equals(ANONYMOUS)) {
             author = WikiBoard.guessAuthor(ip);
@@ -86,7 +87,7 @@ public class Wiki {
             // only the administrator may change the access right
             if (!sb.verifyAuthentication(header)) {
                 // check access right for admin
-                prop.put("AUTHENTICATE", "admin log-in"); // force log-in
+            	prop.authenticationRequired();
                 return prop;
             }
 
@@ -105,7 +106,7 @@ public class Wiki {
 
             if ((access.equals("admin") && (!sb.verifyAuthentication(header)))) {
                 // check access right for admin
-                prop.put("AUTHENTICATE", "admin log-in"); // force log-in
+            	prop.authenticationRequired();
                 return prop;
             }
 
@@ -129,7 +130,7 @@ public class Wiki {
         if (post != null && post.containsKey("edit")) {
             if ((access.equals("admin") && (!sb.verifyAuthentication(header)))) {
                 // check access right for admin
-                prop.put("AUTHENTICATE", "admin log-in"); // force log-in
+            	prop.authenticationRequired();
                 return prop;
             }
 

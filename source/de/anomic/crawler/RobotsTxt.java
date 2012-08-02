@@ -42,8 +42,8 @@ import net.yacy.cora.protocol.HeaderFramework;
 import net.yacy.cora.protocol.RequestHeader;
 import net.yacy.cora.protocol.ResponseHeader;
 import net.yacy.cora.protocol.http.HTTPClient;
+import net.yacy.cora.util.SpaceExceededException;
 import net.yacy.kelondro.blob.BEncodedHeap;
-import net.yacy.kelondro.index.RowSpaceExceededException;
 import net.yacy.kelondro.io.ByteCount;
 
 import org.apache.log4j.Logger;
@@ -70,7 +70,8 @@ public class RobotsTxt {
         this.syncObjects = new ConcurrentHashMap<String, DomSync>();
         this.tables = worktables;
         try {
-            log.info("initiated robots table: " + this.tables.getHeap(WorkTables.TABLE_ROBOTS_NAME).getFile());
+            this.tables.getHeap(WorkTables.TABLE_ROBOTS_NAME);
+            //log.info("initiated robots table: " + this.tables.getHeap(WorkTables.TABLE_ROBOTS_NAME).getFile());
         } catch (final IOException e) {
             try {
                 this.tables.getHeap(WorkTables.TABLE_ROBOTS_NAME).clear();
@@ -103,7 +104,7 @@ public class RobotsTxt {
         final BEncodedHeap robotsTable = this.tables.getHeap(WorkTables.TABLE_ROBOTS_NAME);
         try {
             record = robotsTable.get(robotsTable.encodedKey(urlHostPort));
-        } catch (final RowSpaceExceededException e) {
+        } catch (final SpaceExceededException e) {
             log.warn("memory exhausted", e);
             record = null;
         }
@@ -131,7 +132,7 @@ public class RobotsTxt {
                 // to complete a download
                 try {
                     record = robotsTable.get(robotsTable.encodedKey(urlHostPort));
-                } catch (final RowSpaceExceededException e) {
+                } catch (final SpaceExceededException e) {
                     log.warn("memory exhausted", e);
                     record = null;
                 }
@@ -261,17 +262,16 @@ public class RobotsTxt {
     // methods that had been in robotsParser.java:
 
     private static final int DOWNLOAD_ACCESS_RESTRICTED = 0;
-    private static final int DOWNLOAD_ROBOTS_TXT = 1;
+    static final int DOWNLOAD_ROBOTS_TXT = 1;
     private static final int DOWNLOAD_ETAG = 2;
     private static final int DOWNLOAD_MODDATE = 3;
 
     static final String getHostPort(final MultiProtocolURI theURL) {
-        String urlHostPort = null;
         final int port = getPort(theURL);
-        urlHostPort = theURL.getHost() + ":" + port;
-        urlHostPort = urlHostPort.toLowerCase().intern();
-
-        return urlHostPort;
+        String host = theURL.getHost();
+        StringBuilder sb = new StringBuilder(host.length() + 6);
+        sb.append(host).append(':').append(Integer.toString(port));
+        return sb.toString();
     }
 
     private static final int getPort(final MultiProtocolURI theURL) {
@@ -287,7 +287,7 @@ public class RobotsTxt {
         return port;
     }
 
-    private static Object[] downloadRobotsTxt(final MultiProtocolURI robotsURL, int redirectionCount, final RobotsTxtEntry entry) throws Exception {
+    static Object[] downloadRobotsTxt(final MultiProtocolURI robotsURL, int redirectionCount, final RobotsTxtEntry entry) throws Exception {
         if (robotsURL == null || !robotsURL.getProtocol().startsWith("http")) return null;
 
         if (redirectionCount < 0) return new Object[]{Boolean.FALSE,null,null};
@@ -308,7 +308,7 @@ public class RobotsTxt {
 
         // adding referer
         reqHeaders.put(RequestHeader.REFERER, (MultiProtocolURI.newURL(robotsURL,"/")).toNormalform(true, true));
-        reqHeaders.put(RequestHeader.ACCEPT, HTTPLoader.DEFAULT_ACCEPT);
+        reqHeaders.put(HeaderFramework.ACCEPT, HTTPLoader.DEFAULT_ACCEPT);
         if (entry != null) {
             oldEtag = entry.getETag();
             reqHeaders = new RequestHeader();
@@ -332,7 +332,7 @@ public class RobotsTxt {
             	ByteCount.addAccountCount(ByteCount.CRAWLER, robotsTxt.length);
             }
             final int code = client.getHttpResponse().getStatusLine().getStatusCode();
-            final ResponseHeader header = new ResponseHeader(client.getHttpResponse().getAllHeaders());
+            final ResponseHeader header = new ResponseHeader(code, client.getHttpResponse().getAllHeaders());
 
             // check the response status
             if (code > 199 && code < 300) {

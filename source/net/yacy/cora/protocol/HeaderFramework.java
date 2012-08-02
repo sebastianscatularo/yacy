@@ -42,6 +42,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import net.yacy.cora.document.ASCII;
 import net.yacy.cora.document.MultiProtocolURI;
 import net.yacy.cora.document.UTF8;
+import net.yacy.cora.util.NumberTools;
 
 
 /**
@@ -80,7 +81,6 @@ public class HeaderFramework extends TreeMap<String, String> implements Map<Stri
     public static final String ACCEPT_LANGUAGE = "Accept-Language";
     public static final String ACCEPT_ENCODING = "Accept-Encoding";
     public static final String ACCEPT_CHARSET = "Accept-Charset";
-
 
     public static final String CONTENT_LENGTH = "Content-Length";
     public static final String CONTENT_TYPE = "Content-Type";
@@ -133,6 +133,11 @@ public class HeaderFramework extends TreeMap<String, String> implements Map<Stri
     public static final String METHOD_HEAD = "HEAD";
     public static final String METHOD_POST = "POST";
     public static final String METHOD_CONNECT = "CONNECT";
+
+    /*
+     * constanst for metadata which is stored in the ResponseHeader
+     */
+    public static final String STATUS_CODE = "STATUS_CODE";
 
     /* =============================================================
      * defining default http status messages
@@ -554,7 +559,7 @@ public class HeaderFramework extends TreeMap<String, String> implements Map<Stri
         if ((pos = host.indexOf(':')) < 0) {
             port = 80;
         } else {
-            port = Integer.parseInt(host.substring(pos + 1));
+            port = NumberTools.parseIntDecSubstring(host, pos + 1);
             host = host.substring(0, pos);
         }
 
@@ -573,7 +578,7 @@ public class HeaderFramework extends TreeMap<String, String> implements Map<Stri
         int p;
         String line;
         while ((line = reader.readLine()) != null) {
-            if (line.length() == 0) break;
+            if (line.isEmpty()) break;
             if ((p = line.indexOf(':')) >= 0) {
                 // store a property
                 add(line.substring(0, p).trim(), line.substring(p + 1).trim());

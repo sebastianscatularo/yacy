@@ -48,6 +48,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -77,11 +78,12 @@ import net.yacy.cora.protocol.Domains;
 import net.yacy.cora.protocol.http.HTTPClient;
 import net.yacy.cora.services.federated.opensearch.SRURSSConnector;
 import net.yacy.cora.services.federated.yacy.CacheStrategy;
+import net.yacy.cora.util.SpaceExceededException;
+import net.yacy.kelondro.data.meta.URIMetadata;
 import net.yacy.kelondro.data.meta.URIMetadataRow;
 import net.yacy.kelondro.data.word.Word;
 import net.yacy.kelondro.data.word.WordReference;
 import net.yacy.kelondro.data.word.WordReferenceFactory;
-import net.yacy.kelondro.index.RowSpaceExceededException;
 import net.yacy.kelondro.logging.Log;
 import net.yacy.kelondro.order.Base64Order;
 import net.yacy.kelondro.order.Bitfield;
@@ -90,13 +92,14 @@ import net.yacy.kelondro.rwi.Reference;
 import net.yacy.kelondro.rwi.ReferenceContainer;
 import net.yacy.kelondro.rwi.ReferenceContainerCache;
 import net.yacy.kelondro.util.ByteBuffer;
-import net.yacy.kelondro.util.EventTracker;
 import net.yacy.kelondro.util.FileUtils;
 import net.yacy.peers.graphics.ProfilingGraph;
 import net.yacy.peers.graphics.WebStructureGraph;
 import net.yacy.peers.graphics.WebStructureGraph.HostReference;
 import net.yacy.peers.operation.yacyVersion;
 import net.yacy.repository.Blacklist;
+import net.yacy.repository.Blacklist.BlacklistType;
+import net.yacy.search.EventTracker;
 import net.yacy.search.Switchboard;
 import net.yacy.search.SwitchboardConstants;
 import net.yacy.search.index.Segment;
@@ -171,6 +174,7 @@ public final class Protocol
 
         Map<String, String> result = null;
         final String salt = crypt.randomSalt();
+        long responseTime = Long.MAX_VALUE;
         try {
             // generate request
             final Map<String, ContentBody> parts =
@@ -188,6 +192,7 @@ public final class Protocol
                     Seed.b64Hash2hexHash(otherHash) + ".yacyh",
                     parts,
                     false);
+            responseTime = System.currentTimeMillis() - start;
             Network.log.logInfo("yacyClient.hello thread '"
                 + Thread.currentThread().getName()
                 + "' contacted peer at "
@@ -195,7 +200,7 @@ public final class Protocol
                 + ", received "
                 + ((content == null) ? "null" : content.length)
                 + " bytes, time = "
-                + (System.currentTimeMillis() - start)
+                + responseTime
                 + " milliseconds");
             result = FileUtils.table(content);
         } catch ( final Exception e ) {
@@ -237,8 +242,10 @@ public final class Protocol
                     if ( p < 0 ) {
                         return -1;
                     }
-                    final String host = Domains.dnsResolve(address.substring(0, p)).getHostAddress();
-                    otherPeer = Seed.genRemoteSeed(seed, salt, false, host);
+                    String h = address.substring(0, p);
+                    InetAddress ie = Domains.dnsResolve(h);
+                    final String host = ie == null ? h : ie.getHostAddress(); // hack to prevent NPEs
+                    otherPeer = Seed.genRemoteSeed(seed, false, host);
                     if ( !otherPeer.hash.equals(otherHash) ) {
                         Network.log.logInfo("yacyClient.hello: consistency error: otherPeer.hash = "
                             + otherPeer.hash
@@ -256,6 +263,12 @@ public final class Protocol
             }
         }
 
+        // get access type response
+        String mytype = result.get(Seed.YOURTYPE);
+        if ( mytype == null ) {
+            mytype = "";
+        }
+
         // set my own seed according to new information
         // we overwrite our own IP number only
         if ( serverCore.useStaticIP ) {
@@ -263,16 +276,13 @@ public final class Protocol
         } else {
             final String myIP = result.get("yourip");
             final String properIP = Seed.isProperIP(myIP);
+            mySeed.setFlagRootNode((mytype.equals(Seed.PEERTYPE_SENIOR) || mytype.equals(Seed.PEERTYPE_PRINCIPAL)) && responseTime < 1000 && Domains.isThisHostIP(myIP));
             if ( properIP == null ) {
                 mySeed.setIP(myIP);
             }
         }
 
         // change our seed-type
-        String mytype = result.get(Seed.YOURTYPE);
-        if ( mytype == null ) {
-            mytype = "";
-        }
         final Accessible accessible = new Accessible();
         if ( mytype.equals(Seed.PEERTYPE_SENIOR) || mytype.equals(Seed.PEERTYPE_PRINCIPAL) ) {
             accessible.IWasAccessed = true;
@@ -348,9 +358,9 @@ public final class Protocol
                             return -1;
                         }
                         final String host = Domains.dnsResolve(address.substring(0, p)).getHostAddress();
-                        s = Seed.genRemoteSeed(seedStr, salt, false, host);
+                        s = Seed.genRemoteSeed(seedStr, false, host);
                     } else {
-                        s = Seed.genRemoteSeed(seedStr, salt, false, null);
+                        s = Seed.genRemoteSeed(seedStr, false, null);
                     }
                     if ( peerActions.peerArrival(s, (i == 1)) ) {
                         count++;
@@ -391,7 +401,7 @@ public final class Protocol
                 return null;
             }
             //final Date remoteTime = yacyCore.parseUniversalDate((String) result.get(yacySeed.MYTIME)); // read remote time
-            return Seed.genRemoteSeed(result.get("response"), salt, false, target.getIP());
+            return Seed.genRemoteSeed(result.get("response"), false, target.getIP());
         } catch ( final Exception e ) {
             Network.log.logWarning("yacyClient.querySeed error:" + e.getMessage());
             return null;
@@ -576,7 +586,6 @@ public final class Protocol
             null);
     }
 
-    @SuppressWarnings("unchecked")
     public static int search(
         final Seed mySeed,
         final String wordhashes,
@@ -584,7 +593,6 @@ public final class Protocol
         final String urlhashes,
         final Pattern prefer,
         final Pattern filter,
-        final Pattern snippet,
         final String modifier,
         final String language,
         final String sitehash,
@@ -630,7 +638,6 @@ public final class Protocol
                     urlhashes,
                     prefer,
                     filter,
-                    snippet,
                     modifier,
                     language,
                     sitehash,
@@ -666,16 +673,14 @@ public final class Protocol
         // create containers
         final int words = wordhashes.length() / Word.commonHashLength;
         assert words > 0 : "wordhashes = " + wordhashes;
-        final ReferenceContainer<WordReference>[] container = new ReferenceContainer[words];
+        final List<ReferenceContainer<WordReference>> container = new ArrayList<ReferenceContainer<WordReference>>(words);
         for ( int i = 0; i < words; i++ ) {
             try {
-                container[i] =
-                    ReferenceContainer.emptyContainer(
+                container.add(ReferenceContainer.emptyContainer(
                         Segment.wordReferenceFactory,
-                        ASCII.getBytes(wordhashes.substring(i * Word.commonHashLength, (i + 1)
-                            * Word.commonHashLength)),
-                        count);
-            } catch ( final RowSpaceExceededException e ) {
+                        ASCII.getBytes(wordhashes.substring(i * Word.commonHashLength, (i + 1) * Word.commonHashLength)),
+                        count));
+            } catch ( final SpaceExceededException e ) {
                 Log.logException(e);
                 return -1;
             }
@@ -695,7 +700,7 @@ public final class Protocol
             if ( urlEntry.hash().length != 12 ) {
                 continue; // bad url hash
             }
-            if ( blacklist.isListed(Blacklist.BLACKLIST_SEARCH, urlEntry.url()) ) {
+            if ( blacklist.isListed(BlacklistType.SEARCH, urlEntry) ) {
                 if ( Network.log.isInfo() ) {
                     Network.log.logInfo("remote search: filtered blacklisted url "
                         + urlEntry.url()
@@ -768,10 +773,10 @@ public final class Protocol
             }
 
             // add the url entry to the word indexes
-            for ( int m = 0; m < words; m++ ) {
+            for ( final ReferenceContainer<WordReference> c : container ) {
                 try {
-                    container[m].add(entry);
-                } catch ( final RowSpaceExceededException e ) {
+                    c.add(entry);
+                } catch ( final SpaceExceededException e ) {
                     Log.logException(e);
                     break;
                 }
@@ -781,7 +786,8 @@ public final class Protocol
         // store remote result to local result container
         // insert one container into the search result buffer
         // one is enough, only the references are used, not the word
-        containerCache.add(container[0], false, target.getName() + "/" + target.hash, result.joincount, true);
+        containerCache.add(container.get(0), false, target.getName() + "/" + target.hash, result.joincount, time);
+        containerCache.addFinalize();
         containerCache.addExpectedRemoteReferences(-count);
 
         // insert the containers to the index
@@ -796,7 +802,7 @@ public final class Protocol
         Network.log.logInfo("remote search: peer "
             + target.getName()
             + " sent "
-            + container[0].size()
+            + container.get(0).size()
             + "/"
             + result.joincount
             + " references for "
@@ -890,7 +896,6 @@ public final class Protocol
             final String urlhashes,
             final Pattern prefer,
             final Pattern filter,
-            final Pattern snippet,
             final String modifier,
             final String language,
             final String sitehash,
@@ -943,7 +948,6 @@ public final class Protocol
             parts.put("urls", UTF8.StringBody(urlhashes));
             parts.put("prefer", UTF8.StringBody(prefer.pattern()));
             parts.put("filter", UTF8.StringBody(filter.pattern()));
-            parts.put("snippet", UTF8.StringBody(snippet.pattern()));
             parts.put("modifier", UTF8.StringBody(modifier));
             parts.put("language", UTF8.StringBody(language));
             parts.put("sitehash", UTF8.StringBody(sitehash));
@@ -1156,7 +1160,7 @@ public final class Protocol
     public static String transferIndex(
         final Seed targetSeed,
         final ReferenceContainerCache<WordReference> indexes,
-        final SortedMap<byte[], URIMetadataRow> urlCache,
+        final SortedMap<byte[], URIMetadata> urlCache,
         final boolean gzipBody,
         final int timeout) {
 
@@ -1207,7 +1211,7 @@ public final class Protocol
                     targetSeed.hash));
 
         uhss = uhss.trim();
-        if ( uhss.length() == 0 || uhss.equals(",") ) {
+        if ( uhss.isEmpty() || uhss.equals(",") ) {
             return null;
         } // all url's known, we are ready here
 
@@ -1217,7 +1221,7 @@ public final class Protocol
         } // all url's known
 
         // extract the urlCache from the result
-        final URIMetadataRow[] urls = new URIMetadataRow[uhs.length];
+        final URIMetadata[] urls = new URIMetadataRow[uhs.length];
         for ( int i = 0; i < uhs.length; i++ ) {
             urls[i] = urlCache.get(ASCII.getBytes(uhs[i]));
             if ( urls[i] == null ) {
@@ -1325,7 +1329,7 @@ public final class Protocol
 
     private static Map<String, String> transferURL(
         final Seed targetSeed,
-        final URIMetadataRow[] urls,
+        final URIMetadata[] urls,
         boolean gzipBody,
         final int timeout) {
         // this post a message to the remote message board
@@ -1347,7 +1351,7 @@ public final class Protocol
         String resource;
         int urlc = 0;
         int urlPayloadSize = 0;
-        for ( final URIMetadataRow url : urls ) {
+        for ( final URIMetadata url : urls ) {
             if ( url != null ) {
                 resource = url.toString();
                 //System.out.println("*** DEBUG resource = " + resource);
@@ -1515,7 +1519,6 @@ public final class Protocol
                             "", // urlhashes,
                             QueryParams.matchnothing_pattern, // prefer,
                             QueryParams.catchall_pattern, // filter,
-                            QueryParams.catchall_pattern, // snippet,
                             "", // modifier
                             "", // language,
                             "", // sitehash,
@@ -1597,7 +1600,7 @@ public final class Protocol
         }
         final String authenticationMethod =
             env.getConfig("network.unit.protocol.request.authentication.method", "");
-        if ( authenticationMethod.length() == 0 ) {
+        if ( authenticationMethod.isEmpty() ) {
             return false;
         }
         if ( authenticationMethod.equals("salted-magic-sim") ) {

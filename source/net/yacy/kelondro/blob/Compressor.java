@@ -32,6 +32,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.zip.GZIPInputStream;
@@ -39,13 +40,13 @@ import java.util.zip.GZIPOutputStream;
 
 import net.yacy.cora.order.ByteOrder;
 import net.yacy.cora.order.CloneableIterator;
-import net.yacy.kelondro.index.RowSpaceExceededException;
+import net.yacy.cora.util.SpaceExceededException;
 import net.yacy.kelondro.logging.Log;
 import net.yacy.kelondro.util.ByteArray;
 import net.yacy.kelondro.util.MemoryControl;
 
 
-public class Compressor implements BLOB {
+public class Compressor implements BLOB, Iterable<byte[]> {
 
     static byte[] gzipMagic  = {(byte) 'z', (byte) '|'}; // magic for gzip-encoded content
     static byte[] plainMagic = {(byte) 'p', (byte) '|'}; // magic for plain content (no encoding)
@@ -61,18 +62,22 @@ public class Compressor implements BLOB {
         initBuffer();
     }
 
+    @Override
     public long mem() {
         return this.backend.mem();
     }
 
+    @Override
     public void trim() {
         this.backend.trim();
     }
 
+    @Override
     public String name() {
         return this.backend.name();
     }
 
+    @Override
     public synchronized void clear() throws IOException {
         initBuffer();
         this.backend.clear();
@@ -83,10 +88,12 @@ public class Compressor implements BLOB {
         this.bufferlength = 0;
     }
 
+    @Override
     public ByteOrder ordering() {
         return this.backend.ordering();
     }
 
+    @Override
     public synchronized void close(final boolean writeIDX) {
         // no more thread is running, flush all queues
         flushAll();
@@ -164,7 +171,8 @@ public class Compressor implements BLOB {
         }
     }
 
-    public byte[] get(final byte[] key) throws IOException, RowSpaceExceededException {
+    @Override
+    public byte[] get(final byte[] key) throws IOException, SpaceExceededException {
         // depending on the source of the result, we additionally do entry compression
         // because if a document was read once, we think that it will not be retrieved another time again soon
         byte[] b = null;
@@ -181,33 +189,37 @@ public class Compressor implements BLOB {
         b = this.backend.get(key);
         if (b == null) return null;
         if (!MemoryControl.request(b.length * 2, true)) {
-            throw new RowSpaceExceededException(b.length * 2, "decompress needs 2 * " + b.length + " bytes");
+            throw new SpaceExceededException(b.length * 2, "decompress needs 2 * " + b.length + " bytes");
         }
         return decompress(b);
     }
 
+    @Override
     public byte[] get(final Object key) {
         if (!(key instanceof byte[])) return null;
         try {
             return get((byte[]) key);
         } catch (final IOException e) {
             Log.logException(e);
-        } catch (final RowSpaceExceededException e) {
+        } catch (final SpaceExceededException e) {
             Log.logException(e);
         }
         return null;
     }
 
+    @Override
     public boolean containsKey(final byte[] key) {
         synchronized (this) {
             return this.buffer.containsKey(key) || this.backend.containsKey(key);
         }
     }
 
+    @Override
     public int keylength() {
         return this.backend.keylength();
     }
 
+    @Override
     public synchronized long length() {
         try {
             return this.backend.length() + this.bufferlength;
@@ -217,6 +229,7 @@ public class Compressor implements BLOB {
         }
     }
 
+    @Override
     public long length(final byte[] key) throws IOException {
         synchronized (this) {
             byte[] b = this.buffer.get(key);
@@ -226,7 +239,7 @@ public class Compressor implements BLOB {
                 if (b == null) return 0;
                 b = decompress(b);
                 return (b == null) ? 0 : b.length;
-            } catch (final RowSpaceExceededException e) {
+            } catch (final SpaceExceededException e) {
                 throw new IOException(e.getMessage());
             }
         }
@@ -238,6 +251,7 @@ public class Compressor implements BLOB {
         return 0;
     }
 
+    @Override
     public void insert(final byte[] key, final byte[] b) throws IOException {
 
         // first ensure that the files do not exist anywhere
@@ -265,30 +279,45 @@ public class Compressor implements BLOB {
         if (MemoryControl.shortStatus()) flushAll();
     }
 
+    @Override
     public synchronized void delete(final byte[] key) throws IOException {
         this.backend.delete(key);
         final long rx = removeFromQueues(key);
         if (rx > 0) this.bufferlength -= rx;
     }
 
+    @Override
     public synchronized int size() {
         return this.backend.size() + this.buffer.size();
     }
 
+    @Override
     public synchronized boolean isEmpty() {
         if (!this.backend.isEmpty()) return false;
         if (!this.buffer.isEmpty()) return false;
         return true;
     }
 
+    @Override
     public synchronized CloneableIterator<byte[]> keys(final boolean up, final boolean rotating) throws IOException {
         flushAll();
         return this.backend.keys(up, rotating);
     }
 
+    @Override
     public synchronized CloneableIterator<byte[]> keys(final boolean up, final byte[] firstKey) throws IOException {
         flushAll();
         return this.backend.keys(up, firstKey);
+    }
+
+    @Override
+    public Iterator<byte[]> iterator() {
+        flushAll();
+        try {
+            return this.backend.keys(true, false);
+        } catch (IOException e) {
+            return null;
+        }
     }
 
     private boolean flushOne() {
@@ -306,13 +335,14 @@ public class Compressor implements BLOB {
         }
     }
 
-    private void flushAll() {
+    public void flushAll() {
         while (!this.buffer.isEmpty()) {
             if (!flushOne()) break;
         }
     }
 
-    public int replace(final byte[] key, final Rewriter rewriter) throws IOException, RowSpaceExceededException {
+    @Override
+    public int replace(final byte[] key, final Rewriter rewriter) throws IOException, SpaceExceededException {
         final byte[] b = get(key);
         if (b == null) return 0;
         final byte[] c = rewriter.rewrite(b);
@@ -323,7 +353,8 @@ public class Compressor implements BLOB {
         return reduction;
     }
 
-    public int reduce(final byte[] key, final Reducer reducer) throws IOException, RowSpaceExceededException {
+    @Override
+    public int reduce(final byte[] key, final Reducer reducer) throws IOException, SpaceExceededException {
         final byte[] b = get(key);
         if (b == null) return 0;
         final byte[] c = reducer.rewrite(b);
@@ -333,5 +364,6 @@ public class Compressor implements BLOB {
         insert(key, c);
         return reduction;
     }
+
 
 }

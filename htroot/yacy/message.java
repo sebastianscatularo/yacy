@@ -40,11 +40,13 @@ import net.yacy.cora.protocol.Domains;
 import net.yacy.cora.protocol.HeaderFramework;
 import net.yacy.cora.protocol.RequestHeader;
 import net.yacy.kelondro.logging.Log;
-import net.yacy.kelondro.util.FileUtils;
-import net.yacy.peers.Seed;
-import net.yacy.peers.Protocol;
 import net.yacy.peers.Network;
+import net.yacy.peers.Protocol;
+import net.yacy.peers.Seed;
 import net.yacy.search.Switchboard;
+
+import com.google.common.io.Files;
+
 import de.anomic.data.MessageBoard;
 import de.anomic.server.serverObjects;
 import de.anomic.server.serverSwitch;
@@ -67,7 +69,6 @@ public final class message {
         if (!Protocol.authentifyRequest(post, env)) return prop;
 
         final String process = post.get("process", "permission");
-        final String key =  post.get("key", "");
         final String clientip = header.get(HeaderFramework.CONNECTION_PROP_CLIENTIP, "<unknown>"); // read an artificial header addendum
         final InetAddress ias = Domains.dnsResolve(clientip);
 
@@ -106,28 +107,28 @@ public final class message {
         if (process.equals("post")) {
             // post: post message to message board
             final String otherSeedString = post.get("myseed", "");
-            if (otherSeedString.length() == 0) {
+            if (otherSeedString.isEmpty()) {
                 prop.put("response", "-1"); // request rejected
                 return prop;
             }
             //Date remoteTime = yacyCore.parseUniversalDate((String) post.get(yacySeed.MYTIME)); // read remote time
             Seed otherSeed;
             try {
-                otherSeed = Seed.genRemoteSeed(otherSeedString, key, false, ias.getHostAddress());
+                otherSeed = Seed.genRemoteSeed(otherSeedString, false, ias.getHostAddress());
             } catch (final IOException e) {
                 prop.put("response", "-1"); // don't accept messages for bad seeds
                 return prop;
             }
 
-            String subject = crypt.simpleDecode(post.get("subject", ""), key); // message's subject
-            String message = crypt.simpleDecode(post.get("message", ""), key); // message body
+            String subject = crypt.simpleDecode(post.get("subject", "")); // message's subject
+            String message = crypt.simpleDecode(post.get("message", "")); // message body
             if (subject == null || message == null) {
                 prop.put("response", "-1"); // don't accept empty messages
                 return prop;
             }
             message = message.trim();
             subject = subject.trim();
-            if (subject.length() == 0 || message.length() == 0) {
+            if (subject.isEmpty() || message.isEmpty()) {
                 prop.put("response", "-1"); // don't accept empty messages
                 return prop;
             }
@@ -150,7 +151,7 @@ public final class message {
             final File notifierSource = new File(sb.getAppPath(), sb.getConfig("htRootPath","htroot") + "/env/grafics/message.gif");
             final File notifierDest   = new File(sb.getDataPath("htDocsPath", "DATA/HTDOCS"), "notifier.gif");
             try {
-                FileUtils.copy(notifierSource, notifierDest);
+                Files.copy(notifierSource, notifierDest);
             } catch (final IOException e) {
             	Log.logSevere("MESSAGE", "NEW MESSAGE ARRIVED! (error: " + e.getMessage() + ")");
 

@@ -4,7 +4,6 @@ import java.util.regex.Pattern;
 
 import net.yacy.cora.protocol.RequestHeader;
 import net.yacy.kelondro.blob.Tables.Row;
-import net.yacy.kelondro.index.RowSpaceExceededException;
 import net.yacy.kelondro.logging.Log;
 import net.yacy.search.Switchboard;
 import de.anomic.data.UserDB;
@@ -76,11 +75,9 @@ public class manage_tags {
                 prop.put("status", 1);
             } catch (final IOException e) {
                 Log.logException(e);
-            } catch (final RowSpaceExceededException e) {
-            	 Log.logException(e);
-			}
+            }
         } else {
-        	prop.put(YMarkTables.USER_AUTHENTICATE,YMarkTables.USER_AUTHENTICATE_MSG);
+        	prop.put(serverObjects.ACTION_AUTHENTICATE, YMarkTables.USER_AUTHENTICATE_MSG);
         }
         // return rewrite properties
         return prop;

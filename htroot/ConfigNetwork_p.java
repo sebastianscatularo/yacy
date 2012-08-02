@@ -44,7 +44,7 @@ public class ConfigNetwork_p
 {
 
     public static serverObjects respond(
-        final RequestHeader header,
+        @SuppressWarnings("unused") final RequestHeader header,
         final serverObjects post,
         final serverSwitch env) throws FileNotFoundException, IOException {
 
@@ -87,7 +87,6 @@ public class ConfigNetwork_p
                 if ( !indexReceive ) {
                     // remove heuristics
                     sb.setConfig("heuristic.site", false);
-                    sb.setConfig("heuristic.scroogle", false);
                     sb.setConfig("heuristic.blekko", false);
                 }
                 final boolean robinsonmode = "robinson".equals(post.get("network", ""));
@@ -280,7 +279,7 @@ public class ConfigNetwork_p
                 output.append(",").append(element);
             }
         }
-        if ( input.length() == 0 ) {
+        if ( input.isEmpty() ) {
             return input;
         }
         return output.delete(0, 1).toString();

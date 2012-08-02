@@ -47,7 +47,7 @@ import net.yacy.document.parser.html.CharacterCoding;
 import net.yacy.kelondro.data.meta.DigestURI;
 import net.yacy.kelondro.util.FileUtils;
 import net.yacy.peers.Seed;
-import net.yacy.repository.Blacklist;
+import net.yacy.repository.Blacklist.BlacklistType;
 import net.yacy.search.Switchboard;
 import net.yacy.search.query.SearchEventCache;
 
@@ -71,7 +71,7 @@ public class sharedBlacklist_p {
 
     private final static String BLACKLIST_FILENAME_FILTER = "^.*\\.black$";
 
-    public static serverObjects respond(final RequestHeader header, final serverObjects post, final serverSwitch env) {
+    public static serverObjects respond(@SuppressWarnings("unused") final RequestHeader header, final serverObjects post, final serverSwitch env) {
         final Switchboard sb = (Switchboard) env;
         // return variable that accumulates replacements
         final serverObjects prop = new serverObjects();
@@ -210,7 +210,6 @@ public class sharedBlacklist_p {
                 prop.put("page", "1"); //result page
                 prop.put("status", STATUS_ENTRIES_ADDED); //list of added Entries
 
-                int count = 0;//couter of added entries
                 PrintWriter pw = null;
                 try {
                     // open the blacklist file
@@ -238,12 +237,8 @@ public class sharedBlacklist_p {
                             // append the item to the file
                             pw.println(newItem);
 
-                            count++;
                             if (Switchboard.urlBlacklist != null) {
-                                final String supportedBlacklistTypesStr = Blacklist.BLACKLIST_TYPES_STRING;
-                                final String[] supportedBlacklistTypes = supportedBlacklistTypesStr.split(",");
-
-                                for (final String supportedBlacklistType : supportedBlacklistTypes) {
+                                for (final BlacklistType supportedBlacklistType : BlacklistType.values()) {
                                     if (ListManager.listSetContains(supportedBlacklistType + ".BlackLists",selectedBlacklistName)) {
                                         Switchboard.urlBlacklist.add(supportedBlacklistType,newItem.substring(0, pos), newItem.substring(pos + 1));
                                     }

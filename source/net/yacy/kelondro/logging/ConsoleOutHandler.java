@@ -1,4 +1,4 @@
-//ConsoleOutHandler.java 
+//ConsoleOutHandler.java
 //-------------------------------------
 //part of YACY
 //(C) by Michael Peter Christen; mc@yacy.net
@@ -27,6 +27,7 @@
 
 package net.yacy.kelondro.logging;
 
+import java.io.BufferedOutputStream;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.SimpleFormatter;
@@ -34,18 +35,20 @@ import java.util.logging.StreamHandler;
 
 public final class ConsoleOutHandler extends StreamHandler {
 
+    private static int c = 0;
+
     public ConsoleOutHandler() {
         setLevel(Level.FINEST);
         setFormatter(new SimpleFormatter());
-        setOutputStream(System.out);        
+        setOutputStream(new BufferedOutputStream(System.out));
     }
-    
+
     @Override
     public final synchronized void publish(final LogRecord record) {
         super.publish(record);
-        flush();
+        if (c++ % 10 == 0) flush(); // not so many flushes, makes too much IO
     }
-    
+
     @Override
     public final synchronized void close() {
         flush();

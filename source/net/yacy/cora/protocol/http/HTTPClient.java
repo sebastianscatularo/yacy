@@ -47,10 +47,12 @@ import net.yacy.cora.document.MultiProtocolURI;
 import net.yacy.cora.document.UTF8;
 import net.yacy.cora.protocol.ClientIdentification;
 import net.yacy.cora.protocol.ConnectionInfo;
+import net.yacy.cora.protocol.Domains;
 import net.yacy.cora.protocol.HeaderFramework;
 
-import org.apache.commons.httpclient.cookie.CookiePolicy;
 import org.apache.http.Header;
+import org.apache.http.HeaderElement;
+import org.apache.http.HeaderElementIterator;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpHost;
@@ -64,9 +66,11 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpHead;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.params.CookiePolicy;
 import org.apache.http.client.params.HttpClientParams;
 import org.apache.http.client.protocol.ClientContext;
 import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.conn.ConnectionKeepAliveStrategy;
 import org.apache.http.conn.params.ConnRouteParams;
 import org.apache.http.conn.routing.HttpRoute;
 import org.apache.http.conn.scheme.PlainSocketFactory;
@@ -77,10 +81,10 @@ import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.ContentBody;
 import org.apache.http.entity.mime.content.StringBody;
-import org.apache.http.impl.client.AbstractHttpClient;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
+import org.apache.http.impl.conn.PoolingClientConnectionManager;
+import org.apache.http.message.BasicHeaderElementIterator;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
@@ -139,7 +143,7 @@ public class HTTPClient {
 		schemeRegistry.register(new Scheme("http", 80, PlainSocketFactory.getSocketFactory()));
 		schemeRegistry.register(new Scheme("https", 443, getSSLSocketFactory()));
 
-		final ThreadSafeClientConnManager clientConnectionManager = new ThreadSafeClientConnManager(schemeRegistry);
+		final PoolingClientConnectionManager clientConnectionManager = new PoolingClientConnectionManager(schemeRegistry);
 
 		// Create and initialize HTTP parameters
 		final HttpParams httpParams = new BasicHttpParams();
@@ -153,8 +157,8 @@ public class HTTPClient {
 		// connections per host (2 default)
 		clientConnectionManager.setDefaultMaxPerRoute(2);
 		// Increase max connections for localhost
-		final HttpHost localhost = new HttpHost("localhost");
-		clientConnectionManager.setMaxForRoute(new HttpRoute(localhost), maxcon);
+		final HttpHost localhost = new HttpHost(Domains.LOCALHOST);
+		clientConnectionManager.setMaxPerRoute(new HttpRoute(localhost), maxcon);
 		/**
 		 * HTTP protocol settings
 		 */
@@ -178,7 +182,7 @@ public class HTTPClient {
 		HttpConnectionParams.setTcpNoDelay(httpParams, false);
 		// Defines whether the socket can be bound even though a previous connection is still in a timeout state.
 		HttpConnectionParams.setSoReuseaddr(httpParams, true);
-		
+
 		/**
 		 * HTTP client settings
 		 */
@@ -188,10 +192,12 @@ public class HTTPClient {
 		httpClient = new DefaultHttpClient(clientConnectionManager, httpParams);
 		// disable the cookiestore, cause this may cause segfaults and is not needed
 		((DefaultHttpClient) httpClient).setCookieStore(null);
+		// add cutom keep alive strategy
+		addCustomKeepAliveStrategy((DefaultHttpClient) httpClient);
 		// ask for gzip
-		((AbstractHttpClient) httpClient).addRequestInterceptor(new GzipRequestInterceptor());
+		((DefaultHttpClient) httpClient).addRequestInterceptor(new GzipRequestInterceptor());
 		// uncompress gzip
-		((AbstractHttpClient) httpClient).addResponseInterceptor(new GzipResponseInterceptor());
+		((DefaultHttpClient) httpClient).addResponseInterceptor(new GzipResponseInterceptor());
 
 		if (idledConnectionEvictor == null) {
 		    idledConnectionEvictor = new IdledConnectionEvictor(clientConnectionManager);
@@ -233,7 +239,7 @@ public class HTTPClient {
      */
     public static void setMaxRouteHost(final String host) {
     	final HttpHost mHost = new HttpHost(host);
-    	((ThreadSafeClientConnManager) httpClient.getConnectionManager()).setMaxForRoute(new HttpRoute(mHost), 50);
+    	((PoolingClientConnectionManager) httpClient.getConnectionManager()).setMaxPerRoute(new HttpRoute(mHost), 50);
     }
 
     /**
@@ -334,8 +340,8 @@ public class HTTPClient {
      * @throws IOException
      */
     public byte[] GETbytes(final MultiProtocolURI url, final int maxBytes) throws IOException {
-        final boolean localhost = url.getHost().equals("localhost");
-        final String urix = url.toNormalform(true, false, !localhost, false);
+        final boolean localhost = Domains.isLocalhost(url.getHost());
+        final String urix = url.toNormalform(true, false);
         final HttpGet httpGet = new HttpGet(urix);
         if (!localhost) setHost(url.getHost()); // overwrite resolved IP, needed for shared web hosting DO NOT REMOVE, see http://en.wikipedia.org/wiki/Shared_web_hosting_service
         return getContentBytes(httpGet, maxBytes);
@@ -352,7 +358,7 @@ public class HTTPClient {
     public void GET(final String uri) throws IOException {
         if (this.currentRequest != null) throw new IOException("Client is in use!");
         final MultiProtocolURI url = new MultiProtocolURI(uri);
-        final HttpGet httpGet = new HttpGet(url.toNormalform(true, false, true, false));
+        final HttpGet httpGet = new HttpGet(url.toNormalform(true, false));
         setHost(url.getHost()); // overwrite resolved IP, needed for shared web hosting DO NOT REMOVE, see http://en.wikipedia.org/wiki/Shared_web_hosting_service
         this.currentRequest = httpGet;
         execute(httpGet);
@@ -367,7 +373,7 @@ public class HTTPClient {
      */
     public HttpResponse HEADResponse(final String uri) throws IOException {
         final MultiProtocolURI url = new MultiProtocolURI(uri);
-        final HttpHead httpHead = new HttpHead(url.toNormalform(true, false, true, false));
+        final HttpHead httpHead = new HttpHead(url.toNormalform(true, false));
         setHost(url.getHost()); // overwrite resolved IP, needed for shared web hosting DO NOT REMOVE, see http://en.wikipedia.org/wiki/Shared_web_hosting_service
     	execute(httpHead);
     	finish();
@@ -388,9 +394,9 @@ public class HTTPClient {
     public void POST(final String uri, final InputStream instream, final long length) throws IOException {
     	if (this.currentRequest != null) throw new IOException("Client is in use!");
         final MultiProtocolURI url = new MultiProtocolURI(uri);
-        final HttpPost httpPost = new HttpPost(url.toNormalform(true, false, true, false));
+        final HttpPost httpPost = new HttpPost(url.toNormalform(true, false));
         String host = url.getHost();
-        if (host == null) host = "127.0.0.1";
+        if (host == null) host = Domains.LOCALHOST;
         setHost(host); // overwrite resolved IP, needed for shared web hosting DO NOT REMOVE, see http://en.wikipedia.org/wiki/Shared_web_hosting_service
         final NonClosingInputStreamEntity inputStreamEntity = new NonClosingInputStreamEntity(instream, length);
     	// statistics
@@ -424,10 +430,10 @@ public class HTTPClient {
      * @throws IOException
      */
     public byte[] POSTbytes(final MultiProtocolURI url, final String vhost, final Map<String, ContentBody> post, final boolean usegzip) throws IOException {
-    	final HttpPost httpPost = new HttpPost(url.toNormalform(true, false, true, false));
+    	final HttpPost httpPost = new HttpPost(url.toNormalform(true, false));
 
         setHost(vhost); // overwrite resolved IP, needed for shared web hosting DO NOT REMOVE, see http://en.wikipedia.org/wiki/Shared_web_hosting_service
-    	if (vhost == null) setHost("127.0.0.1");
+    	if (vhost == null) setHost(Domains.LOCALHOST);
 
         final MultipartEntity multipartEntity = new MultipartEntity();
         for (final Entry<String,ContentBody> part : post.entrySet())
@@ -455,9 +461,9 @@ public class HTTPClient {
      */
     public byte[] POSTbytes(final String uri, final InputStream instream, final long length) throws IOException {
         final MultiProtocolURI url = new MultiProtocolURI(uri);
-        final HttpPost httpPost = new HttpPost(url.toNormalform(true, false, true, false));
+        final HttpPost httpPost = new HttpPost(url.toNormalform(true, false));
         String host = url.getHost();
-        if (host == null) host = "127.0.0.1";
+        if (host == null) host = Domains.LOCALHOST;
         setHost(host); // overwrite resolved IP, needed for shared web hosting DO NOT REMOVE, see http://en.wikipedia.org/wiki/Shared_web_hosting_service
 
         final InputStreamEntity inputStreamEntity = new InputStreamEntity(instream, length);
@@ -592,6 +598,7 @@ public class HTTPClient {
 	        assert !hrequest.expectContinue();
 	    }
 
+	    Thread.currentThread().setName("HTTPClient-" + httpUriRequest.getURI().getHost());
 	    try {
 	        final long time = System.currentTimeMillis();
             this.httpResponse = httpClient.execute(httpUriRequest, httpContext);
@@ -603,7 +610,7 @@ public class HTTPClient {
         }
     }
 
-    private byte[] getByteArray(final HttpEntity entity, final int maxBytes) throws IOException {
+    private static byte[] getByteArray(final HttpEntity entity, final int maxBytes) throws IOException {
         final InputStream instream = entity.getContent();
         if (instream == null) {
             return null;
@@ -651,11 +658,11 @@ public class HTTPClient {
     		httpParams.setParameter(HTTP.TARGET_HOST, this.host);
     }
 
-    private void setProxy(final HttpParams httpParams) {
+    private static void setProxy(final HttpParams httpParams) {
     	if (ProxySettings.use)
     		ConnRouteParams.setDefaultProxy(httpParams, ProxySettings.getProxyHost());
     	// TODO find a better way for this
-    	ProxySettings.setProxyCreds((AbstractHttpClient) httpClient);
+    	ProxySettings.setProxyCreds((DefaultHttpClient) httpClient);
     }
 
     private void storeConnectionInfo(final HttpUriRequest httpUriRequest) {
@@ -673,14 +680,17 @@ public class HTTPClient {
 
     private static SSLSocketFactory getSSLSocketFactory() {
     	final TrustManager trustManager = new X509TrustManager() {
+            @Override
             public void checkClientTrusted(final X509Certificate[] chain, final String authType)
                             throws CertificateException {
             }
 
+            @Override
             public void checkServerTrusted(final X509Certificate[] chain, final String authType)
                             throws CertificateException {
             }
 
+            @Override
             public X509Certificate[] getAcceptedIssuers() {
                     return null;
             }
@@ -699,6 +709,39 @@ public class HTTPClient {
 
         final SSLSocketFactory sslSF = new SSLSocketFactory(sslContext, SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
     	return sslSF;
+    }
+
+    /**
+     * If the Keep-Alive header is not present in the response,
+     * HttpClient assumes the connection can be kept alive indefinitely.
+     * Here we limit this to 5 seconds.
+     *
+     * @param defaultHttpClient
+     */
+    private static void addCustomKeepAliveStrategy(final DefaultHttpClient defaultHttpClient) {
+    	defaultHttpClient.setKeepAliveStrategy(new ConnectionKeepAliveStrategy() {
+			@Override
+            public long getKeepAliveDuration(HttpResponse response, HttpContext context) {
+		        // Honor 'keep-alive' header
+				String param, value;
+				HeaderElement element;
+		        HeaderElementIterator it = new BasicHeaderElementIterator(
+		                response.headerIterator(HTTP.CONN_KEEP_ALIVE));
+		        while (it.hasNext()) {
+		            element = it.nextElement();
+		            param = element.getName();
+		            value = element.getValue();
+		            if (value != null && param.equalsIgnoreCase("timeout")) {
+		                try {
+		                    return Long.parseLong(value) * 1000;
+		                } catch(final NumberFormatException e) {
+		                }
+		            }
+		        }
+		        // Keep alive for 5 seconds only
+		        return 5 * 1000;
+			}
+    	});
     }
 
     /**
