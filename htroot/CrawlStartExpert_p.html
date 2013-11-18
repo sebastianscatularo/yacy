@@ -27,6 +27,7 @@ Todo:
  - allow setting bookmark-title through post vars
  - better help strings
  - handle 'robots not allowed' when starting a crawl
+ - remove unneccesary id attributes
 Non working:
  - form submission will be intercepted (URL given in dev-console)
 </div>
@@ -225,16 +226,22 @@ Non working:
 										Must match
 									</legend>
 									<p>
-										<input type="radio" name="range" id="rangeDomain" value="domain" #(range_domain)#::checked="checked"#(/range_domain)#/>
-										<label for="rangeDomain">Restrict to start domain(s)</label>
+										<label class="indent">
+											<input type="radio" name="range" id="rangeDomain" value="domain" #(range_domain)#::checked="checked"#(/range_domain)#/>
+											Restrict to start domain(s)
+										</label>.
 									</p>
 									<p>
-										<input type="radio" name="range" id="rangeSubpath" value="subpath" #(range_subpath)#::checked="checked"#(/range_subpath)#/>
-										<label for="rangeSubpath">Restrict to sub-path(s)</label>
+										<label class="indent">
+											<input type="radio" name="range" id="rangeSubpath" value="subpath" #(range_subpath)#::checked="checked"#(/range_subpath)#/>
+											Restrict to sub-path(s)
+										</label>.
 									</p>
 									<div>
-										<input type="radio" name="range" id="rangeWide" value="wide" #(range_wide)#::checked="checked"#(/range_wide)#/>
-										<label for="rangeWide">Use custom match filter</label>.
+										<label class="indent">
+											<input type="radio" name="range" id="rangeWide" value="wide" #(range_wide)#::checked="checked"#(/range_wide)#/>
+											Use custom match filter
+										</label>.
 										<label for="mustmatch">Filter expression for URL inclusion</label>:
 										<input name="mustmatch" id="mustmatch" type="text" size="55" maxlength="100000" value="#[mustmatch]#" data-toggle-id="rangeWide" data-toggle-focus="true" placeholder="#[matchAllStr]#"/>
 										<div class="formHint hidden">
@@ -434,22 +441,28 @@ Non working:
 						<fieldset class="formSection control-group" data-review="skip-title">
 							<legend>No deletion</legend>
 							<div class="content">
-								<input type="radio" name="deleteold" id="deleteoldoff" value="off" #(deleteold_off)#::checked="checked"#(/deleteold_off)#/>
-								<label for="deleteoldoff">Do not delete any document before the crawl is started.</label>
+								<label class="indent">
+									<input type="radio" name="deleteold" id="deleteoldoff" value="off" #(deleteold_off)#::checked="checked"#(/deleteold_off)#/>
+									Do not delete any document before the crawl is started.
+								</label>
 							</div>
 						</fieldset>
 						<fieldset class="formSection control-group" data-review="skip-title">
 							<legend>Delete old</legend>
 							<div class="content">
-								<input type="radio" name="deleteold" id="deleteoldon" value="on" #(deleteold_on)#::checked="checked"#(/deleteold_on)#/>
-								<label for="deleteoldon">For each host in the start URL list, delete all documents (in the given subpath) from that host.</label>
+								<label class="indent">
+									<input type="radio" name="deleteold" id="deleteoldon" value="on" #(deleteold_on)#::checked="checked"#(/deleteold_on)#/>
+									For each host in the start URL list, delete all documents (in the given subpath) from that host.
+								</label>
 							</div>
 						</fieldset>
 						<fieldset class="formSection control-group" data-review="skip-title">
 							<legend>Delete aged</legend>
 							<div class="content">
-								<input type="radio" name="deleteold" id="deleteoldage" value="age" #(deleteold_age)#::checked="checked"#(/deleteold_age)# data-review="custom"/>
-								<label for="deleteoldage">Treat documents older than</label>
+								<label class="indent">
+									<input type="radio" name="deleteold" id="deleteoldage" value="age" #(deleteold_age)#::checked="checked"#(/deleteold_age)# data-review="custom"/>
+									Treat documents older than
+								</label>
 								<select name="deleteIfOlderNumber" id="deleteIfOlderNumber" data-toggle-id="deleteoldage" data-review="skip">
 									#(deleteIfOlderSelect)#::
 									#{list}#<option value="#[name]#" #(default)#::selected="selected"#(/default)#>#[name]#</option>#{/list}#
@@ -476,8 +489,10 @@ Non working:
 						<fieldset class="formSection control-group" data-review="skip-title">
 							<legend>No doubles</legend>
 							<div class="content">
-								<input type="radio" name="recrawl" id="reloadoldoff" value="nodoubles" #(recrawl_nodoubles)#::checked="checked"#(/recrawl_nodoubles)#/>
-								<label for="reloadoldoff">Never load any page that is already known. Only the start-url may be loaded again.</label>
+								<label class="indent">
+									<input type="radio" name="recrawl" id="reloadoldoff" value="nodoubles" #(recrawl_nodoubles)#::checked="checked"#(/recrawl_nodoubles)#/>
+									Never load any page that is already known. Only the start-url may be loaded again.
+								</label>
 							</div>
 						</fieldset>
 						<fieldset class="formSection control-group" data-review="skip-title">
@@ -515,20 +530,28 @@ Non working:
 							<legend>Policy for usage of Web Cache</legend>
 							<div class="content">
 								<p>
-									<input type="radio" name="cachePolicy" value="nocache" id="cachePolicy-noCache" #(cachePolicy_nocache)#::checked="checked"#(/cachePolicy_nocache)#/>
-									<label for="cachePolicy-noCache">Do not use any caches, always download fresh documents</label>
+									<label class="indent">
+										<input type="radio" name="cachePolicy" value="nocache" id="cachePolicy-noCache" #(cachePolicy_nocache)#::checked="checked"#(/cachePolicy_nocache)#/>
+										Do not use any caches, always download fresh documents.
+									</label>
 								</p>
 								<p>
-									<input type="radio" name="cachePolicy" value="iffresh" id="cachePolicy-ifFresh" #(cachePolicy_iffresh)#::checked="checked"#(/cachePolicy_iffresh)# />
-									<label for="cachePolicy-ifFresh">Use cache, if document is fresh</label>
+									<label class="indent">
+										<input type="radio" name="cachePolicy" value="iffresh" id="cachePolicy-ifFresh" #(cachePolicy_iffresh)#::checked="checked"#(/cachePolicy_iffresh)# />
+										Use cache, if document is fresh.
+									</label>
 								</p>
 								<p>
-									<input type="radio" name="cachePolicy" value="ifexist" id="cachePolicy-ifExist" #(cachePolicy_ifexist)#::checked="checked"#(/cachePolicy_ifexist)#/>
-									<label for="cachePolicy-ifExist">Use cache, if document exist</label>
+									<label class="indent">
+										<input type="radio" name="cachePolicy" value="ifexist" id="cachePolicy-ifExist" #(cachePolicy_ifexist)#::checked="checked"#(/cachePolicy_ifexist)#/>
+										Use cache, if document exist.
+									</label>
 								</p>
 								<p>
-									<input type="radio" name="cachePolicy" value="cacheonly" id="cachePolicy-cacheOnly" #(cachePolicy_cacheonly)#::checked="checked"#(/cachePolicy_cacheonly)#/>
-									<label for="cachePolicy-cacheOnly">Use the cache only, do not download any new documents</label>
+									<label class="indent">
+										<input type="radio" name="cachePolicy" value="cacheonly" id="cachePolicy-cacheOnly" #(cachePolicy_cacheonly)#::checked="checked"#(/cachePolicy_cacheonly)#/>
+										Use the cache only, do not download any new documents.
+									</label>
 								</p>
 							</div>
 							<div class="formHelp hidden">

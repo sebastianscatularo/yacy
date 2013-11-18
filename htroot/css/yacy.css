@@ -2616,6 +2616,11 @@ input[type="checkbox"] {
   input[type="checkbox"]:checked:enabled + label {
     opacity: 1; }
 
+label.indent {
+  display: inline-block;
+  text-indent: -2em;
+  padding-left: 2em; }
+
 input:focus:enabled,
 select:focus:enabled,
 textarea:focus:enabled,
