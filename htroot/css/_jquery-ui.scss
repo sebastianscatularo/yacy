@@ -1,0 +1,32 @@
+/** jQuery UI customs */
+.ui-dialog-titlebar.ui-widget-header {
+  background:transparent;
+  border-width:0;
+  font-size:1.2em;
+  text-align:center;
+}
+
+.ui-dialog {
+  h1 {
+    font-size:1.1em;
+    font-weight:bold;
+  }
+
+  .ui-widget-content {
+  	border-width:0;
+  }
+
+  .ui-dialog-buttonpane {
+  	&.ui-widget-content {
+  	  text-align:center;
+	}
+
+  	.ui-dialog-buttonset {
+      float:none;
+  	}
+  }
+}
+
+.ui-dialog-titlebar-close {
+  display: none;
+}

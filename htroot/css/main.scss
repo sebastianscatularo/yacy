@@ -1,0 +1,222 @@
+#devInfo {
+  font-family:monospace;
+  white-space:pre;
+  margin:1em;
+  padding:0.5em;
+  border:2px solid red;
+  border-radius:5px;
+  background-color:#EA9A89;
+  color:#000;
+  overflow:auto;
+}
+
+@import 'yaml-sass/core/base';
+@import 'yaml-sass/navigation/hlist';
+@import 'yaml-sass/screen/typography';
+
+$fa-font-path: 'font-awesome/fonts'; // set font path
+@import 'font-awesome/scss/font-awesome';
+
+// should be replaced
+@import url(http://fonts.googleapis.com/css?family=Droid+Serif:400,400italic,700|Droid+Sans:700);
+
+$ycu-var-font-sans: "Droid Sans",Arial,Helvetica,sans-serif;
+$ycu-var-font-input: Arial, Helvetica, sans-serif;
+
+.ym-wbox {
+  padding:1.5em;
+}
+
+$ycu-icon-fontsize:0.85em;
+
+%font-sans {
+  font-family:$ycu-var-font-sans;
+}
+%font-input {
+  font-family:$ycu-var-font-input;
+}
+
+%opaque-light {
+  opacity:0.7;
+}
+@mixin icon-font {
+  font-family:FontAwesome;
+}
+%icon {
+  @include icon-font;
+  font: {
+    style:normal;
+    size:$ycu-icon-fontsize;
+  }
+}
+@mixin icon {
+  @extend %icon;
+}
+%icon-block {
+  @include icon;
+  display:inline-block;
+}
+@mixin icon-light {
+  @include icon;
+  @extend %opaque-light;
+}
+%icon-block-light {
+  @include icon-light;
+  @extend %icon-block;
+}
+
+@import 'menu';
+@import 'forms';
+
+a[href^="http://"],
+a[href^="https://"] {
+  &:before {
+    @extend %icon-block-light;
+    font-size:0.7em;
+    content:'#{$fa-var-share-square-o}\00a0';
+  }
+}
+
+/** Base */
+body {
+  background-color:#E9F3F9;
+}
+
+main {
+  margin-top:1em;
+}
+
+div.clear {
+  height:0;
+  width:0;
+  clear:both;
+}
+
+.nobr {
+  white-space:nowrap;
+}
+
+h1 {
+  font-size:200%;
+}
+h2 {
+  font-size:170%;
+}
+h3 {
+  font-size:150%;
+}
+h4, h5, h6 {
+  font-size:130%;
+}
+
+/**********
+ * Page layout. */
+header {
+  background-color:#444;
+  color:#ccc;
+  height:47px;
+
+  .logo {
+    @extend %font-sans;
+    font: {
+      size:0.8em;
+      variant:small-caps;
+      weight:bold;
+      style:italic;
+    }
+    text-align:center;
+    position:absolute;
+    top:0.5em;
+    left:0.5em;
+
+    div {
+      display:inline-block;
+      position:relative;
+      bottom:24px;
+      letter-spacing:0.1em;
+    }
+  }
+}
+
+/**********
+ * Special elements. */
+/* API bubble. */
+#api {
+  position:absolute;
+  top:20px;
+  right:1em;
+
+  > a {
+    &:before {
+      display:none;
+    }
+
+    &:hover {
+      background-color:transparent;
+    }
+  }
+
+  img.hasInfo {
+    cursor:pointer;
+  }
+}
+
+// general tables
+table {
+  $color-cell-base:$ycu-var-color-fieldset-bg;
+
+  tbody {
+    tr:nth-child(odd) {
+      background-color:darken($color-cell-base, 5);
+    }
+
+    tr:nth-child(even) {
+      background-color:darken($color-cell-base, 10);
+    }
+
+    tr:hover {
+      background-color:lighten($color-cell-base, 5);
+    }
+  }
+
+  th {
+    @extend %font-sans;
+  }
+}
+// sortable tables
+table.sortable {
+  th {
+    cursor:pointer;
+    color:#555;
+    border-color:#555;
+  }
+
+  /*tbody:hover {
+      background-color:#F8F8F8;
+  }*/
+}
+
+// general icon classes
+.icon-item-new:before {
+  @extend %icon-block-light;
+  content:'#{$fa-var-plus-square}';
+}
+.icon-item-queued:before {
+  @extend %icon-block-light;
+  content:'#{$fa-var-retweet}';
+}
+.icon-item-done:before {
+  @extend %icon-block-light;
+  content:'#{$fa-var-check-square}';
+}
+
+/* Dynamic content initial hidden to prevent 'flickering'. */
+.hidden {
+  display:none;
+}
+
+/** jQuery Ui customizations **/
+@import 'jquery-ui';
+
+/** Page specific styles */
+@import 'pages';
