@@ -29,13 +29,13 @@ package net.yacy.search.index;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.TreeSet;
 import java.util.concurrent.BlockingQueue;
 import java.util.regex.Pattern;
 
@@ -52,7 +52,6 @@ import net.yacy.cora.federate.solr.connector.SolrConnector;
 import net.yacy.cora.federate.yacy.CacheStrategy;
 import net.yacy.cora.order.Base64Order;
 import net.yacy.cora.order.ByteOrder;
-import net.yacy.cora.order.NaturalOrder;
 import net.yacy.cora.protocol.ClientIdentification;
 import net.yacy.cora.protocol.ResponseHeader;
 import net.yacy.cora.storage.HandleSet;
@@ -196,14 +195,6 @@ public class Segment {
         this.urlCitationIndex = null;
     }
 
-    public int citationCount() {
-        return this.urlCitationIndex == null ? 0 : this.urlCitationIndex.sizesMax();
-    }
-    
-    public long citationSegmentCount() {
-        return this.urlCitationIndex == null ? 0 : this.urlCitationIndex.getSegmentCount();
-    }
-    
     public void connectUrlDb(final boolean useTailCache, final boolean exceed134217727) {
         this.fulltext.connectUrlDb(UrlDbName, useTailCache, exceed134217727);
     }
@@ -227,53 +218,54 @@ public class Segment {
      * @return the clickdepth level or 999 if the root url cannot be found or a recursion limit is reached
      * @throws IOException
      */
-    private int getClickDepth(ReferenceReportCache rrc, final DigestURL url, int maxtime) throws IOException {
+    public int getClickDepth(final DigestURL url) throws IOException {
 
         final byte[] searchhash = url.hash();
         RowHandleSet rootCandidates = getPossibleRootHashes(url);
         
-        Set<byte[]> ignore = new TreeSet<byte[]>(NaturalOrder.naturalOrder); // a set of urlhashes to be ignored. This is generated from all hashes that are seen during recursion to prevent enless loops
-        Set<byte[]> levelhashes = new TreeSet<byte[]>(NaturalOrder.naturalOrder); // all hashes of a clickdepth. The first call contains the target hash only and therefore just one entry
-        levelhashes.add(searchhash);
+        RowHandleSet ignore = new RowHandleSet(URIMetadataRow.rowdef.primaryKeyLength, URIMetadataRow.rowdef.objectOrder, 100); // a set of urlhashes to be ignored. This is generated from all hashes that are seen during recursion to prevent enless loops
+        RowHandleSet levelhashes = new RowHandleSet(URIMetadataRow.rowdef.primaryKeyLength, URIMetadataRow.rowdef.objectOrder, 1); // all hashes of a clickdepth. The first call contains the target hash only and therefore just one entry
+        try {levelhashes.put(searchhash);} catch (final SpaceExceededException e) {throw new IOException(e);}
         int leveldepth = 0; // the recursion depth and therefore the result depth-1. Shall be 0 for the first call
         final byte[] hosthash = new byte[6]; // the host of the url to be checked
         System.arraycopy(searchhash, 6, hosthash, 0, 6);
         
-        long timeout = System.currentTimeMillis() + maxtime;
-        mainloop: for (int maxdepth = 0; maxdepth < 6 && System.currentTimeMillis() < timeout; maxdepth++) {
+        long timeout = System.currentTimeMillis() + 10000;
+        for (int maxdepth = 0; maxdepth < 10 && System.currentTimeMillis() < timeout; maxdepth++) {
             
-            Set<byte[]> checknext = new TreeSet<byte[]>(NaturalOrder.naturalOrder);
+            RowHandleSet checknext = new RowHandleSet(URIMetadataRow.rowdef.primaryKeyLength, URIMetadataRow.rowdef.objectOrder, 100);
             
             // loop over all hashes at this clickdepth; the first call to this loop should contain only one hash and a leveldepth = 0
             checkloop: for (byte[] urlhash: levelhashes) {
     
                 // get all the citations for this url and iterate
-                ReferenceReport rr = rrc.getReferenceReport(urlhash, false);
-                //ReferenceContainer<CitationReference> references = this.urlCitationIndex.get(urlhash, null);
-                if (rr == null || rr.getInternalCount() == 0) continue checkloop; // don't know
-                Iterator<byte[]> i = rr.getInternallIDs().iterator();
+                ReferenceContainer<CitationReference> references = this.urlCitationIndex.get(urlhash, null);
+                if (references == null || references.size() == 0) continue checkloop; // don't know
+                Iterator<CitationReference> i = references.entries();
                 nextloop: while (i.hasNext()) {
-                    byte[] u = i.next();
-                    if (u == null) continue nextloop;
-                    
-                    // check if this is from the same host
-                    assert (ByteBuffer.equals(u, 6, hosthash, 0, 6));
+                    CitationReference ref = i.next();
+                    if (ref == null) continue nextloop;
+                    byte[] u = ref.urlhash();
                     
                     // check ignore
-                    if (ignore.contains(u)) continue nextloop;
+                    if (ignore.has(u)) continue nextloop;
+                    
+                    // check if this is from the same host
+                    if (!ByteBuffer.equals(u, 6, hosthash, 0, 6)) continue nextloop;
                     
                     // check if the url is a root url
                     if (rootCandidates.has(u)) {
                         return leveldepth + 1;
                     }
                     
-                    checknext.add(u);
-                    ignore.add(u);
+                    // step to next depth level
+                    try {checknext.put(u);} catch (final SpaceExceededException e) {}
+                    try {ignore.put(u);} catch (final SpaceExceededException e) {}
                 }
-                if (System.currentTimeMillis() > timeout) break mainloop;
             }
             leveldepth++;
             levelhashes = checknext;
+        
         }
         return 999;
     }
@@ -293,7 +285,6 @@ public class Segment {
             rootCandidates.put(new DigestURL(rootStub + "/default.htm").hash());
             rootCandidates.put(new DigestURL(rootStub + "/default.html").hash());
             rootCandidates.put(new DigestURL(rootStub + "/default.php").hash());
-            rootCandidates.optimize();
         } catch (final Throwable e) {}
         return rootCandidates;
     }
@@ -321,30 +312,6 @@ public class Segment {
         }
     }
     
-    public ClickdepthCache getClickdepthCache(ReferenceReportCache rrc)  {
-        return new ClickdepthCache(rrc);
-    }
-    
-    public class ClickdepthCache {
-        ReferenceReportCache rrc;
-        Map<byte[], Integer> cache;
-        public ClickdepthCache(ReferenceReportCache rrc) {
-            this.rrc = rrc;
-            this.cache = new TreeMap<byte[], Integer>(Base64Order.enhancedCoder);
-        }
-        public int getClickdepth(final DigestURL url, int maxtime) throws IOException {
-            Integer clickdepth = cache.get(url.hash());
-            if (clickdepth != null) {
-                //ConcurrentLog.info("Segment", "get clickdepth of url " + url.toNormalform(true) + ": " + clickdepth + " CACHE HIT");
-                return clickdepth.intValue();
-            }
-            clickdepth = Segment.this.getClickDepth(this.rrc, url, maxtime);
-            //ConcurrentLog.info("Segment", "get clickdepth of url " + url.toNormalform(true) + ": " + clickdepth);
-            this.cache.put(url.hash(), clickdepth);
-            return clickdepth.intValue();
-        }
-    }
-    
     /**
      * A ReferenceReport object is a container for all referenced to a specific url.
      * The class stores the number of links from domain-internal and domain-external backlinks,
@@ -360,29 +327,11 @@ public class Segment {
             this.externalHosts = new RowHandleSet(6, Base64Order.enhancedCoder, 0);
             this.internalIDs = new RowHandleSet(12, Base64Order.enhancedCoder, 0);
             this.externalIDs = new RowHandleSet(12, Base64Order.enhancedCoder, 0);
-            if (connectedCitation()) {
-                // read the references from the citation index
-                ReferenceContainer<CitationReference> references;
-                references = urlCitation().get(id, null);
-                if (references == null) return; // no references at all
-                Iterator<CitationReference> ri = references.entries();
-                while (ri.hasNext()) {
-                    CitationReference ref = ri.next();
-                    byte[] hh = ref.hosthash(); // host hash
-                    if (ByteBuffer.equals(hh, 0, id, 6, 6)) {
-                        internalIDs.put(ref.urlhash());
-                        internal++;
-                    } else {
-                        externalHosts.put(hh);
-                        externalIDs.put(ref.urlhash());
-                        external++;
-                    }
-                }
-            }
-            if ((internalIDs.size() == 0 || !connectedCitation()) && Segment.this.fulltext.writeToWebgraph()) {
+            if (Segment.this.fulltext.writeToWebgraph()) {
                 // reqd the references from the webgraph
                 SolrConnector webgraph = Segment.this.fulltext.getWebgraphConnector();
-                BlockingQueue<SolrDocument> docs = webgraph.concurrentDocumentsByQuery("{!raw f=" + WebgraphSchema.target_id_s.getSolrFieldName() + "}" + ASCII.String(id), 0, 10000000, 1000, 100, WebgraphSchema.source_id_s.getSolrFieldName());
+                webgraph.commit(true);
+                BlockingQueue<SolrDocument> docs = webgraph.concurrentDocumentsByQuery(WebgraphSchema.target_id_s.getSolrFieldName() + ":\"" + ASCII.String(id) + "\"", 0, 10000000, 600000, 100, WebgraphSchema.source_id_s.getSolrFieldName());
                 SolrDocument doc;
                 try {
                     while ((doc = docs.take()) != AbstractSolrConnector.POISON_DOCUMENT) {
@@ -404,6 +353,24 @@ public class Segment {
                     }
                 } catch (final InterruptedException e) {
                     ConcurrentLog.logException(e);
+                }
+            } else if (connectedCitation()) {
+                // read the references from the citation index
+                ReferenceContainer<CitationReference> references;
+                references = urlCitation().get(id, null);
+                if (references == null) return; // no references at all
+                Iterator<CitationReference> ri = references.entries();
+                while (ri.hasNext()) {
+                    CitationReference ref = ri.next();
+                    byte[] hh = ref.hosthash(); // host hash
+                    if (ByteBuffer.equals(hh, 0, id, 6, 6)) {
+                        internalIDs.put(ref.urlhash());
+                        internal++;
+                    } else {
+                        externalHosts.put(hh);
+                        externalIDs.put(ref.urlhash());
+                        external++;
+                    }
                 }
             }
         }
@@ -457,7 +424,6 @@ public class Segment {
         try {
             return (int) this.fulltext.getDefaultConnector().getCountByQuery(CollectionSchema.text_t.getSolrFieldName() + ":\"" + word + "\"");
         } catch (final Throwable e) {
-            ConcurrentLog.warn("Segment", "problem with word guess for word: " + word);
             ConcurrentLog.logException(e);
             return 0;
         }
@@ -474,7 +440,7 @@ public class Segment {
      * @param ids
      * @return a set of ids which exist in the database
      */
-    public Set<String> exists(final Set<String> ids) {
+    public Set<String> exists(final Collection<String> ids) {
         return this.fulltext.exists(ids);
     }
 
@@ -535,10 +501,10 @@ public class Segment {
         }
     }
     
-    public void clearCaches() {
+    public void clearCache() {
         if (this.urlCitationIndex != null) this.urlCitationIndex.clearCache();
         if (this.termIndex != null) this.termIndex.clearCache();
-        this.fulltext.clearCaches();
+        this.fulltext.clearCache();
     }
 
     public File getLocation() {
@@ -659,7 +625,7 @@ public class Segment {
         
         // ENRICH DOCUMENT WITH RANKING INFORMATION
         if (this.connectedCitation()) {
-            this.fulltext.getDefaultConfiguration().postprocessing_references(this.getReferenceReportCache(), vector, url, null);
+            this.fulltext.getDefaultConfiguration().postprocessing_references(this.getReferenceReportCache(), null, vector, url, null);
         }
         // STORE TO SOLR
         String error = null;
