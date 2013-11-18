@@ -5,37 +5,57 @@
     <title>YaCy '#[clientname]#': Search Page</title>
     #%env/templates/metas.template%#
     <link rel="alternate" type="application/rss+xml" title="Search for #[former]#" href="yacysearch.rss?query=#[former]#" />
-    <link rel="search" type="application/opensearchdescription+xml" title="YaCy Search on '#[clientname]#'" href="opensearchdescription.xml" /> 
+    <link rel="search" type="application/opensearchdescription+xml" title="YaCy Search on '#[clientname]#'" href="opensearchdescription.xml" />
     <link rel="stylesheet" type="text/css" media="screen" href="/env/highslide.css" />
-  <script type="text/javascript" src="/js/highslide/highslide.js"></script>
-  <script type="text/javascript">hs.outlineType = 'rounded-white';</script>
-  <script src="/yacy/ui/js/jquery-1.3.2.min.js" type="text/javascript"></script>
-  <script src="/yacy/ui/js/jquery-ui-1.7.2.min.js" type="text/javascript"></script>
-  <link media="screen" type="text/css" href="/yacy/ui/css/autocomplete.css" rel="stylesheet" />
-  <script type="text/javascript" src="js/html.js"></script>
+    <script type="text/javascript" src="/js/highslide/highslide.js"></script>
+    <script type="text/javascript">hs.outlineType = 'rounded-white';</script>
+    <script src="/yacy/ui/js/jquery-1.3.2.min.js" type="text/javascript"></script>
+    <script src="/yacy/ui/js/jquery-ui-1.7.2.min.js" type="text/javascript"></script>
+    <link media="screen" type="text/css" href="/yacy/ui/css/autocomplete.css" rel="stylesheet" />
+    <script type="text/javascript" src="js/html.js"></script>
     <script type="text/javascript" src="/yacy/ui/js/jquery.autocomplete.yacy.js"></script>
     <script type="text/javascript">
-      $(document).ready(function() {
-  		$('#search').autocomplete('/suggest.json', {parse: opensearch, delay: 0, selectFirst: false, scroll: false, max: 30});  
-        function opensearch(data) {
-            var parsed = [];
-            data = eval('({"suggest":' + data + '})');
-            for (var i = 0; i < data.suggest[1].length; i++) {
-                var row = data.suggest[1][i];
-                if (row) {
-                    parsed[parsed.length] = {
-                        data: [row],
-                        value: row,
-                        result: row
-                    };  
-                };
+    $(document).ready(function() {
+      $('#search').autocomplete('/suggest.json', {parse: opensearch, delay: 0, selectFirst: false, scroll: false, max: 30});
+      function opensearch(data) {
+        var parsed = [];
+        data = eval('({"suggest":' + data + '})');
+        for (var i = 0; i < data.suggest[1].length; i++) {
+          var row = data.suggest[1][i];
+          if (row) {
+            parsed[parsed.length] = {
+              data: [row],
+              value: row,
+              result: row
             };
-            return parsed;  
+          };
         };
-      });
+        return parsed;
+      };
+    });
     </script>
   </head>
-  <body id="index" onload="#(focus)#::document.getElementById('search').focus()#(/focus)#">
+
+  <body id="webSearch" onload="#(focus)#::document.getElementById('search').focus()#(/focus)#">
+    <ul class="ym-skiplinks">
+      <li><a class="ym-skip" href="#nav">Skip to navigation (Press Enter)</a></li>
+      <li><a class="ym-skip" href="#main">Skip to main content (Press Enter)</a></li>
+    </ul>
+
+    <header>
+      <div class="logo">
+        <img src="/env/grafics/YaCyLogo_60ppi.png" width="103" height="60"/>
+        <div>Administration</div>
+      </div>
+    </header>
+
+    <nav>
+    </nav>
+
+    <main>
+      <div class="ym-wrapper">
+        <div class="ym-wbox">
+
     #(topmenu)#
     #%env/templates/embeddedheader.template%#
     ::
@@ -50,7 +70,7 @@
     <a href="#[promoteSearchPageGreeting.homepage]#" class="yacylogo"><img src="#[promoteSearchPageGreeting.largeImage]#" alt="yacy" style="margin: auto;"/></a><br /><br />
       #[promoteSearchPageGreeting]#
     </h2>
-  
+
     <form class="search" action="yacysearch.html" method="get" id="searchform" accept-charset="UTF-8">
       <fieldset class="maininput">
         <input name="query" class="searchinput" id="search" type="text" size="40" maxlength="80" value="#[former]#" onFocus="this.select()" />
@@ -77,7 +97,7 @@
       </fieldset>
       ::
       </fieldset>
-       
+
       <table>
         <tr>
           <td><label for="count">Results per page</label>:</td>
@@ -123,7 +143,7 @@
           </td>
         </tr>
       </table>
-      
+
       <h4>Query Operators</h4>
 
       <dl style="width:700px">
@@ -173,7 +193,7 @@
         </dl>
       </dd>
       </dl>
-      
+
       <h4>Search Navigation</h4>
 
       <dl style="width:700px">
@@ -205,12 +225,15 @@
       document.getElementById("search").focus();
     #(/focus)#
     </script>
-    
+
     #(topmenu)#
     #%env/templates/embeddedfooter.template%#
     ::
     #%env/templates/simplefooter.template%#
     #(/topmenu)#
     <img src="cytag.png?icon=invisible&amp;nick=yacyh_#[clientid]#&amp;tag=search" alt=""/>
+    </div>
+    </div>
+    </main>
   </body>
 </html>

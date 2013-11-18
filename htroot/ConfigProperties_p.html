@@ -18,7 +18,7 @@
 			  key=document.getElementById("key").value;
 			  while(node!=null){
 					  if(node.nodeType==1 && node.nodeName.toLowerCase()=="option"){
-							  if(key!="" && node.firstChild.nodeValue.indexOf(key)==-1){
+							  if(key!="" && node.firstChild.nodeValue.toLowerCase().indexOf(key.toLowerCase())==-1){
 									  node.setAttribute("class", "filtered");
 							  }else{
 									  node.setAttribute("class", "");
@@ -37,7 +37,7 @@
   </head>
   <body id="ConfigAdvanced" onload="filterList()">
   #%env/templates/header.template%#
-  #%env/templates/submenuConfig.template%#
+  
 
   <h2>Advanced Config</h2>
   <p>

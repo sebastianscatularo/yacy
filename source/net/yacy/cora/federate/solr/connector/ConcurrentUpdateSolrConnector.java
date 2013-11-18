@@ -21,6 +21,7 @@
 package net.yacy.cora.federate.solr.connector;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -87,11 +88,36 @@ public class ConcurrentUpdateSolrConnector implements SolrConnector {
             SolrInputDocument doc;
             try {
                 while ((doc = ConcurrentUpdateSolrConnector.this.updateQueue.take()) != POISON_DOCUMENT) {
-                    try {
+                    int getmore = ConcurrentUpdateSolrConnector.this.updateQueue.size();
+                    if (getmore > 0) {
+                        // accumulate a collection of documents because that is better to send at once to a remote server
+                        Collection<SolrInputDocument> docs = new ArrayList<SolrInputDocument>(getmore + 1);
+                        docs.add(doc);
                         updateIdCache((String) doc.getFieldValue(CollectionSchema.id.getSolrFieldName()));
-                        ConcurrentUpdateSolrConnector.this.connector.add(doc);
-                    } catch (final IOException e) {
-                        ConcurrentLog.logException(e);
+                        for (int i = 0; i < getmore; i++) {
+                            SolrInputDocument d = ConcurrentUpdateSolrConnector.this.updateQueue.take();
+                            if (d == POISON_DOCUMENT) {
+                                ConcurrentUpdateSolrConnector.this.updateQueue.put(POISON_DOCUMENT); // make sure that the outer loop terminates as well
+                                break;
+                            }
+                            docs.add(d);
+                            updateIdCache((String) d.getFieldValue(CollectionSchema.id.getSolrFieldName()));
+                        }
+                        //ConcurrentLog.info("ConcurrentUpdateSolrConnector", "sending " + docs.size() + " documents to solr");
+                        try {
+                            ConcurrentUpdateSolrConnector.this.connector.add(docs);
+                        } catch (final IOException e) {
+                            ConcurrentLog.logException(e);
+                        }
+                    } else {
+                        // if there is only a single document, send this directly to solr
+                        //ConcurrentLog.info("ConcurrentUpdateSolrConnector", "sending one document to solr");
+                        try {
+                            updateIdCache((String) doc.getFieldValue(CollectionSchema.id.getSolrFieldName()));
+                            ConcurrentUpdateSolrConnector.this.connector.add(doc);
+                        } catch (final IOException e) {
+                            ConcurrentLog.logException(e);
+                        }
                     }
                 }
             } catch (final InterruptedException e) {
@@ -116,6 +142,12 @@ public class ConcurrentUpdateSolrConnector implements SolrConnector {
         this.idCacheCapacity = idCacheCapacity;
         ensureAliveDeletionHandler();
         ensureAliveUpdateHandler();
+    }
+
+    @Override
+    public void clearCaches() {
+        this.connector.clearCaches();
+        this.idCache.clear();
     }
 
     /**
@@ -326,10 +358,11 @@ public class ConcurrentUpdateSolrConnector implements SolrConnector {
     }
 
     @Override
-    public Set<String> existsByIds(Collection<String> ids) throws IOException {
+    public Set<String> existsByIds(Set<String> ids) throws IOException {
         HashSet<String> e = new HashSet<String>();
         if (ids == null || ids.size() == 0) return e;
-        Collection<String> idsC = new HashSet<String>();
+        if (ids.size() == 1) return existsById(ids.iterator().next()) ? ids : e;
+        Set<String> idsC = new HashSet<String>();
         for (String id: ids) {
             if (this.idCache.has(ASCII.getBytes(id))) {cacheSuccessSign(); e.add(id); continue;}
             if (existIdFromDeleteQueue(id)) {cacheSuccessSign(); continue;}
@@ -377,11 +410,11 @@ public class ConcurrentUpdateSolrConnector implements SolrConnector {
     }
 
     @Override
-    public Object getFieldById(String id, String field) throws IOException {
+    public String getFieldById(String id, String field) throws IOException {
         if (existIdFromDeleteQueue(id)) return null;
         SolrInputDocument doc = getFromUpdateQueue(id);
-        if (doc != null) {cacheSuccessSign(); return doc.getFieldValue(field);}
-        Object val = this.connector.getFieldById(id, field);
+        if (doc != null) {cacheSuccessSign(); return doc.getFieldValue(field).toString();}
+        String val = this.connector.getFieldById(id, field);
         if (val != null) updateIdCache(id);
         return val;
     }

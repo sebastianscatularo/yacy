@@ -1,15 +1,16 @@
 {
-    "item": {
-		"title": "#[title]#",
-		"desc": "#[desc]#",
-		"lang" : "#[lang]#",
-		"robots": "#(robots-allowed)#0::1::#(/robots-allowed)#",
-  		"robotsInfo": "#[robotsInfo]#",
-
-  		"favicon": "#[favicon]#",
-
-  		"filter": "#[filter]#",
-  		"tags": "#{tags}##[tag]#,#{/tags}#",
-  		"oai": "#[oai]#"
-    }
+  "item": {
+    "title":"#[title]#",
+    "desc":"#[desc]#",
+    "lang":"#[lang]#",
+    "robots":"#(robots-allowed)#0::1::#(/robots-allowed)#",
+    "robotsInfo":"#[robotsInfo]#",
+    "sitemap":"#[sitemap]#",
+    "favicon":"#[favicon]#",
+    "sitelist":"#[sitelist]#",
+    "filter":"#[filter]#",
+    "tags":"#{tags}##[tag]#,#{/tags}#",
+    "links":"#{links}##[link]# #{/links}#",
+    "oai":"#[oai]#"
+  }
 }

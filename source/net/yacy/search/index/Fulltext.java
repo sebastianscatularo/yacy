@@ -81,12 +81,11 @@ import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrException;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.lucene.util.Version;
-import org.apache.solr.core.CoreContainer;
 
 public final class Fulltext {
 
-    private static final String SOLR_PATH = "solr_44"; // the number should be identical to the number in the property luceneMatchVersion in solrconfig.xml
-    private static final String SOLR_OLD_PATH[] = new String[]{"solr_36", "solr_40"};
+    private static final String SOLR_PATH = "solr_45"; // the number should be identical to the number in the property luceneMatchVersion in solrconfig.xml
+    private static final String SOLR_OLD_PATH[] = new String[]{"solr_36", "solr_40", "solr_44"};
     
     // class objects
 	private final File                    segmentPath;
@@ -167,7 +166,6 @@ public final class Fulltext {
             File oldLocation = new File(this.segmentPath, oldVersion);
             if (oldLocation.exists()) oldLocation.renameTo(solrLocation);
         }
-        assert CoreContainer.DEFAULT_DEFAULT_CORE_NAME.equals(CollectionSchema.CORE_NAME); // check that solr and we use the same default core name
         
         EmbeddedInstance localCollectionInstance = new EmbeddedInstance(new File(new File(Switchboard.getSwitchboard().appPath, "defaults"), "solr"), solrLocation, CollectionSchema.CORE_NAME, new String[]{CollectionSchema.CORE_NAME, WebgraphSchema.CORE_NAME});
         EmbeddedSolrConnector localCollectionConnector = new EmbeddedSolrConnector(localCollectionInstance);
@@ -227,10 +225,10 @@ public final class Fulltext {
         }
     }
 
-    public void clearCache() {
+    public void clearCaches() {
         if (this.urlIndexFile != null && this.urlIndexFile instanceof Cache) ((Cache) this.urlIndexFile).clearCache();
         if (this.statsDump != null) this.statsDump.clear();
-        this.solrInstances.clearCache();
+        this.solrInstances.clearCaches();
         this.statsDump = null;
     }
 
@@ -252,7 +250,7 @@ public final class Fulltext {
                 for (String name: instance.getCoreNames()) new EmbeddedSolrConnector(instance, name).clear();
             }
             this.commit(false);
-            this.solrInstances.clearCache();
+            this.solrInstances.clearCaches();
         }
     }
 
@@ -262,7 +260,7 @@ public final class Fulltext {
             if (instance != null) {
                 for (String name: instance.getCoreNames()) new RemoteSolrConnector(instance, name).clear();
             }
-            this.solrInstances.clearCache();
+            this.solrInstances.clearCaches();
         }
     }
 
@@ -312,7 +310,9 @@ public final class Fulltext {
         if (urlHash == null) return null;
         Date x;
         try {
-            x = (Date) this.getDefaultConnector().getFieldById(urlHash, CollectionSchema.load_date_dt.getSolrFieldName());
+            String d = this.getDefaultConnector().getFieldById(urlHash, CollectionSchema.load_date_dt.getSolrFieldName());
+            if (d == null) return null;
+            x = new Date(Long.parseLong(d));
         } catch (final IOException e) {
             return null;
         }
@@ -324,7 +324,7 @@ public final class Fulltext {
         
         String x;
         try {
-            x = (String) this.getDefaultConnector().getFieldById(ASCII.String(urlHash), CollectionSchema.sku.getSolrFieldName());
+            x = this.getDefaultConnector().getFieldById(ASCII.String(urlHash), CollectionSchema.sku.getSolrFieldName());
         } catch (final IOException e) {
             return null;
         }
@@ -400,7 +400,7 @@ public final class Fulltext {
             throw new IOException(e.getMessage(), e);
         }
         this.statsDump = null;
-        if (MemoryControl.shortStatus()) clearCache();
+        if (MemoryControl.shortStatus()) clearCaches();
     }
 
     public void putEdges(final Collection<SolrInputDocument> edges) throws IOException {
@@ -412,7 +412,7 @@ public final class Fulltext {
             throw new IOException(e.getMessage(), e);
         }
         this.statsDump = null;
-        if (MemoryControl.shortStatus()) clearCache();
+        if (MemoryControl.shortStatus()) clearCaches();
     }
 
     /**
@@ -432,7 +432,7 @@ public final class Fulltext {
             throw new IOException(e.getMessage(), e);
         }
         this.statsDump = null;
-        if (MemoryControl.shortStatus()) clearCache();
+        if (MemoryControl.shortStatus()) clearCaches();
     }
 
     /**
@@ -442,23 +442,15 @@ public final class Fulltext {
      * @param freshdate either NULL or a date in the past which is the limit for deletion. Only documents older than this date are deleted
      * @throws IOException
      */
-    public void deleteDomainHashpart(final String hosthash, Date freshdate) {
-        // first collect all url hashes that belong to the domain
-        assert hosthash.length() == 6;
-        final String collection1Query = CollectionSchema.host_id_s.getSolrFieldName() + ":\"" + hosthash + "\"" +
-                ((freshdate != null && freshdate.before(new Date())) ?
-                        (" AND " + CollectionSchema.load_date_dt.getSolrFieldName() + ":[* TO " + ISO8601Formatter.FORMATTER.format(freshdate) + "]") :
-                        ""
-                );
-        final String webgraphQuery = WebgraphSchema.source_host_id_s.getSolrFieldName() + ":\"" + hosthash + "\"" +
-                ((freshdate != null && freshdate.before(new Date())) ?
-                        (" AND " + WebgraphSchema.load_date_dt.getSolrFieldName() + ":[* TO " + ISO8601Formatter.FORMATTER.format(freshdate) + "]") :
-                        ""
-                );
-
+    public void deleteStaleDomainHashes(final Set<String> hosthashes, Date freshdate) {
         // delete in solr
-        try {Fulltext.this.getDefaultConnector().deleteByQuery(collection1Query);} catch (final IOException e) {}
-        if (this.writeWebgraph) try {Fulltext.this.getWebgraphConnector().deleteByQuery(webgraphQuery);} catch (final IOException e) {}
+        Date now = new Date();
+        deleteDomainWithConstraint(this.getDefaultConnector(), CollectionSchema.host_id_s.getSolrFieldName(), hosthashes,
+                (freshdate == null || freshdate.after(now)) ? null :
+                (CollectionSchema.load_date_dt.getSolrFieldName() + ":[* TO " + ISO8601Formatter.FORMATTER.format(freshdate) + "]"));
+        if (this.writeWebgraph) deleteDomainWithConstraint(this.getWebgraphConnector(), WebgraphSchema.source_host_id_s.getSolrFieldName(), hosthashes,
+                (freshdate == null || freshdate.after(now)) ? null :
+                (WebgraphSchema.load_date_dt.getSolrFieldName() + ":[* TO " + ISO8601Formatter.FORMATTER.format(freshdate) + "]"));
 
         // delete in old metadata structure
         if (Fulltext.this.urlIndexFile != null) {
@@ -469,7 +461,7 @@ public final class Fulltext {
                 String hash;
                 while (i != null && i.hasNext()) {
                     hash = ASCII.String(i.next());
-                    if (hosthash.equals(hash.substring(6))) l.add(hash);
+                    if (hosthashes.contains(hash.substring(6))) l.add(hash);
                 }
                 
                 // then delete the urls using this list
@@ -483,32 +475,20 @@ public final class Fulltext {
             HostStat hs;
             while (hsi.hasNext()) {
                 hs = hsi.next();
-                if (hs.hosthash.equals(hosthash)) {
-                    hsi.remove();
-                    break;
-                }
+                if (hosthashes.contains(hs.hosthash)) hsi.remove();
             }
         }
     }
 
-    public void deleteDomainHostname(final String hostname, Date freshdate) {
-        // first collect all url hashes that belong to the domain
-        final String collectionQuery =
-                CollectionSchema.host_s.getSolrFieldName() + ":\"" + hostname + "\"" +
-                ((freshdate != null && freshdate.before(new Date())) ?
-                        (" AND " + CollectionSchema.load_date_dt.getSolrFieldName() + ":[* TO " + ISO8601Formatter.FORMATTER.format(freshdate) + "]") :
-                        ""
-                );
-        final String webgraphQuery =
-        WebgraphSchema.source_host_s.getSolrFieldName() + ":\"" + hostname + "\"" +
-        ((freshdate != null && freshdate.before(new Date())) ?
-                (" AND " + WebgraphSchema.load_date_dt.getSolrFieldName() + ":[* TO " + ISO8601Formatter.FORMATTER.format(freshdate) + "]") :
-                ""
-        );
-        
-        // delete in solr
-        try {Fulltext.this.getDefaultConnector().deleteByQuery(collectionQuery);} catch (final IOException e) {}
-        if (this.writeWebgraph) try {Fulltext.this.getWebgraphConnector().deleteByQuery(webgraphQuery);} catch (final IOException e) {}
+    public void deleteStaleDomainNames(final Set<String> hostnames, Date freshdate) {
+
+        Date now = new Date();
+        deleteDomainWithConstraint(this.getDefaultConnector(), CollectionSchema.host_s.getSolrFieldName(), hostnames,
+                (freshdate == null || freshdate.after(now)) ? null :
+                (CollectionSchema.load_date_dt.getSolrFieldName() + ":[* TO " + ISO8601Formatter.FORMATTER.format(freshdate) + "]"));
+        if (this.writeWebgraph) deleteDomainWithConstraint(this.getWebgraphConnector(), WebgraphSchema.source_host_s.getSolrFieldName(), hostnames,
+                (freshdate == null || freshdate.after(now)) ? null :
+                (WebgraphSchema.load_date_dt.getSolrFieldName() + ":[* TO " + ISO8601Formatter.FORMATTER.format(freshdate) + "]"));
         
         // finally remove the line with statistics
         if (Fulltext.this.statsDump != null) {
@@ -516,10 +496,37 @@ public final class Fulltext {
             HostStat hs;
             while (hsi.hasNext()) {
                 hs = hsi.next();
-                if (hs.hostname.equals(hostname)) {
-                    hsi.remove();
-                    break;
+                if (hostnames.contains(hs.hostname)) hsi.remove();
+            }
+        }
+    }
+    
+    /**
+     * delete all documents within a domain that are registered as error document
+     * @param hosthashes
+     */
+    public void deleteDomainErrors(final Set<String> hosthashes) {
+        deleteDomainWithConstraint(this.getDefaultConnector(), CollectionSchema.host_id_s.getSolrFieldName(), hosthashes, CollectionSchema.failreason_s.getSolrFieldName() + ":[* TO *]");
+    }
+    
+    private static void deleteDomainWithConstraint(SolrConnector connector, String fieldname, final Set<String> hosthashes, String constraintQuery) {
+        if (hosthashes == null || hosthashes.size() == 0) return;
+        int subsetscount = 1 + (hosthashes.size() / 255); // if the list is too large, we get a "too many boolean clauses" exception
+        int c = 0;
+        @SuppressWarnings("unchecked")
+        List<String>[] subsets = new ArrayList[subsetscount];
+        for (int i = 0; i < subsetscount; i++) subsets[i] = new ArrayList<String>();
+        for (String hosthash: hosthashes) subsets[c++ % subsetscount].add(hosthash);
+        for (List<String> subset: subsets) {
+            try {
+                StringBuilder query = new StringBuilder();
+                for (String hosthash: subset) {
+                    if (query.length() > 0) query.append(" OR ");
+                    //query.append(CollectionSchema.host_id_s.getSolrFieldName()).append(":\"").append(hosthash).append(":\"");
+                    query.append("({!raw f=").append(fieldname).append('}').append(hosthash).append(")");
                 }
+                if (constraintQuery == null) connector.deleteByQuery(query.toString()); else connector.deleteByQuery("(" + query.toString() + ") AND " + constraintQuery);
+            } catch (final IOException e) {
             }
         }
     }
@@ -610,10 +617,11 @@ public final class Fulltext {
      * @param ids
      * @return a set of ids which exist in the database
      */
-    public Set<String> exists(Collection<String> ids) {
+    public Set<String> exists(Set<String> ids) {
         HashSet<String> e = new HashSet<String>();
         if (ids == null || ids.size() == 0) return e;
-        Collection<String> idsC = new HashSet<String>();
+        if (ids.size() == 1) return exists(ids.iterator().next()) ? ids : e;
+        Set<String> idsC = new HashSet<String>();
         idsC.addAll(ids);
         if (this.urlIndexFile != null) {
             Iterator<String> idsi = idsC.iterator();
@@ -637,7 +645,7 @@ public final class Fulltext {
 
     public String failReason(final String urlHash) throws IOException {
         if (urlHash == null) return null;
-        String reason = (String) this.getDefaultConnector().getFieldById(urlHash, CollectionSchema.failreason_s.getSolrFieldName());
+        String reason = this.getDefaultConnector().getFieldById(urlHash, CollectionSchema.failreason_s.getSolrFieldName());
         if (reason == null) return null;
         return reason.length() == 0 ? null : reason;
     }
@@ -744,12 +752,12 @@ public final class Fulltext {
     }
     
     // export methods
-    public Export export(final File f, final String filter, final int format, final boolean dom) {
+    public Export export(final File f, final String filter, final String query, final int format, final boolean dom) {
         if ((this.exportthread != null) && (this.exportthread.isAlive())) {
             ConcurrentLog.warn("LURL-EXPORT", "cannot start another export thread, already one running");
             return this.exportthread;
         }
-        this.exportthread = new Export(f, filter, format, dom);
+        this.exportthread = new Export(f, filter, query, format, dom);
         this.exportthread.start();
         return this.exportthread;
     }
@@ -762,14 +770,15 @@ public final class Fulltext {
         private final File f;
         private final Pattern pattern;
         private int count;
-        private String failure;
+        private String failure, query;
         private final int format;
         private final boolean dom;
 
-        private Export(final File f, final String filter, final int format, boolean dom) {
+        private Export(final File f, final String filter, final String query, final int format, boolean dom) {
             // format: 0=text, 1=html, 2=rss/xml
             this.f = f;
             this.pattern = filter == null ? null : Pattern.compile(filter);
+            this.query = query == null? "*:*" : query;
             this.count = 0;
             this.failure = null;
             this.format = format;
@@ -798,7 +807,7 @@ public final class Fulltext {
                 
                
                 if (this.dom) {
-                    Map<String, ReversibleScoreMap<String>> scores = Fulltext.this.getDefaultConnector().getFacets(CollectionSchema.httpstatus_i.getSolrFieldName() + ":200", 100000000, CollectionSchema.host_s.getSolrFieldName());
+                    Map<String, ReversibleScoreMap<String>> scores = Fulltext.this.getDefaultConnector().getFacets(this.query + " AND " + CollectionSchema.httpstatus_i.getSolrFieldName() + ":200", 100000000, CollectionSchema.host_s.getSolrFieldName());
                     ReversibleScoreMap<String> stats = scores.get(CollectionSchema.host_s.getSolrFieldName());
                     for (final String host: stats) {
                         if (this.pattern != null && !this.pattern.matcher(host).matches()) continue;
@@ -807,21 +816,19 @@ public final class Fulltext {
                         this.count++;
                     }
                 } else {
-                    BlockingQueue<SolrDocument> docs = Fulltext.this.getDefaultConnector().concurrentDocumentsByQuery(CollectionSchema.httpstatus_i.getSolrFieldName() + ":200", 0, 100000000, 10 * 60 * 60 * 1000, 100,
+                    BlockingQueue<SolrDocument> docs = Fulltext.this.getDefaultConnector().concurrentDocumentsByQuery(this.query + " AND " + CollectionSchema.httpstatus_i.getSolrFieldName() + ":200", 0, 100000000, 10 * 60 * 60 * 1000, 100,
                             CollectionSchema.id.getSolrFieldName(), CollectionSchema.sku.getSolrFieldName(), CollectionSchema.title.getSolrFieldName(),
                             CollectionSchema.author.getSolrFieldName(), CollectionSchema.description_txt.getSolrFieldName(), CollectionSchema.size_i.getSolrFieldName(), CollectionSchema.last_modified.getSolrFieldName());
                     SolrDocument doc;
-                    ArrayList<?> title;
-                    String url, author, hash;
-                    String[] descriptions;
+                    String url, hash, title, author, description;
                     Integer size;
                     Date date;
                     while ((doc = docs.take()) != AbstractSolrConnector.POISON_DOCUMENT) {
-                        hash = (String) doc.getFieldValue(CollectionSchema.id.getSolrFieldName());
-                        url = (String) doc.getFieldValue(CollectionSchema.sku.getSolrFieldName());
-                        title = (ArrayList<?>) doc.getFieldValue(CollectionSchema.title.getSolrFieldName());
-                        author = (String) doc.getFieldValue(CollectionSchema.author.getSolrFieldName());
-                        descriptions = (String[]) doc.getFieldValue(CollectionSchema.description_txt.getSolrFieldName());
+                        hash = getStringFrom(doc.getFieldValue(CollectionSchema.id.getSolrFieldName()));
+                        url = getStringFrom(doc.getFieldValue(CollectionSchema.sku.getSolrFieldName()));
+                        title = getStringFrom(doc.getFieldValue(CollectionSchema.title.getSolrFieldName()));
+                        author = getStringFrom(doc.getFieldValue(CollectionSchema.author.getSolrFieldName()));
+                        description = getStringFrom(doc.getFieldValue(CollectionSchema.description_txt.getSolrFieldName()));
                         size = (Integer) doc.getFieldValue(CollectionSchema.size_i.getSolrFieldName());
                         date = (Date) doc.getFieldValue(CollectionSchema.last_modified.getSolrFieldName());
                         if (this.pattern != null && !this.pattern.matcher(url).matches()) continue;
@@ -829,16 +836,14 @@ public final class Fulltext {
                             pw.println(url);
                         }
                         if (this.format == 1) {
-                            if (title != null) pw.println("<a href=\"" + MultiProtocolURL.escape(url) + "\">" + CharacterCoding.unicode2xml((String) title.iterator().next(), true) + "</a>");
+                            if (title != null) pw.println("<a href=\"" + MultiProtocolURL.escape(url) + "\">" + CharacterCoding.unicode2xml(title, true) + "</a>");
                         }
                         if (this.format == 2) {
                             pw.println("<item>");
-                            if (title != null) pw.println("<title>" + CharacterCoding.unicode2xml((String) title.iterator().next(), true) + "</title>");
+                            if (title != null) pw.println("<title>" + CharacterCoding.unicode2xml(title, true) + "</title>");
                             pw.println("<link>" + MultiProtocolURL.escape(url) + "</link>");
                             if (author != null && !author.isEmpty()) pw.println("<author>" + CharacterCoding.unicode2xml(author, true) + "</author>");
-                            if (descriptions != null && descriptions.length > 0) {
-                                for (String d: descriptions) pw.println("<description>" + CharacterCoding.unicode2xml(d, true) + "</description>");
-                            }
+                            if (description != null && !description.isEmpty()) pw.println("<description>" + CharacterCoding.unicode2xml(description, true) + "</description>");
                             if (date != null) pw.println("<pubDate>" + HeaderFramework.formatRFC1123(date) + "</pubDate>");
                             if (size != null) pw.println("<yacy:size>" + size.intValue() + "</yacy:size>");
                             pw.println("<guid isPermaLink=\"false\">" + hash + "</guid>");
@@ -875,6 +880,13 @@ public final class Fulltext {
 
         public int count() {
             return this.count;
+        }
+        
+        @SuppressWarnings("unchecked")
+		private String getStringFrom(final Object o) {
+        	if (o == null) return "";
+        	if (o instanceof ArrayList) return ((ArrayList<String>) o).get(0);
+        	return (String) o;
         }
 
     }

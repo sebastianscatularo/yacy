@@ -29,12 +29,13 @@ package net.yacy.search.index;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.concurrent.BlockingQueue;
 import java.util.regex.Pattern;
 
@@ -43,6 +44,7 @@ import org.apache.solr.common.SolrInputDocument;
 
 import net.yacy.cora.document.encoding.ASCII;
 import net.yacy.cora.document.encoding.UTF8;
+import net.yacy.cora.document.id.AnchorURL;
 import net.yacy.cora.document.id.DigestURL;
 import net.yacy.cora.document.id.MultiProtocolURL;
 import net.yacy.cora.federate.solr.connector.AbstractSolrConnector;
@@ -50,6 +52,7 @@ import net.yacy.cora.federate.solr.connector.SolrConnector;
 import net.yacy.cora.federate.yacy.CacheStrategy;
 import net.yacy.cora.order.Base64Order;
 import net.yacy.cora.order.ByteOrder;
+import net.yacy.cora.order.NaturalOrder;
 import net.yacy.cora.protocol.ClientIdentification;
 import net.yacy.cora.protocol.ResponseHeader;
 import net.yacy.cora.storage.HandleSet;
@@ -193,6 +196,14 @@ public class Segment {
         this.urlCitationIndex = null;
     }
 
+    public int citationCount() {
+        return this.urlCitationIndex == null ? 0 : this.urlCitationIndex.sizesMax();
+    }
+    
+    public long citationSegmentCount() {
+        return this.urlCitationIndex == null ? 0 : this.urlCitationIndex.getSegmentCount();
+    }
+    
     public void connectUrlDb(final boolean useTailCache, final boolean exceed134217727) {
         this.fulltext.connectUrlDb(UrlDbName, useTailCache, exceed134217727);
     }
@@ -216,54 +227,53 @@ public class Segment {
      * @return the clickdepth level or 999 if the root url cannot be found or a recursion limit is reached
      * @throws IOException
      */
-    public int getClickDepth(final DigestURL url) throws IOException {
+    private int getClickDepth(ReferenceReportCache rrc, final DigestURL url, int maxtime) throws IOException {
 
         final byte[] searchhash = url.hash();
         RowHandleSet rootCandidates = getPossibleRootHashes(url);
         
-        RowHandleSet ignore = new RowHandleSet(URIMetadataRow.rowdef.primaryKeyLength, URIMetadataRow.rowdef.objectOrder, 100); // a set of urlhashes to be ignored. This is generated from all hashes that are seen during recursion to prevent enless loops
-        RowHandleSet levelhashes = new RowHandleSet(URIMetadataRow.rowdef.primaryKeyLength, URIMetadataRow.rowdef.objectOrder, 1); // all hashes of a clickdepth. The first call contains the target hash only and therefore just one entry
-        try {levelhashes.put(searchhash);} catch (final SpaceExceededException e) {throw new IOException(e);}
+        Set<byte[]> ignore = new TreeSet<byte[]>(NaturalOrder.naturalOrder); // a set of urlhashes to be ignored. This is generated from all hashes that are seen during recursion to prevent enless loops
+        Set<byte[]> levelhashes = new TreeSet<byte[]>(NaturalOrder.naturalOrder); // all hashes of a clickdepth. The first call contains the target hash only and therefore just one entry
+        levelhashes.add(searchhash);
         int leveldepth = 0; // the recursion depth and therefore the result depth-1. Shall be 0 for the first call
         final byte[] hosthash = new byte[6]; // the host of the url to be checked
         System.arraycopy(searchhash, 6, hosthash, 0, 6);
         
-        long timeout = System.currentTimeMillis() + 10000;
-        for (int maxdepth = 0; maxdepth < 10 && System.currentTimeMillis() < timeout; maxdepth++) {
+        long timeout = System.currentTimeMillis() + maxtime;
+        mainloop: for (int maxdepth = 0; maxdepth < 6 && System.currentTimeMillis() < timeout; maxdepth++) {
             
-            RowHandleSet checknext = new RowHandleSet(URIMetadataRow.rowdef.primaryKeyLength, URIMetadataRow.rowdef.objectOrder, 100);
+            Set<byte[]> checknext = new TreeSet<byte[]>(NaturalOrder.naturalOrder);
             
             // loop over all hashes at this clickdepth; the first call to this loop should contain only one hash and a leveldepth = 0
             checkloop: for (byte[] urlhash: levelhashes) {
     
                 // get all the citations for this url and iterate
-                ReferenceContainer<CitationReference> references = this.urlCitationIndex.get(urlhash, null);
-                if (references == null || references.size() == 0) continue checkloop; // don't know
-                Iterator<CitationReference> i = references.entries();
+                ReferenceReport rr = rrc.getReferenceReport(urlhash, false);
+                //ReferenceContainer<CitationReference> references = this.urlCitationIndex.get(urlhash, null);
+                if (rr == null || rr.getInternalCount() == 0) continue checkloop; // don't know
+                Iterator<byte[]> i = rr.getInternallIDs().iterator();
                 nextloop: while (i.hasNext()) {
-                    CitationReference ref = i.next();
-                    if (ref == null) continue nextloop;
-                    byte[] u = ref.urlhash();
-                    
-                    // check ignore
-                    if (ignore.has(u)) continue nextloop;
+                    byte[] u = i.next();
+                    if (u == null) continue nextloop;
                     
                     // check if this is from the same host
-                    if (!ByteBuffer.equals(u, 6, hosthash, 0, 6)) continue nextloop;
+                    assert (ByteBuffer.equals(u, 6, hosthash, 0, 6));
+                    
+                    // check ignore
+                    if (ignore.contains(u)) continue nextloop;
                     
                     // check if the url is a root url
                     if (rootCandidates.has(u)) {
                         return leveldepth + 1;
                     }
                     
-                    // step to next depth level
-                    try {checknext.put(u);} catch (final SpaceExceededException e) {}
-                    try {ignore.put(u);} catch (final SpaceExceededException e) {}
+                    checknext.add(u);
+                    ignore.add(u);
                 }
+                if (System.currentTimeMillis() > timeout) break mainloop;
             }
             leveldepth++;
             levelhashes = checknext;
-        
         }
         return 999;
     }
@@ -283,6 +293,7 @@ public class Segment {
             rootCandidates.put(new DigestURL(rootStub + "/default.htm").hash());
             rootCandidates.put(new DigestURL(rootStub + "/default.html").hash());
             rootCandidates.put(new DigestURL(rootStub + "/default.php").hash());
+            rootCandidates.optimize();
         } catch (final Throwable e) {}
         return rootCandidates;
     }
@@ -310,6 +321,30 @@ public class Segment {
         }
     }
     
+    public ClickdepthCache getClickdepthCache(ReferenceReportCache rrc)  {
+        return new ClickdepthCache(rrc);
+    }
+    
+    public class ClickdepthCache {
+        ReferenceReportCache rrc;
+        Map<byte[], Integer> cache;
+        public ClickdepthCache(ReferenceReportCache rrc) {
+            this.rrc = rrc;
+            this.cache = new TreeMap<byte[], Integer>(Base64Order.enhancedCoder);
+        }
+        public int getClickdepth(final DigestURL url, int maxtime) throws IOException {
+            Integer clickdepth = cache.get(url.hash());
+            if (clickdepth != null) {
+                //ConcurrentLog.info("Segment", "get clickdepth of url " + url.toNormalform(true) + ": " + clickdepth + " CACHE HIT");
+                return clickdepth.intValue();
+            }
+            clickdepth = Segment.this.getClickDepth(this.rrc, url, maxtime);
+            //ConcurrentLog.info("Segment", "get clickdepth of url " + url.toNormalform(true) + ": " + clickdepth);
+            this.cache.put(url.hash(), clickdepth);
+            return clickdepth.intValue();
+        }
+    }
+    
     /**
      * A ReferenceReport object is a container for all referenced to a specific url.
      * The class stores the number of links from domain-internal and domain-external backlinks,
@@ -325,11 +360,29 @@ public class Segment {
             this.externalHosts = new RowHandleSet(6, Base64Order.enhancedCoder, 0);
             this.internalIDs = new RowHandleSet(12, Base64Order.enhancedCoder, 0);
             this.externalIDs = new RowHandleSet(12, Base64Order.enhancedCoder, 0);
-            if (Segment.this.fulltext.writeToWebgraph()) {
+            if (connectedCitation()) {
+                // read the references from the citation index
+                ReferenceContainer<CitationReference> references;
+                references = urlCitation().get(id, null);
+                if (references == null) return; // no references at all
+                Iterator<CitationReference> ri = references.entries();
+                while (ri.hasNext()) {
+                    CitationReference ref = ri.next();
+                    byte[] hh = ref.hosthash(); // host hash
+                    if (ByteBuffer.equals(hh, 0, id, 6, 6)) {
+                        internalIDs.put(ref.urlhash());
+                        internal++;
+                    } else {
+                        externalHosts.put(hh);
+                        externalIDs.put(ref.urlhash());
+                        external++;
+                    }
+                }
+            }
+            if ((internalIDs.size() == 0 || !connectedCitation()) && Segment.this.fulltext.writeToWebgraph()) {
                 // reqd the references from the webgraph
                 SolrConnector webgraph = Segment.this.fulltext.getWebgraphConnector();
-                webgraph.commit(true);
-                BlockingQueue<SolrDocument> docs = webgraph.concurrentDocumentsByQuery(WebgraphSchema.target_id_s.getSolrFieldName() + ":\"" + ASCII.String(id) + "\"", 0, 10000000, 600000, 100, WebgraphSchema.source_id_s.getSolrFieldName());
+                BlockingQueue<SolrDocument> docs = webgraph.concurrentDocumentsByQuery("{!raw f=" + WebgraphSchema.target_id_s.getSolrFieldName() + "}" + ASCII.String(id), 0, 10000000, 1000, 100, WebgraphSchema.source_id_s.getSolrFieldName());
                 SolrDocument doc;
                 try {
                     while ((doc = docs.take()) != AbstractSolrConnector.POISON_DOCUMENT) {
@@ -351,24 +404,6 @@ public class Segment {
                     }
                 } catch (final InterruptedException e) {
                     ConcurrentLog.logException(e);
-                }
-            } else if (connectedCitation()) {
-                // read the references from the citation index
-                ReferenceContainer<CitationReference> references;
-                references = urlCitation().get(id, null);
-                if (references == null) return; // no references at all
-                Iterator<CitationReference> ri = references.entries();
-                while (ri.hasNext()) {
-                    CitationReference ref = ri.next();
-                    byte[] hh = ref.hosthash(); // host hash
-                    if (ByteBuffer.equals(hh, 0, id, 6, 6)) {
-                        internalIDs.put(ref.urlhash());
-                        internal++;
-                    } else {
-                        externalHosts.put(hh);
-                        externalIDs.put(ref.urlhash());
-                        external++;
-                    }
                 }
             }
         }
@@ -422,6 +457,7 @@ public class Segment {
         try {
             return (int) this.fulltext.getDefaultConnector().getCountByQuery(CollectionSchema.text_t.getSolrFieldName() + ":\"" + word + "\"");
         } catch (final Throwable e) {
+            ConcurrentLog.warn("Segment", "problem with word guess for word: " + word);
             ConcurrentLog.logException(e);
             return 0;
         }
@@ -438,7 +474,7 @@ public class Segment {
      * @param ids
      * @return a set of ids which exist in the database
      */
-    public Set<String> exists(final Collection<String> ids) {
+    public Set<String> exists(final Set<String> ids) {
         return this.fulltext.exists(ids);
     }
 
@@ -499,10 +535,10 @@ public class Segment {
         }
     }
     
-    public void clearCache() {
+    public void clearCaches() {
         if (this.urlCitationIndex != null) this.urlCitationIndex.clearCache();
         if (this.termIndex != null) this.termIndex.clearCache();
-        this.fulltext.clearCache();
+        this.fulltext.clearCaches();
     }
 
     public File getLocation() {
@@ -619,30 +655,54 @@ public class Segment {
         char docType = Response.docType(document.dc_format());
         
         // CREATE SOLR DOCUMENT
-        final CollectionConfiguration.SolrVector vector = this.fulltext.getDefaultConfiguration().yacy2solr(collections, responseHeader, document, condenser, referrerURL, language, urlCitationIndex, this.fulltext.getWebgraphConfiguration(), sourceName);
+        final CollectionConfiguration.SolrVector vector = this.fulltext.getDefaultConfiguration().yacy2solr(collections, responseHeader, document, condenser, referrerURL, language, this.fulltext.getWebgraphConfiguration(), sourceName);
         
         // ENRICH DOCUMENT WITH RANKING INFORMATION
         if (this.connectedCitation()) {
-            this.fulltext.getDefaultConfiguration().postprocessing_references(this.getReferenceReportCache(), null, vector, url, null);
+            this.fulltext.getDefaultConfiguration().postprocessing_references(this.getReferenceReportCache(), vector, url, null);
         }
         // STORE TO SOLR
         String error = null;
         this.putDocumentInQueue(vector);
-        if (this.fulltext.writeToWebgraph()) {
-            tryloop: for (int i = 0; i < 20; i++) {
-                try {
-                    error = null;
-                    this.fulltext.putEdges(vector.getWebgraphDocuments());
-                    break tryloop;
-                } catch (final IOException e ) {
-                    error = "failed to send " + urlNormalform + " to solr: " + e.getMessage();
-                    ConcurrentLog.warn("SOLR", error);
-                    if (i == 10) this.fulltext.commit(true);
-                    try {Thread.sleep(1000);} catch (final InterruptedException e1) {}
-                    continue tryloop;
+        List<SolrInputDocument> webgraph = vector.getWebgraphDocuments();
+        if (webgraph != null && webgraph.size() > 0) {
+            
+            // write the edges to the webgraph solr index
+            if (this.fulltext.writeToWebgraph()) {
+                tryloop: for (int i = 0; i < 20; i++) {
+                    try {
+                        error = null;
+                        this.fulltext.putEdges(webgraph);
+                        break tryloop;
+                    } catch (final IOException e ) {
+                        error = "failed to send " + urlNormalform + " to solr: " + e.getMessage();
+                        ConcurrentLog.warn("SOLR", error);
+                        if (i == 10) this.fulltext.commit(true);
+                        try {Thread.sleep(1000);} catch (final InterruptedException e1) {}
+                        continue tryloop;
+                    }
                 }
             }
+        
+            // write the edges to the citation reference index
+            if (this.connectedCitation()) try {
+                // normal links
+                for (SolrInputDocument edge: webgraph) {
+                    String referrerhash = (String) edge.getFieldValue(WebgraphSchema.source_id_s.getSolrFieldName());
+                    String anchorhash = (String) edge.getFieldValue(WebgraphSchema.target_id_s.getSolrFieldName());
+                    if (referrerhash != null && anchorhash != null) {
+                        urlCitationIndex.add(ASCII.getBytes(anchorhash), new CitationReference(ASCII.getBytes(referrerhash), loadDate.getTime()));
+                    }
+                }
+                // media links as well!
+                for (AnchorURL image: document.getImages().keySet()) urlCitationIndex.add(image.hash(), new CitationReference(url.hash(), loadDate.getTime()));
+                for (AnchorURL audio: document.getAudiolinks().keySet()) urlCitationIndex.add(audio.hash(), new CitationReference(url.hash(), loadDate.getTime()));
+                for (AnchorURL video: document.getVideolinks().keySet()) urlCitationIndex.add(video.hash(), new CitationReference(url.hash(), loadDate.getTime()));
+            } catch (Throwable e) {
+                ConcurrentLog.logException(e);
+            }
         }
+        
         if (error != null) {
             ConcurrentLog.severe("SOLR", error + ", PLEASE REPORT TO bugs.yacy.net");
             //Switchboard.getSwitchboard().pauseCrawlJob(SwitchboardConstants.CRAWLJOB_LOCAL_CRAWL, error);

@@ -40,6 +40,7 @@ import java.util.regex.Pattern;
 
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrInputDocument;
+import org.openjena.atlas.logging.Log;
 
 import net.yacy.cora.document.encoding.ASCII;
 import net.yacy.cora.document.id.AnchorURL;
@@ -55,9 +56,8 @@ import net.yacy.cora.protocol.ResponseHeader;
 import net.yacy.cora.util.CommonPattern;
 import net.yacy.cora.util.ConcurrentLog;
 import net.yacy.document.parser.html.ImageEntry;
-import net.yacy.kelondro.data.citation.CitationReference;
-import net.yacy.kelondro.rwi.IndexCell;
 import net.yacy.search.index.Segment;
+import net.yacy.search.index.Segment.ClickdepthCache;
 
 public class WebgraphConfiguration extends SchemaConfiguration implements Serializable {
 
@@ -103,12 +103,13 @@ public class WebgraphConfiguration extends SchemaConfiguration implements Serial
     }
     
     public static class Subgraph {
-        public final ArrayList<String>[] urlProtocols, urlStubs;
+        public final ArrayList<String>[] urlProtocols, urlStubs, urlAnchorTexts;
         public final ArrayList<SolrInputDocument> edges;
         @SuppressWarnings("unchecked")
         public Subgraph(int inboundSize, int outboundSize) {
             this.urlProtocols = new ArrayList[]{new ArrayList<String>(inboundSize), new ArrayList<String>(outboundSize)};
             this.urlStubs = new ArrayList[]{new ArrayList<String>(inboundSize), new ArrayList<String>(outboundSize)};
+            this.urlAnchorTexts = new ArrayList[]{new ArrayList<String>(inboundSize), new ArrayList<String>(outboundSize)};
             this.edges = new ArrayList<SolrInputDocument>(inboundSize + outboundSize);
         }
     }
@@ -117,7 +118,7 @@ public class WebgraphConfiguration extends SchemaConfiguration implements Serial
             final Subgraph subgraph,
             final DigestURL source, final ResponseHeader responseHeader, Map<String, Pattern> collections, int clickdepth_source,
             final List<ImageEntry> images, final boolean inbound, final Collection<AnchorURL> links,
-            final IndexCell<CitationReference> citations, final String sourceName) {
+            final String sourceName) {
         boolean allAttr = this.isEmpty();
         int target_order = 0;
         boolean generalNofollow = responseHeader.get("X-Robots-Tag", "").indexOf("nofollow") >= 0;
@@ -228,8 +229,9 @@ public class WebgraphConfiguration extends SchemaConfiguration implements Serial
             final String target_url_string = target_url.toNormalform(false);
             int pr_target = target_url_string.indexOf("://",0);
             subgraph.urlProtocols[ioidx].add(target_url_string.substring(0, pr_target));
-            if (allAttr || contains(WebgraphSchema.target_protocol_s)) add(edge, WebgraphSchema.target_protocol_s, target_url_string.substring(0, pr_target));
             subgraph.urlStubs[ioidx].add(target_url_string.substring(pr_target + 3));
+            subgraph.urlAnchorTexts[ioidx].add(text);
+            if (allAttr || contains(WebgraphSchema.target_protocol_s)) add(edge, WebgraphSchema.target_protocol_s, target_url_string.substring(0, pr_target));
             if (allAttr || contains(WebgraphSchema.target_urlstub_s)) add(edge, WebgraphSchema.target_urlstub_s, target_url_string.substring(pr_target + 3));
             Map<String, String> target_searchpart = target_url.getSearchpartMap();
             if (target_searchpart == null) {
@@ -268,7 +270,7 @@ public class WebgraphConfiguration extends SchemaConfiguration implements Serial
             }
 
             if (this.contains(WebgraphSchema.target_protocol_s) && this.contains(WebgraphSchema.target_urlstub_s) && this.contains(WebgraphSchema.target_id_s)) {
-                if ((allAttr || contains(WebgraphSchema.target_clickdepth_i)) && citations != null) {
+                if ((allAttr || contains(WebgraphSchema.target_clickdepth_i))) {
                     if (target_url.probablyRootURL()) {
                         boolean lc = this.lazy; this.lazy = false;
                         add(edge, WebgraphSchema.target_clickdepth_i, 0);
@@ -294,18 +296,15 @@ public class WebgraphConfiguration extends SchemaConfiguration implements Serial
         }
     }
     
-    public int postprocessing(final Segment segment, final String harvestkey) {
+    public int postprocessing(final Segment segment, ClickdepthCache clickdepthCache, final String harvestkey) {
         if (!this.contains(WebgraphSchema.process_sxt)) return 0;
-        if (!segment.connectedCitation()) return 0;
         if (!segment.fulltext().writeToWebgraph()) return 0;
-        SolrConnector connector = segment.fulltext().getWebgraphConnector();
+        SolrConnector webgraphConnector = segment.fulltext().getWebgraphConnector();
         // that means we must search for those entries.
-        connector.commit(true); // make sure that we have latest information that can be found
+        webgraphConnector.commit(true); // make sure that we have latest information that can be found
         //BlockingQueue<SolrDocument> docs = index.fulltext().getSolr().concurrentQuery("*:*", 0, 1000, 60000, 10);
-        BlockingQueue<SolrDocument> docs = connector.concurrentDocumentsByQuery(
-                (harvestkey == null ? "" : CollectionSchema.harvestkey_s.getSolrFieldName() + ":\"" + harvestkey + "\" AND ") +
-                WebgraphSchema.process_sxt.getSolrFieldName() + ":[* TO *]",
-                0, 100000, 60000, 50);
+        String query = (harvestkey == null || !this.contains(WebgraphSchema.harvestkey_s) ? "" : WebgraphSchema.harvestkey_s.getSolrFieldName() + ":\"" + harvestkey + "\" AND ") + WebgraphSchema.process_sxt.getSolrFieldName() + ":[* TO *]";
+        BlockingQueue<SolrDocument> docs = webgraphConnector.concurrentDocumentsByQuery(query, 0, 10000000, 1800000, 100);
         
         SolrDocument doc;
         String protocol, urlstub, id;
@@ -315,11 +314,12 @@ public class WebgraphConfiguration extends SchemaConfiguration implements Serial
             while ((doc = docs.take()) != AbstractSolrConnector.POISON_DOCUMENT) {
                 // for each to-be-processed entry work on the process tag
                 Collection<Object> proctags = doc.getFieldValues(WebgraphSchema.process_sxt.getSolrFieldName());
-                for (Object tag: proctags) {
-                    
-                    try {
-                        SolrInputDocument sid = this.toSolrInputDocument(doc);
-                        
+
+                try {
+                    SolrInputDocument sid = this.toSolrInputDocument(doc);
+                    //boolean changed = false;
+                    for (Object tag: proctags) {
+                                             
                         // switch over tag types
                         ProcessType tagtype = ProcessType.valueOf((String) tag);
                         if (tagtype == ProcessType.CLICKDEPTH) {
@@ -328,27 +328,33 @@ public class WebgraphConfiguration extends SchemaConfiguration implements Serial
                                 urlstub = (String) doc.getFieldValue(WebgraphSchema.source_urlstub_s.getSolrFieldName());
                                 id = (String) doc.getFieldValue(WebgraphSchema.source_id_s.getSolrFieldName());
                                 url = new DigestURL(protocol + "://" + urlstub, ASCII.getBytes(id));
-                                if (postprocessing_clickdepth(segment, doc, sid, url, WebgraphSchema.source_clickdepth_i)) proccount_clickdepthchange++;
+                                if (postprocessing_clickdepth(clickdepthCache, sid, url, WebgraphSchema.source_clickdepth_i, 100)) {
+                                    proccount_clickdepthchange++;
+                                    //changed = true;
+                                }
+                                //ConcurrentLog.info("WebgraphConfiguration", "postprocessing webgraph source id " + id + ", url=" + protocol + "://" + urlstub + ", result: " + (changed ? "changed" : "not changed"));
                             }
                             if (this.contains(WebgraphSchema.target_protocol_s) && this.contains(WebgraphSchema.target_urlstub_s) && this.contains(WebgraphSchema.target_id_s)) {
                                 protocol = (String) doc.getFieldValue(WebgraphSchema.target_protocol_s.getSolrFieldName());
                                 urlstub = (String) doc.getFieldValue(WebgraphSchema.target_urlstub_s.getSolrFieldName());
                                 id = (String) doc.getFieldValue(WebgraphSchema.target_id_s.getSolrFieldName());
                                 url = new DigestURL(protocol + "://" + urlstub, ASCII.getBytes(id));
-                                if (postprocessing_clickdepth(segment, doc, sid, url, WebgraphSchema.target_clickdepth_i)) proccount_clickdepthchange++;
+                                if (postprocessing_clickdepth(clickdepthCache, sid, url, WebgraphSchema.target_clickdepth_i, 100)) {
+                                    proccount_clickdepthchange++;
+                                    //changed = true;
+                                }
+                                //ConcurrentLog.info("WebgraphConfiguration", "postprocessing webgraph target id " + id + ", url=" + protocol + "://" + urlstub + ", result: " + (changed ? "changed" : "not changed"));
                             }
                         }
-                        
-                        // all processing steps checked, remove the processing tag
-                        sid.removeField(WebgraphSchema.process_sxt.getSolrFieldName());
-                        sid.removeField(WebgraphSchema.harvestkey_s.getSolrFieldName());
-                        
-                        // send back to index
-                        connector.add(sid);
-                        proccount++;
-                    } catch (final Throwable e1) {
                     }
-                    
+                    // all processing steps checked, remove the processing tag
+                    sid.removeField(WebgraphSchema.process_sxt.getSolrFieldName());
+                    if (this.contains(WebgraphSchema.harvestkey_s)) sid.removeField(WebgraphSchema.harvestkey_s.getSolrFieldName());
+                    // send back to index
+                    webgraphConnector.add(sid);
+                    proccount++;
+                } catch (Throwable e1) {
+                    Log.warn(WebgraphConfiguration.class, "postprocessing failed", e1);
                 }
             }
             ConcurrentLog.info("WebgraphConfiguration", "cleanup_processing: re-calculated " + proccount + " new documents, " + proccount_clickdepthchange + " clickdepth values changed.");

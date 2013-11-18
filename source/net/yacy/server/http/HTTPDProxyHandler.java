@@ -88,6 +88,7 @@ import net.yacy.document.parser.html.ContentTransformer;
 import net.yacy.document.parser.html.Transformer;
 import net.yacy.kelondro.io.ByteCountOutputStream;
 import net.yacy.kelondro.util.FileUtils;
+import net.yacy.peers.operation.yacyBuildProperties;
 import net.yacy.repository.Blacklist.BlacklistType;
 import net.yacy.search.Switchboard;
 import net.yacy.search.SwitchboardConstants;
@@ -1208,7 +1209,7 @@ public final class HTTPDProxyHandler {
             viaValue
             .append(httpVer).append(" ")
             .append(myAddress).append(" ")
-            .append("(YaCy ").append(sb.getConfig("vString", "0.0")).append(")");
+            .append("(YaCy ").append(yacyBuildProperties.getVersion()).append(")");
 
             // storing header back
             header.put(HeaderFramework.VIA, viaValue.toString());
@@ -1303,6 +1304,7 @@ public final class HTTPDProxyHandler {
                (sslSocket.isBound()) &&
                (!(sslSocket.isClosed())) &&
                (sslSocket.isConnected()) &&
+               (!sslSocket.isInputShutdown() && !sslSocket.isOutputShutdown()) &&
                ((cs.isAlive()) || (sc.isAlive()))) {
             // idle
             try {Thread.sleep(1000);} catch (final InterruptedException e) {} // wait a while
@@ -1314,6 +1316,7 @@ public final class HTTPDProxyHandler {
         cs.interrupt();
         sc.interrupt();
         // ...hope they have terminated...
+        if (sslSocket != null) sslSocket.close();
     }
 
     public static class Mediate extends Thread {
@@ -1570,7 +1573,7 @@ public final class HTTPDProxyHandler {
             userAgentStr
             .append(browserUserAgent.substring(0,pos))
             .append("; YaCy ")
-            .append(sb.getConfig("vString","0.1"))
+            .append(yacyBuildProperties.getVersion())
             .append("; yacy.net")
             .append(browserUserAgent.substring(pos));
         } else {

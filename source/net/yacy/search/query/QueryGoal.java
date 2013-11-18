@@ -45,7 +45,7 @@ public class QueryGoal {
     private static char space = ' ';
     private static char sq = '\'';
     private static char dq = '"';
-    private static String seps = ".,/&_";
+    private static String seps = ".:;#'*`,!$%()=?^<>/&_";
     
     private String query_original;
     private HandleSet include_hashes, exclude_hashes;
@@ -165,6 +165,17 @@ public class QueryGoal {
         return exclude_hashes;
     }
    
+    /**
+     * the include string may be useful (and better) for highlight/snippet computation 
+     * @return the query string containing only the positive literals (includes) and without whitespace characters
+     */
+    public String getIncludeString() {
+        if (this.include_strings.size() == 0) return "";
+        StringBuilder sb = new StringBuilder(10 * include_strings.size());
+        for (String s: this.include_strings) sb.append(s).append(' ');
+        return sb.toString().substring(0, sb.length() - 1);
+    }
+   
     public ArrayList<String> getIncludeStrings() {
         return include_strings;
     }
@@ -242,7 +253,8 @@ public class QueryGoal {
         // add filter to prevent that results come from failed urls
         q.append(CollectionSchema.httpstatus_i.getSolrFieldName()).append(":200").append(" AND (");
         q.append(CollectionSchema.images_urlstub_sxt.getSolrFieldName()).append(":[* TO *] OR ");
-        q.append(CollectionSchema.url_file_ext_s.getSolrFieldName()).append(":(jpg OR png OR gif))");
+        q.append(CollectionSchema.url_file_ext_s.getSolrFieldName()).append(":(jpg OR png OR gif) OR");
+        q.append(CollectionSchema.content_type.getSolrFieldName()).append(":(image/*))");
         
         // parse special requests
         if (isCatchall()) return q;

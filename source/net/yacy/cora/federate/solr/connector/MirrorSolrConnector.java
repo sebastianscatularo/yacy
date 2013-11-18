@@ -23,7 +23,10 @@ package net.yacy.cora.federate.solr.connector;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.atomic.AtomicLong;
 
 import net.yacy.cora.sorting.ReversibleScoreMap;
@@ -49,6 +52,12 @@ public class MirrorSolrConnector extends AbstractSolrConnector implements SolrCo
     public MirrorSolrConnector(SolrConnector solr0, SolrConnector solr1) {
         this.solr0 = solr0;
         this.solr1 = solr1;
+    }
+
+    @Override
+    public void clearCaches() {
+        if (this.solr0 != null) this.solr0.clearCaches();
+        if (this.solr1 != null) this.solr1.clearCaches();
     }
     
     public boolean isConnected0() {
@@ -338,4 +347,43 @@ public class MirrorSolrConnector extends AbstractSolrConnector implements SolrCo
         return s;
     }
 
+    @Override
+    public boolean existsById(String id) throws IOException {
+        return (this.solr0 != null && this.solr0.existsById(id)) || (this.solr1 != null && this.solr1.existsById(id));
+    }
+
+    @Override
+    public Set<String> existsByIds(Set<String> ids) throws IOException {
+        if (ids == null || ids.size() == 0) return new HashSet<String>();
+        if (ids.size() == 1) return existsById(ids.iterator().next()) ? ids : new HashSet<String>();
+        if (this.solr0 != null && this.solr1 == null) return this.solr0.existsByIds(ids);
+        if (this.solr0 == null && this.solr1 != null) return this.solr1.existsByIds(ids);
+        Set<String> s = new HashSet<String>();
+        s.addAll(this.solr0.existsByIds(ids));
+        s.addAll(this.solr1.existsByIds(ids));
+        return s;
+    }
+
+    @Override
+    public String getFieldById(String key, String field) throws IOException {
+        if (this.solr0 != null && this.solr1 == null) return this.solr0.getFieldById(key, field);
+        if (this.solr0 == null && this.solr1 != null) return this.solr1.getFieldById(key, field);
+        String value = this.solr0.getFieldById(key, field);
+        if (value != null) return value;
+        return this.solr1.getFieldById(key, field);
+    }
+
+    /*
+    @Override
+    public BlockingQueue<SolrDocument> concurrentDocumentsByQuery(String querystring, int offset, int maxcount, long maxtime, int buffersize, String... fields) {
+        return null;
+    }
+    */
+    @Override
+    public BlockingQueue<String> concurrentIDsByQuery(String querystring, int offset, int maxcount, long maxtime) {
+        if (this.solr0 != null && this.solr1 == null) return this.solr0.concurrentIDsByQuery(querystring, offset, maxcount, maxtime);
+        if (this.solr0 == null && this.solr1 != null) return this.solr1.concurrentIDsByQuery(querystring, offset, maxcount, maxtime);
+        return super.concurrentIDsByQuery(querystring, offset, maxcount, maxtime);
+    }
+    
 }

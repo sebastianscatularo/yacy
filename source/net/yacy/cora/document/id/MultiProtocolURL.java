@@ -57,6 +57,7 @@ import net.yacy.cora.protocol.TimeoutRequest;
 import net.yacy.cora.protocol.ftp.FTPClient;
 import net.yacy.cora.protocol.http.HTTPClient;
 import net.yacy.cora.util.CommonPattern;
+import net.yacy.document.parser.html.CharacterCoding;
 
 /**
  * MultiProtocolURI provides a URL object for multiple protocols like http, https, ftp, smb and file
@@ -66,7 +67,6 @@ public class MultiProtocolURL implements Serializable, Comparable<MultiProtocolU
 
     public static final MultiProtocolURL POISON = new MultiProtocolURL(); // poison pill for concurrent link generators
 
-    private static final Pattern ampPattern = Pattern.compile(Pattern.quote("&amp;"));
     private static final long serialVersionUID = -1173233022912141884L;
     private static final long SMB_TIMEOUT = 5000;
 
@@ -269,9 +269,15 @@ public class MultiProtocolURL implements Serializable, Comparable<MultiProtocolU
     public final boolean isFile()  { return this.protocol.equals("file"); }
     public final boolean isSMB()   { return this.protocol.equals("smb"); }
 
-    public final ContentDomain getContentDomain() {
+    /**
+     * Get the content domain of a document according to the extension.
+     * This can produce wrong results because the extension is a weak hint for the content domain.
+     * If possible, use the mime type, call Classification.getContentDomainFromMime()
+     * @return the content domain which classifies the content type
+     */
+    public final ContentDomain getContentDomainFromExt() {
         if (this.contentDomain == null) {
-            this.contentDomain = Classification.getContentDomain(getFileExtension(this.getFileName()));
+            this.contentDomain = Classification.getContentDomainFromExt(getFileExtension(this.getFileName()));
         }
         return this.contentDomain;
     }
@@ -630,7 +636,7 @@ public class MultiProtocolURL implements Serializable, Comparable<MultiProtocolU
         } else {
             this.searchpart = this.path.substring(r + 1);
             // strip &amp;
-            Matcher matcher = ampPattern.matcher(this.searchpart);
+            Matcher matcher = CharacterCoding.ampPattern.matcher(this.searchpart);
             while (matcher.find()) {
                 this.searchpart = matcher.replaceAll("&");
                 matcher.reset(this.searchpart);
@@ -836,7 +842,7 @@ public class MultiProtocolURL implements Serializable, Comparable<MultiProtocolU
      * resulting words are not ordered by appearance, but all
      * @return
      */
-    private static String toTokens(final String s) {
+    public static String toTokens(final String s) {
         // remove all non-character & non-number
         final StringBuilder sb = new StringBuilder(s.length());
         char c;
@@ -854,18 +860,18 @@ public class MultiProtocolURL implements Serializable, Comparable<MultiProtocolU
         // split the string into tokens and add all camel-case splitting
         final String[] u = CommonPattern.SPACE.split(t);
         final Set<String> token = new LinkedHashSet<String>();
-        for (final String r: u) {
-            token.addAll(parseCamelCase(r));
-        }
+        for (final String r: u) token.add(r);
+        for (final String r: u) token.addAll(parseCamelCase(r));
 
         // construct a String again
-        for (final String v: token) if (v.length() > 1) t += ' ' + v;
-        return t;
+        sb.setLength(0);
+        for (final String v: token) if (v.length() > 1) sb.append(v).append(' ');
+        return sb.length() == 0 ? "" : sb.substring(0, sb.length() - 1);
     }
 
     public static enum CharType { low, high, number; }
 
-    public static Set<String> parseCamelCase(String s) {
+    private static Set<String> parseCamelCase(String s) {
         final Set<String> token = new LinkedHashSet<String>();
         if (s.isEmpty()) return token;
         int p = 0;

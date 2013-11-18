@@ -109,6 +109,7 @@ import net.yacy.cora.util.ConcurrentLog;
 import net.yacy.cora.util.NumberTools;
 import net.yacy.data.UserDB;
 import net.yacy.document.parser.htmlParser;
+import net.yacy.document.parser.html.CharacterCoding;
 import net.yacy.document.parser.html.ContentScraper;
 import net.yacy.document.parser.html.ScraperInputStream;
 import net.yacy.kelondro.util.FileUtils;
@@ -484,7 +485,7 @@ public final class HTTPDFileHandler {
                 //no defaultfile, send a dirlisting
                 if (targetFile == null || !targetFile.exists() || (targetFile.exists() && targetFile.isDirectory())) {
                     final StringBuilder aBuffer = new StringBuilder();
-                    aBuffer.append("<html>\n<head>\n</head>\n<body>\n<h1>Index of " + path + "</h1>\n  <ul>\n");
+                    aBuffer.append("<html>\n<head>\n</head>\n<body>\n<h1>Index of " + CharacterCoding.unicode2html(path, true) + "</h1>\n  <ul>\n");
                     String[] list = targetFile.list();
                     if (list == null) list = new String[0]; // should not occur!
                     File f;
@@ -1602,39 +1603,49 @@ public final class HTTPDFileHandler {
 				if(m.group(8) != null) url = m.group(8);
 				if(m.group(10) != null) url = m.group(10);
 				if (url.startsWith("data:") || url.startsWith("#") || url.startsWith("mailto:") || url.startsWith("javascript:")) {
-					String newurl = init + url;
-					newurl = newurl.replaceAll("\\$","\\\\\\$");
+                                    String newurl = init + url;
+                                    newurl = newurl.replaceAll("\\$","\\\\\\$");
 				    m.appendReplacement(result, newurl);
 
 				} else if (url.startsWith("http")) {
-					// absoulte url of form href="http://domain.com/path"
-					if (sb.getConfig("proxyURL.rewriteURLs", "all").equals("domainlist")) {
-						if (sb.crawlStacker.urlInAcceptedDomain(new DigestURL(url)) != null) {
-							continue;
-						}
-					}
+                                    // absoulte url of form href="http://domain.com/path"
+                                    if (sb.getConfig("proxyURL.rewriteURLs", "all").equals("domainlist")) {
+                                        try {
+                                            if (sb.crawlStacker.urlInAcceptedDomain(new DigestURL(url)) != null) {
+                                                continue;
+                                            }
+                                        } catch (final MalformedURLException e) {
+                                            theLogger.fine("malformed url for url-rewirte: " + url);
+                                            continue;
+                                        }
+                                    }
 
-					String newurl = init + "/proxy.html?url=" + url;
-					newurl = newurl.replaceAll("\\$","\\\\\\$");
+                                    String newurl = init + "/proxy.html?url=" + url;
+                                    newurl = newurl.replaceAll("\\$","\\\\\\$");
 				    m.appendReplacement(result, newurl);
 
 				} else if (url.startsWith("//")) {
-					// absoulte url but same protocol of form href="//domain.com/path"
-					final String complete_url = proxyurl.getProtocol() + ":" +  url;
-					if (sb.getConfig("proxyURL.rewriteURLs", "all").equals("domainlist")) {
-						if (sb.crawlStacker.urlInAcceptedDomain(new DigestURL(complete_url)) != null) {
-							continue;
-						}
-					}
+                                    // absoulte url but same protocol of form href="//domain.com/path"
+                                    final String complete_url = proxyurl.getProtocol() + ":" +  url;
+                                    if (sb.getConfig("proxyURL.rewriteURLs", "all").equals("domainlist")) {
+                                        try {
+                                            if (sb.crawlStacker.urlInAcceptedDomain(new DigestURL(complete_url)) != null) {
+                                                continue;
+                                            }
+                                        } catch (final MalformedURLException e) {
+                                            theLogger.fine("malformed url for url-rewirte: " + complete_url);
+                                            continue;
+                                        }
+                                    }
 
-					String newurl = init + "/proxy.html?url=" + complete_url;
-					newurl = newurl.replaceAll("\\$","\\\\\\$");
-				    m.appendReplacement(result, newurl);
+                                    String newurl = init + "/proxy.html?url=" + complete_url;
+                                    newurl = newurl.replaceAll("\\$", "\\\\\\$");
+                                    m.appendReplacement(result, newurl);
 
 				} else if (url.startsWith("/")) {
-					// absolute path of form href="/absolute/path/to/linked/page"
-					String newurl = init + "/proxy.html?url=http://" + host + url;
-					newurl = newurl.replaceAll("\\$","\\\\\\$");
+                                    // absolute path of form href="/absolute/path/to/linked/page"
+                                    String newurl = init + "/proxy.html?url=http://" + host + url;
+                                    newurl = newurl.replaceAll("\\$","\\\\\\$");
 				    m.appendReplacement(result, newurl);
 
 				} else {

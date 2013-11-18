@@ -55,6 +55,8 @@ import net.yacy.peers.NewsPool;
 import net.yacy.repository.Blacklist.BlacklistType;
 import net.yacy.search.Switchboard;
 import net.yacy.search.SwitchboardConstants;
+import net.yacy.search.index.Fulltext;
+import net.yacy.search.index.Segment;
 import net.yacy.server.serverObjects;
 import net.yacy.server.serverSwitch;
 
@@ -69,12 +71,23 @@ public class Crawler_p {
         // inital values for AJAX Elements (without JavaScript)
         final serverObjects prop = new serverObjects();
         prop.put("rejected", 0);
-        prop.put("urlpublictextSize", 0);
-        prop.put("urlpublictextSegmentCount", 0);
-        prop.put("webgraphSize", 0);
-        prop.put("webgraphSegmentCount", 0);
-        prop.put("rwipublictextSize", 0);
-        prop.put("rwipublictextSegmentCount", 0);
+
+        Segment segment = sb.index;
+        Fulltext fulltext = segment.fulltext();
+        String localSolr = "/solr/select?core=collection1&q=*:*&start=0&rows=3";
+        String remoteSolr = env.getConfig(SwitchboardConstants.FEDERATED_SERVICE_SOLR_INDEXING_URL, localSolr);
+        if (!remoteSolr.endsWith("/")) remoteSolr = remoteSolr + "/";
+        prop.put("urlpublictextSolrURL", fulltext.connectedLocalSolr() ? localSolr : remoteSolr + "collection1/select?&q=*:*&start=0&rows=3");
+        prop.putNum("urlpublictextSize", fulltext.collectionSize());
+        prop.putNum("urlpublictextSegmentCount", fulltext.getDefaultConnector().getSegmentCount());
+        prop.put("webgraphSolrURL", fulltext.connectedLocalSolr() ? localSolr.replace("collection1", "webgraph") : remoteSolr + "webgraph/select?&q=*:*&start=0&rows=3");
+        prop.putNum("webgraphSize", fulltext.writeToWebgraph() ? fulltext.webgraphSize() : 0);
+        prop.putNum("webgraphSegmentCount", fulltext.writeToWebgraph() ? fulltext.getWebgraphConnector().getSegmentCount() : 0);
+        prop.putNum("citationSize", segment.citationCount());
+        prop.putNum("citationSegmentCount", segment.citationSegmentCount());
+        prop.putNum("rwipublictextSize", segment.RWICount());
+        prop.putNum("rwipublictextSegmentCount", segment.RWISegmentCount());
+        
         prop.put("list", "0");
         prop.put("loaderSize", 0);
         prop.put("loaderMax", 0);
@@ -170,7 +183,8 @@ public class Crawler_p {
                     if (t > 0) deleteageDate = new Date(t);
                 }
                 final boolean deleteold = (deleteage && deleteageDate != null) || (restrictedcrawl && post.getBoolean("deleteold"));
-                
+
+                final String sitemapURLStr = post.get("sitemapURL","");
                 String crawlingStart0 = post.get("crawlingURL","").trim(); // the crawljob start url
                 String[] rootURLs0 = crawlingStart0.indexOf('\n') > 0 || crawlingStart0.indexOf('\r') > 0 ? crawlingStart0.split("[\\r\\n]+") : crawlingStart0.split(Pattern.quote("|"));
                 Set<DigestURL> rootURLs = new HashSet<DigestURL>();
@@ -199,7 +213,7 @@ public class Crawler_p {
                     if (p >= 8) crawlName = crawlName.substring(0, p);
                 }
                 if (crawlName.endsWith(",")) crawlName = crawlName.substring(0, crawlName.length() - 1);
-
+                if (crawlName.length() == 0 && sitemapURLStr.length() > 0) crawlName = "sitemap loader for " + sitemapURLStr;
                 
                 // set the crawl filter
                 String ipMustMatch = post.get("ipMustmatch", CrawlProfile.MATCH_ALL_STRING);
@@ -263,7 +277,7 @@ public class Crawler_p {
 
                 env.setConfig("storeHTCache", storeHTCache);
                 
-                String agentName = post.get("agentName", ClientIdentification.yacyInternetCrawlerAgentName);
+                String agentName = post.get("agentName", sb.isIntranetMode() ? ClientIdentification.yacyIntranetCrawlerAgentName : ClientIdentification.yacyInternetCrawlerAgentName);
                 ClientIdentification.Agent agent = ClientIdentification.getAgent(agentName);
 
                 CacheStrategy cachePolicy = CacheStrategy.parse(post.get("cachePolicy", "iffresh"));
@@ -311,9 +325,9 @@ public class Crawler_p {
                     if (fullDomain) {
                         siteFilter = CrawlProfile.siteFilter(rootURLs);
                         if (deleteold) {
-                            for (DigestURL u: rootURLs) {
-                                sb.index.fulltext().deleteDomainHashpart(u.hosthash(), deleteageDate);
-                            }
+                            Set<String> hosthashes = new HashSet<String>();
+                            for (DigestURL u: rootURLs) hosthashes.add(u.hosthash());
+                            sb.index.fulltext().deleteStaleDomainHashes(hosthashes, deleteageDate);
                         }
                     } else if (subPath) {
                         siteFilter = CrawlProfile.subpathFilter(rootURLs);
@@ -386,10 +400,12 @@ public class Crawler_p {
                 try {sb.crawlQueues.noticeURL.removeByProfileHandle(profile.handle(), 10000);} catch (final SpaceExceededException e1) {}
                 
                 // delete all error urls for that domain
+                Set<String> hosthashes = new HashSet<String>();
                 for (DigestURL u: rootURLs) {
                     sb.index.fulltext().remove(u.hash());
-                    sb.crawlQueues.errorURL.removeHost(ASCII.getBytes(u.hosthash()));
+                    hosthashes.add(u.hosthash());
                 }
+                sb.crawlQueues.errorURL.removeHosts(hosthashes);
                 sb.index.fulltext().commit(true);
                 
                 // start the crawl
@@ -442,7 +458,6 @@ public class Crawler_p {
                         if (successurls.size() > 0) sb.continueCrawlJob(SwitchboardConstants.CRAWLJOB_LOCAL_CRAWL);
                     }
                 } else if ("sitemap".equals(crawlingMode)) {
-                    final String sitemapURLStr = post.get("sitemapURL","");
                     try {
                         final DigestURL sitemapURL = new DigestURL(sitemapURLStr);
                         sb.crawler.putActive(handle, profile);

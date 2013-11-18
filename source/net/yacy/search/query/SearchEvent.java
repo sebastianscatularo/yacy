@@ -113,7 +113,7 @@ public final class SearchEvent {
     }
     */
 
-    public static ConcurrentLog log = new ConcurrentLog("SEARCH");
+    public final static ConcurrentLog log = new ConcurrentLog("SEARCH");
 
     public static final int SNIPPET_MAX_LENGTH = 220;
     private static final int MAX_TOPWORDS = 12; // default count of words for topicnavigagtor
@@ -245,7 +245,7 @@ public final class SearchEvent {
         this.IAmaxcounthash = null;
         this.IAneardhthash = null;
         this.localSearchThread = null;
-        this.remote = (peers != null && peers.sizeConnected() > 0) && (this.query.domType == QueryParams.Searchdom.CLUSTER || (this.query.domType == QueryParams.Searchdom.GLOBAL && Switchboard.getSwitchboard().getConfigBool(SwitchboardConstants.INDEX_RECEIVE_ALLOW, false)));
+        this.remote = (peers != null && peers.sizeConnected() > 0) && (this.query.domType == QueryParams.Searchdom.CLUSTER || (this.query.domType == QueryParams.Searchdom.GLOBAL && Switchboard.getSwitchboard().getConfigBool(SwitchboardConstants.INDEX_RECEIVE_ALLOW_SEARCH, false)));
         this.local_rwi_available  = new AtomicInteger(0); // the number of results in the local peer after filtering
         this.local_rwi_stored     = new AtomicInteger(0);
         this.local_solr_available = new AtomicInteger(0);
@@ -343,7 +343,7 @@ public final class SearchEvent {
         } else {
             this.primarySearchThreadsL = null;
             this.nodeSearchThreads = null;
-            this.pollImmediately = !query.getSegment().connectedRWI() || !Switchboard.getSwitchboard().getConfigBool(SwitchboardConstants.INDEX_RECEIVE_ALLOW, false);
+            this.pollImmediately = !query.getSegment().connectedRWI() || !Switchboard.getSwitchboard().getConfigBool(SwitchboardConstants.INDEX_RECEIVE_ALLOW_SEARCH, false);
             if ( generateAbstracts ) {
                 // we need the results now
                 try {
@@ -1040,12 +1040,13 @@ public final class SearchEvent {
             }
 
             // check content domain
+            ContentDomain contentDomain = page.getContentDomain();
             if (this.query.contentdom.getCode() > 0 && (
-                (this.query.contentdom == Classification.ContentDomain.IMAGE && page.url().getContentDomain() != Classification.ContentDomain.IMAGE) ||
-                (this.query.contentdom == Classification.ContentDomain.AUDIO && page.url().getContentDomain() != Classification.ContentDomain.AUDIO) ||
-                (this.query.contentdom == Classification.ContentDomain.VIDEO && page.url().getContentDomain() != Classification.ContentDomain.VIDEO) ||
-                (this.query.contentdom == Classification.ContentDomain.APP && page.url().getContentDomain() != Classification.ContentDomain.APP)) && this.query.urlMask_isCatchall) {
-                if (log.isFine()) log.fine("dropped RWI: wrong contentdom = " + this.query.contentdom + ", domain = " + page.url().getContentDomain());
+                (this.query.contentdom == Classification.ContentDomain.IMAGE && contentDomain != Classification.ContentDomain.IMAGE) ||
+                (this.query.contentdom == Classification.ContentDomain.AUDIO && contentDomain != Classification.ContentDomain.AUDIO) ||
+                (this.query.contentdom == Classification.ContentDomain.VIDEO && contentDomain != Classification.ContentDomain.VIDEO) ||
+                (this.query.contentdom == Classification.ContentDomain.APP && contentDomain != Classification.ContentDomain.APP)) && this.query.urlMask_isCatchall) {
+                if (log.isFine()) log.fine("dropped RWI: wrong contentdom = " + this.query.contentdom + ", domain = " + contentDomain);
                 if (page.word().local()) this.local_rwi_available.decrementAndGet(); else this.remote_rwi_available.decrementAndGet();
                 continue;
             }
@@ -1321,7 +1322,8 @@ public final class SearchEvent {
         }
 
         // load snippet
-        if (page.url().getContentDomain() == Classification.ContentDomain.TEXT || page.url().getContentDomain() == Classification.ContentDomain.ALL) {
+        ContentDomain contentDomain = page.getContentDomain();
+        if (contentDomain == Classification.ContentDomain.TEXT || contentDomain == Classification.ContentDomain.ALL) {
             // attach text snippet
             long startTime = System.currentTimeMillis();
             final TextSnippet snippet = new TextSnippet(

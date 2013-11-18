@@ -45,6 +45,7 @@ import net.yacy.cora.document.analysis.Classification.ContentDomain;
 import net.yacy.cora.document.encoding.UTF8;
 import net.yacy.cora.document.feed.RSSMessage;
 import net.yacy.cora.document.id.DigestURL;
+import net.yacy.cora.document.id.MultiProtocolURL;
 import net.yacy.cora.federate.opensearch.OpenSearchConnector;
 import net.yacy.cora.federate.yacy.CacheStrategy;
 import net.yacy.cora.geo.GeoLocation;
@@ -152,10 +153,7 @@ public class yacysearch {
         prop.put("rssYacyImageURL", "http://" + hostName + "/env/grafics/yacy.gif");
         prop.put("thisaddress", hostName);
         final boolean clustersearch = sb.isRobinsonMode() && sb.getConfig(SwitchboardConstants.CLUSTER_MODE, "").equals(SwitchboardConstants.CLUSTER_MODE_PUBLIC_CLUSTER);
-        final boolean indexReceiveGranted =
-            sb.getConfigBool(SwitchboardConstants.INDEX_RECEIVE_ALLOW, true)
-                || sb.getConfigBool(SwitchboardConstants.INDEX_RECEIVE_AUTODISABLED, true)
-                || clustersearch;
+        final boolean indexReceiveGranted = sb.getConfigBool(SwitchboardConstants.INDEX_RECEIVE_ALLOW_SEARCH, true) || clustersearch;
         boolean p2pmode = sb.peers != null && sb.peers.sizeConnected() > 0 && indexReceiveGranted;
         boolean global = post == null || (post.get("resource", "local").equals("global") && p2pmode);
         boolean stealthmode = p2pmode && !global;
@@ -359,7 +357,7 @@ public class yacysearch {
 
             // check available memory and clean up if necessary
             if ( !MemoryControl.request(8000000L, false) ) {
-                indexSegment.clearCache();
+                indexSegment.clearCaches();
                 SearchEventCache.cleanupEvents(false);
             }
 
@@ -658,7 +656,7 @@ public class yacysearch {
                     constraint,
                     true,
                     DigestURL.hosthashess(sb.getConfig("search.excludehosth", "")),
-                    DigestURL.TLD_any_zone_filter,
+                    MultiProtocolURL.TLD_any_zone_filter,
                     client,
                     authenticated,
                     indexSegment,
@@ -669,7 +667,7 @@ public class yacysearch {
                         && sb.peers.mySeed().getFlagAcceptRemoteIndex(),
                     false,
                     lat, lon, rad,
-                    sb.getConfig("search_navigation","").split(","));
+                    sb.getConfig("search.navigation","").split(","));
             EventTracker.delete(EventTracker.EClass.SEARCH);
             EventTracker.update(EventTracker.EClass.SEARCH, new ProfilingGraph.EventSearch(
                 theQuery.id(true),

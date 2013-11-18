@@ -7,7 +7,6 @@
   <body id="IndexDeletion">
   
     #%env/templates/header.template%#
-    #%env/templates/submenuIndexControl.template%#
     <h2>Index Deletion</h2>
     <p>The search index contains #[doccount]# documents. You can delete them here. Deletions are made concurrently which can cause that recently deleted documents are not yet reflected in the document count.</p>
     <form id="IndexDeletionPath" action="IndexDeletion_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">

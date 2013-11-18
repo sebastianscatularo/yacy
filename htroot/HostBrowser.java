@@ -399,7 +399,7 @@ public class HostBrowser {
                     } else {
                         // this is a folder
                         prop.put("files_list_" + c + "_type", 1);
-                        prop.put("files_list_" + c + "_type_url", entry.getKey());
+                        prop.putHTML("files_list_" + c + "_type_url", entry.getKey());
                         int linked = ((int[]) entry.getValue())[0];
                         int stored = ((int[]) entry.getValue())[1];
                         int crawler = ((int[]) entry.getValue())[2];
@@ -441,7 +441,9 @@ public class HostBrowser {
                                     // maybe this is only in the errorURL
                                     prop.put("files_list_" + c + "_type_stored_error", process == HarvestProcess.ERRORS ? sb.crawlQueues.errorURL.get(ASCII.String(uri.hash())).getFailReason() : "unknown error");
                                 } else {
-                                    prop.put("files_list_" + c + "_type_stored_error", failType == FailType.excl ? "excluded from indexing" : "load fail");
+                                    String ids = ASCII.String(uri.hash());
+                                    InfoCacheEntry ice = infoCache.get(ids);
+                                    prop.put("files_list_" + c + "_type_stored_error", failType == FailType.excl ? "excluded from indexing" : "load fail; " + ice.toString());
                                 }
                             }
                             if (loadRight) {
@@ -551,7 +553,6 @@ public class HostBrowser {
                     }
                 } catch (final IOException e) {
                 }
-                
             }
             this.references_external = (rc_external == null || rc_external.intValue() <= 0) ? 0 : rc_external.intValue();
             this.references_exthosts = (rc_exthosts == null || rc_exthosts.intValue() <= 0) ? 0 : rc_exthosts.intValue();
@@ -560,7 +561,7 @@ public class HostBrowser {
             StringBuilder sbi = new StringBuilder();
             int c = 0;
             for (String s: references_internal_urls) {
-                sbi.append("<a href='").append("/HostBrowser.html?path=" + s).append("' target='_blank'><img src='env/grafics/i16.gif' alt='info' title='" + s + "' width='12' height='12'/></a>");
+                sbi.append("<a href='").append(s).append("' target='_blank'><img src='env/grafics/i16.gif' alt='info' title='" + s + "' width='12' height='12'/></a>");
                 c++;
                 if (c % 80 == 0) sbi.append("<br/>");
             }
@@ -568,7 +569,7 @@ public class HostBrowser {
             StringBuilder sbe = new StringBuilder();
             c = 0;
             for (String s: references_external_urls) {
-                sbe.append("<a href='").append("/HostBrowser.html?path=" + s).append("' target='_blank'><img src='env/grafics/i16.gif' alt='info' title='" + s + "' width='12' height='12'/></a>");
+                sbe.append("<a href='").append(s).append("' target='_blank'><img src='env/grafics/i16.gif' alt='info' title='" + s + "' width='12' height='12'/></a>");
                 c++;
                 if (c % 80 == 0) sbe.append("<br/>");
             }

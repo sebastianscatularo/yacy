@@ -1,72 +1,287 @@
-<div class="head">
-	<h1>YaCy Administration</h1>
-	#%env/templates/portalinput.template%#
-</div>
+<header>
+  <div class="logo">
+    <img src="/env/grafics/YaCyLogo_60ppi.png" width="103" height="60"/>
+    <div>Administration</div>
+  </div>
+</header>
 
-<ul id="menu">
-  <li class="menugroup" id="menugroupGlobalIndex">
-    <h3>Search Interfaces</h3>
-    <ul class="menu">
-      <li><a href="/index.html" accesskey="s" class="MenuItemLink">Web Search</a></li>
-      <li><a href="/yacyinteractive.html" class="MenuItemLink">File Search</a></li>
-      <li><a href="/HostBrowser.html?hosts=" class="MenuItemLink">Host Browser</a></li>
-      <!--<li><a href="/yacysearch_location.html" class="MenuItemLink">Location Search</a></li>-->
-      <li><a href="/solr/select?q=*:*&defType=edismax&start=0&rows=3&core=collection1" class="MenuItemLink">Solr Default Core</a></li>
-      <li><a href="/solr/select?q=*:*&defType=edismax&start=0&rows=3&core=webgraph" class="MenuItemLink">Solr Webgraph Core</a></li>
-      <li><a href="/gsa/search?q=www&num=3" class="MenuItemLink">Google Appliance API</a></li>
-      <!--<li><a href="/yacy/ui/" accesskey="s" class="MenuItemLink">Rich Client Search</a></li>-->
-      <li><a href="/compare_yacy.html?display=1" class="MenuItemLink">Compare Search</a></li>
-      <li><a href="/ViewFile.html" class="MenuItemLink">URL Viewer</a></li>
-      <li><a href="/YMarks.html" class="MenuItemLink">Bookmarks</a></li>
-    </ul>
-  <li class="menugroup" id="menugroupGlobalIndex">
-    <h3>Search Design</h3>
-    <ul class="menu">
-      <li><a href="/ConfigLiveSearch.html" class="MenuItemLink">Search Integration into External Sites</a></li>
-      <li><a href="/ConfigPortal.html" class="MenuItemLink">Integrated Search Configuration</a></li>
-    </ul>
-  </li>
-  <li class="menugroup" id="menugroupCrawlerControl">
-    <h3>Index&nbsp;Production</h3>
-    <ul class="menu">
-      <li><a href="/CrawlStartSite_p.html" class="MenuItemLink lock">Crawler / Harvester</a></li>
-      <li><a href="/Crawler_p.html" class="MenuItemLink lock">Creation Monitor</a></li>
-      <li><a href="/IndexControlURLs_p.html" class="MenuItemLink lock">Index Administration</a></li>
-      <li><a href="/Blacklist_p.html" class="MenuItemLink lock">Filter &amp; Blacklists</a></li>
-      <li><a href="/Vocabulary_p.html" class="MenuItemLink lock">Content Semantic</a></li>
-      <li><a href="/Tables_p.html?table=robots&count=100" class="MenuItemLink lock">Target Analysis</a></li>
-      <li><a href="/Table_API_p.html" class="MenuItemLink lock">Process Scheduler</a></li>
-    </ul>
-  </li>
-  <li class="menugroup" id="menugroupMonitoring">
-    <h3>Monitoring</h3>
-    <ul class="menu">
-      <li><a href="/Network.html" accesskey="w" class="MenuItemLink">YaCy Network</a></li>
-      <li><a href="/WatchWebStructure_p.html?host=auto&amp;depth=3&amp;time=1000" class="MenuItemLink lock">Web Visualization</a></li>
-      <li><a href="/AccessGrid_p.html" class="MenuItemLink lock">Network Access</a></li>
-      <li><a href="/ViewLog_p.html" class="MenuItemLink lock">Computation</a></li>
-      <li><a href="/terminal_p.html" accesskey="t" class="MenuItemLink lock">Terminal</a></li>
-    </ul>
-  </li>
-  <li class="menugroup" id="menugroupPeerControl">
-    <h3>Peer Control</h3>
-    <ul class="menu">
-      <li><a href="/Status.html?noforward=" class="MenuItemLink">Admin Console</a></li>
-      <li><a href="/Steering.html?restart=" class="MenuItemLink lock" onclick="return confirm('Confirm Restart')">Re-Start</a></li>
-      <li><a href="/Steering.html?shutdown=" class="MenuItemLink lock" onclick="return confirm('Confirm Shutdown')">Shutdown</a></li>
-    </ul>
-  </li>
-  <li class="menugroup" id="menugroupTheProjekt">
-    <h3>The YaCy Project</h3>
-    <ul class="menu">
-      <li><a href="http://www.yacy.net/" target="_blank" class="MenuItemLink">Project Home</a></li>
-      <li><a href="/Help.html" target="_blank" class="MenuItemLink">Tutorials</a></li>
-      <li><a href="http://forum.yacy.de" target="_blank" class="MenuItemLink">Forum/Discussion</a></li>
-      <li><a href="http://wiki.yacy.de" target="_blank" class="MenuItemLink">Project Wiki</a></li>
-      <li><a href="https://gitorious.org/yacy/rc1/commits/master" target="_blank" class="MenuItemLink">Git Repository</a></li>
-      <li><a href="http://bugs.yacy.net" target="_blank" class="MenuItemLink">Bugtracker</a></li>      
-      <li><a href="#(newpeer)#http://www.yacystats.de/peer/#[peerhash]#::http://www.yacystats.de#(/newpeer)#" target="_blank" class="MenuItemLink">#(newpeer)#Peer Statistics::YaCy Statistics#(/newpeer)#</a></li>
-    </ul>
-  </li>
-</ul>
-<div class="content">
+<!--
+<div class="head">
+  <h1>YaCy Administration</h1>
+  %env/templates/portalinput.template%
+</div>
+-->
+
+<nav id="nav">
+  <ul class="main">
+    <li><span>Search</span>
+      <ul class="hidden">
+        <li><span>Interfaces</span>
+          <ul class="hidden">
+            <li><a href="/index.html">Web Search</a></li>
+            <li><a href="/yacyinteractive.html">File Search</a></li>
+            <li><a href="/HostBrowser.html?hosts=">Host Browser</a></li>
+            <!--<li><a href="/yacysearch_location.html">Location Search</a></li>-->
+            <li><a href="/solr/select?q=*:*&defType=edismax&start=0&rows=3&core=collection1">Solr Default Core</a></li>
+            <li><a href="/solr/select?q=*:*&defType=edismax&start=0&rows=3&core=webgraph">Solr Webgraph Core</a></li>
+            <li><a href="/gsa/search?q=www&num=3">Google Appliance API</a></li>
+            <!--<li><a href="/yacy/ui/">Rich Client Search</a></li>-->
+            <li><a href="/compare_yacy.html?display=1">Compare Search</a></li>
+            <li><a href="/ViewFile.html">URL Viewer</a></li>
+            <li><a href="/YMarks.html">Bookmarks</a></li>
+          </ul>
+        </li>
+        <li><span>Design</span>
+          <ul class="hidden">
+            <li><a href="/ConfigLiveSearch.html">Live Search Anywhere</a></li>
+            <li><a href="/ConfigSearchBox.html">Search Box Anywhere</a></li>
+            <li><span>Integrated Search Configuration</span>
+              <ul class="hidden">
+                <li><a href="/ConfigPortal.html" class="MenuItemLink">Generic Search Portal</a></li>
+                <li><a href="/ConfigSearchPage_p.html" class="MenuItemLink lock">Search Page Layout</a></li>
+                <li><a href="/ConfigAppearance_p.html" class="MenuItemLink lock">Appearance</a></li>
+                <li><a href="/ConfigLanguage_p.html" class="MenuItemLink lock">Language</a></li>
+                <li><a href="/ConfigProfile_p.html" class="MenuItemLink lock">User Profile</a></li>
+                <li><a href="/ConfigHeuristics_p.html" class="MenuItemLink lock">Heuristics</a></li>
+                <li><a href="/RankingSolr_p.html" class="MenuItemLink lock">Solr Ranking Config</a></li>
+                <li><a href="/RankingRWI_p.html" class="MenuItemLink lock">RWI Ranking Config</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><span>Crawler / Harvester</span>
+      <ul class="hidden">
+        <li><span>Crawler/Spider</span>
+          <ul class="hidden">
+            <li><a href="/CrawlStartSite_p.html" class="lock">Full Site Crawl/Sitemap Loader</a></li>
+            <li><a href="/CrawlStartExpert_p.html" class="lock">Crawl Start(Expert)</a></li>
+            <li><a href="/CrawlStartScanner_p.html" class="lock">Network Scanner</a></li>
+            <li><a href="/Load_MediawikiWiki.html">Crawling of MediaWikis</a></li>
+            <li><a href="/Load_PHPBB3.html">Crawling of phpBB3 Forums</a></li>
+          </ul>
+        </li>
+        <li><span>Content Import</span>
+          <ul class="hidden">
+            <li><a href="/Load_RSS_p.html" class="lock">RSS Feed Importer</a></li>
+            <li><a href="/IndexImportOAIPMH_p.html" class="lock">OAI-PMH Importer</a></li>
+          </ul>
+        </li>
+        <li><span>Network Harvesting</span>
+          <ul class="hidden">
+            <li><a href="/RemoteCrawl_p.html" class="lock">Remote Crawling</a></li>
+            <li><a href="/ProxyIndexingMonitor_p.html" class="lock">Scraping Proxy</a></li>
+          </ul>
+        </li>
+        <li><span>Database Reader</span>
+          <ul class="hidden">
+            <li><a href="/ContentIntegrationPHPBB3_p.html" class="lock">Database Reader for phpBB3 Forums</a></li>
+            <li><a href="/IndexImportMediawiki_p.html" class="lock">Dump Reader for MediaWiki dumps</a></li>
+          </ul>
+        </li>
+        <li><span>Creation Monitor</span>
+          <ul class="hidden">
+            <li><span>Processing Monitor</span>
+              <ul class="hidden">
+                <li><a href="/Crawler_p.html" class="lock">Crawler</a></li>
+                <li><a href="/IndexCreateLoaderQueue_p.html" class="lock">Loader</a></li>
+                <li><a href="/IndexCreateParserErrors_p.html" class="lock">Rejected URLs</a></li>
+              </ul>
+            </li>
+            <li><span>Queues</span>
+              <ul class="hidden">
+                <li><a href="/IndexCreateQueues_p.html?stack=LOCAL" class="lock">Local</a></li>
+                #(p2p)#::<li><a href="/IndexCreateQueues_p.html?stack=GLOBAL" class="lock">Global</a></li>#(/p2p)#
+                #(p2p)#::<li><a href="/IndexCreateQueues_p.html?stack=REMOTE" class="lock">Remote</a></li>#(/p2p)#
+                <li><a href="/IndexCreateQueues_p.html?stack=NOLOAD" class="lock">No-Load</a></li>
+              </ul>
+            </li>
+            <li><span>Crawler Steering</span>
+              <ul class="hidden">
+                <li><a href="/CrawlProfileEditor_p.html" class="lock">Scheduler and Profile Editor</a></li>
+                <li><a href="/Table_RobotsTxt_p.html" class="lock">robots.txt Monitor</a></li>
+              </ul>
+            </li>
+            <li><span>Results</span>
+              <ul class="hidden">
+                <li><a href="/CrawlResults.html">Overview</a></li>
+                #(p2p)#::<li><a href="/CrawlResults.html?process=1" class="lock">(1) Receipts</a></li>#(/p2p)#
+                <li><a href="/CrawlResults.html?process=2" class="lock">(2) Queries</a></li>
+                #(p2p)#::<li><a href="/CrawlResults.html?process=3" class="lock">(3) DHT Transfer</a></li>#(/p2p)#
+                <li><a href="/CrawlResults.html?process=4" class="lock">(4) Proxy Use</a></li>
+                <li><a href="/CrawlResults.html?process=5" class="lock">(5) Local Crawling</a></li>
+                #(p2p)#::<li><a href="/CrawlResults.html?process=6">(6) Global Crawling</a></li>#(/p2p)#
+                <li><a href="/CrawlResults.html?process=7" class="lock">(7) Surrogate Import</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li><span>Index Administration</span>
+          <ul class="hidden">
+            <li><a href="/IndexControlURLs_p.html" class="lock">URL Database Administration</a></li>
+            <li><a href="/IndexDeletion_p.html" class="lock">Index Deletion</a></li>
+            <li><a href="/IndexFederated_p.html" class="lock">Index Sources &amp; Targets</a></li>
+            <li><a href="/IndexSchema_p.html" class="lock">Solr Schema Editor</a></li>
+            <li><a href="/IndexReIndexMonitor_p.html" class="lock">Field Re-Indexing</a></li>
+            #(p2p)#::<li><a href="/IndexControlRWIs_p.html" class="lock">Reverse Word Index</a></li>#(/p2p)#
+            <!--<li><a href="/IndexControlCleaner_p.html" class="lock">Index Cleaner</a></li>-->
+            <!--<li><a href="/ContentAnalysis_p.html" class="lock">Content Analysis</a></li>-->
+            <li><a href="/ConfigHTCache_p.html" class="lock">Web Cache</a></li>
+            <li><a href="/ConfigParser.html" class="lock">Parser Configuration</a></li>
+          </ul>
+        </li>
+        <li><span>Filter &amp; Blacklists</span>
+          <ul class="hidden">
+            <li><a href="/Blacklist_p.html" class="lock">Blacklist Administration</a></li>
+            <li><a href="/BlacklistCleaner_p.html" class="lock">Blacklist Cleaner</a></li>
+            <li><a href="/BlacklistTest_p.html" class="lock">Blacklist Test</a></li>
+            <li><a href="/BlacklistImpExp_p.html" class="lock">Import/Export</a></li>
+            <li><a href="/ContentControl_p.html" class="lock">Content Control</a></li>
+          </ul>
+        </li>
+        <li><span>Content Semantic</span>
+          <ul class="hidden">
+            <li><span>Automated Annotation</span>
+              <ul class="hidden">
+                <li><a href="/Vocabulary_p.html" class="lock">Auto-Annotation Vocabulary Editor</a></li>
+                <li><a href="/DictionaryLoader_p.html" class="lock">Knowledge Loader</a></li>
+              </ul>
+            </li>
+            <li><span>Augmented Content</span>
+              <ul class="hidden">
+                <li><a href="/AugmentedBrowsing_p.html" class="lock">Augmented Browsing</a></li>
+                <li><a href="/AugmentedBrowsingFilters_p.html" class="lock">Filters and Modules</a></li>
+                <li><a href="/AugmentedParsing_p.html" class="lock">Augmented Parsing</a></li>
+              </ul>
+            </li>
+            <li><span>Linked Data</span>
+              <ul class="hidden">
+                <li><a href="/Triplestore_p.html" class="lock">Triplestore</a></li>
+                <li><a href="/Triple_p.html" class="lock">Query</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li><span>Target Analysis</span>
+          <ul class="hidden">
+            <li><a href="/Tables_p.html?table=robots&count=100" class="lock">Robots.txt Database</a></li>
+            <li><a href="/CrawlCheck_p.html" class="lock">Mass Crawl Check</a></li>
+            <li><a href="/RegexTest.html">Regex Test</a></li>
+          </ul>
+        </li>
+        <li><a href="/Table_API_p.html" class="lock">Process Scheduler</a></li>
+      </ul>
+    </li>
+    <li><span>Monitoring</span>
+      <ul class="hidden">
+        <li><a href="/Network.html">YaCy Network</a></li>
+        <li><span>Web Visualization</span>
+          <ul class="hidden">
+            <li><a href="/WatchWebStructure_p.html?host=auto&amp;depth=3&amp;time=1000" class="lock">Web Structure</a></li>
+            <li><a href="/Collage.html">Image Collage</a></li>
+          </ul>
+        </li>
+        <li><span>Network Access</span>
+          <ul class="hidden">
+            <li><span>Server Access</span>
+              <ul class="hidden">
+                <li><a href="/AccessGrid_p.html" class="lock">Access Grid</a></li>
+                <li><a href="/AccessTracker_p.html?page=0" class="lock">Incoming Requests Overview</a></li>
+                <li><a href="/AccessTracker_p.html?page=1" class="lock">Incoming Requests Details</a></li>
+                <li><a href="/Connections_p.html" class="lock">All Connections</a></li>
+              </ul>
+            </li>
+            <li><span>Local Search</span>
+              <ul class="hidden">
+                <li><a href="/AccessTracker_p.html?page=2" class="lock">Log</a></li>
+                <li><a href="/AccessTracker_p.html?page=3" class="lock">Host Tracker</a></li>
+              </ul>
+            </li>
+            <li><span>Remote Search</span>
+              <ul class="hidden">
+                <li><a href="/AccessTracker_p.html?page=4" class="lock">Log</a></li>
+                <li><a href="/AccessTracker_p.html?page=5" class="lock">Host Tracker</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li><span>Computation</span>
+          <ul class="hidden">
+            <li><span>Processes</span>
+              <ul class="hidden">
+                <li><a href="/ViewLog_p.html" class="lock">Server Log</a></li>
+                <li><a href="/PerformanceConcurrency_p.html" class="lock">Concurrent Indexing</a></li>
+                <li><a href="/PerformanceMemory_p.html" class="lock">Memory Usage</a></li>
+                <li><a href="/PerformanceSearch_p.html" class="lock">Search Sequence</a></li>
+              </ul>
+            </li>
+            <li><span>Messages</span>
+              <ul class="hidden">
+                <li><a href="/News.html">Overview</a></li>
+                <li><a href="/News.html?page=1">Incoming&nbsp;News</a></li>
+                <li><a href="/News.html?page=2">Processed&nbsp;News</a></li>
+                <li><a href="/News.html?page=3">Outgoing&nbsp;News</a></li>
+                <li><a href="/News.html?page=4">Published&nbsp;News</a></li>
+              </ul>
+            </li>
+            <li><span>Community Data</span>
+              <ul class="hidden">
+                <li><a href="/Surftips.html">Surftips</a></li>
+                <li><a href="/Wiki.html?display=1">Local Peer Wiki</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li><a href="/terminal_p.html" class="lock">Terminal</a></li>
+      </ul>
+    </li>
+    <li><span>Peer</span>
+      <ul class="hidden">
+        <li><span>Admin Console</span>
+          <ul class="hidden">
+            <li><span>Peer Administration Console</span>
+              <ul class="hidden">
+                <li><a href="/Status.html">Status</a></li>
+                <li><a href="/ConfigBasic.html" class="lock">Basic Configuration</a></li>
+                <li><a href="/ConfigAccounts_p.html" class="lock">Accounts</a></li>
+                <li><a href="/ConfigNetwork_p.html" class="lock">Network Configuration</a></li>
+                <li><a href="/ConfigUpdate_p.html" class="lock">Download System Update</a></li>
+              </ul>
+            </li>
+            <li><span>Advanced Settings</span>
+              <ul class="hidden">
+                <li><a href="/Performance_p.html" class="lock">Performance</a></li>
+                <li><a href="/Settings_p.html" class="lock">Advanced Settings</a></li>
+                <li><a href="/ConfigRobotsTxt_p.html" class="lock">Local robots.txt</a></li>
+                <li><a href="/ConfigProperties_p.html" class="lock">Advanced Properties</a></li>
+                <li><a href="/Threaddump_p.html" class="lock">Thread Dump</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li><a href="/Steering.html?restart=" class="lock" onclick="return confirm('Confirm Restart')">Re-Start</a></li>
+        <li><a href="/Steering.html?shutdown=" class="lock" onclick="return confirm('Confirm Shutdown')">Shutdown</a></li>
+      </ul>
+    </li>
+    <li><span>Project</span>
+      <ul class="hidden">
+        <li><a href="http://www.yacy.net/" target="_blank">Project Home</a></li>
+        <li><a href="/Help.html" target="_blank">Tutorials</a></li>
+        <li><a href="http://forum.yacy.de" target="_blank">Forum/Discussion</a></li>
+        <li><a href="http://wiki.yacy.de" target="_blank">Project Wiki</a></li>
+        <li><a href="https://gitorious.org/yacy/rc1/commits/master" target="_blank">Git Repository</a></li>
+        <li><a href="http://bugs.yacy.net" target="_blank">Bugtracker</a></li>
+        <li><a href="#(newpeer)#http://www.yacystats.de/peer/#[peerhash]#::http://www.yacystats.de#(/newpeer)#" target="_blank">#(newpeer)#Peer Statistics::YaCy Statistics#(/newpeer)#</a></li>
+      </ul>
+    </li>
+  </ul>
+  <div id="navSub" class="hidden">
+    <div class="wrap">
+      <div class="content"></div>
+    </div>
+  </div>
+  <div class="clear"></div>
+</nav>
+<div id="menuToggle" class="hidden"></div>
+<div id="breadCrumb"></div>

@@ -21,7 +21,6 @@
 package net.yacy.cora.federate.solr.connector;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -70,7 +69,7 @@ public abstract class AbstractSolrConnector implements SolrConnector {
         catchSuccessQuery.setRows(0);
         catchSuccessQuery.setStart(0);
     }
-    private final static int pagesize = 100;
+    protected final static int pagesize = 100;
     
     @Override
     public boolean existsByQuery(final String query) throws IOException {
@@ -83,10 +82,10 @@ public abstract class AbstractSolrConnector implements SolrConnector {
     }
     
     @Override
-    public Object getFieldById(final String key, final String field) throws IOException {
+    public String getFieldById(final String key, final String field) throws IOException {
         SolrDocument doc = getDocumentById(key, field);
         if (doc == null) return null;
-        return doc.getFieldValue(field);
+        return doc.getFieldValue(field).toString();
     }
     
     /**
@@ -116,8 +115,8 @@ public abstract class AbstractSolrConnector implements SolrConnector {
                             try {queue.put(d);} catch (final InterruptedException e) {break;}
                             count++;
                         }
-                        if (sdl.size() < pagesize) break;
-                        o += pagesize;
+                        if (sdl.size() <= 0) break;
+                        o += sdl.size();
                     } catch (final SolrException e) {
                         break;
                     } catch (final IOException e) {
@@ -145,8 +144,8 @@ public abstract class AbstractSolrConnector implements SolrConnector {
                         for (SolrDocument d: sdl) {
                             try {queue.put((String) d.getFieldValue(CollectionSchema.id.getSolrFieldName()));} catch (final InterruptedException e) {break;}
                         }
-                        if (sdl.size() < pagesize) break;
-                        o += pagesize;
+                        if (sdl.size() <= 0) break;
+                        o += sdl.size();
                     } catch (final SolrException e) {
                         break;
                     } catch (final IOException e) {
@@ -235,7 +234,7 @@ public abstract class AbstractSolrConnector implements SolrConnector {
      * @return a collection of a subset of the ids which exist in the index
      * @throws IOException
      */
-    public Set<String> existsByIds(Collection<String> ids) throws IOException {
+    public Set<String> existsByIds(Set<String> ids) throws IOException {
         if (ids == null || ids.size() == 0) return new HashSet<String>();
         // construct raw query
         final SolrQuery params = new SolrQuery();
@@ -306,6 +305,7 @@ public abstract class AbstractSolrConnector implements SolrConnector {
         params.setRows(0);
         params.setStart(0);
         params.setFacet(true);
+        params.setFacetMinCount(1); // there are many 0-count facets in the uninverted index cache
         params.setFacetLimit(maxresults);
         params.setFacetSort(FacetParams.FACET_SORT_COUNT);
         params.setParam(FacetParams.FACET_METHOD, FacetParams.FACET_METHOD_fcs);
@@ -329,11 +329,11 @@ public abstract class AbstractSolrConnector implements SolrConnector {
     }
     
     @Override
-    public SolrDocument getDocumentById(final String key, final String ... fields) throws IOException {
+    public SolrDocument getDocumentById(final String id, final String ... fields) throws IOException {
         final SolrQuery query = new SolrQuery();
-        assert key.length() == 12;
+        assert id.length() == 12;
         // construct query
-        query.setQuery("{!raw f=" + CollectionSchema.id.getSolrFieldName() + "}" + key);
+        query.setQuery("{!raw f=" + CollectionSchema.id.getSolrFieldName() + "}" + id);
         query.clearSorts();
         query.setRows(1);
         query.setStart(0);
