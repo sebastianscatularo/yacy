@@ -6,13 +6,12 @@
   </head>
   <body id="ConfigNetwork">
     #%env/templates/header.template%#
-    #%env/templates/submenuSearchConfiguration.template%#
     <h2>Heuristics Configuration</h2>
     <p>
     A <a href="http://en.wikipedia.org/wiki/Heuristic">heuristic</a> is an 'experience-based technique that help in problem solving, learning and discovery' (wikipedia). The search heuristics that can be switched on here are techniques that help the discovery of possible search results based on link guessing, in-search crawling and requests to other search engines.
     When a search heuristic is used, the resulting links are not used directly as search result but the loaded pages are indexed and stored like other content. This ensures that blacklists can be used and that the searched word actually appears on the page that was discovered by the heuristic.
     </p>
-    
+
     <form action=""><fieldset>
     The success of heuristics are marked with an image (<img width="16" height="9" src="/env/grafics/heuristic_redundant.gif" title="heuristic:&lt;name&gt; (redundant)" style="width:16px; height:9px;" alt="heuristic:&lt;name&gt; (redundant)"/>/<img width="16" height="9" src="/env/grafics/heuristic_new.gif" title="heuristic:&lt;name&gt; (new link)" style="width:16px; height:9px;" alt="heuristic:&lt;name&gt; (new link)"/>) below the favicon left from the search result entry:
     <dl>
@@ -29,7 +28,7 @@
           The search result was discovered by a heuristic, not previously known by YaCy
         </dd>
     </dl></fieldset></form>
-    
+
     <form id="HeuristicFormSite" method="post" action="ConfigHeuristics_p.html" enctype="multipart/form-data" accept-charset="UTF-8">
     <fieldset>
       <legend>
@@ -43,7 +42,7 @@
       </p>
     </fieldset>
     </form>
-    
+
     <form id="HeuristicFormSearchResult" method="post" action="ConfigHeuristics_p.html" enctype="multipart/form-data" accept-charset="UTF-8">
         <fieldset>
             <table>
@@ -70,7 +69,7 @@
       </p>
     </fieldset>
     </form>
-    
+
     <form id="HeuristicFormTwitter" method="post" action="ConfigHeuristics_p.html" enctype="multipart/form-data" accept-charset="UTF-8">
     <fieldset>
       <legend>
@@ -83,7 +82,7 @@
       </p>
     </fieldset>
     </form>
-    
+
     <form id="HeuristicFormBlekko" method="post" action="ConfigHeuristics_p.html" enctype="multipart/form-data" accept-charset="UTF-8">
     <fieldset>
       <legend>

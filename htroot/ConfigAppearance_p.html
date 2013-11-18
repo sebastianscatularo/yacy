@@ -7,7 +7,6 @@
   </head>
   <body id="ConfigSkins">
     #%env/templates/header.template%#
-    #%env/templates/submenuSearchConfiguration.template%#
 
     <script type="text/javascript" src="/yacy/ui/js/jquery.colorpicker.js"></script>
 	<script type="text/javascript">
@@ -34,7 +33,7 @@
       If you <a href="ConfigPortal.html">create a search portal with YaCy</a> then you can
       change the appearance of the search page here.
     </p>
-    
+
     <form action="ConfigAppearance_p.html" accept-charset="UTF-8">
       <fieldset>
       <legend>Skin Selection</legend>
@@ -42,7 +41,7 @@
         <dl>
           <dt><label for="cur_skin">Current skin</label>:</dt>
           <dd id="cur_skin">#[currentskin]#&nbsp;</dd>
-          
+
           <dt><label for="skins">Available Skins</label>:</dt>
           <dd>
             <select id="skins" name="skin">#{skinlist}#
@@ -57,7 +56,7 @@
         </dl>
       </fieldset>
     </form>
-    
+
     <form action="ConfigAppearance_p.html" accept-charset="UTF-8">
       <fieldset>
       <legend>Skin Color Definition</legend>
@@ -90,7 +89,7 @@
         </td></tr></table>
       </fieldset>
     </form>
-    
+
     <form action="ConfigAppearance_p.html" accept-charset="UTF-8">
       <fieldset>
         <legend>Skin Download</legend>
@@ -98,7 +97,7 @@
         <dl>
           <dt><label for="url">Install new skin from URL</label>:</dt>
           <dd><input type="text" name="url" id="url" size="30" /></dd>
-          
+
           <dt><label for="use_url">Use this skin</label></dt>
           <dd><input type="checkbox" name="use_skin" id="use_url" value="on" checked="checked" /></dd>
           <dt>&nbsp;</dt>
@@ -108,8 +107,8 @@
            might overwrite existing data if a file of the same name exists already.</p>
       </fieldset>
     </form>
-    
-    
+
+
     #(status)#
     ::<p><strong>Unable to get URL: #[url]#</strong></p>
     ::<p><strong>Error saving the skin.</strong></p>

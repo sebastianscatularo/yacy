@@ -6,7 +6,6 @@
   </head>
   <body id="RankingSolr_p">
     #%env/templates/header.template%#
-    #%env/templates/submenuSearchConfiguration.template%#
     <h2>Solr Ranking Configuration</h2>
     <p>These are ranking attributes for Solr. This ranking applies for internal and remote (P2P or shard) Solr access.</p>
 
@@ -64,7 +63,7 @@
         <input type="hidden" name="profileNr" value="#[profileNr]#" />
         <legend>Solr Boosts</legend>
         This is the set of searchable fields. Entries without a boost value are not searched. Boost values make hits inside the corresponding field more important.
-        <dl style="margin:0;">#{boosts}# 
+        <dl style="margin:0;">#{boosts}#
           <dt style="width:260px;margin:0;padding:0;height:1.8em;"><label for="boost_#[field]#">#[field]#</label>
             <input type="checkbox" id="#[field]#" name="#[field]#"#(checked)#:: checked="checked"#(/checked)#
             onclick="if (document.getElementById('#[field]#').checked) document.getElementById('boost_#[field]#').value='1.0'; else document.getElementById('boost_#[field]#').value='';"/>
