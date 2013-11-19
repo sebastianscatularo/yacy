@@ -128,16 +128,19 @@ YaCyUi.DataStore = {
 YaCyUi.init = function() {
   var modules = {};
 
-  var devInfoBtn = $('<button>hide</button>');
-  devInfoBtn.on('click', function() {
-    $(this).parent().remove();
-  });
-  $('#devInfo').prepend(devInfoBtn).prepend('<u><strong>Developer notice:</strong></u>&nbsp;');
+  // temporary developer info controls
+  if ($('#devInfo').size() > 0) {
+    var devInfoBtn = $('<button>hide</button>');
+    devInfoBtn.on('click', function() {
+      $(this).parent().remove();
+    });
+    $('#devInfo').prepend(devInfoBtn).prepend('<u><strong>Developer notice:</strong></u>&nbsp;');
+  }
 
   // Create buttonsets
-  $('.buttonSet').each(function() {
+  /*$('.buttonSet').each(function() {
     $(this).buttonset();
-  });
+  });*/
 
   // create main menu
   YaCyUi.MainMenu = new YaCyUi.Func.MainMenu();
@@ -148,7 +151,7 @@ YaCyUi.init = function() {
     modules.form.init();
   }
 
-  // API bubbles
+  // API bubbles: more info dialog
   var apiInfo = $('#api').children('div');
   if (apiInfo.size() > 0) {
     var apiBubble = $('#api').children('img');
@@ -167,6 +170,25 @@ YaCyUi.init = function() {
     });
     apiBubble.on('click', function() {
       apiInfoDialog.dialog('open');
+    });
+  }
+
+  // make tables sortable, if any and script is loaded
+  if(jQuery().tablesorter) {
+    // custom table data extraction for date sorting - TODO: is this needed?
+    var parseData = function(node) {
+      var datePattern = /(\d{2}).(\d{2}).(\d{4})\s(\d{2}:\d{2}:\d{2})/;
+      var dateReplace = '$3-$2-$1 $4';
+      var nodeData = node.innerHTML;
+      if (nodeData.match(datePattern)) {
+        return nodeData.replace(datePattern, dateReplace);
+      }
+      return nodeData;
+    };
+    $('table.sortable').each(function(){
+      $(this).tablesorter({
+        textExtraction: parseData
+      });
     });
   }
 

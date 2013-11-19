@@ -2433,7 +2433,7 @@
 .ym-wbox {
   padding: 1.5em; }
 
-#nav,
+nav,
 #navSub, #breadCrumb, fieldset .content, fieldset.formSection > legend, header .logo, table th, body#crawlStartExpert #formReview dt {
   font-family: "Droid Sans", Arial, Helvetica, sans-serif; }
 
@@ -2444,13 +2444,13 @@ select,
   font-family: Arial, Helvetica, sans-serif; }
 
 #breadCrumb span:not(:last-of-type):after, #breadCrumb:before, .formHint > *:before, .resourceQueryBox .queryBox:after, a[href^="http://"]:before,
-a[href^="https://"]:before, .icon-item-new:before, .icon-item-queued:before, .icon-item-done:before, body#crawlStartExpert #startPointDetails .ycu-data-true:before,
+a[href^="https://"]:before, .icon-item-new:before, .icon-item-queued:before, .icon-item-done:before, table.sortable th:after, body#crawlStartExpert #startPointDetails .ycu-data-true:before,
 body#crawlStartSite #startPointDetails .ycu-data-true:before, body#crawlStartExpert #startPointDetails .ycu-data-false:before,
 body#crawlStartSite #startPointDetails .ycu-data-false:before, body#crawlStartExpert #formReview dt:not(.notConfigured):before, body#crawlStartExpert .ycu-data-true:before, body#crawlStartExpert .ycu-data-false:before, button:before, fieldset.collapsible > legend:hover:before, fieldset.collapsible.collapsed > legend:before {
   opacity: 0.7; }
 
 #breadCrumb span:not(:last-of-type):after, #breadCrumb:before, .formHint > *:before, .resourceQueryBox .queryBox:after, a[href^="http://"]:before,
-a[href^="https://"]:before, .icon-item-new:before, .icon-item-queued:before, .icon-item-done:before, body#crawlStartExpert #startPointDetails .ycu-data-true:before,
+a[href^="https://"]:before, .icon-item-new:before, .icon-item-queued:before, .icon-item-done:before, table.sortable th:after, body#crawlStartExpert #startPointDetails .ycu-data-true:before,
 body#crawlStartSite #startPointDetails .ycu-data-true:before, body#crawlStartExpert #startPointDetails .ycu-data-false:before,
 body#crawlStartSite #startPointDetails .ycu-data-false:before, body#crawlStartExpert #formReview dt:not(.notConfigured):before, body#crawlStartExpert .ycu-data-true:before, body#crawlStartExpert .ycu-data-false:before, #navSub li a:after,
 #navSub li span:after, fieldset.collapsible > legend:before, fieldset.formSection .hasHelp:before, fieldset.formGroup > legend:before, fieldset.formGroup > legend:after, .formHint:before {
@@ -2459,7 +2459,7 @@ body#crawlStartSite #startPointDetails .ycu-data-false:before, body#crawlStartEx
   font-size: 0.85em; }
 
 #breadCrumb span:not(:last-of-type):after, #breadCrumb:before, .formHint > *:before, .resourceQueryBox .queryBox:after, a[href^="http://"]:before,
-a[href^="https://"]:before, .icon-item-new:before, .icon-item-queued:before, .icon-item-done:before, body#crawlStartExpert #startPointDetails .ycu-data-true:before,
+a[href^="https://"]:before, .icon-item-new:before, .icon-item-queued:before, .icon-item-done:before, table.sortable th:after, body#crawlStartExpert #startPointDetails .ycu-data-true:before,
 body#crawlStartSite #startPointDetails .ycu-data-true:before, body#crawlStartExpert #startPointDetails .ycu-data-false:before,
 body#crawlStartSite #startPointDetails .ycu-data-false:before, body#crawlStartExpert #formReview dt:not(.notConfigured):before, body#crawlStartExpert .ycu-data-true:before, body#crawlStartExpert .ycu-data-false:before, #navSub li a:after,
 #navSub li span:after, fieldset.collapsible > legend:before, fieldset.formSection .hasHelp:before {
@@ -2467,21 +2467,32 @@ body#crawlStartSite #startPointDetails .ycu-data-false:before, body#crawlStartEx
 
 /**********
  * Main navigation. */
+header.withNav {
+  position: relative; }
+  header.withNav nav {
+    position: absolute;
+    bottom: 0;
+    left: 0.5em; }
+  header.withNav ul {
+    font-size: 0.8em; }
+
+nav ul.main {
+  padding-bottom: 0 !important;
+  padding-left: 99px; }
+  nav ul.main > li {
+    float: left;
+    padding: 0.3em 0.3em;
+    margin: 0 0.2em; }
+
 #nav {
   border-bottom: 3px solid #94c6e4;
   border-top: 1px dotted #5a5a5a;
   background-color: #222; }
-  #nav ul.main {
-    padding-bottom: 0 !important;
-    padding-left: 99px; }
-    #nav ul.main > li {
-      float: left;
-      padding: 0.3em 0.3em;
-      margin: 0 0.2em;
-      border-top-left-radius: 5px;
-      border-top-right-radius: 5px; }
-      #nav ul.main > li:hover, #nav ul.main > li.active {
-        background-color: #666; }
+  #nav ul.main > li {
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px; }
+    #nav ul.main > li:hover, #nav ul.main > li.active {
+      background-color: #666; }
 
 #navSub {
   border-top: 3px solid #666666;
@@ -2542,19 +2553,19 @@ body#crawlStartSite #startPointDetails .ycu-data-false:before, body#crawlStartEx
     #navSub div.menuLevel-3 li:hover {
       background-color: #8f8f8f; }
 
-#nav ul,
+nav ul,
 #navSub ul {
   margin: 0;
   padding: 0.5em 0; }
-#nav li,
+nav li,
 #navSub li {
   list-style-type: none; }
-  #nav li *,
+  nav li *,
   #navSub li * {
     color: #fff;
     text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3); }
-#nav a,
-#nav span,
+nav a,
+nav span,
 #navSub a,
 #navSub span {
   cursor: pointer;
@@ -3054,22 +3065,6 @@ header {
   #api img.hasInfo {
     cursor: pointer; }
 
-table tbody tr:nth-child(odd) {
-  background-color: #cbd8ec; }
-table tbody tr:nth-child(even) {
-  background-color: #b9cae5; }
-table tbody tr:hover {
-  background-color: #f1f4fa; }
-
-table.sortable {
-  /*tbody:hover {
-      background-color:#F8F8F8;
-  }*/ }
-  table.sortable th {
-    cursor: pointer;
-    color: #555;
-    border-color: #555; }
-
 .icon-item-new:before {
   content: "\f0fe"; }
 
@@ -3082,6 +3077,26 @@ table.sortable {
 /* Dynamic content initial hidden to prevent 'flickering'. */
 .hidden {
   display: none; }
+
+/**********
+ * Tables. */
+table tbody tr:nth-child(odd) {
+  background-color: #cbd8ec; }
+table tbody tr:nth-child(even) {
+  background-color: #b9cae5; }
+table tbody tr:hover {
+  background-color: #f1f4fa; }
+
+table.sortable th {
+  cursor: pointer;
+  color: #555;
+  border-color: #555; }
+  table.sortable th:after {
+    padding-left: 0.3em; }
+  table.sortable th.headerSortDown:after {
+    content: "\f0d7"; }
+  table.sortable th.headerSortUp:after {
+    content: "\f0d8"; }
 
 /** jQuery Ui customizations **/
 /** jQuery UI customs */
@@ -3226,3 +3241,7 @@ body#crawlStartExpert .reviewHeader {
   padding: 1.5em 1em; }
 body#crawlStartExpert .reviewContent {
   clear: both; }
+
+body#yacySearch #searchBox {
+  background-color: #222;
+  padding: 0.5em; }

@@ -3,12 +3,12 @@
   <head>
     <title>YaCy '#[clientname]#': Server Connection Tracking</title>
     #%env/templates/metas.template%#
+    <script type="text/javascript" src="/js/yaml/tablesorter/jquery.tablesorter.min.js"></script>
     <meta http-equiv="REFRESH" content="3" />
   </head>
   <body id="Connections">
     #%env/templates/header.template%#
-    
-    <script type="text/javascript" src="/js/sorttable.js"></script>
+
     <h2>Server Connection Tracking</h2>
     <h3>Incoming Connections</h3>
     <p>Showing #[numActiveRunning]# active, #[numActivePending]# pending connections from a max. of #[numMax]# allowed incoming connections.</p>
@@ -57,7 +57,7 @@
       </tr>
       #{/clientList}#
     </table>
-    
+
     #%env/templates/footer.template%#
   </body>
 </html>

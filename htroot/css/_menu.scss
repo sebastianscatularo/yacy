@@ -4,12 +4,21 @@
 $ycu-var-color-sumbenu-bg:#666;
 $ycu-var-color-nav-border:#94C6E4;
 
-#nav {
-  border-bottom:3px solid $ycu-var-color-nav-border;
-  border-top:1px dotted #5a5a5a;
-  background-color:#222;
+header.withNav {
+  position:relative;
 
-  // top level
+  nav {
+    position:absolute;
+    bottom:0;
+    left:0.5em;
+  }
+
+  ul {
+    font-size:0.8em;
+  }
+}
+
+nav {
   ul.main {
     padding-bottom:0 !important;
     padding-left:99px;
@@ -18,6 +27,18 @@ $ycu-var-color-nav-border:#94C6E4;
       float:left;
       padding:0.3em 0.3em;
       margin:0 0.2em;
+    }
+  }
+}
+
+#nav {
+  border-bottom:3px solid $ycu-var-color-nav-border;
+  border-top:1px dotted #5a5a5a;
+  background-color:#222;
+
+  // top level
+  ul.main {
+    > li {
       border: {
         top-left-radius:5px;
         top-right-radius:5px;
@@ -112,7 +133,7 @@ $ycu-var-color-nav-border:#94C6E4;
   }
 }
 
-#nav,
+nav,
 #navSub {
   @extend %font-sans;
 

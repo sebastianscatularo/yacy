@@ -42,25 +42,24 @@
       <li><a class="ym-skip" href="#main">Skip to main content (Press Enter)</a></li>
     </ul>
 
-    <header>
+    <header class="withNav">
       <div class="logo">
         <img src="/env/grafics/YaCyLogo_60ppi.png" width="103" height="60"/>
-        <div>Administration</div>
       </div>
+      <nav>
+        #(topmenu)#
+        #%env/templates/embeddedheader.template%#
+        ::
+        #%env/templates/simpleheader.template%#
+        #(/topmenu)#
+      </nav>
     </header>
-
-    <nav>
-    </nav>
 
     <main>
       <div class="ym-wrapper">
         <div class="ym-wbox">
 
-    #(topmenu)#
-    #%env/templates/embeddedheader.template%#
-    ::
-    #%env/templates/simpleheader.template%#
-    #(/topmenu)#
+
 
     #(pi)#::
     <div style="position:fixed; bottom: 0; right: 1px;"><a href="/Status.html">&pi;</a></div>

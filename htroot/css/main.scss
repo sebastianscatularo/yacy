@@ -161,6 +161,27 @@ header {
   }
 }
 
+// general icon classes
+.icon-item-new:before {
+  @extend %icon-block-light;
+  content:'#{$fa-var-plus-square}';
+}
+.icon-item-queued:before {
+  @extend %icon-block-light;
+  content:'#{$fa-var-retweet}';
+}
+.icon-item-done:before {
+  @extend %icon-block-light;
+  content:'#{$fa-var-check-square}';
+}
+
+/* Dynamic content initial hidden to prevent 'flickering'. */
+.hidden {
+  display:none;
+}
+
+/**********
+ * Tables. */
 // general tables
 table {
   $color-cell-base:$ycu-var-color-fieldset-bg;
@@ -189,30 +210,20 @@ table.sortable {
     cursor:pointer;
     color:#555;
     border-color:#555;
+
+    &:after {
+      @extend %icon-block-light;
+      padding-left:0.3em;
+    }
+
+    &.headerSortDown:after {
+      content:'#{$fa-var-caret-down}';
+    }
+
+    &.headerSortUp:after {
+      content:'#{$fa-var-caret-up}';
+    }
   }
-
-  /*tbody:hover {
-      background-color:#F8F8F8;
-  }*/
-}
-
-// general icon classes
-.icon-item-new:before {
-  @extend %icon-block-light;
-  content:'#{$fa-var-plus-square}';
-}
-.icon-item-queued:before {
-  @extend %icon-block-light;
-  content:'#{$fa-var-retweet}';
-}
-.icon-item-done:before {
-  @extend %icon-block-light;
-  content:'#{$fa-var-check-square}';
-}
-
-/* Dynamic content initial hidden to prevent 'flickering'. */
-.hidden {
-  display:none;
 }
 
 /** jQuery Ui customizations **/

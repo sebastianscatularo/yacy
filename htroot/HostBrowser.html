@@ -4,6 +4,7 @@
   <head>
     <title>YaCy '#[clientname]#': Host Browser</title>
     #%env/templates/metas.template%#
+    <script type="text/javascript" src="/js/yaml/tablesorter/jquery.tablesorter.min.js"></script>
   <script type="text/javascript">
 //<![CDATA[
 function xmlhttpPost() {
@@ -15,7 +16,7 @@ function search(query) {
     var xmlHttpReq = false;
     var self = this;
     if (window.XMLHttpRequest) { // Mozilla/Safari
-        self.xmlHttpReq = new XMLHttpRequest(); 
+        self.xmlHttpReq = new XMLHttpRequest();
     }
     else if (window.ActiveXObject) { // IE
         self.xmlHttpReq = new ActiveXObject("Microsoft.XMLHTTP");
@@ -37,9 +38,9 @@ function updatepage(str) {
   var startIndex = firstChannel.startIndex;
   var itemsPerPage = firstChannel.itemsPerPage;
   var navigation = firstChannel.navigation;
-  
+
   var html = "";
-  
+
   if (totalResults > 0 && firstChannel.items.length > 0) {
     var item;
     html += "<table class=\"networkTable\" border=\"0\" cellpadding=\"2\" cellspacing=\"1\" width=\"99%\">";
@@ -55,7 +56,6 @@ function updatepage(str) {
 }
 //]]>
 </script>
-<script type="text/javascript" src="/js/sorttable.js"></script>
   </head>
   <body id="IndexControl">
     #(topmenu)#
@@ -73,7 +73,7 @@ function updatepage(str) {
     <p>Browse the index of #[ucount]# documents. Enter a host or an URL for a file list or view a list of <a href="/HostBrowser.html?hosts=">all hosts</a>, <a href="/HostBrowser.html?hosts=crawling">only hosts with urls pending in the crawler</a> or <a href="/HostBrowser.html?hosts=error">only with load errors</a>.</p>
     <form action="HostBrowser.html" id="searchform" method="get" onkeyup="xmlhttpPost(); return false;">
     <fieldset class="yacys">
-      Host/URL: 
+      Host/URL:
       <input id="search" type="text" name="path" value="#[path]#" size="80" maxlength="250" />
       <input type="submit" name="list" value="Browse Host" class="submitready" style="width:240px;"/>
       #(delete)#::<input type="submit" name="delete" value="Delete Subpath" class="submitready" style="width:240px;" onclick="return confirm('Confirm Deletion')"/>#(/delete)#
@@ -82,7 +82,7 @@ function updatepage(str) {
     </fieldset>
     </form>
     #[result]#
-    
+
     #(hosts)#::
      <fieldset><legend>Host List</legend>
       #{list}#
@@ -99,7 +99,7 @@ function updatepage(str) {
         </div>
     </fieldset>
     #(/hosts)#
-    
+
     #(files)#::
      <fieldset><legend>Browser for <a href="#[path]#" target="_blank">#[path]#</a></legend>
      <p>documents stored for host: #[hostsize]#; documents stored for subpath: #[subpathloadsize]#; unloaded documents detected in subpath: #[subpathdetectedsize]# <!-- #(complete)#;<a href="/HostBrowser.html?complete=true&path=#[path]#">get complete list</a>::<a href="/HostBrowser.html?path=#[path]#">directory view</a>#(/complete)#-->
@@ -147,7 +147,7 @@ function updatepage(str) {
       </table>
     </fieldset>
     #(/files)#
-    
+
     #(outbound)#::
      <fieldset><legend>Outbound Links, outgoing from #[host]# - Host List</legend>
       #{list}#
@@ -175,10 +175,10 @@ function updatepage(str) {
     </fieldset>
     #(/inbound)#
 
-    #(admin)#:: 
-    #%HostBrowserAdmin_p.html%# 
+    #(admin)#::
+    #%HostBrowserAdmin_p.html%#
     #(/admin)#
-    
+
     #%env/templates/footer.template%#
   </body>
 </html>

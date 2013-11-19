@@ -1,8 +1,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" >
 <head>
-  #%env/templates/metas.template%#
   <title>YaCy '#[clientname]#': Configuration of a RSS Search</title>
+  #%env/templates/metas.template%#
+  <script type="text/javascript" src="/js/yaml/tablesorter/jquery.tablesorter.min.js"></script>
   <script type="text/javascript" src="/js/yaml/loadRss.js"></script>
   <script type="text/javascript">
     <!--
@@ -16,7 +17,6 @@
     };
     -->
   </script>
-  <script type="text/javascript" src="/js/sorttable.js"></script>
 </head>
 
 <body id="loadRss">
@@ -202,16 +202,16 @@ TODO:
                   <th>Recording</th>
                 </tr>
               </thead>
-              #{list}#
               <tbody>
+                #{list}#
                 <tr class="TableCellLight">
                   <td align="left"><input type="checkbox" name="item_#[count]#" value="mark_#[pk]#" /></td>
                   <td><a href="/Load_RSS_p.html?showrss=&amp;url=#[rss]#">#[title]#</a></td>
                   <td><a href="/Load_RSS_p.html?showrss=&amp;url=#[rss]#">#[rss]#</a><br/><a href="#[referrer]#">#[referrer]#</a></td>
                   <td>#[recording]#</td>
                 </tr>
+                #{/list}#
               </tbody>
-              #{/list}#
             </table>
             <p>
               <input type="hidden" name="num" value="#[num]#" />
