@@ -18,4 +18,28 @@ YaCyPage.init = function() {
 
   // handle navigational keys
   $(document).on('keydown', YaCyPage.eventHandler.handleArrowKeys);
+
+  // add autocomplete to search field
+  $('#search').autocomplete({
+    source: function(request, response) {
+      $.ajax({
+        url:'/suggest.json',
+        type: 'POST',
+        data:{
+          query: request.term
+        },
+        success: function(data) {
+          response(
+            $.map(data[1], function(item) {
+              console.debug('suggest-item', item);
+              return {
+                label: item
+              };
+            })
+          );
+        }
+      })
+    },
+    minLength: 2
+  });
 };
