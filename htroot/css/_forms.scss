@@ -119,6 +119,10 @@ button {
     content:'#{$fa-var-exclamation-triangle}\00a0';
   }
 
+  &.icon-search:before {
+    content:'#{$fa-var-search}\00a0';
+  }
+
   &.icon-revert:before {
     content:'#{$fa-var-times}\00a0';
   }
@@ -151,7 +155,7 @@ button {
   }
 
   // button with icon first
-  &:before {
+  &[class^='icon-']:before {
     @include icon-font;
     @extend %opaque-light;
     float:left;

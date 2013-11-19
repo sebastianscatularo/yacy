@@ -2434,7 +2434,7 @@
   padding: 1.5em; }
 
 nav,
-#navSub, #breadCrumb, fieldset .content, fieldset.formSection > legend, header .logo, table th, body#crawlStartExpert #formReview dt {
+#navSub, #breadCrumb, fieldset .content, fieldset.formSection > legend, header .logo, table th, body#crawlStartExpert #formReview dt, body#yacySearch header .subRow {
   font-family: "Droid Sans", Arial, Helvetica, sans-serif; }
 
 input,
@@ -2446,7 +2446,7 @@ select,
 #breadCrumb span:not(:last-of-type):after, #breadCrumb:before, .formHint > *:before, .resourceQueryBox .queryBox:after, a[href^="http://"]:before,
 a[href^="https://"]:before, .icon-item-new:before, .icon-item-queued:before, .icon-item-done:before, table.sortable th:after, body#crawlStartExpert #startPointDetails .ycu-data-true:before,
 body#crawlStartSite #startPointDetails .ycu-data-true:before, body#crawlStartExpert #startPointDetails .ycu-data-false:before,
-body#crawlStartSite #startPointDetails .ycu-data-false:before, body#crawlStartExpert #formReview dt:not(.notConfigured):before, body#crawlStartExpert .ycu-data-true:before, body#crawlStartExpert .ycu-data-false:before, button:before, fieldset.collapsible > legend:hover:before, fieldset.collapsible.collapsed > legend:before {
+body#crawlStartSite #startPointDetails .ycu-data-false:before, body#crawlStartExpert #formReview dt:not(.notConfigured):before, body#crawlStartExpert .ycu-data-true:before, body#crawlStartExpert .ycu-data-false:before, button[class^='icon-']:before, fieldset.collapsible > legend:hover:before, fieldset.collapsible.collapsed > legend:before {
   opacity: 0.7; }
 
 #breadCrumb span:not(:last-of-type):after, #breadCrumb:before, .formHint > *:before, .resourceQueryBox .queryBox:after, a[href^="http://"]:before,
@@ -2467,15 +2467,6 @@ body#crawlStartSite #startPointDetails .ycu-data-false:before, body#crawlStartEx
 
 /**********
  * Main navigation. */
-header.withNav {
-  position: relative; }
-  header.withNav nav {
-    position: absolute;
-    bottom: 0;
-    left: 0.5em; }
-  header.withNav ul {
-    font-size: 0.8em; }
-
 nav ul.main {
   padding-bottom: 0 !important;
   padding-left: 99px; }
@@ -2487,7 +2478,7 @@ nav ul.main {
 #nav {
   border-bottom: 3px solid #94c6e4;
   border-top: 1px dotted #5a5a5a;
-  background-color: #222; }
+  background-color: #222222; }
   #nav ul.main > li {
     border-top-left-radius: 5px;
     border-top-right-radius: 5px; }
@@ -2681,6 +2672,8 @@ button {
     content: "\f040\00a0"; }
   button.icon-fix:before {
     content: "\f071\00a0"; }
+  button.icon-search:before {
+    content: "\f002\00a0"; }
   button.icon-revert:before {
     content: "\f00d\00a0"; }
   button.icon-delete:before {
@@ -2698,7 +2691,7 @@ button {
   button:focus {
     outline: 0;
     background: #fafafa; }
-  button:before {
+  button[class^='icon-']:before {
     font-family: FontAwesome;
     float: left;
     margin: 0 1em 0 -1em;
@@ -3033,7 +3026,7 @@ h4, h5, h6 {
 /**********
  * Page layout. */
 header {
-  background-color: #444;
+  background-color: #444444;
   color: #ccc;
   height: 47px; }
   header .logo {
@@ -3053,15 +3046,19 @@ header {
 
 /**********
  * Special elements. */
+a.yacyLogo:before,
+#api > a:before {
+  display: none; }
+a.yacyLogo:active, a.yacyLogo:hover,
+#api > a:active,
+#api > a:hover {
+  background-color: transparent; }
+
 /* API bubble. */
 #api {
   position: absolute;
   top: 20px;
   right: 1em; }
-  #api > a:before {
-    display: none; }
-  #api > a:hover {
-    background-color: transparent; }
   #api img.hasInfo {
     cursor: pointer; }
 
@@ -3242,6 +3239,58 @@ body#crawlStartExpert .reviewHeader {
 body#crawlStartExpert .reviewContent {
   clear: both; }
 
-body#yacySearch #searchBox {
-  background-color: #222;
-  padding: 0.5em; }
+body#yacySearch header {
+  height: auto;
+  box-shadow: 0 4px 5px rgba(50, 50, 50, 0.4);
+  border-bottom: 3px solid #94c6e4; }
+  body#yacySearch header .headRow,
+  body#yacySearch header .content {
+    margin-left: 103px;
+    padding-left: 0.5em; }
+  body#yacySearch header .headRow {
+    background-color: #444444; }
+  body#yacySearch header .subRow {
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+    background-color: #222222;
+    font-size: 0.9em; }
+  body#yacySearch header .logo {
+    position: absolute;
+    overflow: visible;
+    left: 0;
+    top: 0;
+    width: 103px;
+    margin: 0.5em; }
+  body#yacySearch header .menu.empty {
+    height: 2em; }
+  body#yacySearch header .search {
+    margin-bottom: 0.2em; }
+  body#yacySearch header form {
+    margin: 0; }
+  body#yacySearch header input {
+    margin-left: 0.8em;
+    margin-right: 0.3em;
+    padding: 0.2em;
+    width: 20em; }
+  body#yacySearch header button {
+    text-shadow: 0; }
+  body#yacySearch header input,
+  body#yacySearch header button {
+    margin-top: 0;
+    margin-bottom: 0;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box; }
+body#yacySearch nav {
+  padding: 0;
+  margin: 0; }
+  body#yacySearch nav ul {
+    font-size: 0.8em;
+    padding: 0; }
+body#yacySearch h1.greeting {
+  font-style: italic;
+  float: right;
+  font-size: 1.2em;
+  opacity: 0.9;
+  padding: 0;
+  margin: 0;
+  margin-right: 1.5em; }

@@ -3,20 +3,7 @@
 
 $ycu-var-color-sumbenu-bg:#666;
 $ycu-var-color-nav-border:#94C6E4;
-
-header.withNav {
-  position:relative;
-
-  nav {
-    position:absolute;
-    bottom:0;
-    left:0.5em;
-  }
-
-  ul {
-    font-size:0.8em;
-  }
-}
+$ycu-var-color-nav-bg:#222;
 
 nav {
   ul.main {
@@ -34,7 +21,7 @@ nav {
 #nav {
   border-bottom:3px solid $ycu-var-color-nav-border;
   border-top:1px dotted #5a5a5a;
-  background-color:#222;
+  background-color:$ycu-var-color-nav-bg;
 
   // top level
   ul.main {

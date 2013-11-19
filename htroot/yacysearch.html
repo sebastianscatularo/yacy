@@ -3,11 +3,22 @@
 <head>
   <title>#[former]# - YaCy '#[clientname]#': Search Page</title>
   #%env/templates/metas.template%#
+  <script type="text/javascript" src="/js/yaml/pages/yacySearch.js"></script>
+  <script type="text/javascript">
+    //<![CDATA[
+    $(function() {
+      #(focus)#::
+        document.getElementById("search").focus();
+      #(/focus)#
+    });
+    //]]>
+  </script>
+
   <!-- # %env/templates/interactionheader.template%# -->
   <link rel="alternate" type="application/rss+xml" title="Search for #[former]#" href="yacysearch.rss?query=#[former]#" />
   <link rel="search" type="application/opensearchdescription+xml" title="YaCy Search on '#[clientname]#'" href="http://#[thisaddress]#/opensearchdescription.xml" />
-  <link rel="stylesheet" type="text/css" media="screen" href="/env/highslide.css" />
 <!--YCU
+  <link rel="stylesheet" type="text/css" media="screen" href="/env/highslide.css" />
   <script type="text/javascript" src="/js/ajax.js"></script>
   <script type="text/javascript" src="/js/xml.js"></script>
   <script type="text/javascript" src="/js/yacysearch.js"></script>
@@ -17,36 +28,16 @@
   <script src="/yacy/ui/js/jquery-ui-1.7.2.min.js" type="text/javascript"></script>
   <script src="/yacy/ui/js/jquery.tagcloud.js" type="text/javascript"></script>
   <script src="/yacy/ui/js/jquery.tinysort.min.js" type="text/javascript"></script>
--->
+
   <link media="screen" type="text/css" href="/yacy/ui/css/themes/start/ui.base.css" rel="stylesheet" />
   <link media="screen" type="text/css" href="/yacy/ui/css/themes/start/ui.theme.css" rel="stylesheet" />
   <link media="screen" type="text/css" href="/yacy/ui/css/autocomplete.css" rel="stylesheet" />
-
-  <script type="text/javascript">
-  //<![CDATA[
-  function handleArrowKeys(evt) {
-    evt = (evt) ? evt : ((window.event) ? event : null);
-    if (evt) {
-        switch (evt.keyCode) {
-            case 9:
-            case 33:
-                window.location.href = document.getElementById("nextpage").href;
-                break;
-            case 34:
-                window.location.href = document.getElementById("prevpage").href;
-                break;
-            case 40:
-         }
-    }
-  }
-  document.onkeydown = handleArrowKeys;
-  //]]>
-  </script>
+-->
 </head>
 <body id="yacySearch">
   <!--YCU <script type="text/javascript" src="/yacy/ui/js/jquery.autocomplete.yacy.js"></script>-->
 	<script type="text/javascript">
-    $(document).ready(function() {
+    /*$(document).ready(function() {
 		  $('#search').autocomplete('/suggest.json', {parse: opensearch, delay: 0, selectFirst: false, scroll: false, max: 30});
         function opensearch(data) {
             var parsed = [];
@@ -63,36 +54,73 @@
             };
             return parsed;
         };
-      });
+      });*/
     </script>
 
-    <header #(topmenu)#::class="withNav"#(/topmenu)#>
+    <header>
       <div class="logo">
-        <img src="/env/grafics/YaCyLogo_60ppi.png" width="103" height="60"/>
+        <a href="#[promoteSearchPageGreeting.homepage]#" class="yacyLogo">
+          <img src="#[promoteSearchPageGreeting.smallImage]#"/>
+        </a>
       </div>
-      #(topmenu)#
-      #%env/templates/embeddedheader.template%#
-      ::
-      <nav>
-        #%env/templates/simpleheader.template%#
-      </nav>
-      #(/topmenu)#
-    </header>
 
-    <div id="searchBox">
-      <input id="search" class="searchinput" name="query" type="text" size="40" maxlength="80" value="#[former]#" onFocus="this.select()" onclick="document.getElementById('Enter').value = 'Search'" />
-    </div>
+      <form action="" method="get" accept-charset="UTF-8">
+        <div class="headRow">
+          <div class="menu#(topmenu)# empty::#(/topmenu)#">
+            #(topmenu)#::
+            <nav>
+              #%env/templates/simpleheader.template%#
+            </nav>
+            #(/topmenu)#
+          </div>
+          <div class="search">
+            <input id="search" name="query" type="text" maxlength="80" value="#[former]#" onFocus="this.select()" onclick="document.getElementById('Enter').value = 'Search'" />
+            <button id="Enter" type="submit" name="Enter" class="icon-search">Search</button>
+          </div>
+        </div>
+
+        #(searchdomswitches)#::
+        <div class="subRow">
+          <div class="content">
+            <div class="yacysearch">
+              #(searchtext)#::<input type="radio" id="text" name="contentdom" value="text" #(check)#::checked="checked"#(/check)# /><label for="text">Text</label>&nbsp;&nbsp;#(/searchtext)#
+              #(searchimage)#::<input type="radio" id="image" name="contentdom" value="image" #(check)#::checked="checked"#(/check)# /><label for="image">Images</label>&nbsp;&nbsp;#(/searchimage)#
+              #(searchaudio)#::<input type="radio" id="audio" name="contentdom" value="audio" #(check)#::checked="checked"#(/check)# /><label for="audio">Audio</label>&nbsp;&nbsp;#(/searchaudio)#
+              #(searchvideo)#::<input type="radio" id="video" name="contentdom" value="video" #(check)#::checked="checked"#(/check)# /><label for="video">Video</label>&nbsp;&nbsp;#(/searchvideo)#
+              #(searchapp)#::<input type="radio" id="app" name="contentdom" value="app" #(check)#::checked="checked"#(/check)# /><label for="app">Applications</label>#(/searchapp)#
+              &nbsp;
+              <a href="index.html?searchoptions=2&amp;count=#[count]#&amp;prefermaskfilter=#[prefermaskfilter]#&amp;cat=#[cat]#&amp;constraint=#[constraint]#&amp;contentdom=#[contentdom]#&amp;former=#[former]#&amp;meanCount=#[meanCount]#">more options</a>
+            </div>
+          </div>
+        </div>
+        #(/searchdomswitches)#
+        <input type="hidden" name="former" value="#[former]#" />
+        <input type="hidden" name="maximumRecords" value="#[count]#" />
+        <input type="hidden" name="startRecord" value="0" />
+        <input type="hidden" name="verify" value="#[search.verify]#" />
+        <input type="hidden" name="resource" value="#[resource]#" />
+        <input type="hidden" name="nav" value="#[search.navigation]#" />
+        <input type="hidden" name="prefermaskfilter" value="#[prefermaskfilter]#" />
+        <input type="hidden" name="depth" value="#[depth]#" />
+        <input type="hidden" name="cat" value="#[cat]#" />
+        <input type="hidden" name="constraint" value="#[constraint]#" />
+        <input type="hidden" name="meanCount" value="#[meanCount]#" />
+      </form>
+    </header>
 
     <main>
       <div class="ym-wrapper">
+        <h1 class="greeting">#[promoteSearchPageGreeting]#</h1>
+        <div class="clear"></div>
         <div class="ym-wbox">
+
           #(topmenu)#::
           <div id="api">
             <img src="env/grafics/rss.png" width="32" height="32" alt="RSS"/>
             <div class="hidden">
               <script type="text/javascript">
                 //<![CDATA[
-                  document.write('<a href="yacysearch.rss?' + window.location.search.substring(1) + '>This search results</a>');
+                document.write('<a href="yacysearch.rss?' + window.location.search.substring(1) + '>This search results</a>');
                 //]]>
               </script>
               can also be retrieved as RSS/<a href="http://www.opensearch.org">opensearch</a> output.
@@ -101,20 +129,29 @@
               To see a list of all APIs, please visit the <a href="http://www.yacy-websuche.de/wiki/index.php/Dev:API">API wiki page</a>.
             </div>
           </div>
-#(resource-select)#::
-<div id="searchmode">
-<img src="env/grafics/searchmode_p2p_activated_32.png" width="91" height="32"/><br/>
-<a href="yacysearch.html?resource=local"><img src="env/grafics/searchmode_stealth_deactivated_32.png" width="91" height="32"/></a>
-<span>Your search is done using peers in the YaCy P2P network. You can switch to 'Stealth Mode' which will switch off P2P, giving you full privacy. Expect less results then, because then only your own search index is used.</span>
-</div>::
-<div id="searchmode">
-<a href="yacysearch.html?resource=global"><img src="env/grafics/searchmode_p2p_deactivated_32.png" width="91" height="32"/></a><br/>
-<img src="env/grafics/searchmode_stealth_activated_32.png" width="91" height="32"/>
-<span>Your search is done using only your own peer, locally. You can switch to 'Peer-to-Peer Mode' which will cause that your search is done using the other peers in the YaCy network.</span>
-</div>#(/resource-select)#
-    #(/topmenu)#
+          #(resource-select)#::
+          <div id="searchmode">
+            <img src="env/grafics/searchmode_p2p_activated_32.png" width="91" height="32"/>
+            <br/>
+            <a href="yacysearch.html?resource=local"><img src="env/grafics/searchmode_stealth_deactivated_32.png" width="91" height="32"/></a>
+            <span>
+              Your search is done using peers in the YaCy P2P network. You can switch to 'Stealth Mode' which will switch off P2P, giving you full privacy. Expect less results then, because then only your own search index is used.
+            </span>
+          </div>
+          ::
+          <div id="searchmode">
+            <a href="yacysearch.html?resource=global"><img src="env/grafics/searchmode_p2p_deactivated_32.png" width="91" height="32"/></a><br/>
+            <img src="env/grafics/searchmode_stealth_activated_32.png" width="91" height="32"/>
+            <span>
+              Your search is done using only your own peer, locally. You can switch to 'Peer-to-Peer Mode' which will cause that your search is done using the other peers in the YaCy network.
+            </span>
+          </div>
+          #(/resource-select)#
+          #(/topmenu)#
+
 <script type="text/javascript">
 //<![CDATA[
+/*
 $(function() {
 	$.extend($.ui.accordion.defaults, {
 		autoHeight: false,
@@ -135,40 +172,10 @@ $(function() {
 #(focus)#::
 	$("#search").focus();
 #(/focus)#
-});
+});*/
 //]]>
 </script>
 
-<form class="search small" action="" method="get" accept-charset="UTF-8">
-  <h2>#[promoteSearchPageGreeting]#</h2>
-  <div class="yacylogo"><a href="#[promoteSearchPageGreeting.homepage]#" class="yacylogo"><img src="#[promoteSearchPageGreeting.smallImage]#" alt="yacysearch" /></a></div>
-  <fieldset class="yacys">
-    <input id="search" class="searchinput" name="query" type="text" size="40" maxlength="80" value="#[former]#" onFocus="this.select()" onclick="document.getElementById('Enter').value = 'Search'" />
-    <input id="Enter" type="submit" name="Enter" value="Search" />
-    #(searchdomswitches)#::
-    <div class="yacysearch">
-	    #(searchtext)#::<input type="radio" id="text" name="contentdom" value="text" #(check)#::checked="checked"#(/check)# /><label for="text">Text</label>&nbsp;&nbsp;#(/searchtext)#
-	    #(searchimage)#::<input type="radio" id="image" name="contentdom" value="image" #(check)#::checked="checked"#(/check)# /><label for="image">Images</label>&nbsp;&nbsp;#(/searchimage)#
-	    #(searchaudio)#::<input type="radio" id="audio" name="contentdom" value="audio" #(check)#::checked="checked"#(/check)# /><label for="audio">Audio</label>&nbsp;&nbsp;#(/searchaudio)#
-	    #(searchvideo)#::<input type="radio" id="video" name="contentdom" value="video" #(check)#::checked="checked"#(/check)# /><label for="video">Video</label>&nbsp;&nbsp;#(/searchvideo)#
-	    #(searchapp)#::<input type="radio" id="app" name="contentdom" value="app" #(check)#::checked="checked"#(/check)# /><label for="app">Applications</label>#(/searchapp)#
-        &nbsp;
-        <a href="index.html?searchoptions=2&amp;count=#[count]#&amp;prefermaskfilter=#[prefermaskfilter]#&amp;cat=#[cat]#&amp;constraint=#[constraint]#&amp;contentdom=#[contentdom]#&amp;former=#[former]#&amp;meanCount=#[meanCount]#">more options</a>
-    </div>
-    #(/searchdomswitches)#
-    <input type="hidden" name="former" value="#[former]#" />
-    <input type="hidden" name="maximumRecords" value="#[count]#" />
-    <input type="hidden" name="startRecord" value="0" />
-    <input type="hidden" name="verify" value="#[search.verify]#" />
-    <input type="hidden" name="resource" value="#[resource]#" />
-    <input type="hidden" name="nav" value="#[search.navigation]#" />
-    <input type="hidden" name="prefermaskfilter" value="#[prefermaskfilter]#" />
-    <input type="hidden" name="depth" value="#[depth]#" />
-    <input type="hidden" name="cat" value="#[cat]#" />
-    <input type="hidden" name="constraint" value="#[constraint]#" />
-    <input type="hidden" name="meanCount" value="#[meanCount]#" />
-  </fieldset>
-</form>
 #(urlmaskerror)#::
 <p><b>Illegal URL mask:</b> <i>#[urlmask]#</i> (not a valid regular expression), mask ignored.</p>
 #(/urlmaskerror)#
@@ -211,9 +218,6 @@ document.getElementById("Enter").value = "search again";
 <!-- the search results -->
 <script type="text/javascript">
 //YCU var progressbar = new Progressbar(#[results]#, document.getElementById("results"));
-#(focus)#::
-document.getElementById("search").focus();
-#(/focus)#
 </script>
 <div style="float:left; width:70%;">
 
@@ -242,7 +246,7 @@ document.getElementById("search").focus();
 <!-- linklist begin -->
 #(resultTable)#::<table width="100%"><tr class="TableHeader"><td width="30%">Media</td><td width="70%">URL</td></tr>#(/resultTable)#
 #{results}#
-<!--#include virtual="yacysearchitem.html?item=#[item]#&eventID=#[eventID]#" -->
+<!--# include virtual="yacysearchitem.html?item=#[item]#&eventID=#[eventID]#" -->
 #{/results}#
 #(resultTable)#::</table>#(/resultTable)#
 <!-- linklist end -->
@@ -250,12 +254,12 @@ document.getElementById("search").focus();
 <!--#(pageNavBottom)#::<div id="pageNavBottom" style="text-align:center">#[resnav]#</div>#(/pageNavBottom)#-->
 </div>
 <!-- div style="width=220px;" -->
-<!--#include virtual="yacysearchtrailer.html?eventID=#[eventID]#" -->
+<!--# include virtual="yacysearchtrailer.html?eventID=#[eventID]#" -->
 <!-- /div -->
 </div>
 <!-- update the search results statistics after the search is finished -->
 <script type="text/javascript">
-
+/*
 function latestinfo() {
   if (window.XMLHttpRequest) { // Mozilla/Safari
     self.xmlHttpReq = new XMLHttpRequest();
@@ -282,9 +286,10 @@ window.setTimeout('latestinfo();',5000);
 window.setTimeout('latestinfo();',6000);
 window.setTimeout('latestinfo();',8000);
 window.setTimeout('latestinfo();',10000);
+*/
 </script>
 
-<!--#include virtual="/interaction_elements/Footer.html" -->
+<!--# include virtual="/interaction_elements/Footer.html" -->
 
 </body>
 </html>

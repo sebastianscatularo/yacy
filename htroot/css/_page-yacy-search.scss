@@ -1,4 +1,89 @@
-#searchBox {
-  background-color:#222;
-  padding:0.5em;
+header {
+  $logo-width:103px;
+  height:auto;
+  box-shadow:0 4px 5px rgba(50,50,50,0.4);
+  border-bottom:3px solid $ycu-var-color-nav-border;
+
+  .headRow,
+  .content {
+    margin-left:$logo-width;
+    padding-left:0.5em;
+  }
+
+  .headRow {
+    background-color:$ycu-var-color-header-bg;
+  }
+
+  .subRow {
+    padding: {
+      top:0.5em;
+      bottom:0.5em;
+    }
+    background-color:$ycu-var-color-nav-bg;
+    @extend %font-sans;
+    font-size:0.9em;
+  }
+
+  .logo {
+    position:absolute;
+    overflow:visible;
+    left:0;
+    top:0;
+    width:$logo-width;
+    margin:0.5em;
+  }
+
+  .menu.empty {
+    height:2em;
+  }
+
+  .search {
+    margin-bottom:0.2em;
+  }
+
+  form {
+    margin:0;
+  }
+
+  input {
+    margin: {
+      left:0.8em;
+      right:0.3em;
+    }
+    padding:0.2em;
+    width:20em;
+  }
+
+  button {
+    text-shadow:0;
+  }
+
+  input,
+  button {
+    margin: {
+      top:0;
+      bottom:0;
+    }
+    -moz-box-sizing:content-box;
+    box-sizing:content-box;
+  }
+}
+
+nav {
+  padding:0;
+  margin:0;
+  ul {
+    font-size:0.8em;
+    padding:0;
+  }
+}
+
+h1.greeting {
+  font-style:italic;
+  float:right;
+  font-size:1.2em;
+  opacity:0.9;
+  padding:0;
+  margin:0;
+  margin-right:1.5em;
 }
