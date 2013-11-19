@@ -1,40 +1,45 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-  <title>#[former]# - YaCy '#[clientname]#': Search Page</title>
-  #%env/templates/metas.template%#
-  <script type="text/javascript" src="/js/yaml/pages/yacySearch.js"></script>
-  <script type="text/javascript">
-    //<![CDATA[
-    $(function() {
-      #(focus)#::
+  <head>
+    <title>#[former]# - YaCy '#[clientname]#': Search Page</title>
+    #%env/templates/metas.template%#
+    <script type="text/javascript" src="/js/yaml/yacyui-widgets.js"></script>
+    <script type="text/javascript" src="/js/yaml/pages/yacySearch.js"></script>
+    <script type="text/javascript">
+      //<![CDATA[
+      $(function() {
+        #(focus)#::
         document.getElementById("search").focus();
-      #(/focus)#
-    });
-    //]]>
-  </script>
+        #(/focus)#
+        #(searchagain)#::
+        $('#startSearch').text = "Search again";
+        #(/searchagain)#
+      });
+      //]]>
+    </script>
 
-  <!-- # %env/templates/interactionheader.template%# -->
-  <link rel="alternate" type="application/rss+xml" title="Search for #[former]#" href="yacysearch.rss?query=#[former]#" />
-  <link rel="search" type="application/opensearchdescription+xml" title="YaCy Search on '#[clientname]#'" href="http://#[thisaddress]#/opensearchdescription.xml" />
-<!--YCU
-  <link rel="stylesheet" type="text/css" media="screen" href="/env/highslide.css" />
-  <script type="text/javascript" src="/js/ajax.js"></script>
-  <script type="text/javascript" src="/js/xml.js"></script>
-  <script type="text/javascript" src="/js/yacysearch.js"></script>
-  <script type="text/javascript" src="/js/highslide/highslide.js"></script>
-  <script type="text/javascript">hs.outlineType = 'rounded-white';</script>
-  <script src="/yacy/ui/js/jquery-1.3.2.min.js" type="text/javascript"></script>
-  <script src="/yacy/ui/js/jquery-ui-1.7.2.min.js" type="text/javascript"></script>
-  <script src="/yacy/ui/js/jquery.tagcloud.js" type="text/javascript"></script>
-  <script src="/yacy/ui/js/jquery.tinysort.min.js" type="text/javascript"></script>
+    <!-- # %env/templates/interactionheader.template%# -->
+    <link rel="alternate" type="application/rss+xml" title="Search for #[former]#" href="yacysearch.rss?query=#[former]#" />
+    <link rel="search" type="application/opensearchdescription+xml" title="YaCy Search on '#[clientname]#'" href="http://#[thisaddress]#/opensearchdescription.xml" />
+    <!--YCU
+    <link rel="stylesheet" type="text/css" media="screen" href="/env/highslide.css" />
+    <script type="text/javascript" src="/js/ajax.js"></script>
+    <script type="text/javascript" src="/js/xml.js"></script>
+    <script type="text/javascript" src="/js/yacysearch.js"></script>
+    <script type="text/javascript" src="/js/highslide/highslide.js"></script>
+    <script type="text/javascript">hs.outlineType = 'rounded-white';</script>
+    <script src="/yacy/ui/js/jquery-1.3.2.min.js" type="text/javascript"></script>
+    <script src="/yacy/ui/js/jquery-ui-1.7.2.min.js" type="text/javascript"></script>
+    <script src="/yacy/ui/js/jquery.tagcloud.js" type="text/javascript"></script>
+    <script src="/yacy/ui/js/jquery.tinysort.min.js" type="text/javascript"></script>
 
-  <link media="screen" type="text/css" href="/yacy/ui/css/themes/start/ui.base.css" rel="stylesheet" />
-  <link media="screen" type="text/css" href="/yacy/ui/css/themes/start/ui.theme.css" rel="stylesheet" />
-  <link media="screen" type="text/css" href="/yacy/ui/css/autocomplete.css" rel="stylesheet" />
--->
-</head>
-<body id="yacySearch">
+    <link media="screen" type="text/css" href="/yacy/ui/css/themes/start/ui.base.css" rel="stylesheet" />
+    <link media="screen" type="text/css" href="/yacy/ui/css/themes/start/ui.theme.css" rel="stylesheet" />
+    <link media="screen" type="text/css" href="/yacy/ui/css/autocomplete.css" rel="stylesheet" />
+    -->
+  </head>
+
+  <body id="yacySearch">
     <header>
       <div class="logo">
         <a href="#[promoteSearchPageGreeting.homepage]#" class="yacyLogo">
@@ -52,21 +57,21 @@
             #(/topmenu)#
           </div>
           <div class="search">
-            <input id="search" name="query" type="text" maxlength="80" value="#[former]#" onFocus="this.select()" onclick="document.getElementById('Enter').value = 'Search'" />
-            <button id="Enter" type="submit" name="Enter" class="icon-search">Search</button>
+            <input id="search" name="query" type="text" value="#[former]#" onFocus="this.select()"/>
+            <button id="startSearch" type="submit" name="Enter" class="icon-search">Search</button>
           </div>
         </div>
 
         #(searchdomswitches)#::
         <div class="subRow">
           <div class="content">
-            <div class="yacysearch">
-              #(searchtext)#::<input type="radio" id="text" name="contentdom" value="text" #(check)#::checked="checked"#(/check)# /><label for="text">Text</label>&nbsp;&nbsp;#(/searchtext)#
-              #(searchimage)#::<input type="radio" id="image" name="contentdom" value="image" #(check)#::checked="checked"#(/check)# /><label for="image">Images</label>&nbsp;&nbsp;#(/searchimage)#
-              #(searchaudio)#::<input type="radio" id="audio" name="contentdom" value="audio" #(check)#::checked="checked"#(/check)# /><label for="audio">Audio</label>&nbsp;&nbsp;#(/searchaudio)#
-              #(searchvideo)#::<input type="radio" id="video" name="contentdom" value="video" #(check)#::checked="checked"#(/check)# /><label for="video">Video</label>&nbsp;&nbsp;#(/searchvideo)#
+            <div>
+              #(searchtext)#::
+              <input type="radio" id="text" name="contentdom" value="text" #(check)#::checked="checked"#(/check)# /><label for="text">Text</label>#(/searchtext)#
+              #(searchimage)#::<input type="radio" id="image" name="contentdom" value="image" #(check)#::checked="checked"#(/check)# /><label for="image">Images</label>#(/searchimage)#
+              #(searchaudio)#::<input type="radio" id="audio" name="contentdom" value="audio" #(check)#::checked="checked"#(/check)# /><label for="audio">Audio</label>#(/searchaudio)#
+              #(searchvideo)#::<input type="radio" id="video" name="contentdom" value="video" #(check)#::checked="checked"#(/check)# /><label for="video">Video</label>#(/searchvideo)#
               #(searchapp)#::<input type="radio" id="app" name="contentdom" value="app" #(check)#::checked="checked"#(/check)# /><label for="app">Applications</label>#(/searchapp)#
-              &nbsp;
               <a href="index.html?searchoptions=2&amp;count=#[count]#&amp;prefermaskfilter=#[prefermaskfilter]#&amp;cat=#[cat]#&amp;constraint=#[constraint]#&amp;contentdom=#[contentdom]#&amp;former=#[former]#&amp;meanCount=#[meanCount]#">more options</a>
             </div>
           </div>
@@ -84,6 +89,15 @@
         <input type="hidden" name="constraint" value="#[constraint]#" />
         <input type="hidden" name="meanCount" value="#[meanCount]#" />
       </form>
+      <div id="searchProgress">
+        <script type="text/javascript">
+        //<![CDATA[
+        var progressBar = new YaCyUi.Widgets.ProgressBar($('#searchProgress'),
+          #[results]#);
+        progressBar.step(4);
+        //]]>
+      </script>
+      </div>
     </header>
 
     <main>
@@ -147,9 +161,6 @@ $(function() {
 	$("#sidebarNameSpace").accordion({});
     $("#sidebarTopics").tagcloud({type:"sphere",power:.25,seed:0,sizemin:10,sizemax:20,height:80,colormin:"682",colormax:"20C"}).find("li").tsort();
     $("#sidebarAbout").accordion({});
-#(focus)#::
-	$("#search").focus();
-#(/focus)#
 });*/
 //]]>
 </script>
@@ -165,13 +176,6 @@ $(function() {
 #(didYouMean)#::
 <p><b>Did you mean:</b> #{suggestions}# <a href="#[url]#">#[word]#</a> #[sep]##{/suggestions}#</p>
 #(/didYouMean)#
-
-#(searchagain)#
-::
-<script type="text/javascript">
-document.getElementById("Enter").value = "search again";
-</script>
-#(/searchagain)#
 
 <!-- show information about search key handling -->
 #(excluded)#
@@ -224,7 +228,7 @@ document.getElementById("Enter").value = "search again";
 <!-- linklist begin -->
 #(resultTable)#::<table width="100%"><tr class="TableHeader"><td width="30%">Media</td><td width="70%">URL</td></tr>#(/resultTable)#
 #{results}#
-<!--# include virtual="yacysearchitem.html?item=#[item]#&eventID=#[eventID]#" -->
+<!--#include virtual="yacysearchitem.html?item=#[item]#&eventID=#[eventID]#" -->
 #{/results}#
 #(resultTable)#::</table>#(/resultTable)#
 <!-- linklist end -->
@@ -237,7 +241,6 @@ document.getElementById("Enter").value = "search again";
 </div>
 <!-- update the search results statistics after the search is finished -->
 <script type="text/javascript">
-/*
 function latestinfo() {
   if (window.XMLHttpRequest) { // Mozilla/Safari
     self.xmlHttpReq = new XMLHttpRequest();
@@ -264,7 +267,6 @@ window.setTimeout('latestinfo();',5000);
 window.setTimeout('latestinfo();',6000);
 window.setTimeout('latestinfo();',8000);
 window.setTimeout('latestinfo();',10000);
-*/
 </script>
 
 <!--# include virtual="/interaction_elements/Footer.html" -->

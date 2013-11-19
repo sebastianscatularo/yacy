@@ -41,6 +41,10 @@ header {
     margin-bottom:0.2em;
   }
 
+  label {
+    padding-right:0.5em;
+  }
+
   form {
     margin:0;
   }
@@ -86,4 +90,8 @@ h1.greeting {
   padding:0;
   margin:0;
   margin-right:1.5em;
+}
+
+#searchProgress {
+  height:1em;
 }

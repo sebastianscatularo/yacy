@@ -56,7 +56,9 @@
 #(/content)#
 
 <script type="text/javascript">
-statistics("#[offset]#", "#[itemscount]#", "#[itemsperpage]#", "#[totalcount]#", "#[localResourceSize]#", "#[remoteResourceSize]#", "#[remoteIndexCount]#", "#[remotePeerCount]#", "#[navurlBase]#");
-progressbar.step(1);
+  $(function() {
+    YaCyPage.statistics("#[offset]#", "#[itemscount]#", "#[itemsperpage]#", "#[totalcount]#", "#[localResourceSize]#", "#[remoteResourceSize]#", "#[remoteIndexCount]#", "#[remotePeerCount]#", "#[navurlBase]#");
+  });
+  progressBar.step(1);
 </script>
 
