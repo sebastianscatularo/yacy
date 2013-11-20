@@ -16,7 +16,7 @@
       <fieldset class="ui-widget-content ui-corner-all">
         <legend>Topics</legend>
         <div id="tagCloud">#{element}#
-          <a rel="#[count]#" href="#[url]#" style="text-decoration: none;">#[name]#</a>
+          <a rel="#[count]#" href="#[url]#" title="#[name]#">#[name]#</a>
           #{/element}#
         </div>
       </fieldset>
@@ -25,7 +25,7 @@
 
     #(nav-protocols)#::
     <div id="sidebarProtocols" class="accordion">
-      <h3 style="padding-left:25px;">Protocol Navigator</h3>
+      <h3>Protocol Navigator</h3>
       <div>
         #{element}#
         <label>
@@ -39,7 +39,7 @@
 
     #(nav-filetypes)#::
     <div id="sidebarFiletypes" class="accordion">
-      <h3 style="padding-left:25px;">Filetype Navigator</h3>
+      <h3>Filetype Navigator</h3>
       <div>
         #{element}#
         <label>
@@ -53,7 +53,7 @@
 
     #(nav-domains)#::
     <div id="sidebarDomains" class="accordion">
-      <h3 style="padding-left:25px;">Domain Navigator</h3>
+      <h3>Domain Navigator</h3>
       <div>
         #{element}#
         <label>
@@ -67,7 +67,7 @@
 
     #(nav-namespace)#::
     <div id="sidebarNameSpace" class="accordion">
-      <h3 style="padding-left:25px;">Name Space Navigator</h3>
+      <h3>Name Space Navigator</h3>
       <div>
         #{element}#
         <label>
@@ -81,7 +81,7 @@
 
     #(nav-authors)#::
     <div id="sidebarAuthors" class="accordion">
-      <h3 style="padding-left:25px;">Author Navigator</h3>
+      <h3>Author Navigator</h3>
       <div>
         #{element}#
         <label>
@@ -95,7 +95,7 @@
 
     #{nav-vocabulary}#
     <div id="sidebar#[navname]#" class="accordion">
-      <h3 style="padding-l  eft:25px;">#[navname]# Navigator</h3>
+      <h3>#[navname]# Navigator</h3>
       <div>
         #{element}#
         <label>
@@ -109,8 +109,8 @@
 
     #(nav-about)#::
     <div id="sidebarAbout" class="accordion">
-      <h3 style="padding-left:25px;">#[headline]#</h3>
-      <div style="margin:0px; padding:0px;">
+      <h3>#[headline]#</h3>
+      <div>
         #[body]#
       </div>
     </div>
