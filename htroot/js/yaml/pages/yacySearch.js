@@ -14,7 +14,23 @@ YaCyPage.chacheResultElements = function() {
   };
 };
 
-YaCyPage.statistics = function(offset, itemscount, itemsperpage, totalcount, localResourceSize, remoteResourceSize, remoteIndexCount, remotePeerCount, navurlbase) {
+YaCyPage.latestInfo = function(eventId) {
+  $.ajax({
+    url:'yacysearchlatestinfo.json',
+    type:'GET',
+    data: {
+      eventID: eventId
+    }
+  }).done(function(data) {
+    YaCyPage.statistics(data.offset, data.itemscount, data.itemsperpage,
+      data.totalcount, data.localResourceSize, data.remoteResourceSize,
+      data.remoteIndexCount, data.remotePeerCount, data.navurlBase);
+  });
+};
+
+YaCyPage.statistics = function(offset, itemscount, itemsperpage, totalcount,
+    localResourceSize, remoteResourceSize, remoteIndexCount, remotePeerCount,
+    navurlbase) {
   if (totalcount === 0) {
     return;
   }
@@ -140,8 +156,11 @@ YaCyPage.init = function() {
     height:80,
     colormin:"682",
     colormax:"20C"
-  });//.css('display', 'inline-block');
+  });
 
   // show sidebar after it's completely loaded
   $('#searchTrailer').css('visibility', 'visible');
+
+  // search is done now - update stats
+
 };

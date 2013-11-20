@@ -121,7 +121,9 @@
 <script type="text/javascript">
   //<![CDATA[
   $(function() {
-    $('#searchTrailer .ym-cbox').children('.accordion').accordion({collapsible: true});
+    $('#searchTrailer .ym-cbox').children('.accordion').accordion({
+      collapsible:true
+    });
 
     #(nav-authors)#::#(activate)#
     $("#sidebarAuthors").accordion({active: false});
@@ -136,7 +138,6 @@
     ::#(/activate)##(/nav-domains)#
 
     #(nav-filetypes)#::#(activate)#
-    console.debug('sidebarFiletypes, deactivate');
     $("#sidebarFiletypes").accordion({active: false});
     ::#(/activate)##(/nav-filetypes)#
 

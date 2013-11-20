@@ -9,6 +9,18 @@
     <script type="text/javascript" src="/js/yaml/pages/yacySearch.js"></script>
     <script type="text/javascript">
       //<![CDATA[
+      var infoUpdates = 0; // number of done updates
+      var updateTimes = [500, 1000, 1500, 2000, 3000, 4000, 5000, 6000, 8000, 10000];
+
+      function getLatestInfo() {
+        YaCyPage.latestInfo('#[eventID]#');
+        infoUpdates++;
+
+        if (infoUpdates <= (updateTimes.length -1)) {
+          window.setTimeout(getLatestInfo(), updateTimes[infoUpdates]);
+        }
+      }
+
       $(function() {
         #(focus)#::
         document.getElementById("search").focus();
@@ -16,6 +28,12 @@
         #(searchagain)#::
         $('#startSearch').text = "Search again";
         #(/searchagain)#
+        #{sidebarVocabulary}#
+        $("#sidebar#[vocabulary]#").accordion({collapsible: true});
+        #{/sidebarVocabulary}#
+        $("#sidebarAbout").accordion({});
+        // search is done
+        window.setTimeout(getLatestInfo(), updateTimes[0]);
       });
       //]]>
     </script>
@@ -137,18 +155,6 @@
           #(/resource-select)#
           #(/topmenu)#
 
-          <script type="text/javascript">
-            //<![CDATA[
-            $(function() {
-              #{sidebarVocabulary}#
-              $("#sidebar#[vocabulary]#").accordion({collapsible: true});
-              #{/sidebarVocabulary}#
-              $("#sidebarTopics").tagcloud({type:"sphere",power:.25,seed:0,sizemin:10,sizemax:20,height:80,colormin:"682",colormax:"20C"}).find("li").tsort();
-              $("#sidebarAbout").accordion({});
-            });
-            //]]>
-          </script>
-
           #(urlmaskerror)#::
           <p>
             <b>Illegal URL mask:</b> <i>#[urlmask]#</i> (not a valid regular expression), mask ignored.
@@ -266,42 +272,11 @@
             </div>
             <!--#include virtual="yacysearchtrailer.html?eventID=#[eventID]#" -->
           </div>
-
-          <!-- update the search results statistics after the search is finished -->
-          <script type="text/javascript">
-            //<![CDATA[
-            function latestinfo() {
-              if (window.XMLHttpRequest) { // Mozilla/Safari
-                self.xmlHttpReq = new XMLHttpRequest();
-              } else if (window.ActiveXObject) { // IE
-                self.xmlHttpReq = new ActiveXObject("Microsoft.XMLHTTP");
-              }
-              self.xmlHttpReq.open('GET', "yacysearchlatestinfo.json?eventID=#[eventID]#", true);
-              self.xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-              self.xmlHttpReq.onreadystatechange = function() {
-                if (self.xmlHttpReq.readyState == 4) {
-                  //YCU var rsp = eval("(" + self.xmlHttpReq.responseText + ")");
-                  //YCU statistics(rsp.offset, rsp.itemscount, rsp.itemsperpage, rsp.totalcount, rsp.localResourceSize, rsp.remoteResourceSize, rsp.remoteIndexCount, rsp.remotePeerCount, rsp.navurlBase);
-                }
-              }
-              self.xmlHttpReq.send(null);
-            }
-            window.setTimeout('latestinfo();',500);
-            window.setTimeout('latestinfo();',1000);
-            window.setTimeout('latestinfo();',1500);
-            window.setTimeout('latestinfo();',2000);
-            window.setTimeout('latestinfo();',3000);
-            window.setTimeout('latestinfo();',4000);
-            window.setTimeout('latestinfo();',5000);
-            window.setTimeout('latestinfo();',6000);
-            window.setTimeout('latestinfo();',8000);
-            window.setTimeout('latestinfo();',10000);
-            //]]>
-          </script>
-
-          <!--# include virtual="/interaction_elements/Footer.html" -->
         </div>
       </div>
     </main>
+    <footer class="hidden">
+      <!--#include virtual="/interaction_elements/Footer.html" -->
+    </footer>
   </body>
 </html>

@@ -137,11 +137,6 @@ YaCyUi.init = function() {
     $('#devInfo').prepend(devInfoBtn).prepend('<u><strong>Developer notice:</strong></u>&nbsp;');
   }
 
-  // Create buttonsets
-  /*$('.buttonSet').each(function() {
-    $(this).buttonset();
-  });*/
-
   // create main menu
   YaCyUi.MainMenu = new YaCyUi.Func.MainMenu();
 
@@ -206,5 +201,11 @@ YaCyUi.init = function() {
     }, 125);
   } else {
     delete YaCyUi.Func; // unload function space
+  }
+
+  // show footer, if it has content
+  if ($('footer').children().size() > 0) {
+    $('footer').show();
+    $('main').css('margin-bottom', $('footer').height() + 'px');
   }
 };

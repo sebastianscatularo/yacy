@@ -286,3 +286,11 @@ main {
     }
   }
 }
+
+#sidebarAbout .ui-accordion-content {
+  padding:0.5em;
+
+  iframe {
+    height:auto !important;
+  }
+}

@@ -23,8 +23,12 @@ $fa-font-path: 'font-awesome/fonts'; // set font path
 $ycu-var-font-sans: "Droid Sans",Arial,Helvetica,sans-serif;
 $ycu-var-font-input: Arial, Helvetica, sans-serif;
 $ycu-var-color-header-bg:#444;
+$ycu-var-color-header-fg:#ccc;
+$ycu-var-color-footer-bg:$ycu-var-color-header-bg;
+$ycu-var-color-footer-fg:$ycu-var-color-header-fg;
 $ycu-var-color-page-bg:#E9F3F9;
 $ycu-var-color-link:#4D87C7;
+$ycu-var-color-nav-border:#94C6E4;
 
 .ym-wbox {
   padding:1.5em;
@@ -125,7 +129,7 @@ h4, h5, h6 {
  * Page layout. */
 header {
   background-color:$ycu-var-color-header-bg;
-  color:#ccc;
+  color:$ycu-var-color-header-fg;
   height:47px;
 
   .logo {
@@ -148,6 +152,29 @@ header {
       letter-spacing:0.1em;
     }
   }
+}
+
+footer {
+  color:$ycu-var-color-footer-fg;
+  background-color:$ycu-var-color-footer-bg;
+  position:fixed;
+  bottom:0;
+  width:100%;
+  display:table;
+  border-top:3px solid $ycu-var-color-nav-border;
+  padding:0.3em 1em;
+}
+
+// footer log-in
+#footerMenu {
+  @extend %font-sans;
+  display:table-row;
+}
+#logon_trigger.admin i {
+  color:#FF6D00;
+}
+#logon_trigger.user i {
+  color:#69DE6B;
 }
 
 /**********
@@ -231,6 +258,7 @@ table.sortable {
 
     &:after {
       @extend %icon-block-light;
+      content:'#{$fa-var-sort}';
       padding-left:0.3em;
     }
 

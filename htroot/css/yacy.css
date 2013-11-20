@@ -2434,7 +2434,7 @@
   padding: 1.5em; }
 
 nav,
-#navSub, #breadCrumb, fieldset .content, fieldset.formSection > legend, header .logo, table th, body#crawlStartExpert #formReview dt, body#yacySearch header .subRow, body#yacySearch .searchResult .snippet, body#yacySearch #searchTrailer, body#yacySearch #searchTrailer .ui-widget {
+#navSub, #breadCrumb, fieldset .content, fieldset.formSection > legend, header .logo, #footerMenu, table th, body#crawlStartExpert #formReview dt, body#yacySearch header .subRow, body#yacySearch .searchResult .snippet, body#yacySearch #searchTrailer, body#yacySearch #searchTrailer .ui-widget {
   font-family: "Droid Sans", Arial, Helvetica, sans-serif; }
 
 input,
@@ -3033,7 +3033,7 @@ h4, h5, h6 {
  * Page layout. */
 header {
   background-color: #444444;
-  color: #ccc;
+  color: #cccccc;
   height: 47px; }
   header .logo {
     font-size: 0.8em;
@@ -3049,6 +3049,25 @@ header {
       position: relative;
       bottom: 24px;
       letter-spacing: 0.1em; }
+
+footer {
+  color: #cccccc;
+  background-color: #444444;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  display: table;
+  border-top: 3px solid #94c6e4;
+  padding: 0.3em 1em; }
+
+#footerMenu {
+  display: table-row; }
+
+#logon_trigger.admin i {
+  color: #FF6D00; }
+
+#logon_trigger.user i {
+  color: #69DE6B; }
 
 /**********
  * Special elements. */
@@ -3098,6 +3117,7 @@ table.sortable th {
   color: #555;
   border-color: #555; }
   table.sortable th:after {
+    content: "\f0dc";
     padding-left: 0.3em; }
   table.sortable th.headerSortDown:after {
     content: "\f0d7"; }
@@ -3414,3 +3434,7 @@ body#yacySearch {
       body#yacySearch #tagCloud a:hover {
         border-radius: 5px;
         color: #fff !important; }
+  body#yacySearch #sidebarAbout .ui-accordion-content {
+    padding: 0.5em; }
+    body#yacySearch #sidebarAbout .ui-accordion-content iframe {
+      height: auto !important; }
