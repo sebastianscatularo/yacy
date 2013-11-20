@@ -3306,6 +3306,9 @@ body#yacySearch #searchProgress {
   height: 1em; }
 body#yacySearch main a:before {
   display: none; }
+body#yacySearch #resultsList {
+  float: left;
+  width: 70%; }
 body#yacySearch .searchResult {
   margin-bottom: 2em;
   margin-left: -0.5em;
