@@ -17,7 +17,7 @@
         infoUpdates++;
 
         if (infoUpdates <= (updateTimes.length -1)) {
-          window.setTimeout(getLatestInfo(), updateTimes[infoUpdates]);
+          window.setTimeout('getLatestInfo()', updateTimes[infoUpdates]);
         }
       }
 
@@ -33,7 +33,7 @@
         #{/sidebarVocabulary}#
         $("#sidebarAbout").accordion({});
         // search is done
-        window.setTimeout(getLatestInfo(), updateTimes[0]);
+        window.setTimeout('getLatestInfo()', updateTimes[0]);
       });
       //]]>
     </script>
@@ -186,7 +186,7 @@
           ::
           <p>No Results. (length of search words must be at least 2 characters)</p>
           ::
-          <div id="results"></div>
+
           <span id="resCounter" style="display: inline;">
             <strong id="resultsOffset">#[offset]#</strong>
             -
