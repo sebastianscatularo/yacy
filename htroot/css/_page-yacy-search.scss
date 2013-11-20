@@ -275,4 +275,13 @@ main {
 
 #tagCloud {
   text-align:justify;
+
+  a {
+    padding:3px;
+
+    &:hover {
+      border-radius:5px;
+      color:#fff !important;
+    }
+  }
 }

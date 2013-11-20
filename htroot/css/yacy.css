@@ -3408,3 +3408,8 @@ body#yacySearch {
       padding: 0 0.3em; }
   body#yacySearch #tagCloud {
     text-align: justify; }
+    body#yacySearch #tagCloud a {
+      padding: 3px; }
+      body#yacySearch #tagCloud a:hover {
+        border-radius: 5px;
+        color: #fff !important; }
