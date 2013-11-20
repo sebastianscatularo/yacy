@@ -131,4 +131,7 @@ YaCyPage.init = function() {
     color: {start: '#c08080', end: '#2200CC'}
   };
   $("#tagCloud a").tagcloud();
+
+  // show sidebar after it's completely loaded
+  $('#searchTrailer').css('visibility', 'visible');
 };

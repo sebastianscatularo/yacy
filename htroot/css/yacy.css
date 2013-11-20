@@ -3081,6 +3081,9 @@ a.yacyLogo:active, a.yacyLogo:hover,
 .hidden {
   display: none; }
 
+.invisible {
+  visibility: hidden; }
+
 /**********
  * Tables. */
 table tbody tr:nth-child(odd) {
