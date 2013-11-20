@@ -150,10 +150,6 @@ main {
     font-weight:bold;
   }
 
-  .snippet {
-    @extend %font-sans;
-  }
-
   .urlInfo {
     font-size:0.9em;
 
@@ -183,6 +179,15 @@ main {
     display:block;
   }
 
+  .snippet {
+    @extend %font-sans;
+    word-wrap:break-word;
+
+    &:after {
+      content:'\2026'; // horizontal ellipsis
+    }
+  }
+
   h1 {
     display:inline-block;
   }
@@ -195,6 +200,11 @@ main {
       white-space:nowrap;
       text-overflow:ellipsis;
       overflow:hidden;
+
+      &:hover {
+        text-overflow:inherit;
+        white-space:inherit;
+      }
     }
   }
 

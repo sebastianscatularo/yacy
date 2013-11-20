@@ -3349,6 +3349,10 @@ body#yacySearch .searchResult {
     font-style: italic; }
   body#yacySearch .searchResult .tags {
     display: block; }
+  body#yacySearch .searchResult .snippet {
+    word-wrap: break-word; }
+    body#yacySearch .searchResult .snippet:after {
+      content: '\2026'; }
   body#yacySearch .searchResult h1 {
     display: inline-block; }
   body#yacySearch .searchResult p {
@@ -3358,6 +3362,9 @@ body#yacySearch .searchResult {
       white-space: nowrap;
       text-overflow: ellipsis;
       overflow: hidden; }
+      body#yacySearch .searchResult p.url:hover {
+        text-overflow: inherit;
+        white-space: inherit; }
   body#yacySearch .searchResult p:last-of-type {
     margin-bottom: 0; }
 body#yacySearch .urlActions {
