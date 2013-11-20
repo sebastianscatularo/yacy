@@ -184,14 +184,22 @@ $(function() {
 #(/excluded)#
 
 <!-- type the number of results and navigation bar -->
-#(num-results)#
-	::
+#(num-results)#::
 	<p>No Results.</p>
 	::
 	<p>No Results. (length of search words must be at least 2 characters)</p>
 	::
 	<div id="results"></div>
-	<span id="resCounter" style="display: inline;"><strong id="resultsOffset">#[offset]#</strong>-<strong id="itemscount">#[itemscount]#</strong> of <strong id="totalcount">#[totalcount]#</strong> #(globalresults)#::; (<strong id="localResourceSize">#[localResourceSize]#</strong> local, <strong id="remoteResourceSize">#[remoteResourceSize]#</strong> remote), <strong id="remoteIndexCount">#[remoteIndexCount]#</strong> from <strong id="remotePeerCount">#[remotePeerCount]#</strong> remote YaCy peers.#(/globalresults)#</span>
+	<span id="resCounter" style="display: inline;">
+    <strong id="resultsOffset">#[offset]#</strong>
+    -
+    <strong id="itemscount">#[itemscount]#</strong>
+    of
+    <strong id="totalcount">#[totalcount]#</strong>
+    #(globalresults)#::
+    <span id="globalResults">
+    ; (<strong id="localResourceSize">#[localResourceSize]#</strong> local, <strong id="remoteResourceSize">#[remoteResourceSize]#</strong> remote), <strong id="remoteIndexCount">#[remoteIndexCount]#</strong> from <strong id="remotePeerCount">#[remotePeerCount]#</strong> remote YaCy peers.</span>
+    #(/globalresults)#</span>
 	<span id="resNav" style="display: inline;">#[resnav]#</span>
 	::
 	<p>Searching the web with this peer is disabled for unauthorized users. Please <a href="Status.html?login=">log in</a> as administrator to use the search function</p>
@@ -226,6 +234,11 @@ $(function() {
 #(/geoinfo)#
 
 <!-- linklist begin -->
+<script type="text/javascript">
+  //<![CDATA[
+  YaCyPage.chacheResultElements();
+  //]]>
+</script>
 #(resultTable)#::<table width="100%"><tr class="TableHeader"><td width="30%">Media</td><td width="70%">URL</td></tr>#(/resultTable)#
 #{results}#
 <!--#include virtual="yacysearchitem.html?item=#[item]#&eventID=#[eventID]#" -->

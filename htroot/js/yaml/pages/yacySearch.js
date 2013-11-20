@@ -1,15 +1,40 @@
-YaCyPage.statistics = function(offset, itemscount, itemsperpage, totalcount, localResourceSize, remoteResourceSize, remoteIndexCount, remotePeerCount, navurlbase) {
-  if (totalcount == 0) return;
-  if (offset >= 0) document.getElementById("resultsOffset").firstChild.nodeValue = offset;
-  if (itemscount >= 0) document.getElementById("itemscount").firstChild.nodeValue = itemscount;
-  document.getElementById("totalcount").firstChild.nodeValue = totalcount;
-  if (document.getElementById("localResourceSize") != null) document.getElementById("localResourceSize").firstChild.nodeValue = localResourceSize;
-  if (document.getElementById("remoteResourceSize") != null) document.getElementById("remoteResourceSize").firstChild.nodeValue = remoteResourceSize;
-  if (document.getElementById("remoteIndexCount") != null) document.getElementById("remoteIndexCount").firstChild.nodeValue = remoteIndexCount;
-  if (document.getElementById("remotePeerCount") != null) document.getElementById("remotePeerCount").firstChild.nodeValue = remotePeerCount;
-  document.getElementById("resNav").firstChild.nodeValue = "X";
-  // compose page navigation
+YaCyPage.e; // frequent used elements cache, set by chacheResultElements
 
+YaCyPage.chacheResultElements = function() {
+  YaCyPage.e = {
+    globalResults: $('#globalResults'),
+    itemsCount: $('#itemscount'),
+    localResourceSize: $('#localResourceSize'),
+    remoteIndexCount: $('#remoteIndexCount'),
+    remotePeerCount: $('#remotePeerCount'),
+    remoteResourceSize: $('#remoteResourceSize'),
+    resNav: $('#resNav'),
+    resultsOffset: $('#resultsOffset'),
+    totalCount: $('#totalcount')
+  };
+};
+
+YaCyPage.statistics = function(offset, itemscount, itemsperpage, totalcount, localResourceSize, remoteResourceSize, remoteIndexCount, remotePeerCount, navurlbase) {
+  if (totalcount === 0) {
+    return;
+  }
+  if (offset >= 0) {
+    YaCyPage.e.resultsOffset.text(offset);
+  }
+  if (itemscount >= 0) {
+    YaCyPage.e.itemsCount.text(itemscount);
+  }
+  YaCyPage.e.totalCount.text(totalcount);
+
+  if (YaCyPage.e.globalResults.size() > 0) {
+    YaCyPage.e.localResourceSize.text(localResourceSize);
+    YaCyPage.e.remoteResourceSize.text(remoteResourceSize);
+    YaCyPage.e.remoteIndexCount.text(remoteIndexCount);
+    YaCyPage.e.remotePeerCount.text(remotePeerCount);
+  }
+  YaCyPage.e.resNav.text('X');
+
+  // compose page navigation
   resnav = "";
   thispage = Math.floor(offset / itemsperpage);
   if (thispage == 0) {
@@ -47,7 +72,7 @@ YaCyPage.statistics = function(offset, itemscount, itemsperpage, totalcount, loc
       resnav += ("\"><img src=\"env/grafics/navdr.gif\" alt=\"arrowright\" title=\"use the TAB key to navigate to next page\" width=\"16\" height=\"16\" /></a>");
   }
 
-  document.getElementById("resNav").innerHTML = resnav;
+  YaCyPage.e.resNav.html(resnav);
 };
 
 YaCyPage.EventHandler = function() {
@@ -61,7 +86,7 @@ YaCyPage.EventHandler = function() {
 
   this.handleArrowKeys = function(evObj) {
     switch (evObj.keyCode) {
-      case 9:
+      //case 9:
       case 33:
         window.location.href = document.getElementById("nextpage").href;
         break;
