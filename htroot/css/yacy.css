@@ -2434,7 +2434,7 @@
   padding: 1.5em; }
 
 nav,
-#navSub, #breadCrumb, fieldset .content, fieldset.formSection > legend, header .logo, #footerMenu, table th, body#crawlStartExpert #formReview dt, body#yacySearch header .subRow, body#yacySearch .searchResult .snippet, body#yacySearch #searchTrailer, body#yacySearch #searchTrailer .ui-widget {
+#navSub, #breadCrumb, fieldset .content, fieldset.formSection > legend, header .logo, #footerMenu, table th, body#crawlStartExpert #formReview dt, body#yacySearch header .subRow, body#yacySearch .searchResult .snippet, body#yacySearch #searchTrailer, body#yacySearch #searchTrailer .ui-widget, body#yacySearch #resCounter, body#yacySearch .resNav {
   font-family: "Droid Sans", Arial, Helvetica, sans-serif; }
 
 input,
@@ -3438,3 +3438,38 @@ body#yacySearch {
     padding: 0.5em; }
     body#yacySearch #sidebarAbout .ui-accordion-content iframe {
       height: auto !important; }
+  body#yacySearch #resBarTop {
+    margin-bottom: 1em; }
+  body#yacySearch #resCounter {
+    font-size: 0.9em;
+    font-style: italic; }
+  body#yacySearch .resNav {
+    margin-left: 1.5em; }
+    body#yacySearch .resNav .left:before,
+    body#yacySearch .resNav .right:before {
+      font-family: FontAwesome;
+      font-style: normal;
+      font-size: 1.2em; }
+    body#yacySearch .resNav a,
+    body#yacySearch .resNav span {
+      display: inline-block;
+      margin: 0 0.2em;
+      padding: 0 0.25em; }
+    body#yacySearch .resNav span.current {
+      font-weight: bold; }
+    body#yacySearch .resNav a:not(.iconic) {
+      border-top: 3px solid transparent;
+      font-weight: bold;
+      border-radius: 3px;
+      background-color: #d5e8f4; }
+      body#yacySearch .resNav a:not(.iconic):hover {
+        border-top: 3px solid #94E84D;
+        color: #4d87c7; }
+    body#yacySearch .resNav .left:before {
+      content: "\f0d9"; }
+    body#yacySearch .resNav .right:before {
+      content: "\f0da"; }
+  body#yacySearch #resNav {
+    display: inline-block; }
+  body#yacySearch #resNavBottom {
+    float: right; }

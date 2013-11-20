@@ -9,6 +9,7 @@ YaCyPage.chacheResultElements = function() {
     remotePeerCount: $('#remotePeerCount'),
     remoteResourceSize: $('#remoteResourceSize'),
     resNav: $('#resNav'),
+    resNavBottom: $('#resNavBottom'),
     resultsOffset: $('#resultsOffset'),
     totalCount: $('#totalcount')
   };
@@ -54,41 +55,35 @@ YaCyPage.statistics = function(offset, itemscount, itemsperpage, totalcount,
   resnav = "";
   thispage = Math.floor(offset / itemsperpage);
   if (thispage == 0) {
-    resnav += ("<img src=\"env/grafics/navdl.gif\" alt=\"arrowleft\" width=\"16\" height=\"16\" />&nbsp;");
+    resnav += '<span class="left"></span>';
   } else {
-    resnav += ("<a id=\"prevpage\" href=\"");
-      resnav += (navurlbase + "&amp;startRecord=" + ((thispage - 1) * itemsperpage));
-    resnav += ("\"><img src=\"env/grafics/navdl.gif\" alt=\"arrowleft\" width=\"16\" height=\"16\" /></a>&nbsp;");
+    resnav += '<a href="' + navurlbase + "&amp;startRecord="
+      + ((thispage - 1) * itemsperpage) + '"><span class="left"></span></a>';
   }
 
   numberofpages = Math.floor(Math.min(10, 1 + ((totalcount.replace(/\./g,'') - 1) / itemsperpage)));
-  if (!numberofpages) numberofpages = 10;
+  var tabText = 'Use the TAB key to navigate to next page.';
+  if (!numberofpages) {
+    numberofpages = 10;
+  }
   for (i = 0; i < numberofpages; i++) {
-      if (i == thispage) {
-         resnav += "<img src=\"env/grafics/navs";
-         resnav += (i + 1);
-         resnav += (".gif\" alt=\"page");
-         resnav += (i + 1);
-         resnav += ("\" width=\"16\" height=\"16\" />&nbsp;");
-      } else {
-         resnav += ("<a href=\"");
-         resnav += (navurlbase + "&amp;startRecord=" + (i * itemsperpage));
-         resnav += ("\"><img src=\"env/grafics/navd");
-         resnav += (i + 1);
-         resnav += (".gif\" alt=\"page");
-         resnav += (i + 1);
-         resnav += ("\" title=\"use the TAB key to navigate to next page\" width=\"16\" height=\"16\" /></a>&nbsp;");
+    if (i == thispage) {
+      resnav += '<span class="current">' + (i + 1) + '</span>';
+    } else {
+      resnav += '<a href="' + navurlbase + "&amp;startRecord=" +
+        (i * itemsperpage) + '" class="page" title="' + tabText + '">' +
+        (i + 1) + '</a>';
       }
   }
   if (thispage >= numberofpages) {
-    resnav += ("<img src=\"env/grafics/navdr.gif\" alt=\"arrowright\" title=\"use the TAB key to navigate to next page\" width=\"16\" height=\"16\" />");
+    resnav += '<span class="right" title="' + tabText + '"></span>';
   } else {
-      resnav += ("<a id=\"nextpage\" href=\"");
-      resnav += (navurlbase + "&amp;startRecord=" + ((thispage + 1) * itemsperpage));
-      resnav += ("\"><img src=\"env/grafics/navdr.gif\" alt=\"arrowright\" title=\"use the TAB key to navigate to next page\" width=\"16\" height=\"16\" /></a>");
+    resnav += '<a class="iconic" href="' + navurlbase + "&amp;startRecord=" +
+      ((thispage + 1) * itemsperpage) + '" title="' + tabText + '"><span class="right"></span></a>';
   }
 
   YaCyPage.e.resNav.html(resnav);
+  YaCyPage.e.resNavBottom.html(resnav);
 };
 
 YaCyPage.EventHandler = function() {
@@ -102,7 +97,7 @@ YaCyPage.EventHandler = function() {
 
   this.handleArrowKeys = function(evObj) {
     switch (evObj.keyCode) {
-      //case 9:
+      case 9:
       case 33:
         window.location.href = document.getElementById("nextpage").href;
         break;
@@ -162,5 +157,6 @@ YaCyPage.init = function() {
   $('#searchTrailer').css('visibility', 'visible');
 
   // search is done now - update stats
-
+  YaCyPage.e.resNavBottom = $('#resNavBottom');
+  YaCyPage.e.resNavBottom.html(YaCyPage.e.resNav.clone());
 };
