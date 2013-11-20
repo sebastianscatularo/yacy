@@ -2446,7 +2446,7 @@ select,
 #breadCrumb span:not(:last-of-type):after, #breadCrumb:before, .formHint > *:before, .resourceQueryBox .queryBox:after, a[href^="http://"]:before,
 a[href^="https://"]:before, .icon-item-new:before, .icon-item-queued:before, .icon-item-done:before, table.sortable th:after, body#crawlStartExpert #startPointDetails .ycu-data-true:before,
 body#crawlStartSite #startPointDetails .ycu-data-true:before, body#crawlStartExpert #startPointDetails .ycu-data-false:before,
-body#crawlStartSite #startPointDetails .ycu-data-false:before, body#crawlStartExpert #formReview dt:not(.notConfigured):before, body#crawlStartExpert .ycu-data-true:before, body#crawlStartExpert .ycu-data-false:before, button[class^='icon-']:before, fieldset.collapsible > legend:hover:before, fieldset.collapsible.collapsed > legend:before {
+body#crawlStartSite #startPointDetails .ycu-data-false:before, body#crawlStartExpert #formReview dt:not(.notConfigured):before, body#crawlStartExpert .ycu-data-true:before, body#crawlStartExpert .ycu-data-false:before, button[class*='icon-']:before, fieldset.collapsible > legend:hover:before, fieldset.collapsible.collapsed > legend:before {
   opacity: 0.7; }
 
 #breadCrumb span:not(:last-of-type):after, #breadCrumb:before, .formHint > *:before, .resourceQueryBox .queryBox:after, a[href^="http://"]:before,
@@ -2691,7 +2691,7 @@ button {
   button:focus {
     outline: 0;
     background: #fafafa; }
-  button[class^='icon-']:before {
+  button[class*='icon-']:before {
     font-family: FontAwesome;
     float: left;
     margin: 0 1em 0 -1em;

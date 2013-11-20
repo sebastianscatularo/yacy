@@ -155,7 +155,7 @@ button {
   }
 
   // button with icon first
-  &[class^='icon-']:before {
+  &[class*='icon-']:before {
     @include icon-font;
     @extend %opaque-light;
     float:left;
