@@ -3,11 +3,9 @@ YaCyUi.Widgets = YaCyUi.Widgets || {}; // UI namespace
 
 YaCyUi.Widgets.ProgressBar = function(element, maxValue) {
   var self = this;
-  console.debug("progress is", element);
 
   this.step = function(amount) {
     element.progressbar('value', element.progressbar('value') + amount);
-    console.debug("progress set", element.progressbar('value'));
   }
 
   this.show = function() {
@@ -15,7 +13,6 @@ YaCyUi.Widgets.ProgressBar = function(element, maxValue) {
   }
 
   this.hide = function() {
-    console.debug("progress hide", element.progressbar('value'));
     element.hide('slow');
   }
 
@@ -25,5 +22,4 @@ YaCyUi.Widgets.ProgressBar = function(element, maxValue) {
       self.hide();
     }
   });
-  console.debug("progress init");
 };

@@ -2434,7 +2434,7 @@
   padding: 1.5em; }
 
 nav,
-#navSub, #breadCrumb, fieldset .content, fieldset.formSection > legend, header .logo, table th, body#crawlStartExpert #formReview dt, body#yacySearch header .subRow, body#yacySearch .searchResult .snippet {
+#navSub, #breadCrumb, fieldset .content, fieldset.formSection > legend, header .logo, table th, body#crawlStartExpert #formReview dt, body#yacySearch header .subRow, body#yacySearch .searchResult .snippet, body#yacySearch #searchTrailer, body#yacySearch #searchTrailer .ui-widget {
   font-family: "Droid Sans", Arial, Helvetica, sans-serif; }
 
 input,
@@ -3245,131 +3245,163 @@ body#crawlStartExpert .reviewHeader {
 body#crawlStartExpert .reviewContent {
   clear: both; }
 
-body#yacySearch header {
-  height: auto;
-  box-shadow: 0 4px 5px rgba(50, 50, 50, 0.4);
-  border-bottom: 3px solid #94c6e4; }
-  body#yacySearch header .headRow,
-  body#yacySearch header .content {
-    margin-left: 103px;
-    padding-left: 0.5em; }
-  body#yacySearch header .headRow {
-    background-color: #444444; }
-  body#yacySearch header .subRow {
-    padding-top: 0.5em;
-    padding-bottom: 0.5em;
-    background-color: #222222;
-    font-size: 0.9em; }
-  body#yacySearch header .logo {
-    position: absolute;
-    overflow: visible;
-    left: 0;
-    top: 0;
-    width: 103px;
-    margin: 0.5em; }
-  body#yacySearch header .menu.empty {
-    height: 2em; }
-  body#yacySearch header .search {
-    margin-bottom: 0.2em; }
-  body#yacySearch header label {
-    padding-right: 0.5em; }
-  body#yacySearch header form {
+body#yacySearch {
+  /** YAML layout */
+  /** Page layout */ }
+  body#yacySearch .ym-column {
+    display: block;
+    overflow: hidden;
+    padding-right: 250px;
+    width: auto; }
+  body#yacySearch .ym-col1 {
+    /* content */
+    position: relative;
+    float: left;
+    width: 100%; }
+  body#yacySearch .ym-col3 {
+    /* sidebar */
+    position: relative;
+    float: left;
+    width: 250px;
+    margin: 0 -250px 0 0; }
+  body#yacySearch header {
+    height: auto;
+    box-shadow: 0 4px 5px rgba(50, 50, 50, 0.4);
+    border-bottom: 3px solid #94c6e4; }
+    body#yacySearch header .headRow,
+    body#yacySearch header .content {
+      margin-left: 103px;
+      padding-left: 0.5em; }
+    body#yacySearch header .headRow {
+      background-color: #444444; }
+    body#yacySearch header .subRow {
+      padding-top: 0.5em;
+      padding-bottom: 0.5em;
+      background-color: #222222;
+      font-size: 0.9em; }
+    body#yacySearch header .logo {
+      position: absolute;
+      overflow: visible;
+      left: 0;
+      top: 0;
+      width: 103px;
+      margin: 0.5em; }
+    body#yacySearch header .menu.empty {
+      height: 2em; }
+    body#yacySearch header .search {
+      margin-bottom: 0.2em; }
+    body#yacySearch header label {
+      padding-right: 0.5em; }
+    body#yacySearch header form {
+      margin: 0; }
+    body#yacySearch header input {
+      margin-left: 0.8em;
+      margin-right: 0.3em;
+      padding: 0.2em;
+      width: 20em; }
+    body#yacySearch header button {
+      text-shadow: 0; }
+    body#yacySearch header input,
+    body#yacySearch header button {
+      margin-top: 0;
+      margin-bottom: 0;
+      -moz-box-sizing: content-box;
+      box-sizing: content-box; }
+  body#yacySearch nav {
+    padding: 0;
     margin: 0; }
-  body#yacySearch header input {
-    margin-left: 0.8em;
-    margin-right: 0.3em;
-    padding: 0.2em;
-    width: 20em; }
-  body#yacySearch header button {
-    text-shadow: 0; }
-  body#yacySearch header input,
-  body#yacySearch header button {
-    margin-top: 0;
-    margin-bottom: 0;
-    -moz-box-sizing: content-box;
-    box-sizing: content-box; }
-body#yacySearch nav {
-  padding: 0;
-  margin: 0; }
-  body#yacySearch nav ul {
-    font-size: 0.8em;
-    padding: 0; }
-body#yacySearch h1.greeting {
-  font-style: italic;
-  float: right;
-  font-size: 1.2em;
-  opacity: 0.9;
-  padding: 0;
-  margin: 0;
-  margin-right: 1.5em; }
-body#yacySearch #searchProgress {
-  height: 1em; }
-body#yacySearch main a:before {
-  display: none; }
-body#yacySearch #resultsList {
-  float: left;
-  width: 70%; }
-body#yacySearch .searchResult {
-  margin-bottom: 2em;
-  margin-left: -0.5em;
-  padding: 0.5em;
-  border-radius: 5px; }
-  body#yacySearch .searchResult:hover {
-    background-color: #fdfefe; }
-  body#yacySearch .searchResult .icon {
-    float: left; }
-    body#yacySearch .searchResult .icon .controls {
+    body#yacySearch nav ul {
       font-size: 0.8em;
-      line-height: 1.3em;
-      text-align: center; }
-      body#yacySearch .searchResult .icon .controls > * {
-        display: block; }
-      body#yacySearch .searchResult .icon .controls a i {
-        opacity: 0.6; }
-      body#yacySearch .searchResult .icon .controls a:hover i {
-        opacity: 1; }
-  body#yacySearch .searchResult .content {
-    margin-left: 30px; }
-  body#yacySearch .searchResult .icon,
-  body#yacySearch .searchResult h1 {
-    line-height: 1.5em;
-    font-size: 1.3em;
+      padding: 0; }
+  body#yacySearch h1.greeting {
+    font-style: italic;
+    float: right;
+    font-size: 1.2em;
+    opacity: 0.9;
+    padding: 0;
     margin: 0;
-    font-weight: bold; }
-  body#yacySearch .searchResult .urlInfo {
-    font-size: 0.9em; }
-    body#yacySearch .searchResult .urlInfo span {
-      display: inline-block;
-      padding: 0;
-      padding-right: 0.3em; }
-      body#yacySearch .searchResult .urlInfo span:not(:first-of-type):before {
-        content: '|';
+    margin-right: 1.5em; }
+  body#yacySearch #searchProgress {
+    height: 1em; }
+  body#yacySearch main a:before {
+    display: none; }
+  body#yacySearch #resultsList {
+    margin-right: 1em; }
+  body#yacySearch .searchResult {
+    margin-bottom: 2em;
+    margin-left: -0.5em;
+    padding: 0.5em;
+    border-radius: 5px; }
+    body#yacySearch .searchResult:hover {
+      background-color: #fdfefe; }
+    body#yacySearch .searchResult .icon {
+      float: left; }
+      body#yacySearch .searchResult .icon .controls {
+        font-size: 0.8em;
+        line-height: 1.3em;
+        text-align: center; }
+        body#yacySearch .searchResult .icon .controls > * {
+          display: block; }
+        body#yacySearch .searchResult .icon .controls a i {
+          opacity: 0.6; }
+        body#yacySearch .searchResult .icon .controls a:hover i {
+          opacity: 1; }
+    body#yacySearch .searchResult .content {
+      margin-left: 30px; }
+    body#yacySearch .searchResult .icon,
+    body#yacySearch .searchResult h1 {
+      line-height: 1.5em;
+      font-size: 1.3em;
+      margin: 0;
+      font-weight: bold; }
+    body#yacySearch .searchResult .urlInfo {
+      font-size: 0.9em; }
+      body#yacySearch .searchResult .urlInfo span {
         display: inline-block;
+        padding: 0;
         padding-right: 0.3em; }
-    body#yacySearch .searchResult .urlInfo a.iconic {
-      font-size: 1.2em; }
-  body#yacySearch .searchResult .date {
-    font-style: italic; }
-  body#yacySearch .searchResult .tags {
+        body#yacySearch .searchResult .urlInfo span:not(:first-of-type):before {
+          content: '|';
+          display: inline-block;
+          padding-right: 0.3em; }
+      body#yacySearch .searchResult .urlInfo a.iconic {
+        font-size: 1.2em; }
+    body#yacySearch .searchResult .date {
+      font-style: italic; }
+    body#yacySearch .searchResult .tags {
+      display: block; }
+    body#yacySearch .searchResult .snippet {
+      word-wrap: break-word; }
+      body#yacySearch .searchResult .snippet:after {
+        content: '\2026'; }
+    body#yacySearch .searchResult h1 {
+      display: inline-block; }
+    body#yacySearch .searchResult p {
+      margin-bottom: 0.5em; }
+      body#yacySearch .searchResult p.url {
+        font-size: 0.9em;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden; }
+        body#yacySearch .searchResult p.url:hover {
+          text-overflow: inherit;
+          white-space: inherit; }
+    body#yacySearch .searchResult p:last-of-type {
+      margin-bottom: 0; }
+  body#yacySearch .urlActions {
+    margin-bottom: 0.3em;
+    opacity: 0.7; }
+  body#yacySearch #searchTrailer .ym-cbox > div {
+    margin-top: 1em;
+    width: 220px; }
+  body#yacySearch #searchTrailer .ym-cbox > div:first-of-type {
+    margin-top: 0; }
+  body#yacySearch #searchTrailer label {
     display: block; }
-  body#yacySearch .searchResult .snippet {
-    word-wrap: break-word; }
-    body#yacySearch .searchResult .snippet:after {
-      content: '\2026'; }
-  body#yacySearch .searchResult h1 {
-    display: inline-block; }
-  body#yacySearch .searchResult p {
-    margin-bottom: 0.5em; }
-    body#yacySearch .searchResult p.url {
-      font-size: 0.9em;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      overflow: hidden; }
-      body#yacySearch .searchResult p.url:hover {
-        text-overflow: inherit;
-        white-space: inherit; }
-  body#yacySearch .searchResult p:last-of-type {
-    margin-bottom: 0; }
-body#yacySearch .urlActions {
-  margin-bottom: 0.3em;
-  opacity: 0.7; }
+  body#yacySearch #searchTrailer fieldset {
+    padding: 0.5em; }
+    body#yacySearch #searchTrailer fieldset legend {
+      font-size: 0.8em;
+      padding: 0 0.3em; }
+  body#yacySearch #tagCloud {
+    text-align: justify; }

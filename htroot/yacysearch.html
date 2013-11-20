@@ -141,20 +141,9 @@
           <script type="text/javascript">
             //<![CDATA[
             $(function() {
-              $.extend($.ui.accordion.defaults, {
-                autoHeight: false,
-                clearStyle: true,
-                collapsible: true,
-                header: "h3"
-              });
               #{sidebarVocabulary}#
-              $("#sidebar#[vocabulary]#").accordion({});
+              $("#sidebar#[vocabulary]#").accordion({collapsible: true});
               #{/sidebarVocabulary}#
-              $("#sidebarDomains").accordion({});
-              $("#sidebarProtocols").accordion({});
-              $("#sidebarFiletypes").accordion({});
-              $("#sidebarAuthors").accordion({});
-              $("#sidebarNameSpace").accordion({});
               $("#sidebarTopics").tagcloud({type:"sphere",power:.25,seed:0,sizemin:10,sizemax:20,height:80,colormin:"682",colormax:"20C"}).find("li").tsort();
               $("#sidebarAbout").accordion({});
             });
@@ -212,106 +201,108 @@
           </p>
           #(/num-results)#
 
-          <!-- the search results -->
-          <div id="resultsList">
-            <!-- show openstreetmap tiles if geoinfo was found -->
-            #(geoinfo)#::
-            <div class="searchresults">
-              <h4 class="linktitle">
-                <img src="http://www.openstreetmap.org/favicon.ico" class="favicon" style="width:16px; height:16px;" alt="" />
-                Location -- click on map to enlarge</h4>
-                <p class="url">
-                  #{loc}#
-                  <div style="margin: 20px; width: 100px; float: left;">
-                    <a href="/osm.png?lon=#[lon]#&amp;lat=#[lat]#&amp;zoom=14" class="thumblink"  style="float:left;" onclick="return hs.expand(this)">
-                      <img src="/osm.png?lon=#[lon]#&amp;lat=#[lat]#&amp;zoom=14" width="192" height="192" alt="map #[lon]#, #[lat]#" />
-                    </a>
-                    <div class="TableCellDark">
-                      <a href="http://www.openstreetmap.org/?lat=#[lat]#&amp;lon=#[lon]#&amp;zoom=14">#[name]#</a>
-                      <br />
-                      <a href="http://www.openstreetmap.org/?lat=#[lat]#&amp;lon=#[lon]#&amp;zoom=14">lat=#[lat]#, lon=#[lon]#</a>
+          <div class="ym-column">
+            <!-- the search results -->
+            <div id="resultsList" class="ym-col1">
+              <div class="ym-cbox">
+                <!-- show openstreetmap tiles if geoinfo was found -->
+                #(geoinfo)#::
+                <div class="searchresults">
+                  <h4 class="linktitle">
+                    <img src="http://www.openstreetmap.org/favicon.ico" class="favicon" style="width:16px; height:16px;" alt="" />
+                    Location -- click on map to enlarge
+                  </h4>
+                  <p class="url">
+                    #{loc}#
+                    <div style="margin: 20px; width: 100px; float: left;">
+                      <a href="/osm.png?lon=#[lon]#&amp;lat=#[lat]#&amp;zoom=14" class="thumblink"  style="float:left;" onclick="return hs.expand(this)">
+                        <img src="/osm.png?lon=#[lon]#&amp;lat=#[lat]#&amp;zoom=14" width="192" height="192" alt="map #[lon]#, #[lat]#" />
+                      </a>
+                      <div class="TableCellDark">
+                        <a href="http://www.openstreetmap.org/?lat=#[lat]#&amp;lon=#[lon]#&amp;zoom=14">#[name]#</a>
+                        <br />
+                        <a href="http://www.openstreetmap.org/?lat=#[lat]#&amp;lon=#[lon]#&amp;zoom=14">lat=#[lat]#, lon=#[lon]#</a>
+                      </div>
+                      <!-- preview -->
+                      <div class="highslide-caption">
+                        <a href="http://www.openstreetmap.org/?lat=#[lat]#&amp;lon=#[lon]#&amp;zoom=14">#[name]#</a>
+                        <br />
+                        <a href="http://www.openstreetmap.org/?lat=#[lat]#&amp;lon=#[lon]#&amp;zoom=14">lat=#[lat]#, lon=#[lon]#</a>
+                      </div>
+                      <!-- zoomed -->
                     </div>
-                    <!-- preview -->
-                    <div class="highslide-caption">
-                      <a href="http://www.openstreetmap.org/?lat=#[lat]#&amp;lon=#[lon]#&amp;zoom=14">#[name]#</a>
-                      <br />
-                      <a href="http://www.openstreetmap.org/?lat=#[lat]#&amp;lon=#[lon]#&amp;zoom=14">lat=#[lat]#, lon=#[lon]#</a>
-                  </div>
-                  <!-- zoomed -->
+                    #{/loc}#
+                  </p>
+                  <p class="urlinfo" style="clear:left;">
+                    Map (c) by <a href="http://www.openstreetmap.org">OpenStreetMap</a> and contributors, CC-BY-SA
+                  </p>
                 </div>
-                #{/loc}#
-              </p>
-              <p class="urlinfo" style="clear:left;">
-                Map (c) by <a href="http://www.openstreetmap.org">OpenStreetMap</a> and contributors, CC-BY-SA
-              </p>
+                #(/geoinfo)#
+
+                <!-- linklist begin -->
+                <script type="text/javascript">
+                  //<![CDATA[
+                  YaCyPage.chacheResultElements();
+                  //]]>
+                </script>
+                #(resultTable)#::
+                <table width="100%">
+                  <tr class="TableHeader">
+                    <td width="30%">Media</td>
+                    <td width="70%">URL</td>
+                  </tr>
+                  #(/resultTable)#
+                  #{results}#
+                  <!--#include virtual="yacysearchitem.html?item=#[item]#&eventID=#[eventID]#" -->
+                  #{/results}#
+                  #(resultTable)#::
+                </table>
+                #(/resultTable)#
+                <!-- linklist end -->
+
+                #(pageNavBottom)#::
+                <div id="pageNavBottom" style="text-align:center">#[resnav]#</div>
+                #(/pageNavBottom)#
+              </div>
             </div>
-            #(/geoinfo)#
-
-            <!-- linklist begin -->
-            <script type="text/javascript">
-              //<![CDATA[
-              YaCyPage.chacheResultElements();
-              //]]>
-            </script>
-            #(resultTable)#::
-            <table width="100%">
-              <tr class="TableHeader">
-                <td width="30%">Media</td>
-                <td width="70%">URL</td>
-              </tr>
-              #(/resultTable)#
-              #{results}#
-              <!--#include virtual="yacysearchitem.html?item=#[item]#&eventID=#[eventID]#" -->
-              #{/results}#
-              #(resultTable)#::
-            </table>
-            #(/resultTable)#
-            <!-- linklist end -->
-
-            <!-- attach the bottomline -->
-            <!--#(pageNavBottom)#::<div id="pageNavBottom" style="text-align:center">#[resnav]#</div>#(/pageNavBottom)#-->
+            <!--#include virtual="yacysearchtrailer.html?eventID=#[eventID]#" -->
           </div>
 
-          <!-- div style="width=220px;" -->
-          <!--# include virtual="yacysearchtrailer.html?eventID=#[eventID]#" -->
-          <!-- /div -->
-        </div>
-
-        <!-- update the search results statistics after the search is finished -->
-        <script type="text/javascript">
-          //<![CDATA[
-          function latestinfo() {
-            if (window.XMLHttpRequest) { // Mozilla/Safari
-              self.xmlHttpReq = new XMLHttpRequest();
-            } else if (window.ActiveXObject) { // IE
-              self.xmlHttpReq = new ActiveXObject("Microsoft.XMLHTTP");
-            }
-            self.xmlHttpReq.open('GET', "yacysearchlatestinfo.json?eventID=#[eventID]#", true);
-            self.xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-            self.xmlHttpReq.onreadystatechange = function() {
-              if (self.xmlHttpReq.readyState == 4) {
-                //YCU var rsp = eval("(" + self.xmlHttpReq.responseText + ")");
-                //YCU statistics(rsp.offset, rsp.itemscount, rsp.itemsperpage, rsp.totalcount, rsp.localResourceSize, rsp.remoteResourceSize, rsp.remoteIndexCount, rsp.remotePeerCount, rsp.navurlBase);
+          <!-- update the search results statistics after the search is finished -->
+          <script type="text/javascript">
+            //<![CDATA[
+            function latestinfo() {
+              if (window.XMLHttpRequest) { // Mozilla/Safari
+                self.xmlHttpReq = new XMLHttpRequest();
+              } else if (window.ActiveXObject) { // IE
+                self.xmlHttpReq = new ActiveXObject("Microsoft.XMLHTTP");
               }
+              self.xmlHttpReq.open('GET', "yacysearchlatestinfo.json?eventID=#[eventID]#", true);
+              self.xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+              self.xmlHttpReq.onreadystatechange = function() {
+                if (self.xmlHttpReq.readyState == 4) {
+                  //YCU var rsp = eval("(" + self.xmlHttpReq.responseText + ")");
+                  //YCU statistics(rsp.offset, rsp.itemscount, rsp.itemsperpage, rsp.totalcount, rsp.localResourceSize, rsp.remoteResourceSize, rsp.remoteIndexCount, rsp.remotePeerCount, rsp.navurlBase);
+                }
+              }
+              self.xmlHttpReq.send(null);
             }
-            self.xmlHttpReq.send(null);
-          }
-          window.setTimeout('latestinfo();',500);
-          window.setTimeout('latestinfo();',1000);
-          window.setTimeout('latestinfo();',1500);
-          window.setTimeout('latestinfo();',2000);
-          window.setTimeout('latestinfo();',3000);
-          window.setTimeout('latestinfo();',4000);
-          window.setTimeout('latestinfo();',5000);
-          window.setTimeout('latestinfo();',6000);
-          window.setTimeout('latestinfo();',8000);
-          window.setTimeout('latestinfo();',10000);
-          //]]>
-        </script>
+            window.setTimeout('latestinfo();',500);
+            window.setTimeout('latestinfo();',1000);
+            window.setTimeout('latestinfo();',1500);
+            window.setTimeout('latestinfo();',2000);
+            window.setTimeout('latestinfo();',3000);
+            window.setTimeout('latestinfo();',4000);
+            window.setTimeout('latestinfo();',5000);
+            window.setTimeout('latestinfo();',6000);
+            window.setTimeout('latestinfo();',8000);
+            window.setTimeout('latestinfo();',10000);
+            //]]>
+          </script>
 
-        <!--# include virtual="/interaction_elements/Footer.html" -->
+          <!--# include virtual="/interaction_elements/Footer.html" -->
+        </div>
       </div>
-    </div>
-  </main>
-</body>
+    </main>
+  </body>
 </html>

@@ -124,4 +124,11 @@ YaCyPage.init = function() {
     },
     minLength: 2
   });
+
+  // create the topics tag-cloud
+  $.fn.tagcloud.defaults = {
+    size: {start: 0.8, end: 1.3, unit: 'em'},
+    color: {start: '#c08080', end: '#2200CC'}
+  };
+  $("#tagCloud a").tagcloud();
 };
