@@ -3407,8 +3407,9 @@ body#yacySearch {
       font-size: 0.8em;
       padding: 0 0.3em; }
   body#yacySearch #tagCloud {
-    text-align: justify; }
+    text-align: center; }
     body#yacySearch #tagCloud a {
+      display: inline-block;
       padding: 3px; }
       body#yacySearch #tagCloud a:hover {
         border-radius: 5px;

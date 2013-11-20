@@ -130,7 +130,17 @@ YaCyPage.init = function() {
     size: {start: 0.8, end: 1.3, unit: 'em'},
     color: {start: '#c08080', end: '#2200CC'}
   };
-  $("#tagCloud a").tagcloud();
+  //$("#tagCloud a").tagcloud();
+  $('#tagCloud a').tsort().tagcloud({
+    type:"sphere",
+    power:.25,
+    seed:0,
+    sizemin:10,
+    sizemax:20,
+    height:80,
+    colormin:"682",
+    colormax:"20C"
+  });//.css('display', 'inline-block');
 
   // show sidebar after it's completely loaded
   $('#searchTrailer').css('visibility', 'visible');
