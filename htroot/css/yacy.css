@@ -2434,7 +2434,7 @@
   padding: 1.5em; }
 
 nav,
-#navSub, #breadCrumb, fieldset .content, fieldset.formSection > legend, header .logo, #footerMenu, table th, body#crawlStartExpert #formReview dt, body#yacySearch header .subRow, body#yacySearch .searchResult .snippet, body#yacySearch #searchTrailer, body#yacySearch #searchTrailer .ui-widget, body#yacySearch #resCounter, body#yacySearch .resNav {
+#navSub, #breadCrumb, fieldset .content, fieldset.formSection > legend, header .logo, #footerMenu, table th, body#crawlStartExpert #formReview dt, body#yacySearch main, body#yacySearch #searchTrailer .ui-widget {
   font-family: "Droid Sans", Arial, Helvetica, sans-serif; }
 
 input,
@@ -2453,7 +2453,7 @@ body#crawlStartSite #startPointDetails .ycu-data-false:before, body#crawlStartEx
 a[href^="https://"]:before, .icon-item-new:before, .icon-item-queued:before, .icon-item-done:before, table.sortable th:after, body#crawlStartExpert #startPointDetails .ycu-data-true:before,
 body#crawlStartSite #startPointDetails .ycu-data-true:before, body#crawlStartExpert #startPointDetails .ycu-data-false:before,
 body#crawlStartSite #startPointDetails .ycu-data-false:before, body#crawlStartExpert #formReview dt:not(.notConfigured):before, body#crawlStartExpert .ycu-data-true:before, body#crawlStartExpert .ycu-data-false:before, #navSub li a:after,
-#navSub li span:after, fieldset.collapsible > legend:before, fieldset.formSection .hasHelp:before, fieldset.formGroup > legend:before, fieldset.formGroup > legend:after, .formHint:before {
+#navSub li span:after, fieldset.collapsible > legend:before, fieldset.formSection .hasHelp:before, body#yacySearch #messages > p:before, fieldset.formGroup > legend:before, fieldset.formGroup > legend:after, .formHint:before {
   font-family: FontAwesome;
   font-style: normal;
   font-size: 0.85em; }
@@ -2462,7 +2462,7 @@ body#crawlStartSite #startPointDetails .ycu-data-false:before, body#crawlStartEx
 a[href^="https://"]:before, .icon-item-new:before, .icon-item-queued:before, .icon-item-done:before, table.sortable th:after, body#crawlStartExpert #startPointDetails .ycu-data-true:before,
 body#crawlStartSite #startPointDetails .ycu-data-true:before, body#crawlStartExpert #startPointDetails .ycu-data-false:before,
 body#crawlStartSite #startPointDetails .ycu-data-false:before, body#crawlStartExpert #formReview dt:not(.notConfigured):before, body#crawlStartExpert .ycu-data-true:before, body#crawlStartExpert .ycu-data-false:before, #navSub li a:after,
-#navSub li span:after, fieldset.collapsible > legend:before, fieldset.formSection .hasHelp:before {
+#navSub li span:after, fieldset.collapsible > legend:before, fieldset.formSection .hasHelp:before, body#yacySearch #messages > p:before {
   display: inline-block; }
 
 /**********
@@ -3473,3 +3473,12 @@ body#yacySearch {
     display: inline-block; }
   body#yacySearch #resNavBottom {
     float: right; }
+  body#yacySearch #messages > p {
+    padding: 0.3em 1em;
+    border-radius: 5px; }
+  body#yacySearch #messages .error:before {
+    content: "\f06a"; }
+  body#yacySearch #messages .suggest strong {
+    font-style: italic; }
+  body#yacySearch #messages .suggest:before {
+    content: "\f0eb"; }

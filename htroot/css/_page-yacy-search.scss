@@ -42,7 +42,6 @@ header {
       bottom:0.5em;
     }
     background-color:$ycu-var-color-nav-bg;
-    @extend %font-sans;
     font-size:0.9em;
   }
 
@@ -102,6 +101,10 @@ nav {
     font-size:0.8em;
     padding:0;
   }
+}
+
+main {
+  @extend %font-sans;
 }
 
 h1.greeting {
@@ -206,7 +209,6 @@ main {
   }
 
   .snippet {
-    @extend %font-sans;
     word-wrap:break-word;
 
     &:after {
@@ -245,8 +247,6 @@ main {
 }
 
 #searchTrailer {
-  @extend %font-sans;
-
   .ui-widget {
     @extend %font-sans;
   }
@@ -300,7 +300,6 @@ main {
 }
 
 #resCounter {
-  @extend %font-sans;
   font: {
     size:0.9em;
     style:italic;
@@ -308,7 +307,6 @@ main {
 }
 
 .resNav {
-  @extend %font-sans;
   margin-left:1.5em;
 
   .left:before,
@@ -358,4 +356,29 @@ main {
 
 #resNavBottom {
   float:right;
+}
+
+#messages {
+  > p{
+    padding:0.3em 1em;
+    border-radius:5px;
+
+    &:before {
+      @extend %icon-block;
+    }
+  }
+
+  .error:before {
+    content:'#{$fa-var-exclamation-circle}';
+  }
+
+  .suggest{
+    strong {
+      font-style:italic;
+    }
+
+    &:before {
+      content:'#{$fa-var-lightbulb-o}';
+    }
+  }
 }

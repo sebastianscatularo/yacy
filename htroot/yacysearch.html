@@ -155,23 +155,25 @@
           #(/resource-select)#
           #(/topmenu)#
 
-          #(urlmaskerror)#::
-          <p>
-            <b>Illegal URL mask:</b> <i>#[urlmask]#</i> (not a valid regular expression), mask ignored.
-          </p>
-          #(/urlmaskerror)#
+          <div id="messages">
+            #(urlmaskerror)#::
+            <p class="error">
+              <strong>Illegal URL mask:</strong> <i>#[urlmask]#</i> (not a valid regular expression), mask ignored.
+            </p>
+            #(/urlmaskerror)#
 
-          #(prefermaskerror)#::
-          <p>
-            <b>Illegal prefer mask:</b> <i>#[prefermask]#</i> (not a valid regular expression), mask ignored.</b>
-          </p>
-          #(/prefermaskerror)#
+            #(prefermaskerror)#::
+            <p class="error">
+              <strong>Illegal prefer mask:</strong> <i>#[prefermask]#</i> (not a valid regular expression), mask ignored.</b>
+            </p>
+            #(/prefermaskerror)#
 
-          #(didYouMean)#::
-          <p>
-            <b>Did you mean:</b> #{suggestions}# <a href="#[url]#">#[word]#</a> #[sep]##{/suggestions}#
-          </p>
-          #(/didYouMean)#
+            #(didYouMean)#::
+            <p class="suggest">
+              <strong>Did you mean:</strong> #{suggestions}# <a href="#[url]#">#[word]#</a> #[sep]##{/suggestions}#
+            </p>
+            #(/didYouMean)#
+          </div>
 
           <!-- show information about search key handling -->
           #(excluded)#::
@@ -186,7 +188,6 @@
           ::
           <p>No Results. (length of search words must be at least 2 characters)</p>
           ::
-
           <div id="resBarTop">
             <span id="resCounter" style="display: inline;">
               <strong id="resultsOffset">#[offset]#</strong>&mdash;<strong id="itemscount">#[itemscount]#</strong>
