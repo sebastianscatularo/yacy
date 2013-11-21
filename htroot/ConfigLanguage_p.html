@@ -1,65 +1,176 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <title>YaCy '#[clientname]#': Language selection</title>
-  	#%env/templates/metas.template%#
-  </head>
-  <body id="ConfigLanguage">
-    #%env/templates/header.template%#
-    <h2>Language selection</h2>
-    <p>
-      You can change the language of the YaCy-webinterface with translation files.
-    </p>
-    <form action="ConfigLanguage_p.html" accept-charset="UTF-8">
-      <fieldset>
-        <dl>
-          <dt><label for="cur_lang">Current language</label>:</dt>
-          <dd id="cur_lang"><!-- lang -->default(english)&nbsp;</dd>
+<head>
+  <title>YaCy '#[clientname]#': Language selection</title>
+  #%env/templates/header-backend.template%#
+  <script type="text/javascript">
+    //<![CDATA[
+    YaCyPage.init = function() {
+      var submitBtn = $('#startDownloadLang');
+      console.debug(YaCyUi.Tools);
+      YaCyUi.Tools.Validation.simpleUrlValidator($('#urlInstall'),
+          function(evObj, type, elements) {
+            console.debug("validate", evObj, type, elements);
+        if (type == 'valid') {
+          submitBtn.prop('disabled', false);
+        } else {
+          submitBtn.prop('disabled', true);
+        }
+      });
+    };
+    //]]>
+  </script>
+</head>
 
-          <dt><label for="lang_file">Author(s) (chronological)</label>:</dt>
-          <dd id="lang_file"><!-- author -->&nbsp;</dd>
+<body id="configLanguage">
+  <ul class="ym-skiplinks">
+    <li><a class="ym-skip" href="#nav">Skip to navigation (Press Enter)</a></li>
+    <li><a class="ym-skip" href="#main">Skip to main content (Press Enter)</a></li>
+  </ul>
 
-          <dt><label for="lang_maintainer"><em>Send additions to maintainer</em></label>:</dt>
-          <dd id="lang_maintainer"><!-- maintainer -->&nbsp;</dd>
+  #%env/templates/header.template%#
 
-          <dt><label for="lang_list">Available Languages</label>:</dt>
-          <dd>
-            <select name="language" id="lang_list">#{langlist}#
-              <option value="#[file]#" #[selected]#>#[name]#</option>#{/langlist}#
-            </select>
-          </dd>
-          <dt></dt>
-          <dd>
-            <input type="submit" name="use_button" value="Use" class="submitready"/>
-            <input type="submit" name="delete" value="Delete" class="submitready"/>
-          </dd>
-        </dl>
-      </fieldset>
-    </form>
+  <main>
+    <div class="ym-wrapper">
+      <div class="ym-wbox">
 
-    <form action="ConfigLanguage_p.html" accept-charset="UTF-8">
-      <fieldset>
-        <dl>
-          <dt><label for="url_install">Install new language from URL</label>:</dt>
-          <dd>
-            <input type="text" name="url" id="url_install" size="30" />
-          </dd>
+<div id="devInfo">
+This may not work as expected, as a lot of strings has been changed!
+TODO:
+ - hide language setting, if there are no languages
+</div>
 
-          <dt><label for="use_lang"> Use this language</label></dt>
-          <dd>
-            <input type="checkbox" name="use_lang" id="use_lang" value="on" checked="checked" />
-          </dd>
-          <dt></dt>
-          <dd><input type="submit" value="Install" class="submitready"/></dd>
-        </dl>
-        <p>Make sure that you only download data from trustworthy sources. The new language file
-           might overwrite existing data if a file of the same name exists already.</p>
-      </fieldset>
-    </form>
-    #(status)#
-    ::<p><strong>Unable to get URL: #[url]#</strong></p>
-    ::<p><strong>Error saving the language file.</strong></p>
-    #(/status)#
+        <h1>Language selection</h1>
+        <p>
+          You can change the language of the YaCy-webinterface with translation files.
+        </p>
+
+        #(status)#
+        <form action="ConfigLanguage_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
+          <fieldset class="main">
+            <legend>Language Selection</legend>
+
+            <fieldset class="formGroup">
+              <legend>Current Setting</legend>
+              <fieldset class="formSection">
+                <legend>Current language</legend>
+                <div class="content">
+                  default (english)
+                </div>
+              </fieldset>
+              <fieldset class="formSection">
+                <legend>Author(s) (chronological)</legend>
+                <div class="content">
+                </div>
+              </fieldset>
+              <fieldset class="formSection">
+                <legend>Maintainer</legend>
+                <div class="content">
+                  <p>
+                    <s class="sym sym-hint"></s>
+                    Please send additions and corrections to this maintainer.
+                  </p>
+                </div>
+              </fieldset>
+            </fieldset>
+
+            <fieldset class="formGroup">
+              <legend>Available Languages</legend>
+              <fieldset class="formSection">
+                <legend>Languages</legend>
+                <div class="content">
+                  <select name="language" id="lang_list">
+                    #{langlist}#
+                    <option value="#[file]#" #[selected]#>#[name]#</option>
+                    #{/langlist}#
+                  </select>
+                </div>
+              </fieldset>
+            </fieldset>
+
+            <fieldset class="formControl" data-id="formControl">
+              <div class="content">
+                <button type="submit" name="use_button" class="icon-delete">Delete selected language</button>
+                <button type="submit" name="delete" class="primary icon-run">Use selected language</button>
+              </div>
+            </fieldset>
+          </fieldset>
+        </form>
+        ::#(/status)#
+
+        <form id="downloadLang" action="ConfigLanguage_p.html#downloadLang" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
+          <fieldset class="main">
+            <legend>Install Language</legend>
+            #(status)#
+            ::
+            <div class="description">
+              <p>
+                <s class="sym sym-warning"></s>
+                <strong>Unable to get URL:</strong> <code>#[url]#</code>
+              </p>
+            </div>
+            ::
+            <div class="description">
+              <p>
+                <s class="sym sym-warning"></s>
+                <strong>Error saving the language file.</strong>
+              </p>
+            </div>
+            #(/status)#
+            <fieldset class="formGroup">
+              <legend>Download</legend>
+              <fieldset class="formSection">
+                <legend>Download URL</legend>
+                <div class="content">
+                  <input type="text" name="url" id="urlInstall"/>
+                  <div class="formHint hidden">
+                    <p class="ok">
+                      The entered location looks correct.
+                    </p>
+                    <p class="error" data-id="invalid">
+                      The entered URL is not valid.
+                    </p>
+                    <p class="error" data-id="empty">
+                      You need to enter a URL to download a language.
+                    </p>
+                    <p class="help">
+                      Please enter the URL for download.
+                    </p>
+                  </div>
+                </div>
+              </fieldset>
+              <fieldset class="formSection">
+                <legend>Use Language</legend>
+                <div class="content">
+                  <input type="checkbox" name="use_lang" id="use_lang" value="on" checked="checked"/>
+                  <label for="use_lang">Use this language after download.</label>
+                </div>
+              </fieldset>
+            </fieldset>
+
+            <fieldset class="formControl" data-id="formControl">
+              <div class="description">
+                <p>
+                  <s class="sym sym-hint"></s>
+                  Make sure that you only download data from trustworthy sources.
+                </p>
+                <p>
+                  <s class="sym sym-warning"></s>
+                  The new language file might overwrite existing data if a file of the same name exists already.
+                </p>
+              </div>
+              <div class="content">
+                <button type="submit" class="primary icon-run" id="startDownloadLang">Download &amp; install new language</button>
+              </div>
+            </fieldset>
+          </fieldset>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <footer class="hidden">
     #%env/templates/footer.template%#
-  </body>
+  </footer>
+</body>
 </html>

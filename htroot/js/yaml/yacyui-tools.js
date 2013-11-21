@@ -75,5 +75,17 @@ YaCyUi.Tools.Validation = {
       }
     }
     return true;
+  },
+
+  simpleUrlValidator: function(attachTo, eventHandler) {
+    YaCyUi.Event.handle('validation-state', function(evObj, type, elements) {
+      eventHandler(evObj, type, elements);
+    });
+
+    YaCyUi.Form.Validate.addValidator(attachTo, {
+      func: new YaCyUi.Form.Validate.Validators.url().validate,
+      delay: YaCyPage.validationDelay,
+      onload: true
+    });
   }
 };
