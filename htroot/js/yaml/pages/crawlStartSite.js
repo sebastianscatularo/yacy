@@ -87,7 +87,6 @@ YaCyPage.init = function() {
   YaCyPage.eventHandler = new YaCyPage.EventHandler();
 
   YaCyUi.Event.handle('validation-state', function(evObj, type, elements) {
-    console.debug("EV!");
     YaCyPage.eventHandler.handle(evObj, type, elements);
   });
 };
