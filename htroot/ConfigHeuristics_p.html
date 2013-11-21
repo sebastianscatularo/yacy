@@ -146,7 +146,7 @@ Todo:
                       #{osdcfg}#
                       <tr>
                         <td align="center"><input type="checkbox" name="ossys_#[title]#" value="checked" #(checked)#::checked="checked"#(/checked)#/></td>
-                        <td align="left"><b><a href="#[urlhostlink]#" target="_blank">#[title]#</b></a> </td>
+                        <td align="left"><b><a href="#[urlhostlink]#" target="_blank">#[title]#</a></b></td>
                         <td align="left">#[comment]#</td>
                         <td align="left"><input type="text" name="ossys_url_#[title]#" value="#[url]#" size="70"/></td>
                         <td align="center"><input type="checkbox" name="ossys_del_#[title]#" value="checked" #(delchecked)#::checked="checked"#(/delchecked)#/></td>
@@ -183,41 +183,33 @@ Todo:
                 The task is started in the background. It may take some minutes before new entries appear (after refreshing the page).
                 <br/>
                 Alternatively you may <a href="?copydefaultosdconfig=">copy &amp; paste a example config file</a> located in <code>defaults/heuristicopensearch.conf</code> to the DATA/SETTINGS directory.
-              </br>
-              For the discover function the <em>web graph</em> option of the web structure index and the fields <code>target_rel_s</code>, <code>target_protocol_s</code>, <code>target_urlstub_s</code> have to be switched on in the <a href="IndexSchema_p.html?core=webgraph">webgraph Solr schema</a>. To do this, you may use the <em>Solr Configuration</em> action.
-            </p>
-          </div>
-
-          <fieldset class="formSection">
-            <legend>Discover</legend>
-            <div class="content">
-              <button type="submit" name="discoverosd" id="discoverosd" class="icon-run" onclick="return confirm('start background task, depending on index size this may run a long time')">Discover OpenSearch provider from index</button>
+                <br/>
+                For the discover function the <em>web graph</em> option of the web structure index and the fields <code>target_rel_s</code>, <code>target_protocol_s</code>, <code>target_urlstub_s</code> have to be switched on in the <a href="IndexSchema_p.html?core=webgraph">webgraph Solr schema</a>. To do this, you may use the <em>Solr Configuration</em> action.
+              </p>
             </div>
+
+            <fieldset class="formSection">
+              <legend>Discover</legend>
+              <div class="content">
+                <button type="submit" name="discoverosd" id="discoverosd" class="icon-run" onclick="return confirm('start background task, depending on index size this may run a long time')">Discover OpenSearch provider from index</button>
+              </div>
+            </fieldset>
+
+            #{osdsolrfieldswitch}#
+            <fieldset class="formSection">
+              <legend>Solr Configuration</legend>
+              <div class="content">
+                <button type="submit" name="switchsolrfieldson" onclick="return confirm('modify Solr Schema')" class="icon-config">Switch Solr fields on</button>
+              </div>
+            </fieldset>
+            #{/osdsolrfieldswitch}#
           </fieldset>
-
-          #{osdsolrfieldswitch}#
-          <fieldset class="formSection">
-            <legend>Solr Configuration</legend>
-            <div class="content">
-              <button type="submit" name="switchsolrfieldson" onclick="return confirm('modify Solr Schema')" class="icon-config">Switch Solr fields on</button>
-            </div>
-          </fieldset>
-          #{/osdsolrfieldswitch}#
-        </fieldset>
-
-      <div>
-        <div style="float:right">
-
-        </div>
-
+        </form>
       </div>
-    </form>
-    </fieldset>
-  </div>
-</div>
-</main>
-<footer class="hidden">
-  #%env/templates/footer.template%#
-</footer>
+    </div>
+  </main>
+  <footer class="hidden">
+    #%env/templates/footer.template%#
+  </footer>
 </body>
 </html>
