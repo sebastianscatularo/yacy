@@ -1096,6 +1096,7 @@ YaCyUi.Func.Form.ToggleableFormElement = function(toggleableElements) {
         toggles[toggleElementId].push($(this));
         // attach handler
         toggleElement.on('change', function() {
+          console.debug("sTOGGLE ", $(this).is(':checked'));
           $(this).is(':checked') ? toggleOn(toggles[this.id]) :
             toggleOff(toggles[this.id]);
         });
@@ -1109,8 +1110,11 @@ YaCyUi.Func.Form.ToggleableFormElement = function(toggleableElements) {
     $.each(toggles.groups, function(group, toggles) {
       $('input[name="' + group + '"]').on('change', function() {
         for (var toggleId in toggles) {
-          toggleId == this.id ? toggleOn(toggles[toggleId]) :
+          if (toggleId == this.id && $(this).is(':checked')) {
+            toggleOn(toggles[toggleId]);
+          } else {
             toggleOff(toggles[toggleId]);
+          }
         }
       });
     });
