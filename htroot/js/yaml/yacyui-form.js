@@ -110,9 +110,6 @@ YaCyUi.Func.Form = {
 
       console.debug("YaCyUi.Form: finished loading");
       YaCyUi.Func.Form.loaded = true;
-
-      // destroy self
-      delete YaCyUi.Func.Form;
     }, 125);
   }
 };

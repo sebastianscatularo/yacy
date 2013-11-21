@@ -1101,7 +1101,7 @@
   font-weight: normal;
   font-style: normal; }
 
-.fa, s.sym i:before {
+.fa {
   display: inline-block;
   font-family: FontAwesome;
   font-style: normal;
@@ -1159,9 +1159,9 @@
 .pull-left {
   float: left; }
 
-.fa.pull-left, s.sym i.pull-left:before {
+.fa.pull-left {
   margin-right: .3em; }
-.fa.pull-right, s.sym i.pull-right:before {
+.fa.pull-right {
   margin-left: .3em; }
 
 .fa-spin {
@@ -1245,7 +1245,7 @@
   -o-transform: scale(1, -1);
   transform: scale(1, -1); }
 
-.fa-stack, s.sym {
+.fa-stack {
   position: relative;
   display: inline-block;
   width: 2em;
@@ -1253,16 +1253,16 @@
   line-height: 2em;
   vertical-align: middle; }
 
-.fa-stack-1x, s.sym-hint i:last-of-type:before, s.sym-warning i:last-of-type:before, .fa-stack-2x, s.sym-hint i:first-of-type:before, s.sym-warning i:first-of-type:before {
+.fa-stack-1x, .fa-stack-2x {
   position: absolute;
   left: 0;
   width: 100%;
   text-align: center; }
 
-.fa-stack-1x, s.sym-hint i:last-of-type:before, s.sym-warning i:last-of-type:before {
+.fa-stack-1x {
   line-height: inherit; }
 
-.fa-stack-2x, s.sym-hint i:first-of-type:before, s.sym-warning i:first-of-type:before {
+.fa-stack-2x {
   font-size: 2em; }
 
 .fa-inverse {
@@ -2423,7 +2423,7 @@
   padding: 1.5em; }
 
 fieldset .content, fieldset.formSection > legend, header .logo, #footerMenu, table th, nav,
-#navSub, #breadCrumb, body#crawlStartExpert #formReview dt {
+#navSub, body#yacySearch main, body#yacySearch #searchTrailer .ui-widget {
   font-family: "Droid Sans", Arial, Helvetica, sans-serif; }
 
 input,
@@ -2433,25 +2433,17 @@ select,
   font-family: Arial, Helvetica, sans-serif; }
 
 .formHint > *:before, .resourceQueryBox .queryBox:after, a[href^="http://"]:before,
-a[href^="https://"]:before, table.sortable th:after, #breadCrumb span:not(:last-of-type):after, #breadCrumb:before, .icon-item-new:before, .icon-item-queued:before, .icon-item-done:before, body#crawlStartExpert #startPointDetails .ycu-data-true:before,
-body#crawlStartSite #startPointDetails .ycu-data-true:before, body#crawlStartExpert #startPointDetails .ycu-data-false:before,
-body#crawlStartSite #startPointDetails .ycu-data-false:before, body#crawlStartExpert #formReview dt:not(.notConfigured):before, body#crawlStartExpert .ycu-data-true:before, body#crawlStartExpert .ycu-data-false:before, button[class*='icon-']:before, fieldset.collapsible > legend:hover:before, fieldset.collapsible.collapsed > legend:before {
+a[href^="https://"]:before, table.sortable th:after, button[class*='icon-']:before, fieldset.collapsible > legend:hover:before, fieldset.collapsible.collapsed > legend:before {
   opacity: 0.7; }
 
 .formHint > *:before, .resourceQueryBox .queryBox:after, a[href^="http://"]:before,
-a[href^="https://"]:before, table.sortable th:after, #breadCrumb span:not(:last-of-type):after, #breadCrumb:before, .icon-item-new:before, .icon-item-queued:before, .icon-item-done:before, body#crawlStartExpert #startPointDetails .ycu-data-true:before,
-body#crawlStartSite #startPointDetails .ycu-data-true:before, body#crawlStartExpert #startPointDetails .ycu-data-false:before,
-body#crawlStartSite #startPointDetails .ycu-data-false:before, body#crawlStartExpert #formReview dt:not(.notConfigured):before, body#crawlStartExpert .ycu-data-true:before, body#crawlStartExpert .ycu-data-false:before, fieldset.collapsible > legend:before, fieldset.formSection .hasHelp:before, #navSub li a:after,
-#navSub li span:after, fieldset.formGroup > legend:before, fieldset.formGroup > legend:after, .formHint:before {
+a[href^="https://"]:before, table.sortable th:after, fieldset.collapsible > legend:before, fieldset.formSection .hasHelp:before, body#yacySearch #messages > p:before, fieldset.formGroup > legend:before, fieldset.formGroup > legend:after, .formHint:before {
   font-family: FontAwesome;
   font-style: normal;
   font-size: 0.85em; }
 
 .formHint > *:before, .resourceQueryBox .queryBox:after, a[href^="http://"]:before,
-a[href^="https://"]:before, table.sortable th:after, #breadCrumb span:not(:last-of-type):after, #breadCrumb:before, .icon-item-new:before, .icon-item-queued:before, .icon-item-done:before, body#crawlStartExpert #startPointDetails .ycu-data-true:before,
-body#crawlStartSite #startPointDetails .ycu-data-true:before, body#crawlStartExpert #startPointDetails .ycu-data-false:before,
-body#crawlStartSite #startPointDetails .ycu-data-false:before, body#crawlStartExpert #formReview dt:not(.notConfigured):before, body#crawlStartExpert .ycu-data-true:before, body#crawlStartExpert .ycu-data-false:before, fieldset.collapsible > legend:before, fieldset.formSection .hasHelp:before, #navSub li a:after,
-#navSub li span:after {
+a[href^="https://"]:before, table.sortable th:after, fieldset.collapsible > legend:before, fieldset.formSection .hasHelp:before, body#yacySearch #messages > p:before {
   display: inline-block; }
 
 /**********
@@ -2978,8 +2970,6 @@ table.sortable th {
     content: "\f0d8"; }
 
 /**********
- * Full main navigation. */
-/**********
  * Main navigation basics. */
 nav ul.main {
   padding-bottom: 0 !important;
@@ -3008,276 +2998,218 @@ nav span,
   display: block;
   padding: 0 0.5em; }
 
-#nav {
-  border-bottom: 3px solid #94c6e4;
-  border-top: 1px dotted #5a5a5a;
-  background-color: #222222; }
-  #nav ul.main > li {
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px; }
-    #nav ul.main > li:hover, #nav ul.main > li.active {
-      background-color: #666; }
-
-#navSub {
-  border-top: 3px solid #666666;
-  clear: left; }
-  #navSub .wrap {
-    display: table; }
-  #navSub .content {
-    display: table-row; }
-  #navSub li {
-    display: block;
-    line-height: 1.8em;
-    padding-top: 0.2em;
-    padding-bottom: 0.2em;
-    padding-left: 1em;
-    margin: 0; }
-    #navSub li a:after,
-    #navSub li span:after {
-      margin-left: 0.3em;
-      content: "\f0da";
-      visibility: hidden; }
-    #navSub li.active {
-      box-shadow: 0 4px 5px -2px rgba(50, 50, 50, 0.4); }
-      #navSub li.active,
-      #navSub li.active * {
-        cursor: default !important; }
-    #navSub li.hasLink.active, #navSub li.hasLink:hover {
-      background-color: #4D87C7 !important; }
-    #navSub li.hasSub:not(.active) span:after {
-      visibility: visible; }
-  #navSub div[class^='menuLevel-'] {
-    display: table-cell; }
-  #navSub.level-1,
-  #navSub div.menuLevel-1 {
-    background-color: #666666; }
-    #navSub.level-1 li.active,
-    #navSub.level-1 li:hover,
-    #navSub div.menuLevel-1 li.active,
-    #navSub div.menuLevel-1 li:hover {
-      background-color: #707070; }
-  #navSub div.menuLevel-2 {
-    box-shadow: -2px 0 5px -2px rgba(50, 50, 50, 0.4); }
-  #navSub.level-2,
-  #navSub div.menuLevel-2 {
-    background-color: #757575; }
-    #navSub.level-2 li.active,
-    #navSub.level-2 li:hover,
-    #navSub div.menuLevel-2 li.active,
-    #navSub div.menuLevel-2 li:hover {
-      background-color: gray; }
-  #navSub div.menuLevel-3 {
-    box-shadow: -2px 0 5px -2px rgba(50, 50, 50, 0.4); }
-  #navSub.level-3,
-  #navSub div.menuLevel-3 {
-    background-color: #858585; }
-    #navSub.level-3 li.active,
-    #navSub.level-3 li:hover,
-    #navSub div.menuLevel-3 li.active,
-    #navSub div.menuLevel-3 li:hover {
-      background-color: #8f8f8f; }
-
-#breadCrumb {
-  z-index: -1;
-  font-size: 0.8em;
-  font-style: italic;
-  margin-left: 0.75em;
-  display: inline-block;
-  border-bottom: 1px dotted #B3BBBF;
-  position: relative;
-  top: -1.5em; }
-  #breadCrumb * {
-    display: inline-block; }
-  #breadCrumb span:last-of-type {
-    padding-right: 1.5em; }
-  #breadCrumb span:not(:last-of-type):after {
-    content: "\00a0\f0da";
-    margin: 0 0.3em; }
-  #breadCrumb:before {
-    margin-right: 0.5em;
-    content: "\f13d"; }
-
-#menuToggle {
-  text-align: center; }
-  #menuToggle i {
-    cursor: pointer;
-    color: #2d80b2;
-    padding: 0.1em 0.5em 0.2em 0.5em;
-    background-color: #94c6e4;
-    border-bottom-right-radius: 10px;
-    border-bottom-left-radius: 10px; }
-
-#devInfo {
-  font-family: monospace;
-  white-space: pre;
-  margin: 1em;
-  padding: 0.5em;
-  border: 2px solid red;
-  border-radius: 5px;
-  background-color: #EA9A89;
-  color: #000;
-  overflow: auto; }
-
-.icon-item-new:before {
-  content: "\f0fe"; }
-
-.icon-item-queued:before {
-  content: "\f079"; }
-
-.icon-item-done:before {
-  content: "\f14a"; }
-
-/** Stacked fontAwesome symbols **/
-s.sym-hint i:first-of-type:before, s.sym-warning i:first-of-type:before {
-  color: yellow;
-  content: "\f0a3"; }
-s.sym-hint i:last-of-type:before {
-  color: blue;
-  content: "\f0eb"; }
-s.sym-warning i:last-of-type:before {
-  color: red;
-  content: "\f12a"; }
-
-/** jQuery Ui customizations **/
-/** jQuery UI customs */
-.ui-dialog-titlebar.ui-widget-header {
-  background: transparent;
-  border-width: 0;
-  font-size: 1.2em;
-  text-align: center; }
-
-.ui-dialog h1 {
-  font-size: 1.1em;
-  font-weight: bold; }
-.ui-dialog .ui-widget-content {
-  border-width: 0; }
-.ui-dialog .ui-dialog-buttonpane.ui-widget-content {
-  text-align: center; }
-.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset {
-  float: none; }
-
-.ui-dialog-titlebar-close {
-  display: none; }
-
 /** Pages specific CSS */
-body#crawlStartExpert #startPointDetails dl,
-body#crawlStartSite #startPointDetails dl {
-  width: 100%;
-  float: left;
-  margin-top: 1em;
-  display: table;
-  table-layout: fixed; }
-body#crawlStartExpert #startPointDetails dt,
-body#crawlStartExpert #startPointDetails dd,
-body#crawlStartSite #startPointDetails dt,
-body#crawlStartSite #startPointDetails dd {
-  margin: 0;
-  margin-bottom: 0.7em;
-  padding: 0;
-  display: table-cell; }
-body#crawlStartExpert #startPointDetails dt,
-body#crawlStartSite #startPointDetails dt {
-  width: 20%;
-  clear: left;
-  float: left;
-  opacity: 0.7; }
-body#crawlStartExpert #startPointDetails dd,
-body#crawlStartSite #startPointDetails dd {
-  -moz-box-sizing: border-box;
-  width: 79%;
-  overflow: auto;
-  float: left;
-  display: block; }
-  body#crawlStartExpert #startPointDetails dd.ycu-data-false,
-  body#crawlStartSite #startPointDetails dd.ycu-data-false {
-    font-style: italic; }
-body#crawlStartExpert #startPointDetails dd.listContent.ycu-data-list,
-body#crawlStartSite #startPointDetails dd.listContent.ycu-data-list {
-  max-height: 10em;
-  background-color: #dee6f3;
-  border-radius: 3px;
-  padding: 0.5em; }
-body#crawlStartExpert #startPointDetails dd[data-id="robotsAllowed"].ycu-data-false,
-body#crawlStartSite #startPointDetails dd[data-id="robotsAllowed"].ycu-data-false {
-  color: red;
-  font-weight: bold; }
-body#crawlStartExpert #startPointDetails ul,
-body#crawlStartSite #startPointDetails ul {
-  margin: 0; }
-body#crawlStartExpert #startPointDetails li,
-body#crawlStartSite #startPointDetails li {
-  margin: 0;
-  margin-bottom: 0.3em;
-  list-style: none; }
-  body#crawlStartExpert #startPointDetails li a,
-  body#crawlStartSite #startPointDetails li a {
-    display: inline-block;
-    white-space: nowrap; }
-    body#crawlStartExpert #startPointDetails li a:before,
-    body#crawlStartSite #startPointDetails li a:before {
-      display: none; }
-body#crawlStartExpert #startPointDetails .ycu-data-true:before,
-body#crawlStartSite #startPointDetails .ycu-data-true:before {
-  content: "\f00c\00a0"; }
-body#crawlStartExpert #startPointDetails .ycu-data-false:before,
-body#crawlStartSite #startPointDetails .ycu-data-false:before {
-  content: "\f00d\00a0"; }
-
-body#crawlStartExpert #formReview h1 {
-  font-size: 1.1em; }
-body#crawlStartExpert #formReview table {
-  table-layout: fixed;
-  width: 100%; }
-body#crawlStartExpert #formReview tr.group > td {
-  padding-top: 0.2em;
-  padding-bottom: 0.2em;
-  background-color: #cfdbee;
-  border-left: 0.5em solid #94e84d;
-  font-size: 1.1em;
-  font-weight: bold; }
-  body#crawlStartExpert #formReview tr.group > td:hover {
-    background-color: #cfdbee; }
-body#crawlStartExpert #formReview colgroup .button {
-  width: 10em; }
-body#crawlStartExpert #formReview colgroup .content {
-  width: auto; }
-body#crawlStartExpert #formReview td {
-  background-color: #dee6f3;
-  word-wrap: break-word; }
-  body#crawlStartExpert #formReview td button {
-    font-size: 0.9em;
-    opacity: 0.6; }
-    body#crawlStartExpert #formReview td button.error {
-      opacity: 1; }
-    body#crawlStartExpert #formReview td button:hover {
-      opacity: 1; }
-body#crawlStartExpert #formReview h1 + dl {
-  margin-left: 1em; }
-body#crawlStartExpert #formReview dl.notConfigured {
-  margin-bottom: 0; }
-body#crawlStartExpert #formReview dt {
-  float: left;
-  clear: left;
-  font-weight: normal; }
-  body#crawlStartExpert #formReview dt:not(.notConfigured):before {
-    content: "\f0da";
-    margin-right: 0.3em; }
-  body#crawlStartExpert #formReview dt:not(.noData):not(.notConfigured):after {
-    content: ':';
-    display: inline-block;
-    margin-right: 0.5em; }
-  body#crawlStartExpert #formReview dt.notConfigured {
+body#yacySearch {
+  /** YAML layout */
+  /** Page layout */ }
+  body#yacySearch .ym-column {
+    display: block;
+    overflow: hidden;
+    padding-right: 250px;
+    width: auto; }
+  body#yacySearch .ym-col1 {
+    /* content */
+    position: relative;
+    float: left;
+    width: 100%; }
+  body#yacySearch .ym-col3 {
+    /* sidebar */
+    position: relative;
+    float: left;
+    width: 250px;
+    margin: 0 -250px 0 0; }
+  body#yacySearch header {
+    height: auto;
+    box-shadow: 0 4px 5px rgba(50, 50, 50, 0.4);
+    border-bottom: 3px solid #94c6e4; }
+    body#yacySearch header .headRow,
+    body#yacySearch header .content {
+      margin-left: 103px;
+      padding-left: 0.5em; }
+    body#yacySearch header .headRow {
+      background-color: #444444; }
+    body#yacySearch header .subRow {
+      padding-top: 0.5em;
+      padding-bottom: 0.5em;
+      background-color: #222222;
+      font-size: 0.9em; }
+    body#yacySearch header .logo {
+      position: absolute;
+      overflow: visible;
+      left: 0;
+      top: 0;
+      width: 103px;
+      margin: 0.5em; }
+    body#yacySearch header .menu.empty {
+      height: 2em; }
+    body#yacySearch header .search {
+      margin-bottom: 0.2em; }
+    body#yacySearch header label {
+      padding-right: 0.5em; }
+    body#yacySearch header form {
+      margin: 0; }
+    body#yacySearch header input {
+      margin-left: 0.8em;
+      margin-right: 0.3em;
+      padding: 0.2em;
+      width: 20em; }
+    body#yacySearch header button {
+      text-shadow: 0; }
+    body#yacySearch header input,
+    body#yacySearch header button {
+      margin-top: 0;
+      margin-bottom: 0;
+      -moz-box-sizing: content-box;
+      box-sizing: content-box; }
+  body#yacySearch nav {
+    padding: 0;
+    margin: 0; }
+    body#yacySearch nav ul {
+      font-size: 0.8em;
+      padding: 0; }
+  body#yacySearch h1.greeting {
     font-style: italic;
-    font-weight: normal; }
-body#crawlStartExpert #formReview dd {
-  margin-bottom: 0; }
-  body#crawlStartExpert #formReview dd.empty {
+    float: right;
+    font-size: 1.2em;
+    opacity: 0.9;
+    padding: 0;
+    margin: 0;
+    margin-right: 1.5em; }
+  body#yacySearch #searchProgress {
+    height: 1em; }
+  body#yacySearch main a:before {
+    display: none; }
+  body#yacySearch #resultsList {
+    margin-right: 1em; }
+  body#yacySearch .searchResult {
+    margin-bottom: 2em;
+    margin-left: -0.5em;
+    padding: 0.5em;
+    border-radius: 5px; }
+    body#yacySearch .searchResult:hover {
+      background-color: #fdfefe; }
+    body#yacySearch .searchResult .icon {
+      float: left; }
+      body#yacySearch .searchResult .icon .controls {
+        font-size: 0.8em;
+        line-height: 1.3em;
+        text-align: center; }
+        body#yacySearch .searchResult .icon .controls > * {
+          display: block; }
+        body#yacySearch .searchResult .icon .controls a i {
+          opacity: 0.6; }
+        body#yacySearch .searchResult .icon .controls a:hover i {
+          opacity: 1; }
+    body#yacySearch .searchResult .content {
+      margin-left: 30px; }
+    body#yacySearch .searchResult .icon,
+    body#yacySearch .searchResult h1 {
+      line-height: 1.5em;
+      font-size: 1.3em;
+      margin: 0;
+      font-weight: bold; }
+    body#yacySearch .searchResult .urlInfo {
+      font-size: 0.9em; }
+      body#yacySearch .searchResult .urlInfo span {
+        display: inline-block;
+        padding: 0;
+        padding-right: 0.3em; }
+        body#yacySearch .searchResult .urlInfo span:not(:first-of-type):before {
+          content: '|';
+          display: inline-block;
+          padding-right: 0.3em; }
+      body#yacySearch .searchResult .urlInfo a.iconic {
+        font-size: 1.2em; }
+    body#yacySearch .searchResult .date {
+      font-style: italic; }
+    body#yacySearch .searchResult .tags {
+      display: block; }
+    body#yacySearch .searchResult .snippet {
+      word-wrap: break-word; }
+      body#yacySearch .searchResult .snippet:after {
+        content: '\2026'; }
+    body#yacySearch .searchResult h1 {
+      display: inline-block; }
+    body#yacySearch .searchResult p {
+      margin-bottom: 0.5em; }
+      body#yacySearch .searchResult p.url {
+        font-size: 0.9em;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden; }
+        body#yacySearch .searchResult p.url:hover {
+          text-overflow: inherit;
+          white-space: inherit; }
+    body#yacySearch .searchResult p:last-of-type {
+      margin-bottom: 0; }
+  body#yacySearch .urlActions {
+    margin-bottom: 0.3em;
+    opacity: 0.7; }
+  body#yacySearch #searchTrailer .ym-cbox > div {
+    margin-top: 1em;
+    width: 220px; }
+  body#yacySearch #searchTrailer .ym-cbox > div:first-of-type {
+    margin-top: 0; }
+  body#yacySearch #searchTrailer label {
+    display: block; }
+  body#yacySearch #searchTrailer fieldset {
+    padding: 0.5em; }
+    body#yacySearch #searchTrailer fieldset legend {
+      font-size: 0.8em;
+      padding: 0 0.3em; }
+  body#yacySearch #tagCloud {
+    text-align: center; }
+    body#yacySearch #tagCloud a {
+      display: inline-block;
+      padding: 3px; }
+      body#yacySearch #tagCloud a:hover {
+        border-radius: 5px;
+        color: #fff !important; }
+  body#yacySearch #sidebarAbout .ui-accordion-content {
+    padding: 0.5em; }
+    body#yacySearch #sidebarAbout .ui-accordion-content iframe {
+      height: auto !important; }
+  body#yacySearch #resBarTop {
+    margin-bottom: 1em; }
+  body#yacySearch #resCounter {
+    font-size: 0.9em;
     font-style: italic; }
-body#crawlStartExpert .ycu-data-true:before {
-  content: "\f00c\00a0"; }
-body#crawlStartExpert .ycu-data-false:before {
-  content: "\f00d\00a0"; }
-body#crawlStartExpert .reviewHeader {
-  padding: 1.5em 1em; }
-body#crawlStartExpert .reviewContent {
-  clear: both; }
+  body#yacySearch .resNav {
+    margin-left: 1.5em; }
+    body#yacySearch .resNav .left:before,
+    body#yacySearch .resNav .right:before {
+      font-family: FontAwesome;
+      font-style: normal;
+      font-size: 1.2em; }
+    body#yacySearch .resNav a,
+    body#yacySearch .resNav span {
+      display: inline-block;
+      margin: 0 0.2em;
+      padding: 0 0.25em; }
+    body#yacySearch .resNav span.current {
+      font-weight: bold; }
+    body#yacySearch .resNav a:not(.iconic) {
+      border-top: 3px solid transparent;
+      font-weight: bold;
+      border-radius: 3px;
+      background-color: #d5e8f4; }
+      body#yacySearch .resNav a:not(.iconic):hover {
+        border-top: 3px solid #94E84D;
+        color: #4d87c7; }
+    body#yacySearch .resNav .left:before {
+      content: "\f0d9"; }
+    body#yacySearch .resNav .right:before {
+      content: "\f0da"; }
+  body#yacySearch #resNav {
+    display: inline-block; }
+  body#yacySearch #resNavBottom {
+    float: right; }
+  body#yacySearch #messages > p {
+    padding: 0.3em 1em;
+    border-radius: 5px; }
+  body#yacySearch #messages .error:before {
+    content: "\f06a"; }
+  body#yacySearch #messages .suggest strong {
+    font-style: italic; }
+  body#yacySearch #messages .suggest:before {
+    content: "\f0eb"; }

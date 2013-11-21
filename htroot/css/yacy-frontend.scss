@@ -1,0 +1,7 @@
+@import 'base';
+@import 'menu-base';
+
+/** Pages specific CSS */
+body#yacySearch {
+  @import 'page-yacy-search';
+}

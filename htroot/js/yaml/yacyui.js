@@ -2,11 +2,15 @@
 /*global YaCyUi:true, $:true, console:true */
 "use strict";
 
+if (typeof YaCyUi !== 'undefined') {
+  console.debug('YaCyUi already loaded!');
+}
+
 var YaCyUi = YaCyUi || {}; // UI namespace
 var YaCyPage = YaCyPage || {}; // Single page namespace
 YaCyPage.validationDelay = 700; // time (in ms) to wait before validation
 
-YaCyUi.error = function (source, message) {
+YaCyUi.error = YaCyUi.error || function (source, message) {
   var err = new Error();
   err.name = 'YaCyUi: ' + source + ' - Error';
   err.message = message;
@@ -14,10 +18,10 @@ YaCyUi.error = function (source, message) {
 };
 
 /** Function space for setting up the UI API. */
-YaCyUi.Func = {};
+YaCyUi.Func = YaCyUi.Func || {};
 
 /** Wrapper for jQueries event framework. */
-YaCyUi.Event = {
+YaCyUi.Event = YaCyUi.Event || {
   /** Trigger an document wide event.
     * @param {string} Event name, will be prefixed with 'ycu-'
     * @param {array} Event data */
@@ -31,7 +35,7 @@ YaCyUi.Event = {
 };
 
 /** Custom wrapper for jQueries data() functions . */
-YaCyUi.DataStore = {
+YaCyUi.DataStore = YaCyUi.DataStore || {
   prefix: 'ycu',
 
   /** Get the data attached to an element.
@@ -125,9 +129,8 @@ YaCyUi.DataStore = {
   }
 };
 
+YaCyUi.modules = YaCyUi.modules || {};
 YaCyUi.init = function() {
-  var modules = {};
-
   // temporary developer info controls
   if ($('#devInfo').size() > 0) {
     var devInfoBtn = $('<button>hide</button>');
@@ -138,12 +141,14 @@ YaCyUi.init = function() {
   }
 
   // create main menu
-  YaCyUi.MainMenu = new YaCyUi.Func.MainMenu();
+  if ($('body').hasClass('frontend') === false) {
+    YaCyUi.MainMenu = YaCyUi.MainMenu || new YaCyUi.Func.MainMenu();
+  }
 
   // init form element functions, if forms are available
-  if ($('form').size() > 0) {
-    modules.form = YaCyUi.Func.Form;
-    modules.form.init();
+  if ($('form').size() > 0 && typeof YaCyUi.modules.form === 'undefined') {
+    YaCyUi.modules.form = YaCyUi.Func.Form;
+    YaCyUi.modules.form.init();
   }
 
   // API bubbles: more info dialog
@@ -188,24 +193,30 @@ YaCyUi.init = function() {
   }
 
   // initialize page script when all modules are loaded (if any)
-  if (typeof YaCyPage.init === 'function') {
-    var t = setInterval(function() {
-      for (var module in modules) {
-        if (!modules[module].loaded) {
-          return;
-        }
+  var t = setInterval(function() {
+    for (var module in YaCyUi.modules) {
+      if (!YaCyUi.modules[module].loaded) {
+        return;
       }
-      clearInterval(t);
-      delete YaCyUi.Func; // unload function space
-      YaCyPage.init();
-    }, 125);
-  } else {
+    }
+    clearInterval(t);
     delete YaCyUi.Func; // unload function space
-  }
+    if (typeof YaCyPage.init === 'function') {
+      console.debug("YaCyUi.init: initializing page");
+      YaCyPage.init();
+    }
+  }, 125);
 
   // show footer, if it has content
   if ($('footer').children().size() > 0) {
     $('footer').show();
     $('main').css('margin-bottom', $('footer').height() + 'px');
   }
+
+  // symbols content, actual styles are set via CSS
+  var symbols = $('main s.sym');
+  symbols.filter('.sym-warning, .sym-hint').html('<i></i><i></i>');
+
+  // finished loading
+  YaCyUi.loaded = true;
 };

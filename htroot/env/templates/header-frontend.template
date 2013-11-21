@@ -1,0 +1,10 @@
+#%env/templates/_header-metas.template%#
+<link rel="stylesheet" type="text/css" href="/css/yacy-search.css"/>
+#%env/templates/_header-scripts.template%#
+<script type="text/javascript">
+  //<![CDATA[
+  $(function(){
+    YaCyUi.init();
+  });
+  //]]>
+</script>

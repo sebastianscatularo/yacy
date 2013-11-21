@@ -32,6 +32,7 @@ YaCyPage.latestInfo = function(eventId) {
 YaCyPage.statistics = function(offset, itemscount, itemsperpage, totalcount,
     localResourceSize, remoteResourceSize, remoteIndexCount, remotePeerCount,
     navurlbase) {
+
   if (totalcount === 0) {
     return;
   }
@@ -52,44 +53,50 @@ YaCyPage.statistics = function(offset, itemscount, itemsperpage, totalcount,
   YaCyPage.e.resNav.text('X');
 
   // compose page navigation
-  resnav = "";
-  thispage = Math.floor(offset / itemsperpage);
-  if (thispage == 0) {
-    resnav += '<span class="left"></span>';
+  var resnav = "";
+  var thispage = Math.floor(offset / itemsperpage);
+  if (thispage === 0) {
+    //resnav += '<span class="left"></span>';
   } else {
     resnav += '<a href="' + navurlbase + "&amp;startRecord="
       + ((thispage - 1) * itemsperpage) + '"><span class="left"></span></a>';
   }
 
-  numberofpages = Math.floor(Math.min(10, 1 + ((totalcount.replace(/\./g,'') - 1) / itemsperpage)));
+  var numberofpages = Math.floor(Math.min(10, 1 + ((totalcount.replace(/\./g,'') - 1) / itemsperpage)));
   var tabText = 'Use the TAB key to navigate to next page.';
-  if (!numberofpages) {
-    numberofpages = 10;
-  }
-  for (i = 0; i < numberofpages; i++) {
-    if (i == thispage) {
-      resnav += '<span class="current">' + (i + 1) + '</span>';
-    } else {
-      resnav += '<a href="' + navurlbase + "&amp;startRecord=" +
-        (i * itemsperpage) + '" class="page" title="' + tabText + '">' +
-        (i + 1) + '</a>';
-      }
-  }
-  if (thispage >= numberofpages) {
-    resnav += '<span class="right" title="' + tabText + '"></span>';
-  } else {
-    resnav += '<a class="iconic" href="' + navurlbase + "&amp;startRecord=" +
-      ((thispage + 1) * itemsperpage) + '" title="' + tabText + '"><span class="right"></span></a>';
-  }
 
-  YaCyPage.e.resNav.html(resnav);
-  YaCyPage.e.resNavBottom.html(resnav);
+  if (numberofpages) {
+    for (i = 0; i < numberofpages; i++) {
+      if (i == thispage) {
+        resnav += '<span class="current">' + (i + 1) + '</span>';
+      } else {
+        resnav += '<a href="' + navurlbase + "&amp;startRecord=" +
+          (i * itemsperpage) + '" class="page" title="' + tabText + '">' +
+          (i + 1) + '</a>';
+        }
+    }
+    console.debug("this", thispage, "num", numberofpages);
+    if (thispage >= numberofpages -1) {
+      //resnav += '<span class="right" title="' + tabText + '"></span>';
+    } else {
+      resnav += '<a class="iconic" href="' + navurlbase + "&amp;startRecord=" +
+        ((thispage + 1) * itemsperpage) + '" title="' + tabText +
+        '"><span class="right"></span></a>';
+    }
+
+    YaCyPage.e.resNav.html(resnav);
+    YaCyPage.e.resNavBottom.html(resnav);
+  } else {
+    YaCyPage.e.resNav.empty();
+    YaCyPage.e.resNavBottom.empty();
+  }
 };
 
 YaCyPage.EventHandler = function() {
   this.addInteractionHandler = function() {
     // handle navigational keys
     $(document).on('keydown', this.handleArrowKeys);
+    // reset search button on changes
     $('#search').on('keydown', function() {
       $('#startSearch').text('Search');
     });
@@ -157,6 +164,8 @@ YaCyPage.init = function() {
   $('#searchTrailer').css('visibility', 'visible');
 
   // search is done now - update stats
-  YaCyPage.e.resNavBottom = $('#resNavBottom');
-  YaCyPage.e.resNavBottom.html(YaCyPage.e.resNav.clone());
+  if (YaCyPage.e.resNavBottom.size() === 0) {
+    YaCyPage.e.resNavBottom = $('#resNavBottom');
+    YaCyPage.e.resNavBottom.html(YaCyPage.e.resNav.clone());
+  }
 };

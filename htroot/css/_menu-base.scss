@@ -1,0 +1,40 @@
+/**********
+ * Main navigation basics. */
+nav {
+  ul.main {
+    padding-bottom:0 !important;
+    padding-left:99px;
+
+    > li {
+      float:left;
+      padding:0.3em 0.3em;
+      margin:0 0.2em;
+    }
+  }
+}
+
+nav,
+#navSub {
+  @extend %font-sans;
+
+  ul {
+    margin:0;
+    padding:0.5em 0;
+  }
+
+  li {
+    list-style-type:none;
+
+    * {
+      color:#fff;
+      text-shadow:0 1px 1px rgba(0, 0, 0, 0.3);
+    }
+  }
+
+  a,
+  span {
+    cursor:pointer;
+    display:block;
+    padding:0 0.5em;
+  }
+}

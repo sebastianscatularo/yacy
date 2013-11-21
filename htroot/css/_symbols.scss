@@ -1,0 +1,32 @@
+s.sym {
+  @extend .#{$fa-css-prefix}-stack;
+
+  i:before {
+    @extend .#{$fa-css-prefix};
+  }
+}
+
+s {
+  &.sym-hint,
+  &.sym-warning {
+    i:first-of-type:before {
+      @extend .#{$fa-css-prefix}-stack-2x;
+      color:yellow;
+      content:'#{$fa-var-certificate}';
+    }
+
+    i:last-of-type:before {
+      @extend .#{$fa-css-prefix}-stack-1x;
+    }
+  }
+
+  &.sym-hint i:last-of-type:before {
+    color:blue;
+    content:'#{$fa-var-lightbulb-o}';
+  }
+
+  &.sym-warning i:last-of-type:before {
+    color:red;
+    content:'#{$fa-var-exclamation}';
+  }
+}

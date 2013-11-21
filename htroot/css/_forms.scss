@@ -140,9 +140,12 @@ button {
   }
 
   &.icon-loader:before {
-    padding-top:0.2em;
-    display:inline-block;
-    content:url('img/ajax-loader.gif');
+    // 'spin' from fontAwesome SASS
+    -webkit-animation: spin 2s infinite linear;
+    -moz-animation: spin 2s infinite linear;
+    -o-animation: spin 2s infinite linear;
+    animation: spin 2s infinite linear;
+    content:'#{$fa-var-spinner}';
   }
 
   &:hover{
@@ -239,10 +242,7 @@ fieldset {
       right:1em;
     }
     border-left:3px solid darken($ycu-var-color-fieldset-formgroup-bg, 15);
-
-    * {
-      font-size:0.9em;
-    }
+    font-size:0.9em;
   }
 
   // fieldset content

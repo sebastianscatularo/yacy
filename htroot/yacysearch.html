@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <title>#[former]# - YaCy '#[clientname]#': Search Page</title>
-    #%env/templates/metas.template%#
+    #%env/templates/header-frontend.template%#
     <script type="text/javascript" src="/js/yaml/tagcloud/jquery.tagcloud.js"></script>
     <script type="text/javascript" src="/js/yaml/tinysort/dist/jquery.tinysort.min.js"></script>
     <script type="text/javascript" src="/js/yaml/yacyui-widgets.js"></script>
@@ -26,7 +26,7 @@
         document.getElementById("search").focus();
         #(/focus)#
         #(searchagain)#::
-        $('#startSearch').text = "Search again";
+        $('#startSearch').text('Search again');
         #(/searchagain)#
         #{sidebarVocabulary}#
         $("#sidebar#[vocabulary]#").accordion({collapsible: true});
@@ -54,7 +54,7 @@
     -->
   </head>
 
-  <body id="yacySearch">
+  <body id="yacySearch" class="frontend">
     <header>
       <div class="logo">
         <a href="#[promoteSearchPageGreeting.homepage]#" class="yacyLogo">
@@ -266,9 +266,7 @@
                 #(/resultTable)#
                 <!-- linklist end -->
 
-                #(pageNavBottom)#::
                 <div id="resNavBottom" class="resNav"></div>
-                #(/pageNavBottom)#
               </div>
             </div>
             <!--#include virtual="yacysearchtrailer.html?eventID=#[eventID]#" -->

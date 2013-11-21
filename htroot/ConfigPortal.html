@@ -1,9 +1,8 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "DTD/xhtml1-transitional.dtd">
-<!-- This page is only XHTML 1.0 Transitional and not Strict because iframes are in use -->
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="en">
   <head>
-    #%env/templates/metas.template%#
     <title>YaCy '#[clientname]#': Integration of a Search Portal</title>
+    #%env/templates/header-backend.template%#
   </head>
 
   <ul class="ym-skiplinks">
@@ -21,6 +20,7 @@
 Todo:
  - form & iframes need some minor styling
  - validation
+ - throwing in some help strings would be nice
 </div>
 
         <h1>Integration of a Search Portal</h1>
@@ -34,7 +34,7 @@ Todo:
           <fieldset>
             <legend>Search Portal Configuration</legend>
 
-            <fieldset class="formGroup">
+            <fieldset class="formGroup collapsible">
               <legend>Layout</legend>
               <fieldset class="formSection">
                 <legend>Greeting Line</legend>
@@ -65,7 +65,7 @@ Todo:
               </fieldset>
             </fieldset>
 
-            <fieldset class="formGroup">
+            <fieldset class="formGroup collapsible">
               <legend>Access</legend>
               <fieldset class="formSection">
                 <legend>Search page access</legend>
@@ -86,7 +86,7 @@ Todo:
               </fieldset>
             </fieldset>
 
-            <fieldset class="formGroup">
+            <fieldset class="formGroup collapsible">
               <legend>Controls</legend>
               <fieldset class="formSection">
                 <legend>Navigation Bar</legend>
@@ -133,11 +133,11 @@ Todo:
               </fieldset>
             </fieldset>
 
-            <fieldset class="formGroup">
+            <fieldset class="formGroup collapsible">
               <legend>Snippets &amp; Link Verification</legend>
               <div class="description">
                 <p>
-                  <strong>Hint:</strong> You can speed up your search results with this options! (use <code>CacheOnly</code> or <code>False</code> to switch off verification)
+                  <s class="sym sym-hint" title="Hint"></s> You can speed up your search results with this options! (use <code>CacheOnly</code> or <code>False</code> to switch off verification)
                 </p>
               </div>
               <fieldset class="formSection">
@@ -187,7 +187,7 @@ Todo:
               </fieldset>
             </fieldset>
 
-            <fieldset class="formGroup">
+            <fieldset class="formGroup collapsible">
               <legend>Greedy Learning Mode</legend>
               <fieldset class="formSection">
                 <legend>Limit</legend>
@@ -200,7 +200,7 @@ Todo:
               </fieldset>
             </fieldset>
 
-            <fieldset class="formGroup">
+            <fieldset class="formGroup collapsible">
               <legend>Default Pop-Up Page</legend>
               <fieldset class="formSection">
                 <legend>Page Type</legend>
@@ -233,7 +233,7 @@ Todo:
               </fieldset>
             </fieldset>
 
-            <fieldset class="formGroup">
+            <fieldset class="formGroup collapsible">
               <legend>Search Page</legend>
               <fieldset class="formSection">
                 <legend>Results</legend>
@@ -298,7 +298,7 @@ Todo:
               </fieldset>
             </fieldset>
 
-            <fieldset class="formGroup">
+            <fieldset class="formGroup collapsible">
               <legend><em>About</em> Column</legend>
               <div class="description">
                 <p>
@@ -354,7 +354,8 @@ Todo:
           height="410"
           frameborder="0"
           scrolling="auto"
-          id="target">
+          id="target"
+          sandbox="">
         </iframe>
 
         <h3>For a search page with a small header, use this code:</h3>
@@ -376,7 +377,8 @@ Todo:
           frameborder="0"
           scrolling="auto"
           id="target2"
-          onfocus="removeFocus(this);">
+          onfocus="removeFocus(this);"
+          sandbox="">
         </iframe>
 
         <h3>A third option is the interactive search. Use this code:</h3>
@@ -398,7 +400,8 @@ Todo:
           frameborder="0"
           scrolling="auto"
           id="target3"
-          onfocus="removeFocus(this);">
+          onfocus="removeFocus(this);"
+          sandbox="">
         </iframe>
 
         #%env/templates/footer.template%#

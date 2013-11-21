@@ -1,0 +1,39 @@
+@import 'base';
+@import 'menu-full';
+
+#devInfo {
+  font-family:monospace;
+  white-space:pre;
+  margin:1em;
+  padding:0.5em;
+  border:2px solid red;
+  border-radius:5px;
+  background-color:#EA9A89;
+  color:#000;
+  overflow:auto;
+}
+
+// general icon classes
+.icon-item-new:before {
+  @extend %icon-block-light;
+  content:'#{$fa-var-plus-square}';
+}
+.icon-item-queued:before {
+  @extend %icon-block-light;
+  content:'#{$fa-var-retweet}';
+}
+.icon-item-done:before {
+  @extend %icon-block-light;
+  content:'#{$fa-var-check-square}';
+}
+
+/** Stacked fontAwesome symbols **/
+@import 'symbols';
+
+/** jQuery Ui customizations **/
+@import 'jquery-ui';
+
+/** Pages specific CSS */
+// body#crawlStartExpert
+// body#crawlStartSite
+@import 'page-crawl-start';

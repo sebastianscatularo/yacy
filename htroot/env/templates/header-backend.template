@@ -1,0 +1,11 @@
+#%env/templates/_header-metas.template%#
+<link rel="stylesheet" type="text/css" href="/css/yacy.css"/>
+#%env/templates/_header-scripts.template%#
+<script src="/js/yaml/yacyui-mainmenu.js" type="text/javascript"></script>
+<script type="text/javascript">
+  //<![CDATA[
+  $(function(){
+    YaCyUi.init();
+  });
+  //]]>
+</script>

@@ -1,15 +1,3 @@
-#devInfo {
-  font-family:monospace;
-  white-space:pre;
-  margin:1em;
-  padding:0.5em;
-  border:2px solid red;
-  border-radius:5px;
-  background-color:#EA9A89;
-  color:#000;
-  overflow:auto;
-}
-
 @import 'yaml-sass/core/base';
 @import 'yaml-sass/navigation/hlist';
 @import 'yaml-sass/screen/typography';
@@ -28,6 +16,8 @@ $ycu-var-color-footer-bg:$ycu-var-color-header-bg;
 $ycu-var-color-footer-fg:$ycu-var-color-header-fg;
 $ycu-var-color-page-bg:#E9F3F9;
 $ycu-var-color-link:#4D87C7;
+$ycu-var-color-sumbenu-bg:#666;
+$ycu-var-color-nav-bg:#222;
 $ycu-var-color-nav-border:#94C6E4;
 
 .ym-wbox {
@@ -72,7 +62,6 @@ $ycu-icon-fontsize:0.85em;
   @extend %icon-block;
 }
 
-@import 'menu';
 @import 'forms';
 
 a {
@@ -203,20 +192,6 @@ a.yacyLogo,
   }
 }
 
-// general icon classes
-.icon-item-new:before {
-  @extend %icon-block-light;
-  content:'#{$fa-var-plus-square}';
-}
-.icon-item-queued:before {
-  @extend %icon-block-light;
-  content:'#{$fa-var-retweet}';
-}
-.icon-item-done:before {
-  @extend %icon-block-light;
-  content:'#{$fa-var-check-square}';
-}
-
 /* Dynamic content initial hidden to prevent 'flickering'. */
 .hidden {
   display:none;
@@ -271,9 +246,3 @@ table.sortable {
     }
   }
 }
-
-/** jQuery Ui customizations **/
-@import 'jquery-ui';
-
-/** Page specific styles */
-@import 'pages';
