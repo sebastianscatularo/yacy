@@ -790,7 +790,7 @@
     margin: 0 0 1.5em 0.8em; }
 
   /* --- general text formatting | Allgemeine Textauszeichnung ------------------------------------------ */
-  p {
+  p, div.p {
     font-size: 100%;
     line-height: 1.5;
     margin: 0 0 1.5em 0; }
@@ -2643,9 +2643,9 @@ fieldset {
           margin-top: 0.5em; }
       fieldset .content fieldset + hr {
         margin-top: 1em; }
-    fieldset .content p {
+    fieldset .content p, fieldset .content div.p {
       margin-bottom: 1em; }
-      fieldset .content p:last-child {
+      fieldset .content p:last-child, fieldset .content div.p:last-child {
         margin-bottom: 0; }
   fieldset + fieldset.formGroup {
     border-top: 1px dotted #aabee0; }
@@ -2665,7 +2665,7 @@ fieldset.formGroup {
     border-left: 0.5em solid #94e84d;
     border-top-right-radius: 5px;
     padding: 0.5em 1.5em; }
-  fieldset.formGroup > p {
+  fieldset.formGroup > p, fieldset.formGroup > div.p {
     padding: 0 1.7em; }
 
 fieldset.formSection + fieldset.formSection {

@@ -790,7 +790,7 @@
     margin: 0 0 1.5em 0.8em; }
 
   /* --- general text formatting | Allgemeine Textauszeichnung ------------------------------------------ */
-  p {
+  p, div.p {
     font-size: 100%;
     line-height: 1.5;
     margin: 0 0 1.5em 0; }
@@ -2437,13 +2437,13 @@ a[href^="https://"]:before, table.sortable th:after, button[class*='icon-']:befo
   opacity: 0.7; }
 
 .formHint > *:before, .resourceQueryBox .queryBox:after, a[href^="http://"]:before,
-a[href^="https://"]:before, table.sortable th:after, fieldset.collapsible > legend:before, fieldset.formSection .hasHelp:before, body#yacySearch #messages > p:before, fieldset.formGroup > legend:before, fieldset.formGroup > legend:after, .formHint:before {
+a[href^="https://"]:before, table.sortable th:after, fieldset.collapsible > legend:before, fieldset.formSection .hasHelp:before, body#yacySearch #messages > p:before, body#yacySearch #messages > div.p:before, fieldset.formGroup > legend:before, fieldset.formGroup > legend:after, .formHint:before {
   font-family: FontAwesome;
   font-style: normal;
   font-size: 0.85em; }
 
 .formHint > *:before, .resourceQueryBox .queryBox:after, a[href^="http://"]:before,
-a[href^="https://"]:before, table.sortable th:after, fieldset.collapsible > legend:before, fieldset.formSection .hasHelp:before, body#yacySearch #messages > p:before {
+a[href^="https://"]:before, table.sortable th:after, fieldset.collapsible > legend:before, fieldset.formSection .hasHelp:before, body#yacySearch #messages > p:before, body#yacySearch #messages > div.p:before {
   display: inline-block; }
 
 /**********
@@ -2635,9 +2635,9 @@ fieldset {
           margin-top: 0.5em; }
       fieldset .content fieldset + hr {
         margin-top: 1em; }
-    fieldset .content p {
+    fieldset .content p, fieldset .content div.p {
       margin-bottom: 1em; }
-      fieldset .content p:last-child {
+      fieldset .content p:last-child, fieldset .content div.p:last-child {
         margin-bottom: 0; }
   fieldset + fieldset.formGroup {
     border-top: 1px dotted #aabee0; }
@@ -2657,7 +2657,7 @@ fieldset.formGroup {
     border-left: 0.5em solid #94e84d;
     border-top-right-radius: 5px;
     padding: 0.5em 1.5em; }
-  fieldset.formGroup > p {
+  fieldset.formGroup > p, fieldset.formGroup > div.p {
     padding: 0 1.7em; }
 
 fieldset.formSection + fieldset.formSection {
@@ -3130,17 +3130,17 @@ body#yacySearch {
         content: '\2026'; }
     body#yacySearch .searchResult h1 {
       display: inline-block; }
-    body#yacySearch .searchResult p {
+    body#yacySearch .searchResult p, body#yacySearch .searchResult div.p {
       margin-bottom: 0.5em; }
-      body#yacySearch .searchResult p.url {
+      body#yacySearch .searchResult p.url, body#yacySearch .searchResult div.url.p {
         font-size: 0.9em;
         white-space: nowrap;
         text-overflow: ellipsis;
         overflow: hidden; }
-        body#yacySearch .searchResult p.url:hover {
+        body#yacySearch .searchResult p.url:hover, body#yacySearch .searchResult div.url.p:hover {
           text-overflow: inherit;
           white-space: inherit; }
-    body#yacySearch .searchResult p:last-of-type {
+    body#yacySearch .searchResult p:last-of-type, body#yacySearch .searchResult div.p:last-of-type {
       margin-bottom: 0; }
   body#yacySearch .urlActions {
     margin-bottom: 0.3em;
@@ -3204,7 +3204,7 @@ body#yacySearch {
     display: inline-block; }
   body#yacySearch #resNavBottom {
     float: right; }
-  body#yacySearch #messages > p {
+  body#yacySearch #messages > p, body#yacySearch #messages > div.p {
     padding: 0.3em 1em;
     border-radius: 5px; }
   body#yacySearch #messages .error:before {

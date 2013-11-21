@@ -97,6 +97,10 @@ div.clear {
   clear:both;
 }
 
+div.p {
+  @extend p;
+}
+
 .nobr {
   white-space:nowrap;
 }
