@@ -19,7 +19,7 @@ $ycu-var-fieldset-legend-width:15em;
 
 /**********
  * Forms elements */
-input,
+input:not([type="range"]),
 textarea,
 select,
 .ui-spinner {
@@ -52,13 +52,13 @@ label.indent {
   padding-left:2em;
 }
 
-input:focus:enabled,
+input:not([type="range"]):focus:enabled,
 select:focus:enabled,
 textarea:focus:enabled,
-input:hover:enabled,
+input:not([type="range"]):hover:enabled,
 select:hover:enabled,
 textarea:hover:enabled,
-input:active:enabled,
+input:not([type="range"]):active:enabled,
 select:active:enabled,
 textarea:active:enabled {
   border:1px $ycu-var-color-input-border solid;
@@ -67,12 +67,14 @@ textarea:active:enabled {
 
 input[type="image"],
 input[type="radio"],
+input[type="range"],
 input[type="checkbox"] {
   border:0 none;// !important;
   background:transparent;// !important;
 }
 
 input[type='text'],
+input[type="range"],
 textarea {
   width:70%;
 }

@@ -2426,7 +2426,7 @@ fieldset .content, fieldset.formSection > legend, header .logo, #footerMenu, tab
 #navSub, #breadCrumb, body#crawlStartExpert #formReview dt {
   font-family: "Droid Sans", Arial, Helvetica, sans-serif; }
 
-input,
+input:not([type="range"]),
 textarea,
 select,
 .ui-spinner {
@@ -2456,7 +2456,7 @@ body#crawlStartSite #startPointDetails .ycu-data-false:before, body#crawlStartEx
 
 /**********
  * Forms elements */
-input,
+input:not([type="range"]),
 textarea,
 select,
 .ui-spinner {
@@ -2484,13 +2484,13 @@ label.indent {
   text-indent: -2em;
   padding-left: 2em; }
 
-input:focus:enabled,
+input:not([type="range"]):focus:enabled,
 select:focus:enabled,
 textarea:focus:enabled,
-input:hover:enabled,
+input:not([type="range"]):hover:enabled,
 select:hover:enabled,
 textarea:hover:enabled,
-input:active:enabled,
+input:not([type="range"]):active:enabled,
 select:active:enabled,
 textarea:active:enabled {
   border: 1px #758aac solid;
@@ -2498,11 +2498,13 @@ textarea:active:enabled {
 
 input[type="image"],
 input[type="radio"],
+input[type="range"],
 input[type="checkbox"] {
   border: 0 none;
   background: transparent; }
 
 input[type='text'],
+input[type="range"],
 textarea {
   width: 70%; }
 
