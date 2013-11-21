@@ -1,40 +1,57 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <title>YaCy '#[clientname]#': RWI Ranking Configuration</title>
-    #%env/templates/metas.template%#
-  	<script>
-	$(function() {
-		$("select").each(function(){
-			var name = $(this).attr("name");
-			$("<div style='width:360px; float:left; display: inline;' name='"+name+"' id='slider_"+name+"'></div>").insertAfter($(this)).slider({
-				min: 0,
-				max: 15,
-				range: "min",
-				value: $(this).val(),
-				slide: function(event, ui) {
-					select = $(ui.handle).parents("dd").children("select");
-					select.val(ui.value);
-				}
-			});
-			$(this).change(function(event) {
-				$(event.target).next().slider("value", this.selectedIndex);
-			});
-		});
-	});
-	</script>
-  </head>
-  <body id="RankingRWI_p">
-    #%env/templates/header.template%#
-    <h2>RWI Ranking Configuration</h2>
-    <p>The document ranking influences the order of the search result entities.
-    A ranking is computed using a number of attributes from the documents that match with the search word.
-    The attributes are first normalized over all search results and then the normalized attribut is multiplied with the ranking coefficient computed from this list.
-    The ranking coefficient grows exponentially with the ranking levels given in the following table. If you increase a single value by one, then the strength of the parameter doubles.
-    </p>
-    <form class="dsearch" action="RankingRWI_p.html" method="post" enctype="multipart/form-data">
-      <fieldset>
-        <legend>Pre-Ranking</legend>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>YaCy '#[clientname]#': RWI Ranking Configuration</title>
+  #%env/templates/header-backend.template%#
+</head>
+
+<body id="rankingRWI">
+  <ul class="ym-skiplinks">
+    <li><a class="ym-skip" href="#nav">Skip to navigation (Press Enter)</a></li>
+    <li><a class="ym-skip" href="#main">Skip to main content (Press Enter)</a></li>
+  </ul>
+
+  #%env/templates/header.template%#
+
+  <main>
+    <div class="ym-wrapper">
+      <div class="ym-wbox">
+
+<div id="devInfo">
+  Unfinished!
+Todo:
+ - Slider values are not preset!
+ - JAVA code should return slider value as single template var, to set the HTML5 sliders
+</div>
+
+        <h1>RWI Ranking Configuration</h1>
+        <p>
+          The document ranking influences the order of the search result entities.
+          A ranking is computed using a number of attributes from the documents that match with the search word.
+          The attributes are first normalized over all search results and then the normalized attribut is multiplied with the ranking coefficient computed from this list.
+          The ranking coefficient grows exponentially with the ranking levels given in the following table. If you increase a single value by one, then the strength of the parameter doubles.
+        </p>
+
+        <form action="RankingRWI_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
+          <fieldset>
+            <legend>Ranking Configuration</legend>
+            <fieldset class="formGroup">
+              <legend>Pre-Ranking</legend>
+              #{attrPre}#
+              <fieldset class="formSection">
+                <legend>#[name]#</legend>
+                <div class="content">
+                  <p>
+                    <input type="range" name="#[nameorg]#" min="0" max="15"/>
+                  </p>
+                  <p>
+                    #[info]#
+                  </p>
+                </div>
+              </fieldset>
+              #{/attrPre}#
+            </fieldset>
+
         <dl>#{attrPre}#
           <dt style="width:260px"><label for="#[nameorg]#">#[name]#</label>&nbsp;<span class="info" style="float:right"><img src="/env/grafics/i16.gif" width="16" height="16" alt="info"/><span>#[info]#</span></span></dt>
           <dd style="width:360px; float:left; display:inline;" id="#[nameorg]#">
@@ -64,6 +81,11 @@
       </fieldset>
     </form>
 
+</div>
+</div>
+</main>
+<footer>
   #%env/templates/footer.template%#
+</footer>
   </body>
 </html>
