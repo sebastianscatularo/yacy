@@ -7,25 +7,6 @@
   #(import)#::
   <!--<meta http-equiv="REFRESH" content="10" />-->
   #(/import)#
-  <script type="text/javascript">
-    function showMessages() {
-      $('#formResults').show();
-    };
-    //<![CDATA[
-    $(function() {
-      #(import-one)#::
-      showMessages();
-      ::
-      showMessages();
-      #(/import-one)#
-      #(status)#::
-      showMessages();
-      ::
-      showMessages();
-      #(/status)#
-    });
-    //]]>
-  </script>
 </head>
 
 <body id="indexImportOAIPMH">
@@ -45,7 +26,7 @@ Todo:
  - code should return input data on error, to prefill form
 </div>
 
-        <div id="formResults" class="message hidden">
+        <div id="formResults">
           #(import-one)#::
           <p class="success">
             <ul>
