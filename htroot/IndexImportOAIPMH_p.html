@@ -51,14 +51,15 @@
           </p>
           ::
           <p class="error">
-            <s class="sym sym-warning"></s>
             <strong>Import failed:</strong> #[error]#
           </p>
           #(/import-one)#
           #(status)#::
           <p class="success">Import started!</p>
           ::
-          <p class="error">Bad input data: #[message]#</p>
+          <p class="error">
+            <strong>Bad input data:</strong> #[message]#
+          </p>
           #(/status)#
         </div>
 
@@ -67,7 +68,7 @@
           Results from the import can be monitored in the <a href="/CrawlResults.html?process=7">indexing results for surrogates</a>.
         </p>
 
-        <form action="IndexImportOAIPMH_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
+        <form action="IndexImportOAIPMH_p.html#formResults" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
           <fieldset>
             <legend>Single request import</legend>
             <div class="description">
@@ -89,7 +90,7 @@
           </fieldset>
         </form>
 
-        <form action="IndexImportOAIPMH_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
+        <form action="IndexImportOAIPMH_p.html#formResults" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
         <fieldset>
           <legend>Import all Records</legend>
           <div class="description">

@@ -230,8 +230,11 @@ YaCyUi.init = function() {
   }
 
   // symbols content, actual styles are set via CSS
+  $('#formResults').find('p.error').prepend('<s class="sym sym-error" title="Error"></s>');
+  $('#formResults').find('p.warning').prepend('<s class="sym sym-warning" title="Warning"></s>');
+  $('#formResults').find('p.hint').prepend('<s class="sym sym-hint" title="Hint"></s>');
   var symbols = $('main s.sym');
-  symbols.filter('.sym-warning, .sym-hint').html('<i></i><i></i>');
+  symbols.filter('.sym-error, .sym-warning, .sym-hint').html('<i></i><i></i>');
 
   // finished loading
   YaCyUi.loaded = true;

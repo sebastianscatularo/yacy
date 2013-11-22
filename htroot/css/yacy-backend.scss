@@ -33,6 +33,15 @@
 /** jQuery Ui customizations **/
 @import 'jquery-ui';
 
+/* Form result messages */
+#formResults {
+  @extend %font-sans;
+  p {
+    border-radius:5px;
+    padding:0.5em;
+  }
+}
+
 /** Pages specific CSS */
 // body#crawlStartExpert
 // body#crawlStartSite

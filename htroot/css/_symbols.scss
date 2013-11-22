@@ -7,6 +7,7 @@ s.sym {
 }
 
 s {
+  &.sym-error,
   &.sym-hint,
   &.sym-warning {
     i:first-of-type:before {
@@ -25,8 +26,13 @@ s {
     content:'#{$fa-var-lightbulb-o}';
   }
 
-  &.sym-warning i:last-of-type:before {
+  &.sym-error i:last-of-type:before {
     color:red;
     content:'#{$fa-var-exclamation}';
+  }
+
+  &.sym-warning i:last-of-type:before {
+    color:red;
+    content:'#{$fa-var-info}';
   }
 }

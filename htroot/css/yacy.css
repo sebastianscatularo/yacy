@@ -1253,16 +1253,16 @@
   line-height: 2em;
   vertical-align: middle; }
 
-.fa-stack-1x, s.sym-hint i:last-of-type:before, s.sym-warning i:last-of-type:before, .fa-stack-2x, s.sym-hint i:first-of-type:before, s.sym-warning i:first-of-type:before {
+.fa-stack-1x, s.sym-error i:last-of-type:before, s.sym-hint i:last-of-type:before, s.sym-warning i:last-of-type:before, .fa-stack-2x, s.sym-error i:first-of-type:before, s.sym-hint i:first-of-type:before, s.sym-warning i:first-of-type:before {
   position: absolute;
   left: 0;
   width: 100%;
   text-align: center; }
 
-.fa-stack-1x, s.sym-hint i:last-of-type:before, s.sym-warning i:last-of-type:before {
+.fa-stack-1x, s.sym-error i:last-of-type:before, s.sym-hint i:last-of-type:before, s.sym-warning i:last-of-type:before {
   line-height: inherit; }
 
-.fa-stack-2x, s.sym-hint i:first-of-type:before, s.sym-warning i:first-of-type:before {
+.fa-stack-2x, s.sym-error i:first-of-type:before, s.sym-hint i:first-of-type:before, s.sym-warning i:first-of-type:before {
   font-size: 2em; }
 
 .fa-inverse {
@@ -2423,7 +2423,7 @@
   padding: 1.5em; }
 
 fieldset .content, fieldset.formSection > legend, header .logo, #footerMenu, table th, nav,
-#navSub, #breadCrumb, body#crawlStartExpert #formReview dt {
+#navSub, #breadCrumb, #formResults, body#crawlStartExpert #formReview dt {
   font-family: "Droid Sans", Arial, Helvetica, sans-serif; }
 
 input:not([type="range"]),
@@ -3140,15 +3140,18 @@ nav span,
   content: "\f14a"; }
 
 /** Stacked fontAwesome symbols **/
-s.sym-hint i:first-of-type:before, s.sym-warning i:first-of-type:before {
+s.sym-error i:first-of-type:before, s.sym-hint i:first-of-type:before, s.sym-warning i:first-of-type:before {
   color: yellow;
   content: "\f0a3"; }
 s.sym-hint i:last-of-type:before {
   color: blue;
   content: "\f0eb"; }
-s.sym-warning i:last-of-type:before {
+s.sym-error i:last-of-type:before {
   color: red;
   content: "\f12a"; }
+s.sym-warning i:last-of-type:before {
+  color: red;
+  content: "\f129"; }
 
 /** jQuery Ui customizations **/
 /** jQuery UI customs */
@@ -3170,6 +3173,11 @@ s.sym-warning i:last-of-type:before {
 
 .ui-dialog-titlebar-close {
   display: none; }
+
+/* Form result messages */
+#formResults p, #formResults div.p {
+  border-radius: 5px;
+  padding: 0.5em; }
 
 /** Pages specific CSS */
 body#crawlStartExpert #startPointDetails dl,
