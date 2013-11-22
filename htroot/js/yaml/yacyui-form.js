@@ -90,6 +90,12 @@ YaCyUi.Func.Form = {
     // init jQuery UI spinner elements
     $('.spinner').spinner();
 
+    // set checkAll button action for tables with checkboxes
+    $('table th input[type="checkbox"][data-action~="checkAllToggle"]').on('change', function() {
+      console.debug("parent table",$(this).closest('table'), "state ",$(this).is(':checked'));
+      YaCyUi.Tools.checkAllBoxes($(this).closest('table'), $(this).is(':checked'));
+    });
+
     // wait until all modules that need initialization are loaded
     var t = window.setInterval(function() {
       var module;

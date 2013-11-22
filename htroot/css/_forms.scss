@@ -263,6 +263,7 @@ fieldset {
       margin-left:0;
       padding-left:0;
       width:auto;
+      display:block;
     }
 
     hr {
@@ -394,6 +395,7 @@ fieldset.formControl {
 }
 
 // very first fieldset
+fieldset.main,
 form > fieldset:first-child {
   margin:0;
 
@@ -685,17 +687,18 @@ textarea {
 
 form {
   margin-bottom:1.5em;
+}
 
-  > fieldset:first-of-type {
-    border: {
-      left:1px solid rgba(50,50,50,0.2);
-      top:1px solid rgba(50,50,50,0.1);
-    }
-    box-shadow:5px 5px 5px rgba(50,50,50,0.4);
+fieldset.main,
+form > fieldset:first-of-type {
+  border: {
+    left:1px solid rgba(50,50,50,0.2);
+    top:1px solid rgba(50,50,50,0.1);
+  }
+  box-shadow:5px 5px 5px rgba(50,50,50,0.4);
 
-    > legend {
-      box-shadow:2px 2px 1px rgba(50,50,50,0.4);
-    }
+  > legend {
+    box-shadow:2px 2px 1px rgba(50,50,50,0.4);
   }
 }
 

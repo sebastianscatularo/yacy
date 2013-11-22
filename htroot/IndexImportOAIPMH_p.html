@@ -1,52 +1,138 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <!-- This page is only XHTML 1.0 Transitional and not Strict because iframes are in use -->
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" >
-  <head>
-    <title>YaCy '#[clientname]#': OAI-PMH Import</title>
-    #%env/templates/metas.template%#
-    #(import)#::<!--<meta http-equiv="REFRESH" content="10" />-->#(/import)#
-  </head>
-  <body id="IndexImportOAIPMH">
-    #%env/templates/header.template%#
-    <h2>OAI-PMH Import</h2>
-    <p>Results from the import can be monitored in the <a href="/CrawlResults.html?process=7">indexing results for surrogates</a></p>
+<html lang="en" >
+<head>
+  <title>YaCy '#[clientname]#': OAI-PMH Import</title>
+  #%env/templates/header-backend.template%#
+  #(import)#::
+  <!--<meta http-equiv="REFRESH" content="10" />-->
+  #(/import)#
+  <script type="text/javascript">
+    function showMessages() {
+      $('#formResults').show();
+    };
+    //<![CDATA[
+    $(function() {
+      #(import-one)#::
+      showMessages();
+      ::
+      showMessages();
+      #(/import-one)#
+      #(status)#::
+      showMessages();
+      ::
+      showMessages();
+      #(/status)#
+    });
+    //]]>
+  </script>
+</head>
 
-    <form action="IndexImportOAIPMH_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
-      <fieldset>
-        <legend>Single request import</legend>
-        This will submit only a single request as given here to a OAI-PMH server and imports records into the index<br />
-        <input name="urlstartone" type="text" value="#[defaulturl]#" size="80" />
-        <input name="submit" type="submit" value="Import OAI-PMH source" />
-        #(import-one)#::
-        <p><dl>
-          <dt>Source:</dt><dd>#[source]#</dd>
-          <dt>Processed:</dt><dd>#[count]# records</dd>
-          <dt>ResumptionToken:</dt><dd>#[rt]#</dd>
-        </dl></p>
-        ::<p>Import failed: #[error]#</p>
-        #(/import-one)#
-        </fieldset>
-    </form>
+<body id="indexImportOAIPMH">
+  <ul class="ym-skiplinks">
+    <li><a class="ym-skip" href="#nav">Skip to navigation (Press Enter)</a></li>
+    <li><a class="ym-skip" href="#main">Skip to main content (Press Enter)</a></li>
+  </ul>
 
+  #%env/templates/header.template%#
 
-    <form action="IndexImportOAIPMH_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
+  <main>
+    <div class="ym-wrapper">
+      <div class="ym-wbox">
+
+        <div id="formResults" class="message hidden">
+          #(import-one)#::
+          <p class="success">
+            <ul>
+              <li><strong>Source:</strong> #[source]#</li>
+              <li><strong>Processed:<strong> #[count]# records</li>
+              <li><strong>ResumptionToken:</strong> #[rt]#</li>
+            </ul>
+          </p>
+          ::
+          <p class="error">
+            <s class="sym sym-warning"></s>
+            <strong>Import failed:</strong> #[error]#
+          </p>
+          #(/import-one)#
+          #(status)#::
+          <p class="success">Import started!</p>
+          ::
+          <p class="error">Bad input data: #[message]#</p>
+          #(/status)#
+        </div>
+
+        <h1>OAI-PMH Import</h1>
+        <p>
+          Results from the import can be monitored in the <a href="/CrawlResults.html?process=7">indexing results for surrogates</a>.
+        </p>
+
+        <form action="IndexImportOAIPMH_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
+          <fieldset>
+            <legend>Single request import</legend>
+            <div class="description">
+              <p>
+                This will submit only a single request as given here to a OAI-PMH server and imports records into the index.
+              </p>
+            </div>
+            <fieldset class="formSection">
+              <legend>OAI-PMH source</legend>
+              <div class="content">
+                <input name="urlstartone" type="text" value="#[defaulturl]#"/>
+              </div>
+            </fieldset>
+            <fieldset class="formControl" data-id="formControl">
+              <div class="content">
+                <button type="submit" name="submit" class="icon-run primary">Import OAI-PMH source</button>
+              </div>
+            </fieldset>
+          </fieldset>
+        </form>
+
+        <form action="IndexImportOAIPMH_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
         <fieldset>
-          <legend>Import all Records from a server</legend>
-          Import all records that follow according to resumption elements into index<br />
-          <input name="urlstart" type="text" value="" size="80" />
-          <input name="importroot" type="submit" value="import this source" />
-          #(optiongetlist)#::or&nbsp;<input name="getlist" type="submit" value="import from a list" />#(/optiongetlist)#
-          #(status)#::<p>Import started!</p>::<p>Bad input data: #[message]# </p>#(/status)#
+          <legend>Import all Records</legend>
+          <div class="description">
+            <p>
+              Import all records from a server that follow according to resumption elements into index.
+            </p>
+          </div>
+          <fieldset class="formSection">
+            <legend>OAI-PMH source</legend>
+            <div class="content">
+              <input name="urlstart" type="text" value=""/>
+            </div>
+          </fieldset>
+          <fieldset class="formControl" data-id="formControl">
+            <div class="content">
+              #(optiongetlist)#::
+              <button name="getlist" type="submit" class="icon-run">Import from a list</button>
+              #(/optiongetlist)#
+              <button type="submit" name="importroot" class="icon-run primary">Import OAI-PMH source</button>
+            </div>
+          </fieldset>
         </fieldset>
-    </form>
-    <iframe name="OAI-PMH_ImportList"
-       src="/IndexImportOAIPMHList_p.html#(iframetype)#::?import=::?source=#(/iframetype)#"
-       width="100%"
-       height="420"
-       frameborder="0"
-       scrolling="auto"
-       id="OAI-PMH_ImportList">
-      </iframe>
-    #%env/templates/footer.template%#
-  </body>
+      </form>
+
+      <fieldset class="main">
+        <legend>OAI-PMH Servers</legend>
+        <div class="content noIndent">
+          <iframe name="OAI-PMH_ImportList"
+          src="/IndexImportOAIPMHList_p.html#(iframetype)#::?import=::?source=#(/iframetype)#"
+          width="100%"
+          height="420"
+          frameborder="0"
+          scrolling="auto"
+          id="OAI-PMH_ImportList">
+        </iframe>
+        </div>
+      </fieldset>
+    </div>
+  </div>
+</main>
+
+<footer class="hidden">
+  #%env/templates/footer.template%#
+</footer>
+</body>
 </html>

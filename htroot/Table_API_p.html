@@ -9,14 +9,6 @@
   #(/showtable)#
   <script type="text/javascript">
   <!--
-	  // The chrome browser is getting the wrong value if we try to get the value inside the script "var checkStatus=inputs.elements[0].checked;" - so now the value is a parameter
-	  function checkAll (formToCheckAll, checkStatus) {
-     var inputs=document.getElementById(formToCheckAll);
-      //var checkStatus=inputs.elements[0].checked;
-      for (var i =0; i < inputs.elements.length; i++) {
-        inputs.elements[i].checked = checkStatus;
-      }
-    }
     function submitchange(from) {
     	document.getElementById("apilist").action = "Table_API_p.html#" + from;
       document.getElementById ("scheduleeventaction").value = "true";
@@ -111,7 +103,7 @@ Todo:
                       <table class="sortable">
                         <thead>
                           <tr valign="bottom">
-                            <th class="sorttable_nosort"><input type="checkbox" id="allswitch" onclick="checkAll(this.form.id, this.checked);" /></th>
+                            <th><input type="checkbox" data-action="checkAllToggle"/></th>
                             <th>Type</th>
                             <th style="width: 100%;">Comment</th>
                             <th>Call<br/>Count</th>

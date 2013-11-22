@@ -185,11 +185,27 @@ YaCyUi.init = function() {
       }
       return nodeData;
     };
-    $('table.sortable').each(function(){
-      $(this).tablesorter({
-        textExtraction: parseData
+    var sortTables = $('table.sortable');
+    if (sortTables.size() > 0) {
+      sortTables.each(function(){
+        console.debug('sortable', $(this));
+        var headers = {}
+        // exclude checkAll columns and those explicitly not to be sorted
+        $(this).find('th.noSort, th input[data-action~="checkAllToggle"]').each(
+            function() {
+          // set noSort for checkAll columns
+          if (this.tagName.toLowerCase() == 'input') {
+            $(this).parent('th').addClass('noSort');
+          }
+          headers[$(this).index()] = {sorter: false};
+        });
+        // setup sorter
+        $(this).tablesorter({
+          headers: headers,
+          textExtraction: parseData
+        });
       });
-    });
+    }
   }
 
   // initialize page script when all modules are loaded (if any)

@@ -2433,13 +2433,13 @@ select,
   font-family: Arial, Helvetica, sans-serif; }
 
 .formHint > *:before, .resourceQueryBox .queryBox:after, a[href^="http://"]:before,
-a[href^="https://"]:before, table.sortable th:after, #breadCrumb span:not(:last-of-type):after, #breadCrumb:before, .icon-item-new:before, .icon-item-queued:before, .icon-item-done:before, body#crawlStartExpert #startPointDetails .ycu-data-true:before,
+a[href^="https://"]:before, table.sortable th:not(.noSort):after, #breadCrumb span:not(:last-of-type):after, #breadCrumb:before, .icon-item-new:before, .icon-item-queued:before, .icon-item-done:before, body#crawlStartExpert #startPointDetails .ycu-data-true:before,
 body#crawlStartSite #startPointDetails .ycu-data-true:before, body#crawlStartExpert #startPointDetails .ycu-data-false:before,
 body#crawlStartSite #startPointDetails .ycu-data-false:before, body#crawlStartExpert #formReview dt:not(.notConfigured):before, body#crawlStartExpert .ycu-data-true:before, body#crawlStartExpert .ycu-data-false:before, button[class*='icon-']:before, fieldset.collapsible > legend:hover:before, fieldset.collapsible.collapsed > legend:before {
   opacity: 0.7; }
 
 .formHint > *:before, .resourceQueryBox .queryBox:after, a[href^="http://"]:before,
-a[href^="https://"]:before, table.sortable th:after, #breadCrumb span:not(:last-of-type):after, #breadCrumb:before, .icon-item-new:before, .icon-item-queued:before, .icon-item-done:before, body#crawlStartExpert #startPointDetails .ycu-data-true:before,
+a[href^="https://"]:before, table.sortable th:not(.noSort):after, #breadCrumb span:not(:last-of-type):after, #breadCrumb:before, .icon-item-new:before, .icon-item-queued:before, .icon-item-done:before, body#crawlStartExpert #startPointDetails .ycu-data-true:before,
 body#crawlStartSite #startPointDetails .ycu-data-true:before, body#crawlStartExpert #startPointDetails .ycu-data-false:before,
 body#crawlStartSite #startPointDetails .ycu-data-false:before, body#crawlStartExpert #formReview dt:not(.notConfigured):before, body#crawlStartExpert .ycu-data-true:before, body#crawlStartExpert .ycu-data-false:before, fieldset.collapsible > legend:before, fieldset.formSection .hasHelp:before, #navSub li a:after,
 #navSub li span:after, fieldset.formGroup > legend:before, fieldset.formGroup > legend:after, .formHint:before {
@@ -2448,7 +2448,7 @@ body#crawlStartSite #startPointDetails .ycu-data-false:before, body#crawlStartEx
   font-size: 0.85em; }
 
 .formHint > *:before, .resourceQueryBox .queryBox:after, a[href^="http://"]:before,
-a[href^="https://"]:before, table.sortable th:after, #breadCrumb span:not(:last-of-type):after, #breadCrumb:before, .icon-item-new:before, .icon-item-queued:before, .icon-item-done:before, body#crawlStartExpert #startPointDetails .ycu-data-true:before,
+a[href^="https://"]:before, table.sortable th:not(.noSort):after, #breadCrumb span:not(:last-of-type):after, #breadCrumb:before, .icon-item-new:before, .icon-item-queued:before, .icon-item-done:before, body#crawlStartExpert #startPointDetails .ycu-data-true:before,
 body#crawlStartSite #startPointDetails .ycu-data-true:before, body#crawlStartExpert #startPointDetails .ycu-data-false:before,
 body#crawlStartSite #startPointDetails .ycu-data-false:before, body#crawlStartExpert #formReview dt:not(.notConfigured):before, body#crawlStartExpert .ycu-data-true:before, body#crawlStartExpert .ycu-data-false:before, fieldset.collapsible > legend:before, fieldset.formSection .hasHelp:before, #navSub li a:after,
 #navSub li span:after {
@@ -2619,7 +2619,8 @@ fieldset {
     fieldset .content.noIndent {
       margin-left: 0;
       padding-left: 0;
-      width: auto; }
+      width: auto;
+      display: block; }
     fieldset .content hr {
       border: 0;
       height: 1px;
@@ -2687,12 +2688,15 @@ fieldset.formSection .content {
 fieldset.formControl {
   margin-top: 1.5em; }
 
+fieldset.main,
 form > fieldset:first-child {
   margin: 0; }
+  fieldset.main > .description,
   form > fieldset:first-child > .description {
     margin-top: 1em;
     font-size: 1em;
     border-left: 0; }
+  fieldset.main > legend:first-child,
   form > fieldset:first-child > legend:first-child {
     font-size: 1.2em;
     font-weight: bold;
@@ -2701,10 +2705,13 @@ form > fieldset:first-child {
     margin-left: 1.2em;
     background-color: #94E84D;
     border-radius: 5px; }
+  fieldset.main:not(.collapsible) > legend:before,
   form > fieldset:first-child:not(.collapsible) > legend:before {
     content: ''; }
+  fieldset.main.collapsible.collapsed,
   form > fieldset:first-child.collapsible.collapsed {
     padding-bottom: 1em; }
+  fieldset.main.collapsible > legend:first-child,
   form > fieldset:first-child.collapsible > legend:first-child {
     width: auto !important; }
 
@@ -2837,12 +2844,15 @@ textarea.invalid {
 
 form {
   margin-bottom: 1.5em; }
-  form > fieldset:first-of-type {
-    border-left: 1px solid rgba(50, 50, 50, 0.2);
-    border-top: 1px solid rgba(50, 50, 50, 0.1);
-    box-shadow: 5px 5px 5px rgba(50, 50, 50, 0.4); }
-    form > fieldset:first-of-type > legend {
-      box-shadow: 2px 2px 1px rgba(50, 50, 50, 0.4); }
+
+fieldset.main,
+form > fieldset:first-of-type {
+  border-left: 1px solid rgba(50, 50, 50, 0.2);
+  border-top: 1px solid rgba(50, 50, 50, 0.1);
+  box-shadow: 5px 5px 5px rgba(50, 50, 50, 0.4); }
+  fieldset.main > legend,
+  form > fieldset:first-of-type > legend {
+    box-shadow: 2px 2px 1px rgba(50, 50, 50, 0.4); }
 
 .resourceQueryBox {
   display: inline-block;
@@ -2967,16 +2977,16 @@ table tbody tr:nth-child(even) {
 table tbody tr:hover {
   background-color: #f1f4fa; }
 
-table.sortable th {
+table.sortable th:not(.noSort) {
   cursor: pointer;
   color: #555;
   border-color: #555; }
-  table.sortable th:after {
+  table.sortable th:not(.noSort):after {
     content: "\f0dc";
     padding-left: 0.3em; }
-  table.sortable th.headerSortDown:after {
+  table.sortable th:not(.noSort).headerSortDown:after {
     content: "\f0d7"; }
-  table.sortable th.headerSortUp:after {
+  table.sortable th:not(.noSort).headerSortUp:after {
     content: "\f0d8"; }
 
 /**********

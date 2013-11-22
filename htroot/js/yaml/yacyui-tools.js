@@ -29,6 +29,15 @@ YaCyUi.Tools = {
     });
   },
 
+  /** Check/Uncheck all checkboxes in the given elements.
+    * @param {jQuery} The elements that contain checkboxes
+    * @param {boolean} True for checked, false for unchecked state.
+    * (default: true) */
+  checkAllBoxes: function(elements, state) {
+    state = typeof state === 'boolean' ? state : true;
+    elements.find('input[type="checkbox"]').prop('checked', state);
+  },
+
   isTextChangingKeyEvent: function(evObj) {
     // filter out non printable keys on key events
     if (evObj.type == 'keyup' || evObj.type == 'keydown' ||

@@ -230,7 +230,7 @@ table {
 }
 // sortable tables
 table.sortable {
-  th {
+  th:not(.noSort) {
     cursor:pointer;
     color:#555;
     border-color:#555;
