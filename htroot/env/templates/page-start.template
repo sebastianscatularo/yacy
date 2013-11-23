@@ -1,0 +1,10 @@
+<ul class="ym-skiplinks">
+  <li><a class="ym-skip" href="#nav">Skip to navigation (Press Enter)</a></li>
+  <li><a class="ym-skip" href="#main">Skip to main content (Press Enter)</a></li>
+</ul>
+
+#%env/templates/header.template%#
+
+<main>
+  <div class="ym-wrapper">
+    <div class="ym-wbox">
