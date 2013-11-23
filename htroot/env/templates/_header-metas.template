@@ -1,10 +1,9 @@
 <!-- (C), Architecture: Michael Peter Christen; Contact: mc <at> yacy.net -->
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="Content-Language" content="English, Englisch" />
 <meta name="keywords" content="YaCy HTTP search engine spider indexer java network open free download Mac Windows Linux Software development" />
 <meta name="description" content="Software HTTP Freeware Home Page" />
-<meta name="copyright" content="Michael Christen et al." />
+<meta name="dcterms.rightsHolder" content="Michael Christen et al." />
 
 <!--
 <link rel="stylesheet" type="text/css" media="all" href="/env/base.css" />
