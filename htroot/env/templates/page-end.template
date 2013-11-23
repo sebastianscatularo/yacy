@@ -1,6 +1,4 @@
-    </div>
-  </div>
-</main>
+#%env/templates/page-end-inline.template%#
 <footer class="hidden">
   #%env/templates/footer.template%#
 </footer>

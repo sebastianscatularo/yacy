@@ -4,7 +4,4 @@
 </ul>
 
 #%env/templates/header.template%#
-
-<main>
-  <div class="ym-wrapper">
-    <div class="ym-wbox">
+#%env/templates/page-start-inline.template%#
