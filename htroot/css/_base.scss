@@ -227,6 +227,10 @@ table {
   th {
     @extend %font-sans;
   }
+
+  td.breakAll {
+    word-break:break-all;
+  }
 }
 // sortable tables
 table.sortable {
