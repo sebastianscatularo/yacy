@@ -209,6 +209,7 @@ a.yacyLogo,
 // general tables
 table {
   $color-cell-base:$ycu-var-color-fieldset-bg;
+  table-layout:fixed;
 
   tbody {
     tr:nth-child(odd) {
