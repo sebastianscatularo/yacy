@@ -1,40 +1,59 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <title>YaCy '#[clientname]#': Loader Queue</title>
-    #%env/templates/metas.template%#
-  </head>
-  <body id="IndexCreateLoaderQueue">
-    #%env/templates/header.template%#
-    <h2>Loader Queue</h2>
-    
-    <p>
-    #(loader-set)#
-    The loader set is empty</p>
-    ::
-    There are #[num]# entries in the loader set:</p>
-    <table border="0" cellpadding="2" cellspacing="1">
-      <colgroup>
-        <col width="60" />
-        <col width="10" />
-        <col />
-      </colgroup>
-      <tr class="TableHeader">
-        <th>Initiator</th>
-        <th>Depth</th>
-        <th>Status</th>
-        <th>URL</th>
-      </tr>
-      #{list}#
-      <tr class="TableCell#(dark)#Light::Dark#(/dark)#">
-        <td>#[initiator]#</td>
-        <td>#[depth]#</td>
-        <td>#[status]#</td>
-        <td><a href="#[url]#">#[url]#</a></td>
-      </tr>
-      #{/list}#
-    </table>
-    #(/loader-set)#
+<head>
+  <title>YaCy '#[clientname]#': Loader Queue</title>
+  #%env/templates/header-backend.template%#
+</head>
+
+<body id="indexCreateLoaderQueue">
+  <ul class="ym-skiplinks">
+    <li><a class="ym-skip" href="#nav">Skip to navigation (Press Enter)</a></li>
+    <li><a class="ym-skip" href="#main">Skip to main content (Press Enter)</a></li>
+  </ul>
+
+  #%env/templates/header.template%#
+
+  <main>
+    <div class="ym-wrapper">
+      <div class="ym-wbox">
+        <h1>Loader Queue</h1>
+
+        #(loader-set)#
+        <p>
+          <s class="sym sym-hint"></s>
+          The loader set is empty
+        </p>
+        ::
+        <p>
+          There are #[num]# entries in the loader set.
+        </p>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Initiator</th>
+              <th>Depth</th>
+              <th>Status</th>
+              <th><abbr>URL</abbr></th>
+            </tr>
+          </thead>
+          <tbody>
+            #{list}#
+            <tr>
+              <td>#[initiator]#</td>
+              <td>#[depth]#</td>
+              <td>#[status]#</td>
+              <td><a href="#[url]#">#[url]#</a></td>
+            </tr>
+            #{/list}#
+          </tbody>
+        </table>
+        #(/loader-set)#
+      </div>
+    </div>
+  </main>
+  <footer class="hidden">
     #%env/templates/footer.template%#
-  </body>
+  </footer>
+</body>
 </html>
