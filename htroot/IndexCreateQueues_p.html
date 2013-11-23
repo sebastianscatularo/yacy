@@ -7,97 +7,84 @@
 
 <body id="indexCreateQueues">
   #(embed)#
-  #%env/templates/header.template%#
-
-  <ul class="ym-skiplinks">
-    <li><a class="ym-skip" href="#nav">Skip to navigation (Press Enter)</a></li>
-    <li><a class="ym-skip" href="#main">Skip to main content (Press Enter)</a></li>
-  </ul>
-
-  <main>
-    <div class="ym-wrapper">
-      <div class="ym-wbox">
-        <h1>Crawl Queue: #[queuename]#</h1>
+  #%env/templates/page-start.template%#
+  <h1>Crawl Queue: #[queuename]#</h1>
   ::
-  <main>
-    <div class="ym-wrapper">
-      <div class="ym-wbox">
+  #%env/templates/page-start-inline.template%#
   #(/embed)#
 
-        <div id="api">
-          <a href="/api/latency_p.xml" title="Click on this API button to see an XML with information about the crawler latency and other statistics."><img src="/env/grafics/api.png" width="60" height="40" alt="API"/></a>
-        </div>
+  <div id="api">
+    <a href="/api/latency_p.xml" title="Click on this API button to see an XML with information about the crawler latency and other statistics."><img src="/env/grafics/api.png" width="60" height="40" alt="API"/></a>
+  </div>
 
-        #(crawler)#
-        <p>
-          <s class="sym sym-hint"></s>
-          This crawler queue is empty.
-        </p>
-        ::
-        #(embed)#
-        <form action="IndexCreateQueues_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
-          <fieldset>
-            Delete Entries:
-            <input type="text" name="pattern" value="#[deletepattern]#" size="40" maxlength="200" />
-            <select name="option" size="1">
-             <option value="5">Initiator</option>
-             <option value="3">Profile</option>
-             <option value="4">Depth</option>
-             <option value="6">Modified Date</option>
-             <option value="2">Anchor Name</option>
-             <option value="1" selected="selected">URL</option>
-           </select>
-           <input type="hidden" name="stack" value="#[queuename]#" />
-           <input type="submit" name="delete" value="Delete" />
-         </fieldset>
-       </form>
-       ::#(/embed)#
+  #(crawler)#
+  <p>
+    <s class="sym sym-hint"></s>
+    This crawler queue is empty.
+  </p>
+  ::
+  #(embed)#
+  <form action="IndexCreateQueues_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
+    <fieldset>
+      Delete Entries:
+      <input type="text" name="pattern" value="#[deletepattern]#" size="40" maxlength="200" />
+      <select name="option" size="1">
+        <option value="5">Initiator</option>
+        <option value="3">Profile</option>
+        <option value="4">Depth</option>
+        <option value="6">Modified Date</option>
+        <option value="2">Anchor Name</option>
+        <option value="1" selected="selected">URL</option>
+      </select>
+      <input type="hidden" name="stack" value="#[queuename]#" />
+      <input type="submit" name="delete" value="Delete" />
+    </fieldset>
+  </form>
+  ::#(/embed)#
 
-       <table>
-        <thead>
-          <tr class="TableHeader">
-            <th>Count</th>
-            <th>Delta/ms</th>
-            <th>Host</th>
-            <th>Initiator</th>
-            <th>Profile</th>
-            <th>Depth</th>
-            <th>Modified Date</th>
-            <th>Anchor Name</th>
-            <th>URL</th>
-          </tr>
-        </thead>
-        <tbody>
-          #{host}#
-          <tr class="TableCellDark">
-            <td>#[hostcount]#</td>
-            <td>#[hostdelta]#</td>
-            <td>
-              <a href="IndexCreateQueues_p.html?#(embed)#::embed=&#(/embed)#delete=&stack=#[queuename]#&option=1&pattern=.*#[hostname]#.*&urlsPerHost=#[urlsPerHost]#"><img src="env/grafics/trash.gif"></a>&nbsp;#[hostname]#
-            </td>
-            <td colspan="6"></td>
-          </tr>
-          #{list}#
-          <tr class="TableCellLight">
-            <td colspan="3"></td>
-            <td>#[initiator]#</td>
-            <td>#[profile]#</td>
-            <td>#[depth]#</td>
-            <td>#[modified]#</td>
-            <td>#[anchor]#</td>
-            <td><a href="#[url]#" target="_blank">#[url]#</a></td>
-          </tr>
-          #{/list}#
-          #{/host}#
-        </tbody>
-      </table>
-      #(/crawler)#
-      #(embed)#
-      #%env/templates/page-end.template%#
-      ::
-      </div>
-    </div>
-  </main>
+  <table>
+    <thead>
+      <tr class="TableHeader">
+        <th>Count</th>
+        <th>Delta/ms</th>
+        <th>Host</th>
+        <th>Initiator</th>
+        <th>Profile</th>
+        <th>Depth</th>
+        <th>Modified Date</th>
+        <th>Anchor Name</th>
+        <th>URL</th>
+      </tr>
+    </thead>
+    <tbody>
+      #{host}#
+      <tr class="TableCellDark">
+        <td>#[hostcount]#</td>
+        <td>#[hostdelta]#</td>
+        <td>
+          <a href="IndexCreateQueues_p.html?#(embed)#::embed=&#(/embed)#delete=&stack=#[queuename]#&option=1&pattern=.*#[hostname]#.*&urlsPerHost=#[urlsPerHost]#"><img src="env/grafics/trash.gif"></a>&nbsp;#[hostname]#
+        </td>
+        <td colspan="6"></td>
+      </tr>
+      #{list}#
+      <tr class="TableCellLight">
+        <td colspan="3"></td>
+        <td>#[initiator]#</td>
+        <td>#[profile]#</td>
+        <td>#[depth]#</td>
+        <td>#[modified]#</td>
+        <td>#[anchor]#</td>
+        <td><a href="#[url]#" target="_blank">#[url]#</a></td>
+      </tr>
+      #{/list}#
+      #{/host}#
+    </tbody>
+  </table>
+  #(/crawler)#
+  #(embed)#
+  #%env/templates/page-end.template%#
+  ::
+  #%env/templates/page-end-inline.template%#
   #(/embed)#
 </body>
 </html>
