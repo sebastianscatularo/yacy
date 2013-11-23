@@ -2962,14 +2962,12 @@ a.yacyLogo:active, a.yacyLogo:hover,
 
 /**********
  * Tables. */
-table {
-  table-layout: fixed; }
-  table tbody tr:nth-child(odd) {
-    background-color: #cbd8ec; }
-  table tbody tr:nth-child(even) {
-    background-color: #b9cae5; }
-  table tbody tr:hover {
-    background-color: #f1f4fa; }
+table tbody tr:nth-child(odd) {
+  background-color: #cbd8ec; }
+table tbody tr:nth-child(even) {
+  background-color: #b9cae5; }
+table tbody tr:hover {
+  background-color: #f1f4fa; }
 
 table.sortable th:not(.noSort) {
   cursor: pointer;
