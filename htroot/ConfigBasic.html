@@ -22,16 +22,8 @@
 </head>
 
 <body id="configBasic">
-  <ul class="ym-skiplinks">
-    <li><a class="ym-skip" href="#nav">Skip to navigation (Press Enter)</a></li>
-    <li><a class="ym-skip" href="#main">Skip to main content (Press Enter)</a></li>
-  </ul>
+  #%env/templates/page-start.template%#
 
-  #%env/templates/header.template%#
-
-<main>
-    <div class="ym-wrapper">
-      <div class="ym-wbox">
   <h1>Basic Configuration</h1>
   #(reconnect)#::
   <p>
@@ -216,9 +208,7 @@
     <!-- [4]: reconnect to different port -->
     <p>The peer port was changed successfully. Your browser will be redirected to the new <a href="#(sslSupport)#http::https#(/sslSupport)#://#[host]#:#[port]#/ConfigBasic.html">location</a> in 5 seconds.</p>
     #(/nextStep)#
-    #%env/templates/footer.template%#
-  </div>
-</div>
-</main>
+
+    #%env/templates/page-end.template%#
   </body>
 </html>

@@ -6,16 +6,7 @@
 </head>
 
 <body id="configSkins">
-  <ul class="ym-skiplinks">
-    <li><a class="ym-skip" href="#nav">Skip to navigation (Press Enter)</a></li>
-    <li><a class="ym-skip" href="#main">Skip to main content (Press Enter)</a></li>
-  </ul>
-
-  #%env/templates/header.template%#
-
-  <main>
-    <div class="ym-wrapper">
-      <div class="ym-wbox">
+  #%env/templates/page-start.template%#
 
         <h1>Integration of a Search Box</h1>
         <p>
@@ -73,11 +64,7 @@
           <li>Replace the given colors <code>#eee</code> (box background) and <code>#ccc</code> (box border)</li>
           <li>Replace the word <em>MySearch</em> with your own message</li>
         </ul>
-      </div>
-    </div>
-  </main>
-  <footer class="hidden">
-    #%env/templates/footer.template%#
-  </footer>
+
+    #%env/templates/page-end.template%#
   </body>
 </html>

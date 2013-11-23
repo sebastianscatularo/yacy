@@ -6,16 +6,7 @@
 </head>
 
 <body id="configLiveSearch">
-  <ul class="ym-skiplinks">
-    <li><a class="ym-skip" href="#nav">Skip to navigation (Press Enter)</a></li>
-    <li><a class="ym-skip" href="#main">Skip to main content (Press Enter)</a></li>
-  </ul>
-
-  #%env/templates/header.template%#
-
-  <main>
-    <div class="ym-wrapper">
-      <div class="ym-wbox">
+  #%env/templates/page-start.template%#
 
         <h1>Integration of Live Search with YaCy Search Widget</h1>
         <p>
@@ -166,12 +157,7 @@
           Themes are installed in <code>./yacy/jquery/themes/</code> (static hosting) or in <code>DATA/HTDOCS/jquery/themes/</code> on remote YaCy Peer.
           YaCy ships with <code>start</code> and <code>smoothness</code> themes pre-installed.
         </p>
-      </div>
-    </div>
-  </main>
 
-  <footer class="hidden">
-    #%env/templates/footer.template%#
-  </footer>
+  #%env/templates/page-end.template%#
 </body>
 </html>

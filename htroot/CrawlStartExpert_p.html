@@ -8,16 +8,8 @@
 </head>
 
 <body id="crawlStartExpert">
-	<ul class="ym-skiplinks">
-		<li><a class="ym-skip" href="#nav">Skip to navigation (Press Enter)</a></li>
-		<li><a class="ym-skip" href="#main">Skip to main content (Press Enter)</a></li>
-	</ul>
+	#%env/templates/page-start.template%#
 
-	#%env/templates/header.template%#
-
-	<main>
-		<div class="ym-wrapper">
-			<div class="ym-wbox">
 				<div id="api">
 					<a href="http://www.yacy-websuche.de/wiki/index.php/Dev:API#Managing_crawl_jobs" title="Click on this API button to see a documentation of the POST request parameter for crawl starts."><img src="/env/grafics/api.png" width="60" height="40" alt="API"/></a>
 				</div>
@@ -688,11 +680,6 @@ Non working:
 						</fieldset>
 					</fieldset>
 				</form>
-			</div>
-		</div>
-	</main>
-	<footer class="hidden">
-		#%env/templates/footer.template%#
-	</footer>
+	#%env/templates/page-end.template%#
 </body>
 </html>

@@ -7,16 +7,7 @@
 </head>
 
 <body id="indexImportMediawiki">
-  <ul class="ym-skiplinks">
-    <li><a class="ym-skip" href="#nav">Skip to navigation (Press Enter)</a></li>
-    <li><a class="ym-skip" href="#main">Skip to main content (Press Enter)</a></li>
-  </ul>
-
-  #%env/templates/header.template%#
-
-  <main>
-    <div class="ym-wrapper">
-      <div class="ym-wbox">
+  #%env/templates/page-start.template%#
 
 <div id="devInfo">
 Todo:
@@ -112,11 +103,6 @@ Todo:
           </fieldset>
         </form>
         ::#(/import)#
-    </div>
-    </div>
-  </main>
-  <footer class="hidden">
-    #%env/templates/footer.template%#
-  </footer>
+  #%env/templates/page-end.template%#
   </body>
 </html>

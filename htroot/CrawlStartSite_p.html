@@ -8,17 +8,7 @@
 </head>
 
 <body id="crawlStartSite">
-  <ul class="ym-skiplinks">
-    <li><a class="ym-skip" href="#nav">Skip to navigation (Press Enter)</a></li>
-    <li><a class="ym-skip" href="#main">Skip to main content (Press Enter)</a></li>
-  </ul>
-
-  #%env/templates/header.template%#
-
-  <main>
-    <div class="ym-wrapper">
-      <div class="ym-wbox">
-        <div id="api"></div>
+#%env/templates/page-start.template%#
 
 <div id="devInfo">
 Todo:
@@ -212,9 +202,6 @@ Non working:
           </fieldset>
         </form>
 
-        #%env/templates/footer.template%#
-      </div>
-    </div>
-  </main>
+  #%env/templates/page-end.template%#
 </body>
 </html>

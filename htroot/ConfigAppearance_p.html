@@ -7,16 +7,7 @@
 </head>
 
 <body id="configSkins">
-    <ul class="ym-skiplinks">
-    <li><a class="ym-skip" href="#nav">Skip to navigation (Press Enter)</a></li>
-    <li><a class="ym-skip" href="#main">Skip to main content (Press Enter)</a></li>
-  </ul>
-
-  #%env/templates/header.template%#
-
-  <main>
-    <div class="ym-wrapper">
-      <div class="ym-wbox">
+  #%env/templates/page-start.template%#
 
 <div id="devInfo">
  This is not fnctional any more!
@@ -122,15 +113,11 @@
       </fieldset>
     </form>
 
-
     #(status)#
     ::<p><strong>Unable to get URL: #[url]#</strong></p>
     ::<p><strong>Error saving the skin.</strong></p>
     #(/status)#
 
-    #%env/templates/footer.template%#
-  </div>
-</div>
-</main>
+    #%env/templates/page-end.template%#
   </body>
 </html>

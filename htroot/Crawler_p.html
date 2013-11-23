@@ -11,16 +11,8 @@
 </head>
 
 <body id="crawler" onload="initCrawler();">
-  <ul class="ym-skiplinks">
-    <li><a class="ym-skip" href="#nav">Skip to navigation (Press Enter)</a></li>
-    <li><a class="ym-skip" href="#main">Skip to main content (Press Enter)</a></li>
-  </ul>
+  #%env/templates/page-start.template%#
 
-  #%env/templates/header.template%#
-
-  <main>
-    <div class="ym-wrapper">
-      <div class="ym-wbox">
         <div id="api">
           <a href="/api/status_p.xml" title="Click on this API button to see an XML with information about the crawler status."><img src="/env/grafics/api.png" width="60" height="40" alt="API"/></a>
         </div>
@@ -295,11 +287,6 @@ Todo:
         <p id="crawllist"></p>
       </fieldset>
       #(/crawlProfilesShow)#
-    </div>
-  </div>
-</main>
-<footer class="hidden">
-  #%env/templates/footer.template%#
-</footer>
+#%env/templates/page-end.template%#
 </body>
 </html>

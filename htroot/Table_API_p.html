@@ -20,16 +20,7 @@
   </head>
 
   <body id="TableApi">
-    <ul class="ym-skiplinks">
-      <li><a class="ym-skip" href="#nav">Skip to navigation (Press Enter)</a></li>
-      <li><a class="ym-skip" href="#main">Skip to main content (Press Enter)</a></li>
-    </ul>
-
-    #%env/templates/header.template%#
-
-    <main>
-      <div class="ym-wrapper">
-        <div class="ym-wbox">
+#%env/templates/page-start.template%#
 
           <div id="api">
             <img src="/env/grafics/api.png" width="60" height="40" alt="API" title="Click on this API button to see a documentation of the XML data that can be retrieved."/>
@@ -293,8 +284,6 @@ Todo:
         if (parentPage != null) parentPage.height = document.getElementById('fullcontent').offsetHeight + 30;
         -->
         </script>
-      </div>
-    </div>
-  </main>
+  #%env/templates/page-end.template%#
 </body>
 </html>
