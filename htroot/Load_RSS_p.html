@@ -1,5 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" >
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <title>YaCy '#[clientname]#': Configuration of a RSS Search</title>
   #%env/templates/header-backend.template%#
@@ -129,7 +129,7 @@ TODO:
         <form id="scheduledfeeds" action="Load_RSS_p.html">
           <fieldset>
             <legend>List of Scheduled RSS Feed Load Targets</legend>
-            <table class="sortable" border="0" cellpadding="2" cellspacing="1">
+            <table class="sortable">
               <thead>
                 <tr valign="bottom">
                   <th>
@@ -145,12 +145,12 @@ TODO:
                   <th>Avg. Update/Day</th>
                 </tr>
               </thead>
-              #{list}#
               <tbody>
-                <tr class="TableCellLight">
+                #{list}#
+                <tr>
                   <td align="left"><input type="checkbox" name="item_#[count]#" value="mark_#[pk]#" /></td>
                   <td><a href="/Load_RSS_p.html?showrss=&amp;url=#[rss]#">#[title]#</a></td>
-                  <td><a href="/Load_RSS_p.html?showrss=&amp;url=#[rss]#">#[rss]#</a><br/><a href="#[referrer]#">#[referrer]#</a></td>
+                  <td class="breakAll"><a href="/Load_RSS_p.html?showrss=&amp;url=#[rss]#">#[rss]#</a><br/><a href="#[referrer]#">#[referrer]#</a></td>
                   <td>#[recording]#</td>
                   <td>#[lastload]#</td>
                   <td>#[nextload]#</td>
@@ -158,8 +158,8 @@ TODO:
                   <td>#[allcount]#</td>
                   <td>#[updperday]#</td>
                 </tr>
+                #{/list}#
               </tbody>
-              #{/list}#
             </table>
             <p>
               <input type="hidden" name="num" value="#[num]#" />
@@ -174,7 +174,7 @@ TODO:
         <form id="newfeeds" action="Load_RSS_p.html">
           <fieldset>
             <legend>Available RSS Feed List</legend>
-            <table class="sortable" border="0" cellpadding="2" cellspacing="1">
+            <table class="sortable">
               <thead>
                 <tr valign="bottom">
                   <th>
@@ -187,10 +187,10 @@ TODO:
               </thead>
               <tbody>
                 #{list}#
-                <tr class="TableCellLight">
+                <tr>
                   <td align="left"><input type="checkbox" name="item_#[count]#" value="mark_#[pk]#" /></td>
                   <td><a href="/Load_RSS_p.html?showrss=&amp;url=#[rss]#">#[title]#</a></td>
-                  <td><a href="/Load_RSS_p.html?showrss=&amp;url=#[rss]#">#[rss]#</a><br/><a href="#[referrer]#">#[referrer]#</a></td>
+                  <td class="breakAll"><a href="/Load_RSS_p.html?showrss=&amp;url=#[rss]#">#[rss]#</a><br/><a href="#[referrer]#">#[referrer]#</a></td>
                   <td>#[recording]#</td>
                 </tr>
                 #{/list}#
@@ -245,7 +245,7 @@ TODO:
             <fieldset class="formGroup">
               <legend>Feed contents</legend>
               <div class="content noIndent">
-                <table class="sortable" border="0" cellpadding="2" cellspacing="1">
+                <table class="sortable">
                   <thead>
                     <tr valign="bottom">
                       <th>
@@ -273,7 +273,7 @@ TODO:
                         #(/state)#
                       </td>
                       <td><a href="#[link]#">#[title]#</a></td>
-                      <td><a href="#[link]#">#[link]#</a></td>
+                      <td class="breakAll"><a href="#[link]#">#[link]#</a></td>
                       <td>#[author]#</td>
                       <td>#[language]#</td>
                       <td>#[date]#</td>
