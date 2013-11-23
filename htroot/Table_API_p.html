@@ -20,7 +20,11 @@
   </head>
 
   <body id="TableApi">
-#%env/templates/page-start.template%#
+    #(inline)#
+    #%env/templates/page-start.template%#
+    ::
+    #%env/templates/page-start-inline.template%#
+    #(/inline)#
 
           <div id="api">
             <img src="/env/grafics/api.png" width="60" height="40" alt="API" title="Click on this API button to see a documentation of the XML data that can be retrieved."/>
@@ -34,7 +38,6 @@
 Todo:
  - scripts need update
  - toggle buttons based on selection state
- - what is #'(inline)'#?
 </div>
 
           <div id="fullcontent">
@@ -284,6 +287,10 @@ Todo:
         if (parentPage != null) parentPage.height = document.getElementById('fullcontent').offsetHeight + 30;
         -->
         </script>
+  #(inline)#
   #%env/templates/page-end.template%#
+  ::
+  #%env/templates/page-end-inline.template%#
+  #(/inline)#
 </body>
 </html>
