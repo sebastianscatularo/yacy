@@ -118,6 +118,9 @@ h3 {
 h4, h5, h6 {
   font-size:130%;
 }
+.tt {
+  @extend tt;
+}
 
 /**********
  * Page layout. */

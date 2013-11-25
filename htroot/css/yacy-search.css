@@ -694,7 +694,8 @@
   kbd,
   samp,
   var,
-  tt {
+  tt,
+  .tt {
     font-family: Consolas, "Lucida Console", "Andale Mono", "Bitstream Vera Sans Mono", "Courier New", Courier; }
 
   /*! font-size: 14px; */
@@ -828,6 +829,7 @@
   code,
   kbd,
   tt,
+  .tt,
   samp,
   var {
     font-size: 100%; }
@@ -847,7 +849,8 @@
   kbd,
   samp,
   var,
-  tt {
+  tt,
+  .tt {
     color: #666666;
     font-weight: bold; }
 
