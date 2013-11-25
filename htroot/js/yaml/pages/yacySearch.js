@@ -75,7 +75,6 @@ YaCyPage.statistics = function(offset, itemscount, itemsperpage, totalcount,
           (i + 1) + '</a>';
         }
     }
-    console.debug("this", thispage, "num", numberofpages);
     if (thispage >= numberofpages -1) {
       //resnav += '<span class="right" title="' + tabText + '"></span>';
     } else {
