@@ -140,8 +140,8 @@ YaCyUi.init = function() {
     $('#devInfo').prepend(devInfoBtn).prepend('<u><strong>Developer notice:</strong></u>&nbsp;');
   }
 
-  // create main menu
-  if ($('body').hasClass('frontend') === false) {
+  // create main menu, if loaded
+  if ('MainMenu' in YaCyUi.Func) {
     YaCyUi.MainMenu = YaCyUi.MainMenu || new YaCyUi.Func.MainMenu();
   }
 
