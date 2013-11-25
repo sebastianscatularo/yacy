@@ -1,47 +1,83 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>YaCy '#[clientname]#': Hypertext Cache Configuration</title>
-    #%env/templates/metas.template%#
-  </head>
-  <body id="ConfigHTCache">
-    #%env/templates/header.template%#
-    <h2>Hypertext Cache Configuration</h2>
-    <p>
-      The HTCache stores content retrieved by the HTTP and FTP protocol. Documents from smb:// and file:// locations are not cached.
-      The cache is a rotating cache: if it is full, then the oldest entries are deleted and new one can fill the space.
-    </p>
+<head>
+  <title>YaCy '#[clientname]#': Hypertext Cache Configuration</title>
+  #%env/templates/header-backend.template%#
+</head>
 
-    <form action="ConfigHTCache_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
-      <fieldset><legend>HTCache Configuration</legend>
-        <dl>
-          <dt><label for="HTCachePath">The path where the cache is stored</label></dt>
-          <dd><input name="HTCachePath" id="HTCachePath" type="text" size="20" maxlength="300" value="#[HTCachePath]#" /></dd>
-          <dt><label for="actualCacheSize">The current size of the cache</label></dt>
-          <dd><span id="actualCacheSize">#[actualCacheSize]# MB for #[actualCacheDocCount]# files, #[docSizeAverage]# KB / file in average </span></dd>
-          <dt><label for="maxCacheSize">The maximum size of the cache</label></dt>
-          <dd><input name="maxCacheSize" id="maxCacheSize" type="text" size="8" maxlength="24" value="#[maxCacheSize]#" /> MB</dd>
-          <dt>&nbsp;</dt>
-          <dd><input type="submit" name="set" value="Set" class="submitready"/></dd>
-        </dl>
+<body id="configHTCache">
+  #%env/templates/page-start.template%#
+
+  <h1>Hypertext Cache Configuration</h1>
+  <p>
+    The HTCache stores content retrieved by the <abbr>HTTP</abbr> and <abbr>FTP</abbr> protocol. Documents from <code>smb://</code> and <code>file://</code> locations are not cached.
+  </p>
+
+  <form action="ConfigHTCache_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
+    <fieldset>
+      <legend>HTCache Configuration</legend>
+      <div class="description">
+        <p>
+          The cache is a rotating cache: if it gets full, then the oldest entries are deleted and new one can fill the available space.
+        </p>
+      </div>
+      <fieldset class="formSection">
+        <legend>Storage path</legend>
+        <div class="content">
+          <input name="HTCachePath" type="text" maxlength="300" value="#[HTCachePath]#" />
+        </div>
       </fieldset>
-    </form>
+      <fieldset class="formSection">
+        <legend>Current size</legend>
+        <div class="content">
+          #[actualCacheSize]# MB for #[actualCacheDocCount]# files, #[docSizeAverage]# KB / file in average.
+        </div>
+      </fieldset>
+      <fieldset class="formSection">
+        <legend>Maximum size</legend>
+        <div class="content">
+          <input name="maxCacheSize" type="text" maxlength="24" value="#[maxCacheSize]#" class="spinner"/> MB
+        </div>
+      </fieldset>
 
-    <form action="ConfigHTCache_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
-    <fieldset><legend>Cleanup</legend>
-      <dl>
-        <dt class="TableCellDark">Cache Deletion</dt>
-        <dd><input type="checkbox" name="deleteCache" id="deleteCache"
-             onclick="x=document.getElementById('deleteCache').checked;document.getElementById('deleteRobots').checked=x;document.getElementById('deleteSearchFl').checked=x;c='disabled';if(x){c='';}document.getElementById('deleteRobots').disabled=c;document.getElementById('deleteSearchFl').disabled=c;"
-            />Delete HTTP &amp; FTP Cache<br/>
-            <input type="checkbox" name="deleteRobots" id="deleteRobots" disabled="disabled" />Delete robots.txt Cache<br/>
-            <input type="checkbox" name="deleteSearchFl" id="deleteSearchFl" disabled="disabled" />Delete cached snippet-fetching failures during search<br/><br/><br/>
-            <input type="submit" name="deletecomplete" value="Delete" class="submitready"/>
-        </dd>
-      </dl>
+      <fieldset class="formControl" data-id="formControl">
+        <div class="content">
+          <button type="submit" name="set" class="primary icon-run">Save</button>
+        </div>
+      </fieldset>
     </fieldset>
-    </form>
+  </form>
 
-    #%env/templates/footer.template%#
-  </body>
+  <form action="ConfigHTCache_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
+    <fieldset>
+      <legend>Cleanup</legend>
+      <fieldset class="formSection">
+        <legend>Cache deletion</legend>
+        <div class="content">
+          <p>
+            <input type="checkbox" name="deleteCache" id="deleteCache"
+            onclick="$(this).closest('fieldset').find('input').prop('disabled',!$(this).is(':checked'));$(this).prop('disabled',false);"
+            />
+            <label for="deleteCache">Delete HTTP &amp; FTP Cache</label>
+          </p>
+          <p>
+            <input type="checkbox" name="deleteRobots" id="deleteRobots" disabled="disabled" />
+            <label for="deleteRobots">Delete robots.txt Cache</label>
+          </p>
+          <p>
+            <input type="checkbox" name="deleteSearchFl" id="deleteSearchFl" disabled="disabled" />
+            <label for="deleteSearchFl">Delete cached snippet-fetching failures during search</label>
+          </p>
+        </div>
+      </fieldset>
+      <fieldset class="formControl" data-id="formControl">
+        <div class="content">
+          <button type="submit" name="deletecomplete" class="primary icon-delete">Delete</button>
+        </div>
+      </fieldset>
+    </fieldset>
+  </form>
+
+  #%env/templates/footer.template%#
+</body>
 </html>
