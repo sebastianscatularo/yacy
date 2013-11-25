@@ -1,54 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <title>YaCy '#[clientname]#': Field Re-Indexing</title>
-        #%env/templates/metas.template%#
-    </head>
-    <body id="IndexReindexMonitor">
+<head>
+  <title>YaCy '#[clientname]#': Field Re-Indexing</title>
+  #%env/templates/header-backend.template%#
+</head>
 
-        #%env/templates/header.template%#
-        <h2>Field Re-Indexing</h2>
-        <p>In case that an index schema has changed, all documents with missing field entries can be indexed again with a reindex job.</p>
-        <form action="IndexReIndexMonitor_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
-          <table><tr valign="top"><td>
-            <fieldset>
-                <table>
-                    <tr>
-                        <td>Documents in current queue</td>
-                        <td>#[querysize]#</td>
-                        <td>#(reindexjobrunning)#::<input type="submit" value="refresh page"/>#(/reindexjobrunning)#</td>
-                    </tr>
-                    <tr>
-                        <td>Documents processed</td>
-                        <td>#[docsprocessed]#</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>current select query </td>
-                        <td>#[currentselectquery]#</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>&nbsp;</td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                </table>
-                #(reindexjobrunning)#
-                <input type="submit" name="reindexnow" value="start reindex job now"/>
-                ::<input type="submit" name="stopreindex" value="stop reindexing"/>
-                #(/reindexjobrunning)#
-                <p class="info">#[infomessage]#</p>
-            </fieldset>
-          </td><td>
-            #(reindexjobrunning)#::
-            <fieldset><legend>Remaining field list</legend>
-              <p>reindex documents containing these fields: </p>
-              <p>#[fieldlist]#</p>
-            </fieldset>
-            #(/reindexjobrunning)#
-          </td></tr></table>
-        </form>
-        #%env/templates/footer.template%#
-    </body>
+<body id="indexReindexMonitor">
+  #%env/templates/page-start.template%#
+
+  <h1>Field Re-Indexing</h1>
+  <p>
+    In case that an index schema has changed, all documents with missing field entries can be indexed again with a reindex job.
+  </p>
+
+  <div id="formResults">
+    <p><em>Status:</em> #[infomessage]#</p>
+  </div>
+
+  #(reindexjobrunning)#
+  <form action="IndexReIndexMonitor_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
+    <button type="submit" name="reindexnow" class="primary icon-run">start reindex job</button>
+  </form>
+  ::#(/reindexjobrunning)#
+
+  <form action="IndexReIndexMonitor_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
+    <fieldset #(reindexjobrunning)#class="hidden"::#(/reindexjobrunning)#>
+      <legend>Queue</legend>
+      <fieldset class="formGroup">
+        <legend>Current</legend>
+        <fieldset class="formSection">
+          <legend>Size</legend>
+          <div class="content">
+            #[querysize]#
+          </div>
+        </fieldset>
+        <fieldset class="formSection">
+          <legend>Current fields</legend>
+          <div class="content">
+            #[fieldlist]#
+          </div>
+        </fieldset>
+      </fieldset>
+      <fieldset class="formSection">
+        <legend>Processed</legend>
+        <div class="content">
+          #[docsprocessed]#
+        </div>
+      </fieldset>
+      <fieldset class="formSection">
+        <legend>current select query</legend>
+        <div class="content">
+          #[currentselectquery]#
+        </div>
+      </fieldset>
+      <fieldset class="formControl" data-id="formControl">
+        <div class="content">
+          #(reindexjobrunning)#::
+          <button type="submit" name="stopreindex" class="icon-stop">stop reindexing</button>
+          <button type="submit" class="primary icon-refresh">refresh page</button>
+          #(/reindexjobrunning)#
+        </div>
+      </fieldset>
+    </fieldset>
+  </form>
+  #%env/templates/page-end.template%#
+</body>
 </html>
