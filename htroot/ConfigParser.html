@@ -1,47 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>YaCy '#[clientname]#': Advanced Settings</title>
-    #%env/templates/metas.template%#
-  </head>
-  <body id="Settings">
-    #%env/templates/header.template%#
-    <h2>Parser Configuration</h2>
-<form id="parsersettings" action="ConfigParser.html" method="post" enctype="multipart/form-data">
-<fieldset><legend id="parser">Content Parser Settings</legend>
-<p>
-  With this settings you can activate or deactivate parsing of additional content-types based on their MIME-types.<br />
-  For a detailed description of the various MIME-types take a look at
-  <a href="http://www.iana.org/assignments/media-types/">http://www.iana.org/assignments/media-types/</a>.</br>
-  If you want to test a specific parser you can do so using the <a href="ViewFile.html">File Viewer</a>.
-</p>
-<table border="0" cellpadding="2" cellspacing="1">
-  <tr class="TableHeader" valign="bottom">
-    <td class="small" ><input type="checkbox" data-action="checkAllToggle"/> enable/disable</td>
-    <td class="small" >Extension</td>
-    <td class="small" >Mime-Type</td>
-  </tr>#{parser}#
-  <tr class="TableCellDark">
-    <td colspan="2">#[name]#</td>
-  </tr>#{ext}#
-  <tr id="#[name]#" class="TableCellLight">
-    <td class="small" align="center"><input type="checkbox" name="extension_#[extension]#" #(status)#::checked="checked" #(/status)#/></td>
-    <td class="small">#[extension]#</td>
-    <td class="small"></td>
-  </tr>#{/ext}##{mime}#
-  <tr class="TableCellLight">
-    <td class="small" align="center"><input type="checkbox" name="mimename_#[mimetype]#" #(status)#::checked="checked" #(/status)#/></td>
-    <td class="small"></td>
-    <td class="small">#[mimetype]#</td>
-  </tr>#{/mime}#
-  #{/parser}#
-  <tr class="TableCellDark">
-    <td colspan="2" class="small" ><input type="submit" name="parserSettings" value="Submit" class="submitready"/></td>
-  </tr>
-</table>
-</fieldset>
-</form>
+<head>
+  <title>YaCy '#[clientname]#': Advanced Settings</title>
+  #%env/templates/header-backend.template%#
+  <script type="text/javascript" src="/js/yaml/tablesorter/jquery.tablesorter.min.js"></script>
+</head>
 
-    #%env/templates/footer.template%#
-  </body>
+<body id="configParser">
+  #%env/templates/header.template%#
+
+<div id="devInfo">
+ Code:
+  - pre-sort parsers by name
+</div>
+
+  <h1>Parser Configuration</h1>
+
+  <form action="ConfigParser.html" method="post" enctype="multipart/form-data">
+    <fieldset>
+      <legend>Content Parser Settings</legend>
+      <p>
+        With this settings you can activate or deactivate parsing of additional content-types based on their MIME-types.
+        <br/>
+        For a detailed description of the various <abbr>MIME</abbr>-types take a look at
+        <a href="http://www.iana.org/assignments/media-types/">http://www.iana.org/assignments/media-types/</a>.
+        <br/>
+        If you want to test a specific parser you can do so using the <a href="ViewFile.html">File Viewer</a>.
+      </p>
+
+      #{parser}#
+      <fieldset class="formGroup collapsible">
+        <legend>#[name]#</legend>
+        <div class="content noIndent">
+          <table class="sortable">
+            <thead>
+              <tr>
+                <th><input type="checkbox" data-action="checkAllToggle"/>enable/disable</th>
+                <th>Extension</th>
+                <th>Mime-Type</th>
+              </tr>
+            </thead>
+            <tbody>
+              #{ext}#
+              <tr>
+                <td>
+                  <input type="checkbox" name="extension_#[extension]#" #(status)#::checked="checked" #(/status)#/>
+                </td>
+                <td>#[extension]#</td>
+                <td></td>
+              </tr>
+              #{/ext}#
+              #{mime}#
+              <tr>
+                <td>
+                  <input type="checkbox" name="mimename_#[mimetype]#" #(status)#::checked="checked" #(/status)#/>
+                </td>
+                <td></td>
+                <td>#[mimetype]#</td>
+              </tr>
+              #{/mime}#
+            </tbody>
+          </table>
+        </div>
+      </fieldset>
+      #{/parser}#
+
+      <fieldset class="formControl" data-id="formControl">
+        <div class="content">
+          <button type="submit" name="parserSettings" class="primary icon-run">Save</button>
+        </div>
+      </fieldset>
+    </fieldset>
+  </form>
+
+  #%env/templates/footer.template%#
+</body>
 </html>
