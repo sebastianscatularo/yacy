@@ -3226,11 +3226,11 @@ iframe {
 iframe.border {
   border: 1px solid #ccc; }
 
-main .ym-wbox:first-of-type * + h1 {
+main .ym-wbox:first-of-type *:not(#api) + h1 {
   margin-top: 2em; }
-main .ym-wbox:first-of-type * + h2 {
+main .ym-wbox:first-of-type *:not(#api) + h2 {
   margin-top: 1.5em; }
-main .ym-wbox:first-of-type * + h3, main .ym-wbox:first-of-type * + h4, main .ym-wbox:first-of-type * + h5, main .ym-wbox:first-of-type * + h6 {
+main .ym-wbox:first-of-type *:not(#api) + h3, main .ym-wbox:first-of-type *:not(#api) + h4, main .ym-wbox:first-of-type *:not(#api) + h5, main .ym-wbox:first-of-type *:not(#api) + h6 {
   margin-top: 1em; }
 main .ym-wbox:first-of-type h1, main .ym-wbox:first-of-type h2, main .ym-wbox:first-of-type h3, main .ym-wbox:first-of-type h4, main .ym-wbox:first-of-type h5, main .ym-wbox:first-of-type h6 {
   text-transform: capitalize; }
