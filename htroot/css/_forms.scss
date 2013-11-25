@@ -96,6 +96,7 @@ button {
   color:#333;
   margin:0 0.75em 0 0;
   padding:0 1.5em;
+  text-transform:capitalize;
 
   &.icon-run:before {
     content:'#{$fa-var-cog}\00a0';

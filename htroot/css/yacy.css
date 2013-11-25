@@ -2523,7 +2523,8 @@ button {
   border-radius: 0.2em;
   color: #333;
   margin: 0 0.75em 0 0;
-  padding: 0 1.5em; }
+  padding: 0 1.5em;
+  text-transform: capitalize; }
   button.icon-run:before {
     content: "\f013\00a0"; }
   button.icon-check:before {
