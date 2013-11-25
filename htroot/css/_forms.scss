@@ -138,6 +138,10 @@ button {
     content:'#{$fa-var-trash-o}\00a0';
   }
 
+  &.icon-refresh:before {
+    content:'#{$fa-var-refresh}\00a0';
+  }
+
   &.icon-showMore:before {
     content:'#{$fa-var-search-plus}\00a0';
   }

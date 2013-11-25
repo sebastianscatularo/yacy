@@ -2548,6 +2548,8 @@ button {
     content: "\f00d\00a0"; }
   button.icon-delete:before {
     content: "\f014\00a0"; }
+  button.icon-refresh:before {
+    content: "\f021\00a0"; }
   button.icon-showMore:before {
     content: "\f00e\00a0"; }
   button.icon-showLess:before {
@@ -2814,6 +2816,8 @@ fieldset.formGroup {
     padding: 0.5em 1.5em; }
   fieldset.formGroup > p, fieldset.formGroup > div.p {
     padding: 0 1.7em; }
+  fieldset.formGroup + fieldset.formSection {
+    margin-top: 2em; }
 
 fieldset.formSection + fieldset.formSection {
   border-top: 1px dotted #84a2d2;

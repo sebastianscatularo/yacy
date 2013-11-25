@@ -123,12 +123,13 @@ fieldset {
 
 // grouping fieldset
 fieldset.formGroup {
+  $margin-bottom:1em;
   border: {
     top:1px solid $ycu-var-color-fieldset-border;
     bottom:1px solid $ycu-var-color-fieldset-border;
   }
   background-color:$ycu-var-color-fieldset-formgroup-bg;
-  margin-bottom:1em;
+  margin-bottom:$margin-bottom;
 
   // nested fieldsets
   fieldset {
@@ -156,6 +157,10 @@ fieldset.formGroup {
 
   > p {
     padding:0 1.7em;
+  }
+
+  + fieldset.formSection {
+    margin-top:$margin-bottom * 2;
   }
 }
 

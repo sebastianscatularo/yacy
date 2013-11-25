@@ -2542,6 +2542,8 @@ button {
     content: "\f00d\00a0"; }
   button.icon-delete:before {
     content: "\f014\00a0"; }
+  button.icon-refresh:before {
+    content: "\f021\00a0"; }
   button.icon-showMore:before {
     content: "\f00e\00a0"; }
   button.icon-showLess:before {
