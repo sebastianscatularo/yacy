@@ -3,6 +3,10 @@
 @import 'dynamic';
 
 /** Pages specific CSS */
+body#yacySearch,
+body#webSearch {
+  @import 'page-search';
+}
 body#yacySearch {
   @import 'page-yacy-search';
 }

@@ -1,37 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>#[former]# - YaCy '#[clientname]#': Search Page</title>
-    #%env/templates/header-frontend.template%#
-    <script type="text/javascript" src="/js/yaml/tagcloud/jquery.tagcloud.js"></script>
-    <script type="text/javascript" src="/js/yaml/tinysort/dist/jquery.tinysort.min.js"></script>
-    <script type="text/javascript" src="/js/yaml/yacyui-widgets.js"></script>
-    <script type="text/javascript" src="/js/yaml/pages/yacySearch.js"></script>
-    <script type="text/javascript">
-      //<![CDATA[
-      var infoUpdates = 0; // number of done updates
-      var updateTimes = [500, 1000, 1500, 2000, 3000, 4000, 5000, 6000, 8000, 10000];
+<head>
+  <title>#[former]# - YaCy '#[clientname]#': Search Page</title>
+  #%env/templates/header-frontend.template%#
+  <script type="text/javascript" src="/js/yaml/tagcloud/jquery.tagcloud.js"></script>
+  <script type="text/javascript" src="/js/yaml/tinysort/dist/jquery.tinysort.min.js"></script>
+  <script type="text/javascript" src="/js/yaml/yacyui-widgets.js"></script>
+  <script type="text/javascript" src="/js/yaml/pages/yacySearch.js"></script>
+  <script type="text/javascript">
+    //<![CDATA[
+    var infoUpdates = 0; // number of done updates
+    var updateTimes = [500, 1000, 1500, 2000, 3000, 4000, 5000, 6000, 8000, 10000];
 
-      function getLatestInfo() {
-        YaCyPage.latestInfo('#[eventID]#');
-        infoUpdates++;
+    function getLatestInfo() {
+      YaCyPage.latestInfo('#[eventID]#');
+      infoUpdates++;
 
-        if (infoUpdates <= (updateTimes.length -1)) {
-          window.setTimeout('getLatestInfo()', updateTimes[infoUpdates]);
-        }
+      if (infoUpdates <= (updateTimes.length -1)) {
+        window.setTimeout('getLatestInfo()', updateTimes[infoUpdates]);
       }
+    }
 
-      $(function() {
-        #(focus)#::
-        document.getElementById("search").focus();
-        #(/focus)#
-        #(searchagain)#::
-        $('#startSearch').text('Search again');
-        #(/searchagain)#
-        #{sidebarVocabulary}#
-        $("#sidebar#[vocabulary]#").accordion({collapsible: true});
-        #{/sidebarVocabulary}#
-        $("#sidebarAbout").accordion({});
+    $(function() {
+      #(focus)#::
+      document.getElementById("search").focus();
+      #(/focus)#
+      #(searchagain)#::
+      $('#startSearch').text('Search again');
+      #(/searchagain)#
+      #{sidebarVocabulary}#
+      $("#sidebar#[vocabulary]#").accordion({collapsible: true});
+      #{/sidebarVocabulary}#
+      $("#sidebarAbout").accordion({});
         // search is done
         window.setTimeout('getLatestInfo()', updateTimes[0]);
       });
@@ -52,230 +52,243 @@
     <link media="screen" type="text/css" href="/yacy/ui/css/themes/start/ui.theme.css" rel="stylesheet" />
     <link media="screen" type="text/css" href="/yacy/ui/css/autocomplete.css" rel="stylesheet" />
     -->
-  </head>
+</head>
 
-  <body id="yacySearch" class="frontend">
-    <header>
-      <div class="logo">
-        <a href="#[promoteSearchPageGreeting.homepage]#" class="yacyLogo">
-          <img src="#[promoteSearchPageGreeting.smallImage]#"/>
-        </a>
+<body id="yacySearch">
+  <header>
+    <div class="logo">
+      <a href="#[promoteSearchPageGreeting.homepage]#" class="yacyLogo">
+        <img src="#[promoteSearchPageGreeting.smallImage]#"/>
+      </a>
+    </div>
+
+    <form action="" method="get" accept-charset="UTF-8">
+      <div class="headRow">
+        <div class="menu#(topmenu)# empty::#(/topmenu)#">
+          #(topmenu)#::
+          <nav>
+            #%env/templates/simpleheader.template%#
+          </nav>
+          #(/topmenu)#
+        </div>
+        <div class="search">
+          <input id="search" name="query" type="text" value="#[former]#" onFocus="this.select()"/>
+          <button id="startSearch" type="submit" name="Enter" class="icon-search">Search</button>
+        </div>
       </div>
 
-      <form action="" method="get" accept-charset="UTF-8">
-        <div class="headRow">
-          <div class="menu#(topmenu)# empty::#(/topmenu)#">
-            #(topmenu)#::
-            <nav>
-              #%env/templates/simpleheader.template%#
-            </nav>
-            #(/topmenu)#
-          </div>
-          <div class="search">
-            <input id="search" name="query" type="text" value="#[former]#" onFocus="this.select()"/>
-            <button id="startSearch" type="submit" name="Enter" class="icon-search">Search</button>
-          </div>
-        </div>
-
-        #(searchdomswitches)#::
-        <div class="subRow">
-          <div class="content">
-            <div>
-              #(searchtext)#::
-              <input type="radio" id="text" name="contentdom" value="text" #(check)#::checked="checked"#(/check)# /><label for="text">Text</label>#(/searchtext)#
-              #(searchimage)#::<input type="radio" id="image" name="contentdom" value="image" #(check)#::checked="checked"#(/check)# /><label for="image">Images</label>#(/searchimage)#
-              #(searchaudio)#::<input type="radio" id="audio" name="contentdom" value="audio" #(check)#::checked="checked"#(/check)# /><label for="audio">Audio</label>#(/searchaudio)#
-              #(searchvideo)#::<input type="radio" id="video" name="contentdom" value="video" #(check)#::checked="checked"#(/check)# /><label for="video">Video</label>#(/searchvideo)#
-              #(searchapp)#::<input type="radio" id="app" name="contentdom" value="app" #(check)#::checked="checked"#(/check)# /><label for="app">Applications</label>#(/searchapp)#
-              <a href="index.html?searchoptions=2&amp;count=#[count]#&amp;prefermaskfilter=#[prefermaskfilter]#&amp;cat=#[cat]#&amp;constraint=#[constraint]#&amp;contentdom=#[contentdom]#&amp;former=#[former]#&amp;meanCount=#[meanCount]#">more options</a>
-            </div>
+      #(searchdomswitches)#::
+      <div class="subRow">
+        <div class="content">
+          <div>
+            #(searchtext)#::
+            <input type="radio" id="text" name="contentdom" value="text" #(check)#::checked="checked"#(/check)# /><label for="text">Text</label>#(/searchtext)#
+            #(searchimage)#::<input type="radio" id="image" name="contentdom" value="image" #(check)#::checked="checked"#(/check)# /><label for="image">Images</label>#(/searchimage)#
+            #(searchaudio)#::<input type="radio" id="audio" name="contentdom" value="audio" #(check)#::checked="checked"#(/check)# /><label for="audio">Audio</label>#(/searchaudio)#
+            #(searchvideo)#::<input type="radio" id="video" name="contentdom" value="video" #(check)#::checked="checked"#(/check)# /><label for="video">Video</label>#(/searchvideo)#
+            #(searchapp)#::<input type="radio" id="app" name="contentdom" value="app" #(check)#::checked="checked"#(/check)# /><label for="app">Applications</label>#(/searchapp)#
+            <a href="index.html?searchoptions=2&amp;count=#[count]#&amp;prefermaskfilter=#[prefermaskfilter]#&amp;cat=#[cat]#&amp;constraint=#[constraint]#&amp;contentdom=#[contentdom]#&amp;former=#[former]#&amp;meanCount=#[meanCount]#">more options</a>
           </div>
         </div>
-        #(/searchdomswitches)#
-        <input type="hidden" name="former" value="#[former]#" />
-        <input type="hidden" name="maximumRecords" value="#[count]#" />
-        <input type="hidden" name="startRecord" value="0" />
-        <input type="hidden" name="verify" value="#[search.verify]#" />
-        <input type="hidden" name="resource" value="#[resource]#" />
-        <input type="hidden" name="nav" value="#[search.navigation]#" />
-        <input type="hidden" name="prefermaskfilter" value="#[prefermaskfilter]#" />
-        <input type="hidden" name="depth" value="#[depth]#" />
-        <input type="hidden" name="cat" value="#[cat]#" />
-        <input type="hidden" name="constraint" value="#[constraint]#" />
-        <input type="hidden" name="meanCount" value="#[meanCount]#" />
-      </form>
-      <div id="searchProgress">
-        <script type="text/javascript">
+      </div>
+      #(/searchdomswitches)#
+      <input type="hidden" name="former" value="#[former]#" />
+      <input type="hidden" name="maximumRecords" value="#[count]#" />
+      <input type="hidden" name="startRecord" value="0" />
+      <input type="hidden" name="verify" value="#[search.verify]#" />
+      <input type="hidden" name="resource" value="#[resource]#" />
+      <input type="hidden" name="nav" value="#[search.navigation]#" />
+      <input type="hidden" name="prefermaskfilter" value="#[prefermaskfilter]#" />
+      <input type="hidden" name="depth" value="#[depth]#" />
+      <input type="hidden" name="cat" value="#[cat]#" />
+      <input type="hidden" name="constraint" value="#[constraint]#" />
+      <input type="hidden" name="meanCount" value="#[meanCount]#" />
+    </form>
+    <div id="searchProgress">
+      <script type="text/javascript">
         //<![CDATA[
         var progressBar = new YaCyUi.Widgets.ProgressBar($('#searchProgress'),
           #[results]#);
         //]]>
       </script>
-      </div>
-    </header>
+    </div>
+  </header>
 
-    <main>
-      <div class="ym-wrapper">
-        <h1 class="greeting">#[promoteSearchPageGreeting]#</h1>
-        <div class="clear"></div>
-        <div class="ym-wbox">
+  <main>
+    <div class="ym-wrapper">
+      <h1 class="greeting">#[promoteSearchPageGreeting]#</h1>
+      <div class="clear"></div>
+      <div class="ym-wbox">
 
-          #(topmenu)#::
-          <div id="api">
-            <img src="env/grafics/rss.png" width="32" height="32" alt="RSS"/>
-            <div class="hidden">
-              <script type="text/javascript">
-                //<![CDATA[
-                document.write('<a href="yacysearch.rss?' + window.location.search.substring(1) + '>This search results</a>');
-                //]]>
-              </script>
-              can also be retrieved as RSS/<a href="http://www.opensearch.org">opensearch</a> output.
-              The query format is similar to <a href="http://www.loc.gov/standards/sru/">SRU</a>.
-              Click the API icon to see an example call to the search rss API.
-              To see a list of all APIs, please visit the <a href="http://www.yacy-websuche.de/wiki/index.php/Dev:API">API wiki page</a>.
-            </div>
-          </div>
-          #(resource-select)#::
-          <div id="searchmode">
-            <img src="env/grafics/searchmode_p2p_activated_32.png" width="91" height="32"/>
-            <br/>
-            <a href="yacysearch.html?resource=local"><img src="env/grafics/searchmode_stealth_deactivated_32.png" width="91" height="32"/></a>
-            <span>
-              Your search is done using peers in the YaCy P2P network. You can switch to 'Stealth Mode' which will switch off P2P, giving you full privacy. Expect less results then, because then only your own search index is used.
-            </span>
-          </div>
-          ::
-          <div id="searchmode">
-            <a href="yacysearch.html?resource=global"><img src="env/grafics/searchmode_p2p_deactivated_32.png" width="91" height="32"/></a><br/>
-            <img src="env/grafics/searchmode_stealth_activated_32.png" width="91" height="32"/>
-            <span>
-              Your search is done using only your own peer, locally. You can switch to 'Peer-to-Peer Mode' which will cause that your search is done using the other peers in the YaCy network.
-            </span>
-          </div>
-          #(/resource-select)#
-          #(/topmenu)#
-
-          <div id="messages">
-            #(urlmaskerror)#::
-            <p class="error">
-              <strong>Illegal URL mask:</strong> <i>#[urlmask]#</i> (not a valid regular expression), mask ignored.
-            </p>
-            #(/urlmaskerror)#
-
-            #(prefermaskerror)#::
-            <p class="error">
-              <strong>Illegal prefer mask:</strong> <i>#[prefermask]#</i> (not a valid regular expression), mask ignored.</b>
-            </p>
-            #(/prefermaskerror)#
-
-            #(didYouMean)#::
-            <p class="suggest">
-              <strong>Did you mean:</strong> #{suggestions}# <a href="#[url]#">#[word]#</a> #[sep]##{/suggestions}#
-            </p>
-            #(/didYouMean)#
-          </div>
-
-          <!-- show information about search key handling -->
-          #(excluded)#::
-          <p>
-            <strong>The following words are stop-words and had been excluded from the search: #[stopwords]#.</strong>
-          </p>
-          #(/excluded)#
-
-          <!-- type the number of results and navigation bar -->
-          #(num-results)#::
-          <p>No Results.</p>
-          ::
-          <p>No Results. (length of search words must be at least 2 characters)</p>
-          ::
-          <div id="resBarTop">
-            <span id="resCounter" style="display: inline;">
-              <strong id="resultsOffset">#[offset]#</strong>&mdash;<strong id="itemscount">#[itemscount]#</strong>
-              &nbsp;of&nbsp;
-              <strong id="totalcount">#[totalcount]#</strong>
-              #(globalresults)#::
-              <span id="globalResults">
-                ; (<strong id="localResourceSize">#[localResourceSize]#</strong> local, <strong id="remoteResourceSize">#[remoteResourceSize]#</strong> remote), <strong id="remoteIndexCount">#[remoteIndexCount]#</strong> from <strong id="remotePeerCount">#[remotePeerCount]#</strong> remote YaCy peers.
-              </span>
-              #(/globalresults)#
-            </span>
-            <span id="resNav" class="resNav">#[resnav]#</span>
-          </div>
-          ::
-          <p>
-            Searching the web with this peer is disabled for unauthorized users. Please <a href="Status.html?login=">log in</a> as administrator to use the search function
-          </p>
-          #(/num-results)#
-
-          <div class="ym-column">
-            <!-- the search results -->
-            <div id="resultsList" class="ym-col1">
-              <div class="ym-cbox">
-                <!-- show openstreetmap tiles if geoinfo was found -->
-                #(geoinfo)#::
-                <div class="searchresults">
-                  <h4 class="linktitle">
-                    <img src="http://www.openstreetmap.org/favicon.ico" class="favicon" style="width:16px; height:16px;" alt="" />
-                    Location -- click on map to enlarge
-                  </h4>
-                  <p class="url">
-                    #{loc}#
-                    <div style="margin: 20px; width: 100px; float: left;">
-                      <a href="/osm.png?lon=#[lon]#&amp;lat=#[lat]#&amp;zoom=14" class="thumblink"  style="float:left;" onclick="return hs.expand(this)">
-                        <img src="/osm.png?lon=#[lon]#&amp;lat=#[lat]#&amp;zoom=14" width="192" height="192" alt="map #[lon]#, #[lat]#" />
-                      </a>
-                      <div class="TableCellDark">
-                        <a href="http://www.openstreetmap.org/?lat=#[lat]#&amp;lon=#[lon]#&amp;zoom=14">#[name]#</a>
-                        <br />
-                        <a href="http://www.openstreetmap.org/?lat=#[lat]#&amp;lon=#[lon]#&amp;zoom=14">lat=#[lat]#, lon=#[lon]#</a>
-                      </div>
-                      <!-- preview -->
-                      <div class="highslide-caption">
-                        <a href="http://www.openstreetmap.org/?lat=#[lat]#&amp;lon=#[lon]#&amp;zoom=14">#[name]#</a>
-                        <br />
-                        <a href="http://www.openstreetmap.org/?lat=#[lat]#&amp;lon=#[lon]#&amp;zoom=14">lat=#[lat]#, lon=#[lon]#</a>
-                      </div>
-                      <!-- zoomed -->
-                    </div>
-                    #{/loc}#
-                  </p>
-                  <p class="urlinfo" style="clear:left;">
-                    Map (c) by <a href="http://www.openstreetmap.org">OpenStreetMap</a> and contributors, CC-BY-SA
-                  </p>
-                </div>
-                #(/geoinfo)#
-
-                <!-- linklist begin -->
-                <script type="text/javascript">
-                  //<![CDATA[
-                  YaCyPage.chacheResultElements();
-                  //]]>
-                </script>
-                #(resultTable)#::
-                <table width="100%">
-                  <tr class="TableHeader">
-                    <td width="30%">Media</td>
-                    <td width="70%">URL</td>
-                  </tr>
-                  #(/resultTable)#
-                  #{results}#
-                  <!--#include virtual="yacysearchitem.html?item=#[item]#&eventID=#[eventID]#" -->
-                  #{/results}#
-                  #(resultTable)#::
-                </table>
-                #(/resultTable)#
-                <!-- linklist end -->
-
-                <div id="resNavBottom" class="resNav"></div>
-              </div>
-            </div>
-            <!--#include virtual="yacysearchtrailer.html?eventID=#[eventID]#" -->
+        #(topmenu)#::
+        <div id="api">
+          <img src="env/grafics/rss.png" width="32" height="32" alt="RSS"/>
+          <div class="hidden">
+            <script type="text/javascript">
+              //<![CDATA[
+              document.write('<a href="yacysearch.rss?' + window.location.search.substring(1) + '>This search results</a>');
+              //]]>
+            </script>
+            can also be retrieved as RSS/<a href="http://www.opensearch.org">opensearch</a> output.
+            The query format is similar to <a href="http://www.loc.gov/standards/sru/">SRU</a>.
+            Click the API icon to see an example call to the search rss API.
+            To see a list of all APIs, please visit the <a href="http://www.yacy-websuche.de/wiki/index.php/Dev:API">API wiki page</a>.
           </div>
         </div>
+        #[resource-select]#
+        #(resource-select)#::
+        <div id="searchMode">
+          <div class="row">
+            <div class="col">
+              <img src="env/grafics/searchmode_p2p_activated_32.png" width="91" height="32"/>
+              <a href="yacysearch.html?resource=local" class="iconic"><img src="env/grafics/searchmode_stealth_deactivated_32.png" width="91" height="32"/></a>
+            </div>
+            <div class="col">
+              Your search is done using peers in the YaCy <abbr title="Peer-to-Peer">P2P</abbr> network.
+              <br/>
+              You can switch to <em>Stealth Mode</em> which will switch off <abbr title="Peer-to-Peer">P2P</abbr>, giving you full privacy. Expect less results then, because then only your own search index is used.
+            </div>
+          </div>
+        </div>
+        ::
+        <div id="searchMode">
+          <div class="row">
+            <div class="row">
+              <a href="yacysearch.html?resource=global" class="iconic">
+                <img src="env/grafics/searchmode_p2p_deactivated_32.png" width="91" height="32"/>
+              </a>
+              <img src="env/grafics/searchmode_stealth_activated_32.png" width="91" height="32"/>
+              <div class="col">
+                Your search is done using only your own peer, locally. You can switch to <em><abbr title="Peer-to-Peer">P2P</abbr> Mode</em> which will cause that your search is done using the other peers in the YaCy network.
+              </div>
+            </div>
+          </div>
+        </div>
+        #(/resource-select)#
+
+        #(/topmenu)#
+
+        <div id="messages">
+          #(urlmaskerror)#::
+          <p class="error">
+            <strong>Illegal URL mask:</strong> <i>#[urlmask]#</i> (not a valid regular expression), mask ignored.
+          </p>
+          #(/urlmaskerror)#
+
+          #(prefermaskerror)#::
+          <p class="error">
+            <strong>Illegal prefer mask:</strong> <i>#[prefermask]#</i> (not a valid regular expression), mask ignored.</b>
+          </p>
+          #(/prefermaskerror)#
+
+          #(didYouMean)#::
+          <p class="suggest">
+            <strong>Did you mean:</strong> #{suggestions}# <a href="#[url]#">#[word]#</a> #[sep]##{/suggestions}#
+          </p>
+          #(/didYouMean)#
+        </div>
+
+        <!-- show information about search key handling -->
+        #(excluded)#::
+        <p>
+          <strong>The following words are stop-words and had been excluded from the search: #[stopwords]#.</strong>
+        </p>
+        #(/excluded)#
+
+        <!-- type the number of results and navigation bar -->
+        #(num-results)#::
+        <p>No Results.</p>
+        ::
+        <p>No Results. (length of search words must be at least 2 characters)</p>
+        ::
+        <div id="resBarTop">
+          <span id="resCounter" style="display: inline;">
+            <strong id="resultsOffset">#[offset]#</strong>&mdash;<strong id="itemscount">#[itemscount]#</strong>
+            &nbsp;of&nbsp;
+            <strong id="totalcount">#[totalcount]#</strong>
+            #(globalresults)#::
+            <span id="globalResults">
+              ; (<strong id="localResourceSize">#[localResourceSize]#</strong> local, <strong id="remoteResourceSize">#[remoteResourceSize]#</strong> remote), <strong id="remoteIndexCount">#[remoteIndexCount]#</strong> from <strong id="remotePeerCount">#[remotePeerCount]#</strong> remote YaCy peers.
+            </span>
+            #(/globalresults)#
+          </span>
+          <span id="resNav" class="resNav">#[resnav]#</span>
+        </div>
+        ::
+        <p>
+          Searching the web with this peer is disabled for unauthorized users. Please <a href="Status.html?login=">log in</a> as administrator to use the search function
+        </p>
+        #(/num-results)#
+
+        <div class="ym-column">
+          <!-- the search results -->
+          <div id="resultsList" class="ym-col1">
+            <div class="ym-cbox">
+              <!-- show openstreetmap tiles if geoinfo was found -->
+              #(geoinfo)#::
+              <div class="searchresults">
+                <h4 class="linktitle">
+                  <img src="http://www.openstreetmap.org/favicon.ico" class="favicon" style="width:16px; height:16px;" alt="" />
+                  Location -- click on map to enlarge
+                </h4>
+                <p class="url">
+                  #{loc}#
+                  <div style="margin: 20px; width: 100px; float: left;">
+                    <a href="/osm.png?lon=#[lon]#&amp;lat=#[lat]#&amp;zoom=14" class="thumblink"  style="float:left;" onclick="return hs.expand(this)">
+                      <img src="/osm.png?lon=#[lon]#&amp;lat=#[lat]#&amp;zoom=14" width="192" height="192" alt="map #[lon]#, #[lat]#" />
+                    </a>
+                    <div class="TableCellDark">
+                      <a href="http://www.openstreetmap.org/?lat=#[lat]#&amp;lon=#[lon]#&amp;zoom=14">#[name]#</a>
+                      <br />
+                      <a href="http://www.openstreetmap.org/?lat=#[lat]#&amp;lon=#[lon]#&amp;zoom=14">lat=#[lat]#, lon=#[lon]#</a>
+                    </div>
+                    <!-- preview -->
+                    <div class="highslide-caption">
+                      <a href="http://www.openstreetmap.org/?lat=#[lat]#&amp;lon=#[lon]#&amp;zoom=14">#[name]#</a>
+                      <br />
+                      <a href="http://www.openstreetmap.org/?lat=#[lat]#&amp;lon=#[lon]#&amp;zoom=14">lat=#[lat]#, lon=#[lon]#</a>
+                    </div>
+                    <!-- zoomed -->
+                  </div>
+                  #{/loc}#
+                </p>
+                <p class="urlinfo" style="clear:left;">
+                  Map (c) by <a href="http://www.openstreetmap.org">OpenStreetMap</a> and contributors, CC-BY-SA
+                </p>
+              </div>
+              #(/geoinfo)#
+
+              <!-- linklist begin -->
+              <script type="text/javascript">
+                //<![CDATA[
+                YaCyPage.chacheResultElements();
+                //]]>
+              </script>
+              #(resultTable)#::
+              <table width="100%">
+                <tr class="TableHeader">
+                  <td width="30%">Media</td>
+                  <td width="70%">URL</td>
+                </tr>
+                #(/resultTable)#
+                #{results}#
+                <!--#include virtual="yacysearchitem.html?item=#[item]#&eventID=#[eventID]#" -->
+                #{/results}#
+                #(resultTable)#::
+              </table>
+              #(/resultTable)#
+              <!-- linklist end -->
+
+              <div id="resNavBottom" class="resNav"></div>
+            </div>
+          </div>
+          <!--#include virtual="yacysearchtrailer.html?eventID=#[eventID]#" -->
+        </div>
       </div>
-    </main>
-    <footer class="hidden">
-      <!--#include virtual="/interaction_elements/Footer.html" -->
-    </footer>
-  </body>
+    </div>
+  </main>
+  <footer class="hidden">
+    <!--#include virtual="/interaction_elements/Footer.html" -->
+  </footer>
+</body>
 </html>

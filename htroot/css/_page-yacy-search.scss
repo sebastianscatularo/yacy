@@ -20,9 +20,10 @@ $ycu-var-sidebar-width:250px;
 }
 
 /** Page layout */
+@import 'page-search';
+
 header {
   $logo-width:103px;
-  height:auto;
   box-shadow:0 4px 5px rgba(50,50,50,0.4);
   border-bottom:3px solid $ycu-var-color-nav-border;
 
@@ -97,21 +98,10 @@ header {
 nav {
   padding:0;
   margin:0;
-  ul {
-    font-size:0.8em;
-    padding:0;
-  }
-}
-
-main {
-  @extend %font-sans;
 }
 
 h1.greeting {
-  font-style:italic;
   float:right;
-  font-size:1.2em;
-  opacity:0.9;
   padding:0;
   margin:0;
   margin-right:1.5em;
@@ -380,5 +370,21 @@ main {
     &:before {
       content:'#{$fa-var-lightbulb-o}';
     }
+  }
+}
+
+#searchMode {
+  padding:0.5em;
+  border:1px solid #ccc;
+  border-radius:5px;
+  display:table;
+
+  .row {
+    display:table-row;
+  }
+
+  .col {
+    display:table-cell;
+    vertical-align:middle;
   }
 }

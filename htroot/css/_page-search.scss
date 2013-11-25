@@ -1,0 +1,23 @@
+header {
+  @extend %font-sans;
+  height:auto;
+}
+
+nav ul {
+  font-size:0.8em;
+  padding:0;
+}
+
+main {
+  @extend %font-sans;
+
+  a:before {
+    display:none;
+  }
+}
+
+h1.greeting {
+  font-style:italic;
+  font-size:1.2em;
+  opacity:0.9;
+}

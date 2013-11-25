@@ -240,8 +240,18 @@ table.sortable th:not(.noSort) {
   &.headerSortDown:after {
     content:'#{$fa-var-caret-down}';
   }
-
+  padding:0.25em 0.15em;
   &.headerSortUp:after {
     content:'#{$fa-var-caret-up}';
   }
+}
+
+// keyboard keys
+code.key {
+  @extend %font-sans;
+  background:linear-gradient(to bottom, #ccc 0%, #fff 20%);
+  padding:0.25em 0.15em;
+  border-radius:0.5em;
+  border:1px solid #666;
+  line-height:1.8em;
 }
