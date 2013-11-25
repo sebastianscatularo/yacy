@@ -234,10 +234,13 @@ table {
 }
 // sortable tables
 table.sortable {
-  th:not(.noSort) {
-    cursor:pointer;
+  th {
     color:#555;
     border-color:#555;
+  }
+
+  th:not(.noSort) {
+    cursor:pointer;
 
     &:after {
       @extend %icon-block-light;

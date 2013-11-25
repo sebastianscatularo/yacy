@@ -236,6 +236,17 @@ YaCyUi.init = function() {
   var symbols = $('main s.sym');
   symbols.filter('.sym-error, .sym-warning, .sym-hint').html('<i></i><i></i>');
 
+  // resize iframes to show the full content
+  $('iframe.autoSize').each(function() {
+    $(this).load(function() {
+      var height = $(this).contents().find('body').height();
+      console.debug("iFrame height ", height);
+      $(this).css({height: height});
+    });
+    //console.debug("iFrame ", this);
+    //this.height = $(this.contentWindow.document).height();
+  });
+
   // finished loading
   YaCyUi.loaded = true;
 };

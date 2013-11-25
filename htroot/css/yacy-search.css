@@ -2971,10 +2971,11 @@ table tbody tr:hover {
 table td.breakAll {
   word-break: break-all; }
 
-table.sortable th:not(.noSort) {
-  cursor: pointer;
+table.sortable th {
   color: #555;
   border-color: #555; }
+table.sortable th:not(.noSort) {
+  cursor: pointer; }
   table.sortable th:not(.noSort):after {
     content: "\f0dc";
     padding-left: 0.3em; }

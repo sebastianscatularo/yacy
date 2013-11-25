@@ -2979,10 +2979,11 @@ table tbody tr:hover {
 table td.breakAll {
   word-break: break-all; }
 
-table.sortable th:not(.noSort) {
-  cursor: pointer;
+table.sortable th {
   color: #555;
   border-color: #555; }
+table.sortable th:not(.noSort) {
+  cursor: pointer; }
   table.sortable th:not(.noSort):after {
     content: "\f0dc";
     padding-left: 0.3em; }
@@ -3180,6 +3181,15 @@ s.sym-warning i:last-of-type:before {
 #formResults p, #formResults div.p {
   border-radius: 5px;
   padding: 0.5em; }
+
+.iframeWrap {
+  position: relative;
+  top: 0; }
+
+iframe {
+  display: block;
+  width: 100%;
+  border-width: 0; }
 
 /** Pages specific CSS */
 body#crawlStartExpert #startPointDetails dl,
