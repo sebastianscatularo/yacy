@@ -226,6 +226,9 @@ table {
 
   th {
     @extend %font-sans;
+    vertical-align:bottom;
+    color:#555;
+    border-color:#555;
   }
 
   td.breakAll {
@@ -233,27 +236,20 @@ table {
   }
 }
 // sortable tables
-table.sortable {
-  th {
-    color:#555;
-    border-color:#555;
+table.sortable th:not(.noSort) {
+  cursor:pointer;
+
+  &:after {
+    @extend %icon-block-light;
+    content:'#{$fa-var-sort}';
+    padding-left:0.3em;
   }
 
-  th:not(.noSort) {
-    cursor:pointer;
+  &.headerSortDown:after {
+    content:'#{$fa-var-caret-down}';
+  }
 
-    &:after {
-      @extend %icon-block-light;
-      content:'#{$fa-var-sort}';
-      padding-left:0.3em;
-    }
-
-    &.headerSortDown:after {
-      content:'#{$fa-var-caret-down}';
-    }
-
-    &.headerSortUp:after {
-      content:'#{$fa-var-caret-up}';
-    }
+  &.headerSortUp:after {
+    content:'#{$fa-var-caret-up}';
   }
 }

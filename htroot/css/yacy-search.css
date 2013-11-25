@@ -2968,12 +2968,13 @@ table tbody tr:nth-child(even) {
   background-color: #b9cae5; }
 table tbody tr:hover {
   background-color: #f1f4fa; }
+table th {
+  vertical-align: bottom;
+  color: #555;
+  border-color: #555; }
 table td.breakAll {
   word-break: break-all; }
 
-table.sortable th {
-  color: #555;
-  border-color: #555; }
 table.sortable th:not(.noSort) {
   cursor: pointer; }
   table.sortable th:not(.noSort):after {

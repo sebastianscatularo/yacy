@@ -2976,12 +2976,13 @@ table tbody tr:nth-child(even) {
   background-color: #b9cae5; }
 table tbody tr:hover {
   background-color: #f1f4fa; }
+table th {
+  vertical-align: bottom;
+  color: #555;
+  border-color: #555; }
 table td.breakAll {
   word-break: break-all; }
 
-table.sortable th {
-  color: #555;
-  border-color: #555; }
 table.sortable th:not(.noSort) {
   cursor: pointer; }
   table.sortable th:not(.noSort):after {
@@ -3132,6 +3133,12 @@ nav span,
   background-color: #EA9A89;
   color: #000;
   overflow: auto; }
+
+.ym-wbox.inline {
+  padding-left: 0;
+  padding-top: 0;
+  padding-right: 6px;
+  padding-bottom: 6px; }
 
 .icon-item-new:before {
   content: "\f0fe"; }
