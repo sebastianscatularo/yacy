@@ -27,7 +27,7 @@
   </head>
   <body onload="init();">
 	#%env/templates/header.template%#
-    
+
     <a href="https://gitorious.org/yacy/rc1" target="_blank" class="forceNoExternalIcon"><img src="env/grafics/forkme.png" style="position:absolute;top:0px;right:0px;z-index: 100;"/></a>
 
     #(showPrivateTable)#
@@ -38,22 +38,21 @@
     </div>
     ::
     #(/showPrivateTable)#
-    
+
     <!--[if IE]>
     <div style="clear:left;" class="gainlayout">
     <![endif]-->
-    
+
     <div class="welcome">
     <div style="margin:auto;text-align:center;">
       <h2><img src="/env/grafics/kaskelix.png" width="128" height="64" alt="YaCy Websearch" style="margin-right:5px; vertical-align:middle;" />Welcome to YaCy!</h2>
-      <iframe src="rssTerminal.html?set=PEERNEWS,REMOTESEARCH,LOCALSEARCH,REMOTEINDEXING,LOCALINDEXING,DHTRECEIVE,DHTSEND,PROXY&amp;width=600px&amp;height=180px&amp;maxlines=20&amp;maxwidth=120"
-              style="width:600px;height:180px;margin:0px;border:1px solid black;" scrolling="no" name="newsframe"></iframe><br />
+      <iframe src="rssTerminal.html?set=PEERNEWS,REMOTESEARCH,LOCALSEARCH,REMOTEINDEXING,LOCALINDEXING,DHTRECEIVE,DHTSEND,PROXY&amp;width=600px&amp;height=180px&amp;maxlines=20&amp;maxwidth=120" class="autoSize" scrolling="no"></iframe><br />
       <img src="PerformanceGraph.png?nomem=" id="graph" alt="PerformanceGraph" width="660" height="240"/><br />
       <img src="Banner.png?textcolor=000000&amp;bgcolor=e7effc&amp;bordercolor=5090d0" alt="banner" width="468" height="60"/>
     </div>
 
     <dl>
-    
+
     <!-- urgent -->
 
     #(urgentSetPassword)#::
@@ -69,21 +68,21 @@
     <dd class="hint">You have not published your peer seed yet. This happens automatically, just wait.
     </dd>
     #(/urgentStatusVirgin)#
-    
+
     #(hintStatusPrivate)#::
     <dt class="hintIcon"><img src="env/grafics/bad.png" width="32" height="32" alt="idea"/></dt>
     <dd class="hint">Your network configuration is in private mode. Your peer seed will not be published.
     </dd>
     #(/hintStatusPrivate)#
-   
+
     <!-- warnings -->
-    
+
     #(warningGoOnline)#::
     <dt class="hintIcon"><img src="env/grafics/bad.png" width="32" height="32" alt="bad"/></dt>
     <dd class="hint">The peer must go online to get a peer address.
     </dd>
     #(/warningGoOnline)#
-    
+
     #(warningStatusJunior)#::
     <dt class="hintIcon"><img src="env/grafics/bad.png" width="32" height="32" alt="bad"/></dt>
     <dd class="hint">You cannot be reached from outside.
@@ -95,33 +94,33 @@
     Please be fair, contribute your own index to the global index.
     </dd>
     #(/warningStatusJunior)#
-    
+
     #(warningDiskSpaceLow)#::
     <dt class="hintIcon"><img src="env/grafics/bad.png" width="32" height="32" alt="bad"/></dt>
     <dd class="hint">Free disk space is lower than #[minSpace]#. Crawling has been disabled. Please fix
     it as soon as possible and restart YaCy.
     </dd>
     #(/warningDiskSpaceLow)#
-    
+
     #(warningMemoryLow)#::
     <dt class="hintIcon"><img src="env/grafics/bad.png" width="32" height="32" alt="bad"/></dt>
     <dd class="hint">Free memory is lower than #[minSpace]#. DHT has been disabled. Please fix
     it as soon as possible and restart YaCy.
     </dd>
     #(/warningMemoryLow)#
-    
+
     #(warningCrawlPaused)#::
     <dt class="hintIcon"><img src="env/grafics/bad.png" width="32" height="32" alt="bad"/></dt>
     <dd class="hint">Crawling is paused! If the crawling was paused automatically, please check your disk space.
     </dd>
     #(/warningCrawlPaused)#
-    
+
      <!-- hints -->
-    
+
     #(hintVersionAvailable)#::
     <dt class="hintIcon"><img src="env/grafics/idea.png" width="32" height="32" alt="idea"/></dt>
     <dd class="hint">Latest public version is v#[latestVersion]#.
-      You can download a more recent version of YaCy. Click here to install this update and restart YaCy: 
+      You can download a more recent version of YaCy. Click here to install this update and restart YaCy:
       <form action="Status.html" method="get" class="PeerControl" accept-charset="UTF-8">
 
 <!-- Is this line here on purpose or by accident?
@@ -134,7 +133,7 @@
       </form>
     </dd>
     #(/hintVersionAvailable)#
-    
+
     <!--
     #(hintVersionDownload)#::
     <dt class="hintIcon"><img src="env/grafics/start.gif" alt="Start"/></dt>
@@ -143,66 +142,66 @@
     </dd>
     #(/hintVersionDownload)#
     -->
-    
+
     #(hintStatusSenior)#::
     <dt class="hintIcon"><img src="env/grafics/good.png" width="32" height="32" alt="good"/></dt>
     <dd class="hint">You are running a server in senior mode and you support the global internet index,
     which you can also <a href="index.html">search yourself</a>.
     </dd>
     #(/hintStatusSenior)#
-    
+
     #(hintStatusPrincipal)#::
     <dt class="hintIcon"><img src="env/grafics/good.png" width="32" height="32" alt="good"/></dt>
     <dd class="hint">You have a principal peer because you publish your seed-list to a public accessible server
     where it can be retrieved using the URL <a href="#[seedURL]#">#[seedURL]#</a>.
     </dd>
     #(/hintStatusPrincipal)#
-    
+
     #(hintCrawlStart)#::
     <dt class="hintIcon"><img src="env/grafics/idea.png" width="32" height="32" alt="idea"/></dt>
     <dd class="hint">Your Web Page Indexer is idle. You can start your own web crawl <a href="CrawlStartSite_p.html">here</a>.
     </dd>
     #(/hintCrawlStart)#
-    
+
     #(hintCrawlMonitor)#::
     <dt class="hintIcon"><img src="env/grafics/idea.png" width="32" height="32" alt="idea"/></dt>
 	<dd class="hint">Your Web Page Indexer is busy. You can <a href="Crawler_p.html">monitor your web crawl</a> here.
     </dd>
     #(/hintCrawlMonitor)#
-    
+
     #(hintSupport)#::
     <dt class="hintIcon"><img src="env/grafics/idea.png" width="32" height="32" alt="idea"/></dt>
 	<dd class="hint">If you need professional support, please write to <tt>support@yacy.net</tt><br>For community support, please visit our <a href="http://forum.yacy.de">forum</a>.
     </dd>
     #(/hintSupport)#
-    
+
     <!-- Social Networking -->
     <!--
     <dt class="hintIcon"><img src="env/grafics/idea.png" width="32" height="32" alt="idea"/></dt>
     <dd class="hint"><a href="http://twitter.com/yacy_search"><img src="/env/grafics/twitter_followme.png" alt="Follow YaCy on Twitter"/></a>
     </dd>
     -->
-    
+
     <!-- templates
     #(hint)#::
     <dt class="hintIcon"><img src="env/grafics/idea.png" width="32" height="32" alt="idea"/></dt>
     <dd class="hint">
     </dd>
     #(/hint)#
-    
-    
+
+
     #(hint)#::
     <dt class="hintIcon"><img src="env/grafics/good.png" width="32" height="32" alt="good"/></dt>
     <dd class="hint">
     </dd>
     #(/hint)#
-    
+
     #(hint)#::
     <dt class="hintIcon"><img src="env/grafics/start.png" width="32" height="32" alt="start" /></dt>
     <dd class="hint">
     </dd>
     #(/hint)#
-    
+
     #(hint)#::
     <dt class="hintIcon"><img src="env/grafics/bad.png" width="32" height="32" alt="bad" /></dt>
     <dd class="hint">
@@ -210,15 +209,15 @@
     #(/hint)#
        -->
     </dl>
-    
+
     </div>
-    
+
     #%[privateStatusTable]%#
-    
-    <!--[if IE]> 
+
+    <!--[if IE]>
     </div>
     <![endif]-->
-    
+
     #%env/templates/footer.template%#
   </body>
 </html>

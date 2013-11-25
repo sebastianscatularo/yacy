@@ -1,6 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "DTD/xhtml1-transitional.dtd">
-<!-- This page is only XHTML 1.0 Transitional and not Strict because iframes are in use -->
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" >
+<!DOCTYPE html>
+<html lang="en" >
 <head>
 <title>YaCy System Terminal Monitor</title>
 <meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />
@@ -54,13 +53,11 @@ function init() {
 <div class="navouter">
 <div class="navheader">Event Terminal</div>
 <div class="navcontent">
-<iframe src="/rssTerminal.html?set=PEERNEWS,REMOTESEARCH,LOCALSEARCH,REMOTEINDEXING,LOCALINDEXING,DHTRECEIVE,DHTSEND&amp;width=430px&amp;height=200px&amp;maxlines=22&amp;maxwidth=95&amp;color=fff&amp;background=000"
-              style="width:430px;height:200px;margin:0;border-width:0;" scrolling="no" name="newsframe"></iframe>
+<iframe src="/rssTerminal.html?set=PEERNEWS,REMOTESEARCH,LOCALSEARCH,REMOTEINDEXING,LOCALINDEXING,DHTRECEIVE,DHTSEND&amp;width=430px&amp;height=200px&amp;maxlines=22&amp;maxwidth=95&amp;color=fff&amp;background=000" class="autoSize" scrolling="no"></iframe>
 </div>
 </div>
 <h1>Image Terminal</h1>
-<iframe src="/Collage.html?emb=&amp;width=468&amp;height=460&amp;max=3"
-              style="width:468px;height:460px;margin:0;border-width:0;" scrolling="no" name="collageframe"></iframe>
+<iframe src="/Collage.html?emb=&amp;width=468&amp;height=460&amp;max=3" class="autoSize" scrolling="no"></iframe>
 
 </div> <!-- end left side -->
 
@@ -72,43 +69,43 @@ function init() {
 <div style="text-align:left;margin:0;padding:0;">
 
 			<!--[if !IE]> -->
-				<object classid="java:domaingraph.class" 
+				<object classid="java:domaingraph.class"
             			type="application/x-java-applet"
             			archive="domaingraph.jar"
             			width="660" height="400"
             			standby="Loading Processing software..." >
-            	    
-            		<param name="codebase" value="processing/domaingraph/applet/" /> 
+
+            		<param name="codebase" value="processing/domaingraph/applet/" />
 					<param name="archive" value="domaingraph.jar" />
-				
+
 					<param name="mayscript" value="true" />
 					<param name="scriptable" value="true" />
-				
+
 					<param name="image" value="processing/domaingraph/applet/loading.gif" />
 					<param name="boxmessage" value="Loading Processing software..." />
 					<param name="boxbgcolor" value="#FFFFFF" />
-				
+
 					<param name="test_string" value="outer" />
 			<!--<![endif]-->
-				
-				<object classid="clsid:8AD9C840-044E-11D1-B3E9-00805F499D93" 
+
+				<object classid="clsid:8AD9C840-044E-11D1-B3E9-00805F499D93"
 						codebase="http://java.sun.com/update/1.4.2/jinstall-1_4_2_12-windows-i586.cab"
 						width="660" height="400"
 						standby="Loading Processing software..."  >
-						
+
 					<param name="code" value="domaingraph" />
 					<param name="codebase" value="processing/domaingraph/applet/" />
 					<param name="archive" value="domaingraph.jar" />
-					
+
 					<param name="mayscript" value="true" />
 					<param name="scriptable" value="true" />
-					
+
 					<param name="image" value="processing/domaingraph/applet/loading.gif" />
 					<param name="boxmessage" value="Loading Processing software..." />
 					<param name="boxbgcolor" value="#FFFFFF" />
-					
+
 					<param name="test_string" value="inner" />
-					
+
 					<p>
 						<strong>
 							This browser does not have a Java Plug-in.
@@ -118,9 +115,9 @@ function init() {
 							</a>
 						</strong>
 					</p>
-				
+
 				</object>
-				
+
 			<!--[if !IE]> -->
 				</object>
 			<!--<![endif]-->

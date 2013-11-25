@@ -10,7 +10,7 @@
 
 <div id="devInfo">
 Todo:
- - form & iframes need some minor styling
+ - form need some minor styling
  - validation
  - throwing in some help strings would be nice
 </div>
@@ -341,14 +341,7 @@ Todo:
         </code></pre>
         This would look like:
         <iframe name="target"
-          src="http://#[myaddress]#/index.html?display=2&amp;resource=local&amp;focus=0"
-          width="100%"
-          height="410"
-          frameborder="0"
-          scrolling="auto"
-          id="target"
-          sandbox="">
-        </iframe>
+          src="http://#[myaddress]#/index.html?display=2&amp;resource=local&amp;focus=0" class="autoSize border" scrolling="no" sandbox="allow-same-origin"></iframe>
 
         <h3>For a search page with a small header, use this code:</h3>
         <pre><code>
@@ -363,15 +356,7 @@ Todo:
         </code></pre>
         This would look like:
         <iframe name="target2"
-          src="http://#[myaddress]#/yacysearch.html?display=2&amp;resource=local&amp;focus=0"
-          width="100%"
-          height="180"
-          frameborder="0"
-          scrolling="auto"
-          id="target2"
-          onfocus="removeFocus(this);"
-          sandbox="">
-        </iframe>
+          src="http://#[myaddress]#/yacysearch.html?display=2&amp;resource=local&amp;focus=0" class="autoSize border" scrolling="no" sandbox="allow-same-origin"></iframe>
 
         <h3>A third option is the interactive search. Use this code:</h3>
         <pre><code>
@@ -385,16 +370,7 @@ Todo:
 &lt;/iframe&gt;
         </code></pre>
         This would look like:
-        <iframe name="target3"
-          src="http://#[myaddress]#/yacyinteractive.html?display=2&amp;focus=0"
-          width="100%"
-          height="180"
-          frameborder="0"
-          scrolling="auto"
-          id="target3"
-          onfocus="removeFocus(this);"
-          sandbox="">
-        </iframe>
+        <iframe src="http://#[myaddress]#/yacyinteractive.html?display=2&amp;focus=0" class="autoSize border" scrolling="no" sandbox="allow-same-origin"></iframe>
 
 #%env/templates/page-end.template%#
 </body>

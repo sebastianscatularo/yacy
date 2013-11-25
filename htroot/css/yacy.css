@@ -3189,14 +3189,13 @@ s.sym-warning i:last-of-type:before {
   border-radius: 5px;
   padding: 0.5em; }
 
-.iframeWrap {
-  position: relative;
-  top: 0; }
-
 iframe {
   display: block;
   width: 100%;
   border-width: 0; }
+
+iframe.border {
+  border: 1px solid #ccc; }
 
 /** Pages specific CSS */
 body#crawlStartExpert #startPointDetails dl,

@@ -16,7 +16,7 @@ function search(query) {
     var xmlHttpReq = false;
     var self = this;
     if (window.XMLHttpRequest) { // Mozilla/Safari
-        self.xmlHttpReq = new XMLHttpRequest(); 
+        self.xmlHttpReq = new XMLHttpRequest();
     }
     else if (window.ActiveXObject) { // IE
         self.xmlHttpReq = new ActiveXObject("Microsoft.XMLHTTP");
@@ -40,9 +40,9 @@ function updatepage(str) {
   var startIndex = firstChannel.startIndex;
   var itemsPerPage = firstChannel.itemsPerPage;
   var navigation = firstChannel.navigation;
-  
+
   var html = "";
-  
+
   if (totalResults > 0 && firstChannel.items.length > 0) {
     var item;
     html += "<table class=\"networkTable\" border=\"0\" cellpadding=\"2\" cellspacing=\"1\" width=\"99%\">";
@@ -66,13 +66,13 @@ function updatepage(str) {
     <form action="IndexControlURLs_p.html" id="searchform" method="post" enctype="multipart/form-data" accept-charset="UTF-8" onkeyup="xmlhttpPost(); return false;">
     <fieldset><legend>URL Retrieval</legend>
       <dl>
-        
+
         <dt class="TableCellDark">Retrieve by URL:</dt>
         <dd><input type="text" name="urlstring" value="#[urlstring]#" size="40" maxlength="250" />
             <input type="submit" name="urlstringsearch" value="Show Details for URL" class="submitready" style="width:240px;"/><br />
             <div id="searchresults"></div>
         </dd>
-        
+
         <dt class="TableCellDark">Retrieve by URL-Hash:</dt>
         <dd><input type="text" name="urlhash" value="#[urlhash]#" size="40" maxlength="12" />
             <input type="submit" name="urlhashsearch" value="Show Details for URL-Hash" class="submitready" style="width:240px;"/>
@@ -80,7 +80,7 @@ function updatepage(str) {
       </dl>
     </fieldset>
     </form>
-    
+
     #(cleanup)#::
     <form action="IndexControlURLs_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
     <fieldset><legend>Cleanup</legend>
@@ -103,7 +103,7 @@ function updatepage(str) {
     </fieldset>
     </form>
     #(/cleanup)#
-    
+
     #(statistics)#::
     <form action="IndexControlURLs_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
     <fieldset><legend>Statistics about top-domains in URL Database</legend>
@@ -116,7 +116,7 @@ function updatepage(str) {
     </fieldset>
     </form>
     #(/statistics)#
-    
+
     #(statisticslines)#::
     <p><em>Statistics about the top-#[domains]# domains in the database:</em></p>
     <table cellpadding="2" cellspacing="1" >
@@ -142,7 +142,7 @@ function updatepage(str) {
       #{/domains}#
     </table>
     #(/statisticslines)#
-    
+
     #(dumprestore)#::
     <form action="IndexControlURLs_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
     <fieldset><legend>Dump and Restore of Solr Index</legend>
@@ -181,7 +181,7 @@ function updatepage(str) {
     </fieldset>
     </form>::
     #(/dumprestore)#
-    
+
     #(lurlexport)#::
     <form action="IndexControlURLs_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
     <fieldset><legend>Loaded URL Export</legend>
@@ -213,22 +213,22 @@ function updatepage(str) {
     </form>::
     <div class="commit" style="text-decoration:blink">Export to file #[exportfile]# is running ..  #[urlcount]# URLs so far</div>::
     #(/lurlexport)#
-    
+
 	#(lurlexportfinished)#::
     <div class="commit">Finished export of #[urlcount]# URLs to file <a href="file://#[exportfile]#" target="_">#[exportfile]#</a></div>::
     #(/lurlexportfinished)#
-    
+
     #(lurlexporterror)#::
     <div class="error">Export to file #[exportfile]# failed: #[exportfailmsg]#</div>::
     #(/lurlexporterror)#
-    
+
     #(indexdump)#::
     <div class="commit">Stored a solr dump to file #[dumpfile]#</div>::
     #(/indexdump)#
-    
+
     #(genUrlProfile)#
     ::No entry found for URL-hash #[urlhash]#
-    ::<iframe src="/solr/select?defType=edismax&start=0&rows=3&core=collection1&wt=html&q=id:%22#[urlhash]#%22" width="100%" height="420" frameborder="0" scrolling="no"></iframe><br />
+    ::<iframe src="/solr/select?defType=edismax&start=0&rows=3&core=collection1&wt=html&q=id:%22#[urlhash]#%22" class="autoSize border" scrolling="no" sandbox="allow-same-origin"></iframe><br />
     <div id="api">
     <a href="/solr/select?defType=edismax&start=0&rows=3&core=collection1&wt=html&q=id:%22#[urlhash]#%22">
     <img src="env/grafics/api.png" width="60" height="40" alt="API" /></a>
@@ -256,9 +256,9 @@ function updatepage(str) {
 		<span class="small">&nbsp;delete the reference to this url at every other word where the reference exists (very extensive, but prevents unresolved references)</span><br />
 	</form>
     #(/genUrlProfile)#
-    
+
     #[result]#
-    
+
     #%env/templates/footer.template%#
   </body>
 </html>
