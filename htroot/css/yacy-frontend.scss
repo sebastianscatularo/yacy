@@ -1,7 +1,11 @@
 @import 'base';
 @import 'menu-base';
+@import 'dynamic';
 
 /** Pages specific CSS */
 body#yacySearch {
   @import 'page-yacy-search';
+}
+body#webSearch {
+  @import 'page-web-search';
 }

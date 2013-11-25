@@ -1,5 +1,15 @@
 @import 'base';
+@import 'forms-backend';
 @import 'menu-full';
+@import 'dynamic';
+
+/* Dynamic content initial hidden to prevent 'flickering'. */
+.hidden {
+  display:none;
+}
+.invisible {
+  visibility:hidden;
+}
 
 #devInfo {
   font-family:monospace;
