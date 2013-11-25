@@ -1,5 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="en">
   <head>
     <title>YaCy '#[clientname]#': Network Configuration</title>
     #%env/templates/metas.template%#
@@ -17,7 +17,7 @@
          }
          document.getElementById("ConfigForm").indexReceiveSearch[recv ? 0 : 1].checked = true;
       }
-      
+
       function EnableRobinson() {
          if(document.getElementById("ConfigForm").network[1].checked) {
             document.getElementById("ConfigForm").indexDistribute.checked = false;
@@ -25,7 +25,7 @@
             document.getElementById("ConfigForm").indexReceiveSearch[1].checked = true;
          }
       }
-      
+
       function EnableP2P() {
          if(document.getElementById("ConfigForm").network[0].checked) {
             document.getElementById("ConfigForm").indexDistribute.checked = true;
@@ -38,7 +38,7 @@
   </head>
   <body id="ConfigNetwork">
     #%env/templates/header.template%#
-    
+
     <h2>Network Configuration</h2>
     #(commit)#
         ::<div class="commit">Accepted Changes.</div>
@@ -67,13 +67,13 @@
             <option>#[network]#</option>
           #{/networks}#
         </select> <a href="#" onclick="document.getElementById('networkDefinitionURLfield').style.display = ''; return false;" style="font-style: italic;">Enter custom URL...</a>
-        
+
         </dd>
         <span id="networkDefinitionURLfield" style="display: none;">
         <dt>Remote Network Definition URL</dt>
         <dd>
         <input type="text" id="networkDefinitionURL" name="networkDefinitionURL" value="" size="100">
-        </select>        
+        </select>
         </dd>
         </span>
         <dt>Network Nick</dt>
@@ -93,7 +93,7 @@
       <legend>
         <label>Distributed Computing Network for Domain</label>
       </legend>
-      
+
     <p>
       You can configure if you want to participate at the global YaCy network or if you want to have your
       own separate search cluster with or without connection to the global network. You may also define
@@ -160,7 +160,7 @@
         </dd>
       </dl>
     </fieldset>
-        
+
     <fieldset>
       <legend>
         <input type="radio" name="network" id="robinson" onclick="EnableRobinson()" value="robinson"#(robinson.checked)#:: checked="checked"#(/robinson.checked)# />

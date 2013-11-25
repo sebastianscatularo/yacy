@@ -1,5 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="en">
   <head>
     <title>YaCy '#[clientname]#': Send message</title>
     #%env/templates/metas.template%#
@@ -18,7 +18,7 @@
     <!-- we have the permission to send the message -->
     <p>The peer <b>#[peerName]#</b> is alive and responded:</p>
     <p><tt class="MessageBackground">#[response]#
-       You are allowed to send me a message &le; #[messagesize]# kb and an 
+       You are allowed to send me a message &le; #[messagesize]# kb and an
        attachment &le; #[attachmentsize]#.</tt>
     </p>
 
@@ -54,7 +54,7 @@
     <p>
       You cannot send a message to <strong>#[peerName]#</strong>.<br />
       The peer is alive but cannot respond. Sorry.
-    </p>	
+    </p>
     #(/permission)#
     ::
     <!-- =========================== preview message =========================== -->
@@ -68,7 +68,7 @@
     <!-- we have the permission to send the message -->
     <p>The peer <b>#[peerName]#</b> is alive and responded:</p>
     <p><tt class="MessageBackground">#[response]#
-       You are allowed to send me a message &le; #[messagesize]# kb and an 
+       You are allowed to send me a message &le; #[messagesize]# kb and an
        attachment &le; #[attachmentsize]#.</tt>
     </p>
 
@@ -121,19 +121,19 @@
     <p>
       You cannot send a message to <strong>#[peerName]#</strong>.<br />
       The peer is alive but cannot respond. Sorry.
-    </p>	
+    </p>
     #(/permission)#
     ::
     <!-- =========================== send message =========================== -->
     <h2>Send message</h2>
     #(status)#
     <!-- Message send successfully -->
-    
+
     <p>Your message has been sent. The target peer responded:</p>
     <p class="Message"><tt>#[response]#</tt></p>
-      
+
     :: <!-- Message could not be send -->
-    
+
     <p>The target peer is alive but did not receive your message. Sorry.</p>
     <p>
       Here is a copy of your message, so you can copy it to save it for further attempts:
@@ -142,12 +142,12 @@
       <tt>#[message]#</tt>
     </p>
     #(/status)#
-    
+
     ::
     <!-- illegal usage of this page -->
       <p>You cannot call this page directly. Instead, use a link on the <a href="Network.html">Network</a> page.</p>
     #(/mode)#
-    
+
     #%env/templates/footer.template%#
   </body>
 </html>

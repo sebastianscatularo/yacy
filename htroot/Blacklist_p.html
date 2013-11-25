@@ -1,5 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="en">
   <head>
     <title>YaCy '#[clientname]#': Blacklist Administration</title>
     #%env/templates/metas.template%#
@@ -17,7 +17,7 @@
   </head>
   <body id="Blacklist"#(disabled)##(edit)# onload="switchTargetBlacklist('');"::#(/edit)#::#(/disabled)#>
     #%env/templates/header.template%#
-  
+
     <h2>Blacklist Administration</h2>
     <p>
       This function provides an URL filter to the proxy; any blacklisted URL is blocked
@@ -43,12 +43,12 @@
         ::
       #(/disabled)#
     </fieldset>
-    
+
     <fieldset class="createList">
       <legend>Create new list:</legend>
       #(error)#
           ::
-          <p>Unable to create list <strong>#[name]#</strong> since it contains illegal characters. 
+          <p>Unable to create list <strong>#[name]#</strong> since it contains illegal characters.
           A legal name is made up from a letter, digit, minus, plus or underscore as the first character
           followed by letters, digits, minus, plus, underscores or dots.</p>
           ::
@@ -58,7 +58,7 @@
           <input type="text" id="newListName" size ="50" name="newListName" />
           <input type="submit" name="createNewList" value="create" />
         </fieldset></form>
-    </fieldset>  
+    </fieldset>
     <br /><br />
 #(disabled)#
     <fieldset class="editList">
@@ -80,7 +80,7 @@
           <li>*.domain.net/*</li>
           <li>*.sub.domain.net/*</li>
           <li>sub.domain.*/*</li>
-          <li>domain.*/*</li>          
+          <li>domain.*/*</li>
           <li>a complete <a href="http://docs.oracle.com/javase/1.5.0/docs/api/java/util/regex/Pattern.html">regex</a> (slow)</li>
        </ul>
 
@@ -96,10 +96,10 @@
               <td><strong>Blacklist Pattern</strong></td>
             </tr>
             #{Itemlist}#
-              <tr class="TableCell#(dark)#Light::Dark#(/dark)#"> 
+              <tr class="TableCell#(dark)#Light::Dark#(/dark)#">
                 <td><input type="checkbox" name="selectedEntry.#[count]#" id="selectedEntry.#[count]#" value="#[item]#" /></td>
                 <td><label for="selectedEntry.#[count]#">#[item]#</label></td>
-              </tr>  
+              </tr>
             #{/Itemlist}#
           </table>
           <br />
@@ -157,7 +157,7 @@
       #(/edit)#
 
     </fieldset>
-    
+
     <fieldset class="listSettings">
       <legend>Settings for this list</legend>
       <form action="Blacklist_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
@@ -182,7 +182,7 @@
           <input type="submit" name="activateList" value="Save" />
         </fieldset>
       </form>
-    </fieldset>    
+    </fieldset>
     ::#(/disabled)#
     <!--
     <div>

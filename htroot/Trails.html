@@ -1,5 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="en">
   <head>
     <title>CyTag Trails</title>
     #%env/templates/metas.template%#
@@ -8,7 +8,7 @@ function search() {
     var xmlHttpReq = false;
     var self = this;
     if (window.XMLHttpRequest) { // Mozilla/Safari
-        self.xmlHttpReq = new XMLHttpRequest(); 
+        self.xmlHttpReq = new XMLHttpRequest();
     }
     else if (window.ActiveXObject) { // IE
         self.xmlHttpReq = new ActiveXObject("Microsoft.XMLHTTP");
@@ -26,9 +26,9 @@ function search() {
 function updatepage(str) {
   var rsp = eval("("+str+")");
   var trails = rsp.trails;
-  
+
   var html = "";
-  
+
   var item;
   html += "<table class=\"networkTable\" border=\"0\" cellpadding=\"2\" cellspacing=\"1\">";
   html += "<tr class=\"TableHeader\" valign=\"bottom\">";

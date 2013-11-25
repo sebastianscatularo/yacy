@@ -1,5 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="en">
   <head>
     <title>YaCy '#[clientname]#': Solr Schema Editor</title>
     #%env/templates/metas.template%#
@@ -9,11 +9,11 @@
 <a href="/api/schema.xml?core=#[core]#">
 <img src="env/grafics/api.png" width="60" height="40" alt="API" /></a>
 <span>The solr schema can also be retrieved as xml here. Click the API icon to see the xml. Just copy this xml to solr/conf/schema.xml to configure solr.</span>
-</div>	
+</div>
     #%env/templates/header.template%#
     <h2>Solr Schema Editor</h2>
     <p>If you use a custom Solr schema you may enter a different field name in the column 'Custom Solr Field Name' of the YaCy default attribute name</p>
-    
+
     <form action="IndexSchema_p.html" method="get" enctype="multipart/form-data" accept-charset="UTF-8">
     Select a core:
       <select id="core" name="core" onchange='submit()'>
@@ -23,7 +23,7 @@
       </select>
     &nbsp;&nbsp;&nbsp;... the core can be searched at <a href="/solr/select?core=#[core]#&amp;q=*:*&start=0&rows=3">/solr/select?core=#[core]#&amp;q=*:*&amp;start=0&amp;rows=3</a>
     </form>
-    
+
     <form action="IndexSchema_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
     <fieldset>
       <input type="hidden" name="core" value="#[core]#" />
@@ -54,15 +54,15 @@
     <p><br /></p>
     <form action="IndexReIndexMonitor_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
       <fieldset>
-        <legend><label>Reindex documents</label></legend>  
+        <legend><label>Reindex documents</label></legend>
         <p>If you unselected some fields, old documents in the index still contain the unselected fields.
              To physically remove them from the index you need to reindex the documents.
              Here you can reindex all documents with inactive fields.</p>
         <div style="text-align:center ">
-          <input type="submit" name="reindexSolr" value="reindex Solr" />  
+          <input type="submit" name="reindexSolr" value="reindex Solr" />
           <input type="hidden" name="reindexnow"/>
-        </div>    
-        <p>You may monitor progress (or stop the job) under <a href="IndexReIndexMonitor_p.html">IndexReIndexMonitor_p.html</a></p> 
+        </div>
+        <p>You may monitor progress (or stop the job) under <a href="IndexReIndexMonitor_p.html">IndexReIndexMonitor_p.html</a></p>
       </fieldset>
     </form>
     #%env/templates/footer.template%#

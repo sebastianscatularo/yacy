@@ -1,5 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="en">
   <head>
     <title>YaCy '#[clientname]#': Performance Settings for Memory</title>
     #%env/templates/metas.template%#
@@ -15,16 +15,16 @@
 	window.setInterval("reloadGraph()", 1000);
 	//--></script>
     #%env/templates/header.template%#
-    
+
     <h2>Performance Settings for Memory</h2>
-    
+
     <p><img src="PerformanceGraph.png" id="graph" alt="PerformanceGraph"/></p>
     <form id="optionreloadGraph" action="" method="get"><p><input type="checkbox" name="option" id="autoreload"/> <label for="autoreload">refresh graph</label></p></form>
 	<form action="PerformanceMemory_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
 	<p><input type="checkbox" name="simulatedshortmemory" onclick = 'this.form.submit()' #(simulatedshortmemory.checked)#:: checked="checked"#(/simulatedshortmemory.checked)#/>simulate short memory status</label></p>
 	<p><input type="checkbox" name="useStandardmemoryStrategy" onclick = 'this.form.submit()' #(useStandardmemoryStrategy.checked)#:: checked="checked"#(/useStandardmemoryStrategy.checked)#/>use Standard Memory Strategy (current: #[memoryStrategy]#)</p>
 	</form>
-    
+
     <p><strong>Memory Usage:</strong></p>
     <table border="0" cellpadding="2" cellspacing="1">
       <tr class="TableHeader" valign="bottom">
@@ -73,7 +73,7 @@
         <td align="left">used memory in the JVM within total amount</td>
       </tr>
     </table>
-    
+
     <p><strong>Table RAM Index:</strong></p>
     <table border="0" cellpadding="2" cellspacing="1">
       <tr class="TableHeader" valign="bottom">
@@ -102,7 +102,7 @@
         <td colspan="9">Total Mem = #[EcoIndexTotalMem]# MB</td>
       </tr>
     </table>
-    
+
     <p><strong>Object Index Caches:</strong></p>
     <table border="0" cellpadding="2" cellspacing="1">
       <tr class="TableHeader" valign="bottom">
@@ -126,7 +126,7 @@
         <td colspan="9">Total Mem: #[indexcacheTotalMem]# MB</td>
       </tr>
     </table>
-    
+
     <p><strong>Object Read Caches:</strong></p>
     <table border="0" cellpadding="2" cellspacing="1">
       <tr class="TableHeader" valign="bottom">
@@ -182,7 +182,7 @@
         <td colspan="19">Total Mem: #[objectHitCacheTotalMem]# MB (hit), #[objectMissCacheTotalMem]# MB (miss); Stop Grow when less than #[objectCacheStopGrow]# MB available left; Start Shrink when less than #[objectCacheStartShrink]# MB availabe left</td>
       </tr>
     </table>
-    
+
     <!-- other cache sizes -->
     <p><strong>Other Caching Structures:</strong></p>
     <table border="0" cellpadding="2" cellspacing="1">
@@ -261,7 +261,7 @@
         <td>#[searchevent.delete]#</td>
       </tr>
     </table>
-    
+
     #%env/templates/footer.template%#
   </body>
 </html>

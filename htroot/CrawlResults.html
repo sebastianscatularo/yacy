@@ -1,12 +1,12 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="en">
   <head>
     <title>YaCy '#[clientname]#': Crawl Results</title>
     #%env/templates/metas.template%#
   </head>
   <body id="CrawlResults">
     #%env/templates/header.template%#
-    
+
     #(process)#
     <h2>Crawl Results Overview</h2>
     <p>These are monitoring pages for the different indexing queues.</p>
@@ -64,8 +64,8 @@
     <p>These records had been imported from surrogate files in DATA/SURROGATES/in</p>
     <p><em>Use Case:</em> place files with dublin core metadata content into DATA/SURROGATES/in or use an index import method (i.e. <a href="/IndexImportMediawiki_p.html">MediaWiki import</a>, <a href="/IndexImportOAIPMH_p.html">OAI-PMH retrieval</a>)</p>
     #(/process)#
-    
-    
+
+
     #(table)#
     <p><em>The stack is empty.</em></p>
     ::
@@ -92,7 +92,7 @@
       </tr>
       #{/domains}#
     </table><br />
-    
+
     <p><em>
     #(size)#
     Showing all #[all]# entries in this stack.
@@ -143,12 +143,12 @@
         <td>
           #(available)#
             <span class="tt">-not cached-</span>
-          ::          
+          ::
             <a href="ViewFile.html?action=info&amp;urlHash=#[urlHash]#" class="small" title="#[urltitle]#">#(nodescr)#no title::#[urldescr]##(/nodescr)#</a>
           #(/available)#
         </td>
         #(/showTitle)#
-        
+
         #(showCountry)#::<td>#[country]#</td>#(/showCountry)#
         #(showIP)#::<td>#[ip]#</td>#(/showIP)#
 

@@ -1,5 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="en">
   <head>
     <title>YaCy '#[clientname]#': Reverse Word Index Administration</title>
     #%env/templates/metas.template%#
@@ -10,12 +10,12 @@
     <p>The local index currently contains #[wcount]# reverse word indexes</p>
     <form action="IndexControlRWIs_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
     <fieldset><legend>RWI Retrieval (= search for a single word)</legend>
-      <dl>        
+      <dl>
         <dt class="TableCellDark">Retrieve by Word:</dt>
         <dd><input type="text" name="keystring" value="#[keystring]#" size="40" maxlength="80" />
             <input type="submit" name="keystringsearch" value="Show URL Entries for Word" class="submitready" style="width:240px;"/>
         </dd>
-          
+
         <dt class="TableCellDark">Retrieve by Word-Hash:</dt>
         <dd><input type="text" name="keyhash" value="#[keyhash]#" size="40" maxlength="12" />
             <input type="submit" name="keyhashsearch" value="Show URL Entries for Word-Hash" class="submitready" style="width:240px;"/>
@@ -24,7 +24,7 @@
       </dl>
     </fieldset>
     </form>
-    
+
     #(limitations)#::
     <form action="IndexControlRWIs_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
     <fieldset><legend>Limitations</legend>
@@ -40,7 +40,7 @@
     </fieldset>
     </form>
     #(/limitations)#
-    
+
     #(searchresult)#::
     <p>No entry for word '#[word]#'</p>::
     <p>No entry for word hash #[wordhash]#</p>::
@@ -146,15 +146,15 @@
     </fieldset>
     </form>
     #(/searchresult)#
-    
+
     #(keyhashsimilar)#::<p>Sequential List of Word-Hashes:<br />
-    #{rows}# 
-    #{cols}# 
+    #{rows}#
+    #{cols}#
     <a href="/IndexControlRWIs_p.html?keyhash=#[wordHash]#&amp;keyhashsearch=1" class="tt">#[wordHash]#</a>#{/cols}#<br />
     #{/rows}#
     </p>
     #(/keyhashsimilar)#
-	
+
     #(genUrlList)#
     ::
     No URL entries related to this word hash <span class="tt">#[keyHash]#</span>.
@@ -249,8 +249,8 @@
       <fieldset><legend>Blacklist Extension</legend>
         <dl>
           <dt>
-            <select name="blacklist" size="1">#{blacklists}# 
-              <option value="#[name]#">#[name]#</option>#{/blacklists}# 
+            <select name="blacklist" size="1">#{blacklists}#
+              <option value="#[name]#">#[name]#</option>#{/blacklists}#
             </select>
           </dt>
           <dd>
@@ -262,7 +262,7 @@
     </form>
     <br />#(/genUrlList)#
     #[result]#
-    
+
     #%env/templates/footer.template%#
   </body>
 </html>

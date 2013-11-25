@@ -1,5 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="en">
   <head>
     <title>YaCy '#[clientname]#': Wiki</title>
     #%env/templates/metas.template%#
@@ -10,7 +10,7 @@
     ::
     #%env/templates/simpleheader.template%#
     #(/topmenu)#
-    
+
     #(mode)#
     <!-- 0: viewing -->
     <div class="Post">
@@ -130,16 +130,16 @@
         <dl>
           <dt><label for="old">Compare version from</label>:</dt>
           <dd>
-            <select id="old" name="old">#{versions}# 
-              <option value="#[date]#"#(oldselected)#:: selected="selected"#(/oldselected)#>#[fdate]#</option>#{/versions}# 
+            <select id="old" name="old">#{versions}#
+              <option value="#[date]#"#(oldselected)#:: selected="selected"#(/oldselected)#>#[fdate]#</option>#{/versions}#
             </select>
             <input type="submit" name="viewold" value="Show" />
           </dd>
           <dt><label for="new">with version from</label>:</dt>
           <dd>
             <select id="new" name="new">
-              <optgroup label="current"><option value="#[curdate]#"#(curselected)#:: selected="selected"#(/curselected)#>#[curfdate]#</option></optgroup>#{versions}# 
-              <option value="#[date]#"#(newselected)#:: selected="selected"#(/newselected)#>#[fdate]#</option>#{/versions}# 
+              <optgroup label="current"><option value="#[curdate]#"#(curselected)#:: selected="selected"#(/curselected)#>#[curfdate]#</option></optgroup>#{versions}#
+              <option value="#[date]#"#(newselected)#:: selected="selected"#(/newselected)#>#[fdate]#</option>#{/versions}#
             </select>
           </dd>
           <dt><input type="submit" name="compare" value="Compare" /></dt>

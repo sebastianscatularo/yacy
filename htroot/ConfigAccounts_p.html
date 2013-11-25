@@ -1,14 +1,14 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="en">
   <head>
     <title>YaCy '#[clientname]#': User Accounts</title>
     #%env/templates/metas.template%#
   </head>
 <body>
     #%env/templates/header.template%#
-    
+
     <h2>User Administration</h2>
-    
+
     <!-- Page 1: Results -->
     #(text)#
     ::
@@ -35,7 +35,7 @@
             </legend>
             Access to your peer from your own computer (localhost access) is granted. No need to configure an administration account.
             </fieldset>
-            
+
             <fieldset>
             <legend>
             <input type="radio" name="access" id="access_account" value="account"#(account.checked)#:: checked="checked"#(/account.checked)# />
@@ -55,7 +55,7 @@
           </fieldset>
       </form>
     </fieldset>
-    
+
     <fieldset><legend>User Accounts</legend>
 	<form action="ConfigAccounts_p.html" accept-charset="UTF-8">
       <fieldset><legend>Select user</legend>
@@ -75,7 +75,7 @@
         </dl>
       </fieldset>
     </form>
-    
+
     <form action="ConfigAccounts_p.html" method="post" accept-charset="UTF-8">
       <fieldset><legend>Edit current user: #[username]#</legend>
         <!-- Hidden(text for debugging): <input type="text" name="current_user" value="#[current_user]#" readonly> -->
@@ -109,7 +109,7 @@
       </fieldset>
     </form>
     </fieldset>
-    
+
 #%env/templates/footer.template%#
 </body>
 </html>

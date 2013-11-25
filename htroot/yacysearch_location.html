@@ -1,5 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <title>YaCy '#[clientname]#': Location Search</title>
   #%env/templates/metas.template%#
@@ -7,7 +7,7 @@
   <script type="text/javascript" src="http://www.openstreetmap.org/openlayers/OpenStreetMap.js"></script>
   <script type="text/javascript">
     // possible values for dom: location,metatag,alltext,title,publisher,creator,subject
-    
+
     var map;
     var searchLayer_md0 = null; // two layers each for double-buffering during search
     var searchLayer_md1 = null;
@@ -23,13 +23,13 @@
     var poisxml = "";
     var kmNormal = 100; // ca. 1km grid for radius
     var meterNormal = 100000; // ca. 1m grid for location
-    
+
     // automatically adapt height of map upon window resize
     function adaptHeight() {
       document.getElementById('map').style.height = (document.documentElement.clientHeight - 130) + "px";
     }
     window.onresize = adaptHeight;
-    
+
     // initialize the map layers
     function init() {
       map = new OpenLayers.Map('map', {
@@ -49,7 +49,7 @@
       map.addLayer(layerCycleMap);
       //map.addLayer(layerMaplint);
       map.addLayer(layerWMS);
-        
+
       map.addControl(new OpenLayers.Control.LayerSwitcher());
       map.setCenter(new OpenLayers.LonLat(9,48) // Center of the map
           .transform(
@@ -59,24 +59,24 @@
         );
       map.events.register( "zoomend", map, zoomChanged );
       map.events.register( "movestart", map, zoomChanged );
-      
+
       //#(initsearch)#::
       var query = '#[query]#'.replace(' ', '+');
-      //#(/initsearch)#        
-        
+      //#(/initsearch)#
+
       window.setInterval("refresh()", 1000);
     }
 
     function zoomChanged () {
       shallZoom = false; // no automatic zoom if user hs zoomed
       refreshsearch();
-    } 
-      
+    }
+
     // called if a search is submitted
     function search() {
       refreshsearch();
     }
-    
+
     // refresh is called if the map is zoomed or paned to get a new search result for the viewport
     function refreshsearch() {
       var query = document.getElementById('query').value.replace(' ', '+');
@@ -97,7 +97,7 @@
       poisfound = 0;
       document.getElementById('resultline').innerHTML = "";
     }
-    
+
     function refresh() {
       // check double-buffer state
       if (searchLayer_md0 != null) {
@@ -109,7 +109,7 @@
         searchLayer_md0 = null;
         searchLayer_co0 = null;
       }
-      
+
       // check if we need to do something
       if (searchLayer_co1 == null || searchLayer_md1 == null) {
         return;
@@ -119,11 +119,11 @@
       //if (mdcount + cocount <= poisfound) {
       //  return;
       //}
-      
+
       // update map and result line
       poisfound = mdcount;
       document.getElementById('resultline').innerHTML = (poisfound == 0) ? "searching..." : poisfound + " <a href=\"" + poisxml + "\">POIs</a> found in region";
-      
+
       // check if any of the markers is visible on the screen.
       // this is only necessary if shallZoom = false since this would set shallZoom = true
       var bounds = searchLayer_md1.getDataExtent();

@@ -1,5 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="en">
   <head>
     <title>YaCy '#[clientname]#': Settings Acknowledge</title>
     #%env/templates/metas.template%#
@@ -7,7 +7,7 @@
   <body>
     #%env/templates/header.template%#
     <h2>Settings Receipt:</h2>
-    
+
     #(info)#<!-- 0 -->
     <p><strong>No information has been submitted</strong><br />
     Nothing changed.</p>
@@ -69,7 +69,7 @@
     ::<!-- 14 -->
     <p><strong>Seed Settings changed, but something is wrong.</strong></p>
     <p class="error">#[errormsg]#</p>
-    <p>Seed Uploading was deactivated automatically. 
+    <p>Seed Uploading was deactivated automatically.
     Please return to the settings page and modify the data.</p>
     ::<!-- 15 -->
     <p><strong>The remote-proxy setting has been changed</strong><br />
@@ -144,7 +144,7 @@
     ::<!-- 27 -->
     <p class="error"><strong>Invalid IP-Number filter:</strong> <tt>#[filter]#</tt><br />
     <strong>Error in pattern nr #[nr]#</strong> "<tt>#[pattern]#</tt>": <tt>#[error]#</tt>
-    </p> 
+    </p>
     ::<!-- 28 : Crawler settings OK -->
     <p><strong>Your crawler settings have been changed.</strong></p>
     <table>

@@ -1,5 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="en">
   <head>
     #(forwardToSteering)#::<meta http-equiv="REFRESH" content="0; url=/Steering.html?update=1&amp;releaseinstall=#[release]#" />#(/forwardToSteering)#
     <title>YaCy '#[clientname]#': System Update</title>
@@ -7,14 +7,14 @@
   </head>
   <body style="margin:0px;">
     #%env/templates/header.template%#
-    
+
 	<h2>System Update</h2>
-	
+
 	#(deploys)#::Release will be installed. Please wait.#(/deploys)#
-	
+
     #(candeploy)#
     This servlet can only be used on operation systems that are currently supported for deploy functions.
-    If you see this message this means that your operation system is not supported. 
+    If you see this message this means that your operation system is not supported.
     ::
       <fieldset>
       <legend>Manual System Update</legend>
@@ -45,7 +45,7 @@
         #(deployenabled)#::no&nbsp;automated installation on development environments::
     	&nbsp;&nbsp;<input type="submit" name="update" value="Install Release" #(buttonsActive)#disabled="disabled"::#(/buttonsActive)#/>
         &nbsp;&nbsp;<input type="submit" name="deleteRelease" value="Delete Release" #(buttonsActive)#disabled="disabled"::#(/buttonsActive)#/>
-        #(/deployenabled)#		
+        #(/deployenabled)#
       </p></form></dd>
       <dt><br />Automatic Update</dt>
       <dd><form action="ConfigUpdate_p.html" method="get" accept-charset="UTF-8"><p>
@@ -60,19 +60,19 @@
       </p></form></dd>
       </dl>
       </fieldset>
-      
+
       <form action="ConfigUpdate_p.html" method="get" accept-charset="UTF-8">
       <fieldset>
       <legend>Automated System Update</legend>
       <dl>
-      
+
       <dt>
         manual update&nbsp;<input type="radio" name="updateMode" value="manual" #(manualUpdateChecked)#::checked="checked" #(/manualUpdateChecked)#/>&nbsp;
       </dt>
       <dd>
         no automatic look-up, updates can be made manually using this interface (see options above)<br /><br />
       </dd>
-      
+
       <dt>
         automatic update&nbsp;<input type="radio" name="updateMode" value="auto" #(autoUpdateChecked)#::checked="checked" #(/autoUpdateChecked)#/>&nbsp;
       </dt>
@@ -104,7 +104,7 @@
       </dl>
       </fieldset>
       </form>
-      
+
       <fieldset>
       <legend>System Update Statistics</legend>
       <dl>
@@ -121,7 +121,7 @@
       <p>YaCy has been installed to the Program Files directory. Automatic update is not possible.<br/>Download and install the latest version from the web page <a href="http://www.yacy.net/">http://www.yacy.net/</a></p>
       ::
     #(/candeploy)#
-    
+
     #%env/templates/footer.template%#
   </body>
 </html>

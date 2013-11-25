@@ -1,5 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="en">
   <head>
     <title>YaCy '#[clientname]#': Surftips</title>
     <meta name="keywords" content="YaCy P2P peer-to-peer Surftips Social Bookmarking Link Voting" />
@@ -18,7 +18,7 @@
   </head>
   <body id="Surftips">
     #%env/templates/header.template%#
-    
+
     <h2 class="yacy">Surftips</h2>
 
     #(surftips)#
@@ -53,7 +53,7 @@
     <p class="aftersurftips">
     ...provided by YaCy peers using public bookmarks, link votes and crawl start points
     </p>
-    
+
     <form action="Surftips.html" method="get" class="PeerControl" accept-charset="UTF-8"><div>
       <button type="submit" name="publicPage" value="0">
         <img src="/env/grafics/lock.gif" alt="authentication required" />
@@ -68,7 +68,7 @@
       addHover();
     </script>
 	#(/surftips)#
-    
+
     #(display)#
     #%env/templates/simplefooter.template%#
     ::

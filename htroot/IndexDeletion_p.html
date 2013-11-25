@@ -1,11 +1,11 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" >
+<!DOCTYPE html>
+<html lang="en">
   <head>
     <title>YaCy '#[clientname]#': Index Deletion</title>
     #%env/templates/metas.template%#
   </head>
   <body id="IndexDeletion">
-  
+
     #%env/templates/header.template%#
     <h2>Index Deletion</h2>
     <p>The search index contains #[doccount]# documents. You can delete them here. Deletions are made concurrently which can cause that recently deleted documents are not yet reflected in the document count.</p>
@@ -29,7 +29,7 @@
       </dl>
     </fieldset>
     </form>
-    
+
     <form id="IndexDeletionAge" action="IndexDeletion_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
     <fieldset>
       <legend><label>Delete by Age</label></legend>
@@ -76,7 +76,7 @@
       </dl>
     </fieldset>
     </form>
-    
+
     <form id="IndexDeletionCollection" action="IndexDeletion_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
     <fieldset>
       <legend><label>Delete Collections</label></legend>
@@ -85,7 +85,7 @@
         <dt>Not Assigned</dt>
         <dd><input type="radio" name="collectiondelete-mode" id="collectiondelete-mode-unassigned" value="unassigned" #(collectiondelete-mode-unassigned-checked)#::checked="checked"#(/collectiondelete-mode-unassigned-checked)# onClick="d=document.getElementById('engage-collectiondelete');d.disabled=true;d.className='dangerdisarmed';"/>Delete all documents which are not assigned to any collection
         </dd>
-        
+
         <dt>Assigned</dt>
         <dd><input type="radio" name="collectiondelete-mode" id="collectiondelete-mode-assigned" value="assigned" #(collectiondelete-mode-assigned-checked)#::checked="checked"#(/collectiondelete-mode-assigned-checked)# onClick="d=document.getElementById('engage-collectiondelete');d.disabled=true;d.className='dangerdisarmed';"/>Delete all documents which are assigned to the following collection(s)
         #(collectiondelete-select)#, separated by ',' (comma) or '|' (vertical bar); or <a href="IndexDeletion_p.html?collectionlist=">generate the collection list...</a><br/><input type="text" name="collectiondelete" id="collections" value="#[collectiondelete]#" size="96" maxlength="1024" onClick="d=document.getElementById('engage-collectiondelete');d.disabled=true;d.className='dangerdisarmed';document.getElementById('collectiondelete-mode-assigned').checked=true;"/>::
@@ -101,7 +101,7 @@
       </dl>
     </fieldset>
     </form>
-    
+
     <form id="IndexDeletionQuery" action="IndexDeletion_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
     <fieldset>
       <legend><label>Delete by Solr Query</label></legend>
@@ -118,7 +118,7 @@
       </dl>
     </fieldset>
     </form>
-    
+
     #%env/templates/footer.template%#
   </body>
 </html>

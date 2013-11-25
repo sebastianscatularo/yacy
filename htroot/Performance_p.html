@@ -1,5 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="en">
   <head>
   <title>YaCy '#[clientname]#': Performance Settings</title>
   #%env/templates/metas.template%#
@@ -15,13 +15,13 @@
     window.setInterval("reloadGraph()", 1000);
     //--></script>
     #%env/templates/header.template%#
-    
+
     <h2>Performance Settings</h2>
-  
+
     <p><img src="PerformanceGraph.png" id="graph" alt="PerformanceGraph" width="660" height="240"/></p>
     <form id="optionreloadGraph" action="" method="get"><p><input type="checkbox" name="option" id="autoreload"/> <label for="autoreload">refresh graph</label></p></form>
-  
-  
+
+
     <form action="Performance_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
       <fieldset>
         <legend>Memory Settings</legend>
@@ -34,7 +34,7 @@
         </dl>
       </fieldset>
     </form>
-    
+
     <form action="Performance_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
       <fieldset>
         <legend>Resource Observer</legend>
@@ -51,7 +51,7 @@
         </dl>
       </fieldset>
     </form>
-    
+
   <form action="Performance_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
 	<fieldset><legend>Use Default Profile:</legend>
 		<p>
@@ -71,7 +71,7 @@
 		<p><input type="submit" name="submitdefault" value="Save" /> Changes take effect immediately</p>
 	</fieldset>
 	</form>
-	
+
     <form action="Performance_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
     <fieldset><legend>YaCy Priority Settings</legend>
       <dl>
@@ -86,7 +86,7 @@
       </dl>
     </fieldset>
   </form>
-  
+
   <form action="Performance_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
 	  <fieldset><legend>Online Caution Settings:</legend>
 	  <p>
@@ -120,7 +120,7 @@
 	    </table>
 	  </fieldset>
   </form>
-  
+
   #%env/templates/footer.template%#
   </body>
 </html>

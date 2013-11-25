@@ -1,12 +1,12 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="en">
   <head>
     <title>YaCy '#[clientname]#': Blacklist Test</title>
     #%env/templates/metas.template%#
   </head>
   <body id="Blacklist">
     #%env/templates/header.template%#
-  
+
     <h2>Blacklist Test</h2>
     <p>Used Blacklist engine: <span class="settingsValue">#[blacklistEngine]#</span></p>
     <!-- blacklist selection -->
@@ -15,7 +15,7 @@
         <legend>Test list:</legend>
         <input type="text" name="testurl" size="50" value="#[url]#" />
         <input type="submit" name="testList" value="Test" />
-        
+
         #(testlist)#::
           <br /><br />
           <div>

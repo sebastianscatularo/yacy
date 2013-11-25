@@ -1,5 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" >
+<!DOCTYPE html>
+<html lang="en">
   <head>
     <title>YaCy '#[clientname]#': Crawl Start</title>
     #%env/templates/metas.template%#
@@ -17,14 +17,14 @@
     </style>
   </head>
   <body id="IndexCreate">
-  
+
 <div id="api"></div>
-  
+
     #%env/templates/header.template%#
     <h2>Crawl Check</h2>
-    
+
     <p>This pages gives you an analysis about the possible success for a web crawl on given addresses.</p>
-    
+
     <fieldset>
       <legend>
         <label>Crawl Check</label>
@@ -34,16 +34,16 @@
         <dt><label>List of possible crawl start URLs</label></dt>
         <dd>
            <textarea name="crawlingURLs" id="crawlingURLs" cols="80" rows="15" size="80">#[starturls]#</textarea>
-        </dd>      
+        </dd>
         <dt></dt>
         <dd><input type="submit" name="crawlcheck" value="Check given urls" class="submitready"/>
         </dd>
       </dl>
-      
+
     </form>
     </fieldset>
-    
-    
+
+
     #(table)#::
      <fieldset><legend>Analysis</legend>
       <table border="0" cellpadding="2" cellspacing="2" style="float:left">
@@ -66,8 +66,8 @@
       </table>
     </fieldset>
     #(/table)#
-    
-    
+
+
     #%env/templates/footer.template%#
   </body>
 </html>

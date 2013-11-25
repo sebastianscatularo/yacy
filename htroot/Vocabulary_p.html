@@ -1,5 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="en">
   <head>
     <title>YaCy '#[clientname]#': Federated Index</title>
     #%env/templates/metas.template%#
@@ -14,7 +14,7 @@ function search(query) {
     var xmlHttpReq = false;
     var self = this;
     if (window.XMLHttpRequest) { // Mozilla/Safari
-        self.xmlHttpReq = new XMLHttpRequest(); 
+        self.xmlHttpReq = new XMLHttpRequest();
     }
     else if (window.ActiveXObject) { // IE
         self.xmlHttpReq = new ActiveXObject("Microsoft.XMLHTTP");
@@ -38,9 +38,9 @@ function updatepage(str) {
   var startIndex = firstChannel.startIndex;
   var itemsPerPage = firstChannel.itemsPerPage;
   var navigation = firstChannel.navigation;
-  
+
   var html = "";
-  
+
   if (totalResults > 0 && firstChannel.items.length > 0) {
     var item;
     html += "<table class=\"networkTable\" border=\"0\" cellpadding=\"2\" cellspacing=\"1\" width=\"99%\">";
@@ -72,16 +72,16 @@ Click the API icon to see the RDF Ontology definition for this vocabulary.
 To see a list of all APIs, please visit the <a href="http://www.yacy-websuche.de/wiki/index.php/Dev:API">API wiki page</a>.</span>
 </div>
 #(/edit)#
-    
+
     #%env/templates/header.template%#
-    
+
     <h2>Vocabulary Administration</h2>
     <p>
       Vocabularies can be used to produce a search navigation. A vocabulary must be created before content is indexed.
       The vocabulary is used to annotate the indexed content with a reference to the object that is denoted by the term of the vocabulary.
       The object can be denoted by a url stub that, combined with the term, becomes the url for the object.
     </p>
-    
+
     <form action="Vocabulary_p.html" method="get" accept-charset="UTF-8">
       <fieldset><legend>Vocabulary Selection</legend>
       <dl>
@@ -97,7 +97,7 @@ To see a list of all APIs, please visit the <a href="http://www.yacy-websuche.de
       </dl>
     </fieldset>
     </form>
-    
+
     #(create)#::
     <!--<form action="Vocabulary_p.html" id="searchform" method="get" accept-charset="UTF-8" onkeyup="xmlhttpPost(); return false;">-->
     <form action="Vocabulary_p.html" id="searchform" method="get" accept-charset="UTF-8" >
@@ -121,7 +121,7 @@ To see a list of all APIs, please visit the <a href="http://www.yacy-websuche.de
     </fieldset>
     </form>
     #(/create)#
-    
+
     #(edit)#::
     <form action="Vocabulary_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
       <fieldset><legend>Vocabulary Editor</legend>
@@ -179,7 +179,7 @@ To see a list of all APIs, please visit the <a href="http://www.yacy-websuche.de
     </fieldset>
     </form>
     #(/edit)#
-    
+
     #%env/templates/footer.template%#
   </body>
 </html>

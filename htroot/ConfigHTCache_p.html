@@ -1,5 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="en">
   <head>
     <title>YaCy '#[clientname]#': Hypertext Cache Configuration</title>
     #%env/templates/metas.template%#
@@ -11,7 +11,7 @@
       The HTCache stores content retrieved by the HTTP and FTP protocol. Documents from smb:// and file:// locations are not cached.
       The cache is a rotating cache: if it is full, then the oldest entries are deleted and new one can fill the space.
     </p>
-    
+
     <form action="ConfigHTCache_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
       <fieldset><legend>HTCache Configuration</legend>
         <dl>
@@ -41,7 +41,7 @@
       </dl>
     </fieldset>
     </form>
-    
+
     #%env/templates/footer.template%#
   </body>
 </html>
