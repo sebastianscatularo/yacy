@@ -2599,7 +2599,8 @@ a[href^="https://"]:before {
 
 /** Base */
 body {
-  background-color: #e9f3f9; }
+  background-color: #e9f3f9;
+  counter-reset: h1-counter; }
 
 main {
   margin-top: 1em; }

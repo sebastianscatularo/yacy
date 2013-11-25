@@ -2605,7 +2605,8 @@ a[href^="https://"]:before {
 
 /** Base */
 body {
-  background-color: #e9f3f9; }
+  background-color: #e9f3f9;
+  counter-reset: h1-counter; }
 
 main {
   margin-top: 1em; }
@@ -2725,6 +2726,9 @@ code.key {
  * Addition to general form elements.
  * Styles used in the backend only.
  */
+legend {
+  text-transform: capitalize; }
+
 .control-group {
   padding: 0.5em; }
   .control-group:hover {
@@ -3221,6 +3225,22 @@ iframe {
 
 iframe.border {
   border: 1px solid #ccc; }
+
+main .ym-wbox:first-of-type h1, main .ym-wbox:first-of-type h2, main .ym-wbox:first-of-type h3, main .ym-wbox:first-of-type h4, main .ym-wbox:first-of-type h5, main .ym-wbox:first-of-type h6 {
+  text-transform: capitalize; }
+main .ym-wbox:first-of-type > h1 {
+  counter-reset: h2-counter; }
+  main .ym-wbox:first-of-type > h1:not(.noNumber):before {
+    content: counter(h1-counter) ".\00a0";
+    counter-increment: h1-counter; }
+main .ym-wbox:first-of-type > h2 {
+  counter-reset: h3-counter; }
+  main .ym-wbox:first-of-type > h2:not(.noNumber):before {
+    content: counter(h1-counter) "." counter(h2-counter) ".\00a0";
+    counter-increment: h2-counter; }
+main .ym-wbox:first-of-type > h3:not(.noNumber):before {
+  content: counter(h1-counter) "." counter(h2-counter) "." counter(h3-counter) ".\00a0";
+  counter-increment: h3-counter; }
 
 /** Pages specific CSS */
 body#crawlStartExpert #startPointDetails dl,

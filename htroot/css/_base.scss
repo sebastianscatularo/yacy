@@ -85,6 +85,7 @@ a[href^="https://"] {
 /** Base */
 body {
   background-color:$ycu-var-color-page-bg;
+  counter-reset:h1-counter;
 }
 
 main {

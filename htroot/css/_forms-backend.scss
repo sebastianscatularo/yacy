@@ -3,6 +3,10 @@
  * Styles used in the backend only.
  */
 
+legend {
+  text-transform:capitalize;
+}
+
 // form control groups
 .control-group {
   padding:0.5em;

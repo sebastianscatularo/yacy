@@ -72,6 +72,35 @@ iframe.border {
   border:1px solid #ccc;
 }
 
+// number top level headings
+main .ym-wbox:first-of-type {
+  h1, h2, h3, h4, h5, h6 {
+    text-transform:capitalize;
+  }
+  > h1 {
+    counter-reset:h2-counter;
+
+    &:not(.noNumber):before {
+      content:counter(h1-counter)'.\00a0';
+      counter-increment:h1-counter;
+    }
+  }
+  > h2 {
+    counter-reset:h3-counter;
+
+    &:not(.noNumber):before {
+      content:counter(h1-counter)'.'counter(h2-counter)'.\00a0';
+      counter-increment:h2-counter;
+    }
+  }
+  > h3 {
+    &:not(.noNumber):before {
+      content:counter(h1-counter)'.'counter(h2-counter)'.'counter(h3-counter)'.\00a0';
+      counter-increment:h3-counter;
+    }
+  }
+}
+
 /** Pages specific CSS */
 // body#crawlStartExpert
 // body#crawlStartSite
