@@ -327,46 +327,54 @@ Todo:
 
         <h2>Search page integration</h2>
         <p>
-          The search page can be integrated in your own web pages with an iframe. Simply use the following code:
+          The search page can be integrated in your own web pages with an iframe.
+        </p>
+
+        <h3>Default YaCy Search Page</h3>
+        <p>
+          Simply use the following code:
         </p>
         <pre><code>
-&lt;iframe name=&quot;target&quot;
+&lt;iframe
   src=&quot;http://#[myaddress]#/index.html?display=2&amp;resource=local&quot;
   width=&quot;100%&quot;
   height=&quot;410&quot;
   frameborder=&quot;0&quot;
   scrolling=&quot;auto&quot;
-  id=&quot;target&quot;&gt;
 &lt;/iframe&gt;
         </code></pre>
         This would look like:
         <iframe name="target"
           src="http://#[myaddress]#/index.html?display=2&amp;resource=local&amp;focus=0" class="autoSize border" scrolling="no" sandbox="allow-same-origin"></iframe>
 
-        <h3>For a search page with a small header, use this code:</h3>
+        <h3>Small Header</h3>
+        <p>
+          For a search page with a small header, use this code:
+        </p>
         <pre><code>
-&lt;iframe name=&quot;target2&quot;
+&lt;iframe
   src=&quot;http://#[myaddress]#/yacysearch.html?display=2&amp;resource=local&quot;
   width=&quot;100%&quot;
   height=&quot;180&quot;
   frameborder=&quot;0&quot;
   scrolling=&quot;auto&quot;
-  id=&quot;target2&quot;&gt;
 &lt;/iframe&gt;
         </code></pre>
         This would look like:
         <iframe name="target2"
           src="http://#[myaddress]#/yacysearch.html?display=2&amp;resource=local&amp;focus=0" class="autoSize border" scrolling="no" sandbox="allow-same-origin"></iframe>
 
-        <h3>A third option is the interactive search. Use this code:</h3>
+        <h3>Interactive search</h3>
+        <p>
+          A third option is the interactive search. Use this code:
+        </p>
         <pre><code>
-&lt;iframe name="target3"
+&lt;iframe
   src=&quot;http://#[myaddress]#/yacyinteractive.html?display=2&quot;
   width=&quot;100%&quot;
   height=&quot;180&quot;
   frameborder=&quot;0&quot;
   scrolling=&quot;auto&quot;
-  id=&quot;target3&quot;&gt;
 &lt;/iframe&gt;
         </code></pre>
         This would look like:
