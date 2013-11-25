@@ -1,29 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>YaCy '#[clientname]#': Table Viewer</title>
-    <link rel="alternate" type="application/xml" title="robots.txt Table" href="/api/table_p.xml?table=robots&pk=" />
-    #%env/templates/metas.template%#
-  </head>
-  <body id="Tables">
+<head>
+  <title>YaCy '#[clientname]#': Table Viewer</title>
+  <link rel="alternate" type="application/xml" title="robots.txt Table" href="/api/table_p.xml?table=robots&pk=" />
+  #%env/templates/header-backend.template%#
+</head>
 
-<div id="api">
-<script type="text/javascript">
-//<![CDATA[
-document.write("\<a href=\"/api/table_p.xml?table=robots&pk=\"\>")
-//]]>
-</script>
-<img src="env/grafics/api.png" width="60" height="40" alt="API"/></a>
-<span>The information that is presented on this page can also be retrieved as XML
-Click the API icon to see the XML.
-To see a list of all APIs, please visit the <a href="http://www.yacy-websuche.de/wiki/index.php/Dev:API">API wiki page</a>.</span>
-</div>
+<body id="tableRobotsTxt">
+  #%env/templates/page-start.template%#
 
-    #%env/templates/header.template%#
+  <div id="api">
+    <img src="env/grafics/api.png" width="60" height="40" alt="API"/></a>
+    <div class="hidden">
+      <p>
+        The information that is presented on this page can also be retrieved as <a href="/api/table_p.xml?table=robots&pk=">XML</a>.
+      </p>
+      <p>
+        To see a list of all <abbr>APIs</abbr>, please visit the <a href="http://www.yacy-websuche.de/wiki/index.php/Dev:API"><abbr>API</abbr> wiki page</a>.
+      </p>
+    </div>
+  </div>
 
-    <h2>robots.txt table</h2>
-    <iframe src="/api/table_p.html?table=robots&row=hostname,modDate,date,disallow,crawlDelayMillis,etag,sitemap"  class="autoSize" scrolling="no"></iframe><br />
+  <h1>robots.txt table</h1>
+  <iframe src="/api/table_p.html?table=robots&row=hostname,modDate,date,disallow,crawlDelayMillis,etag,sitemap"  class="autoSize" scrolling="no"></iframe>
 
-    #%env/templates/footer.template%#
-  </body>
+  #%env/templates/page-end.template%#
+</body>
 </html>
