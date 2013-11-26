@@ -1,91 +1,111 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>YaCy '#[clientname]#': Augmented Browsing</title>
-    #%env/templates/metas.template%#
-  </head>
-  <body id="Settings">
-    #%env/templates/header.template%#
+<head>
+  <title>YaCy '#[clientname]#': Augmented Browsing</title>
+  #%env/templates/header-backend.template%#
+</head>
 
-    <h2>Augmented Browsing</h2>
+<body id="augmentedBrowsing">
+  #%env/templates/page-start.template%#
 
-    <form id="parsersettings" action="AugmentedBrowsing_p.html" method="post" enctype="multipart/form-data">
-<fieldset><legend id="urlproxy">URL Proxy Settings</legend>
-<p>
-  With this settings you can activate or deactivate URL proxy which is the method used for augmentation.
-  Service call: http://localhost:8080/proxy.html?url=parameter, where parameter is the url of an external web page.
-</p>
+  <h1>Augmented Browsing</h1>
 
-            <dl>
+  <form id="proxySettings" action="AugmentedBrowsing_p.html#proxySettings" method="post" enctype="multipart/form-data">
+    <fieldset>
+      <legend id="urlproxy">URL Proxy Settings</legend>
+      <div class="description">
+        <p>
+          With this settings you can activate or deactivate <abbr>URL</abbr> proxy which is the method used for augmentation.
+          Service call: <code>http://localhost:8080/proxy.html?url=parameter</code>, where <code>parameter</code> is the <abbr>URL</abbr> of an external web page.
+        </p>
+      </div>
 
-            <dt><label for="content">URL proxy:</label></dt>
-              <dd>
-                <input type="checkbox" name="urlproxyenabled" id="urlproxyenabled" #(urlproxyenabled_checked)#:: checked="checked"#(/urlproxyenabled_checked)# />Enabled<br/>
-                <p class="help">
-                  Globally enables or disables URL proxy via http://yourpeer:yourport/proxy.html?url=http://externalurl/
-                </p>
-              </dd>
+      <fieldset class="formSection">
+        <legend>Enable / Disable</legend>
+        <div class="content">
+          <p>
+            <input type="checkbox" name="urlproxyenabled" id="urlproxyenabled" #(urlproxyenabled_checked)#:: checked="checked"#(/urlproxyenabled_checked)#/>
+            <label for="urlproxyenabled">Globally enables or disables <abbr>URL</abbr> proxy.</label>
+          </p>
+          <p>
+            The proxy is accessible via <code>http://yourpeer:yourport/proxy.html?url=http://externalurl/</code>.
+         </p>
+        </div>
+      </fieldset>
+      <fieldset class="formSection">
+        <legend>Search results</legend>
+        <div class="content">
+          <p>
+            <input type="checkbox" name="urlproxyuseforresults" id="urlproxyuseforresults" #(urlproxyuseforresults_checked)#:: checked="checked"#(/urlproxyuseforresults_checked)# />
+            <label for="urlproxyuseforresults">Enables or disables <abbr>URL</abbr> proxy for all search results.</label>
+          </p>
+          <p>
+            If enabled, all search results will be tunneled through <abbr>URL</abbr> proxy.
+          </p>
+        </div>
+      </fieldset>
+      <fieldset class="formSection">
+        <legend>Restrict URL proxy use</legend>
+        <div class="content">
+          <p>
+            <input type="text" name="urlproxyfilter" value="#[urlproxyfilter]#"/>
+          </p>
+          <p>
+            Define client filter.
+            <br/>
+            Default: <code>127.0.0.1,0:0:0:0:0:0:0:1</code>.
+          </p>
+        </div>
+      </fieldset>
+      <fieldset class="formSection">
+        <legend>URL substitution</legend>
+        <div class="content">
+          <p>
+            <input type="text" name="urlproxydomains" value="#[urlproxydomains]#"/>
+          </p>
+          <p>
+            Define URL substitution rules which allow navigating in proxy environment.
+            <br/>
+            Possible values: <code>all</code>, <code>domainlist</code>.
+            <br/>
+            Default: <code>domainlist</code>.
+          </p>
+        </div>
+      </fieldset>
 
-              <dt><label for="content">Show search results via URL proxy:</label></dt>
-              <dd>
-                <input type="checkbox" name="urlproxyuseforresults" id="urlproxyuseforresults" #(urlproxyuseforresults_checked)#:: checked="checked"#(/urlproxyuseforresults_checked)# />Enabled<br/>
-                <p class="help">
-                  Enables or disables URL proxy for all search results. If enabled, all search results will be tunneled through URL proxy.
-                </p>
-              </dd>
+      <fieldset class="formControl" data-id="formControl">
+        <div class="content">
+          <button type="submit" name="urlproxySettings" class="primary icon-run">Save</button>
+        </div>
+      </fieldset>
+    </fieldset>
+  </form>
 
-              <dt><label for="author">Restrict URL proxy use:</label></dt>
-              <dd>
-                <input type="text" name="urlproxyfilter" value="#[urlproxyfilter]#" size="60" /><br/><br/>
-                <p class="help">
-                  Define client filter. Default: 127.0.0.1,0:0:0:0:0:0:0:1.
-                </p>
-              </dd>
-              <dt><label for="subject">URL substitution:</label></dt>
-              <dd>
-                <input type="text" name="urlproxydomains" value="#[urlproxydomains]#" size="60" /><br/><br/>
-                <p class="help">
-                  Define URL substitution rules which allow navigating in proxy environment. Possible values: all, domainlist. Default: domainlist.
-                </p>
-              </dd>
+  <form id="augmentedSettings" action="AugmentedBrowsing_p.html#augmentedSettings" method="post" enctype="multipart/form-data">
+    <fieldset>
+      <legend>Augmented Browsing Settings</legend>
+      <div class="description">
+        <p>
+          With this settings you can activate or deactivate augmented browsing which happens usually via the <abbr>URL</abbr> proxy.
+        </p>
+      </div>
+      <fieldset class="formSection">
+        <legend>Enable / Disable</legend>
+        <div class="content">
+          <p>
+            <input type="checkbox" name="augmentationenabled" id="augmentationenabled" #(augmentationenabled_checked)#:: checked="checked"#(/augmentationenabled_checked)# />
+            <label for="augmentationenabled"> Enables or disables augmented browsing. If enabled, all websites will be modified during loading.</label>
+          </p>
+        </div>
+      </fieldset>
+       <fieldset class="formControl" data-id="formControl">
+        <div class="content">
+          <button type="submit" name="augmentationSettings" class="primary icon-run">Save</button>
+        </div>
+      </fieldset>
+    </fieldset>
+  </form>
 
-
-            </dl>
-
-
-            <input type="submit" name="urlproxySettings" value="Submit"/>
-</fieldset>
-</form>
-
-
-
-    <form id="parsersettings" action="AugmentedBrowsing_p.html" method="post" enctype="multipart/form-data">
-
-<fieldset><legend id="augmentation">Augmented Browsing Settings</legend>
-<p>
-  With this settings you can activate or deactivate augmented browsing which happens usually via the URL proxy.
-</p>
-
-
-<dl>
-
-            <dt><label for="content">Augmented Browsing:</label></dt>
-              <dd>
-                <input type="checkbox" name="augmentationenabled" id="augmentationenabled" #(augmentationenabled_checked)#:: checked="checked"#(/augmentationenabled_checked)# />Enabled<br/>
-                <p class="help">
-                  Enables or disables augmented browsing. If enabled, all websites will be modified during loading.
-                </p>
-              </dd>
-
-
-
-            </dl>
-
-
-            <input type="submit" name="augmentationSettings" value="Submit"/>
-</fieldset>
-</form>
-
-    #%env/templates/footer.template%#
-  </body>
+  #%env/templates/page-end.template%#
+</body>
 </html>
