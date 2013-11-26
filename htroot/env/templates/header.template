@@ -175,7 +175,14 @@
     </li>
     <li><span>Monitoring</span>
       <ul class="hidden">
-        <li><a href="/Network.html">YaCy Network</a></li>
+        <li><span>YaCy Network</span>
+          <ul class="hidden">
+            <li><a href="/Network.html">Network Overview</a>
+            <li><a href="/Network.html?page=1&maxCount=1000">Active Peers</a></li>
+            <li><a href="/Network.html?page=2&maxCount=1000">Passive Peers</a></li>
+            <li><a href="/Network.html?page=3&maxCount=1000">Potential Peers</a></li>
+          </ul>
+        </li>
         <li><span>Web Visualization</span>
           <ul class="hidden">
             <li><a href="/WatchWebStructure_p.html?host=auto&amp;depth=3&amp;time=1000" class="lock">Web Structure</a></li>
