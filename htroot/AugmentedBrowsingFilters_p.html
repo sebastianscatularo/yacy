@@ -1,73 +1,80 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>YaCy '#[clientname]#': Augmented Browsing - Filters and Modules</title>
-    #%env/templates/metas.template%#
-  </head>
-  <body id="Settings">
-    #%env/templates/header.template%#
+<head>
+  <title>YaCy '#[clientname]#': Augmented Browsing - Filters and Modules</title>
+  #%env/templates/header-backend.template%#
+</head>
 
-    <h2>Augmented Browsing - Filters and Modules</h2>
+<body id="augmentedBrowsingFilter">
+  #%env/templates/page-start.template%#
 
-    <form id="augmentationFilters" action="AugmentedBrowsingFilters_p.html" method="post" enctype="multipart/form-data">
-<fieldset><legend id="urlproxy">Augmented Browsing Filters</legend>
-<p>
-  Select the desired functionality.
-</p>
+  <h1>Augmented Browsing - Filters and Modules</h1>
 
-            <dl>
+  <form id="augmentationFilters" action="AugmentedBrowsingFilters_p.html#augmentationFilters" method="post" enctype="multipart/form-data">
+    <fieldset>
+      <legend>Augmented Browsing Filters</legend>
+      <fieldset class="formGroup">
+        <legend>External</legend>
+        <div class="description">
+          <p>
+            Select the desired external functionality.
+          </p>
+        </div>
 
-            <dt><label for="content">External REFLECT:</label></dt>
-              <dd>
-                <input type="checkbox" name="augmentedReflect" id="augmentedReflect" #(augmentedReflect_checked)#:: checked="checked"#(/augmentedReflect_checked)# />Enabled<br/>
-                <p class="help">
-                   Send webpages to REFLECT (<a href="http://reflect.ws/" target="_blank">http://reflect.ws/</a>)
-                </p>
-              </dd>
+        <fieldset class="formSection">
+          <legend>REFLECT</legend>
+          <div class="content">
+            <input type="checkbox" name="augmentedReflect" id="augmentedReflect" #(augmentedReflect_checked)#:: checked="checked"#(/augmentedReflect_checked)# />
+            <label for="augmentedReflect">
+              Send webpages to REFLECT (<a href="http://reflect.ws/" target="_blank">http://reflect.ws/</a>)
+            </label>
+          </div>
+        </fieldset>
+      </fieldset>
 
+      <fieldset class="formGroup">
+        <legend>Internal</legend>
+        <div class="description">
+          <p>Select the desired internal functionality.</p>
+        </div>
 
-
-            </dl>
-
+        <fieldset class="formSection">
+          <legend>Add DOCTYPE</legend>
+          <div class="content">
             <p>
-  Select the desired inbuilt functionality
-</p>
-
-            <dl>
-
-            <dt><label for="content">Add DOCTYPE:</label></dt>
-              <dd>
-                <input type="checkbox" name="augmentedAddDoctype" id="augmentedAddDoctype" #(augmentedAddDoctype_checked)#:: checked="checked"#(/augmentedAddDoctype_checked)# />Enabled<br/>
-                <p class="help">
-                   Add DOCTYPE information if not given. This is required for IE to render position:absolute correctly.
-                </p>
-              </dd>
-
-              <dt><label for="content">Reparse webpage:</label></dt>
-              <dd>
-                <input type="checkbox" name="augmentedReparse" id="augmentedReparse" #(augmentedReparse_checked)#:: checked="checked"#(/augmentedReparse_checked)# />Enabled<br/>
-                <p class="help">
-                   Put webpage back into schema (htmlparser document) to allow node by node manipulation.
-                </p>
-              </dd>
-
-              <dt><label for="content">Show overlay interaction buttons:</label></dt>
-              <dd>
-                <input type="checkbox" name="overlayInteraction" id="overlayInteraction" #(overlayInteraction_checked)#:: checked="checked"#(/overlayInteraction_checked)# />Enabled<br/>
-                <p class="help">
-                   Show overlay interaction buttons.
-                </p>
-              </dd>
-
-            </dl>
-
-
-            <input type="submit" name="augmentationFiltersSettings" value="Submit"/>
-</fieldset>
-</form>
-
-
-
-    #%env/templates/footer.template%#
-  </body>
+              <input type="checkbox" name="augmentedAddDoctype" id="augmentedAddDoctype" #(augmentedAddDoctype_checked)#:: checked="checked"#(/augmentedAddDoctype_checked)# />
+              <label for="augmentedAddDoctype">Add <code>DOCTYPE</code> information if not given.</label>
+            </p>
+            <p>
+              <s class="sym sym-hint"></s>
+              This is required for <abbr>IE</abbr> to render <code>position:absolute</code> correctly.
+            </p>
+          </div>
+        </fieldset>
+        <fieldset class="formSection">
+          <legend>Reparse webpage</legend>
+          <div class="content">
+            <input type="checkbox" name="augmentedReparse" id="augmentedReparse" #(augmentedReparse_checked)#:: checked="checked"#(/augmentedReparse_checked)# />
+            <label for="augmentedReparse">
+              Put webpage back into schema (htmlparser document) to allow node by node manipulation.
+            </label>
+          </div>
+        </fieldset>
+        <fieldset class="formSection">
+          <legend>Overlay interaction buttons</legend>
+          <div class="content">
+            <input type="checkbox" name="overlayInteraction" id="overlayInteraction" #(overlayInteraction_checked)#:: checked="checked"#(/overlayInteraction_checked)# />
+            <label for="overlayInteraction">Show overlay interaction buttons.</label>
+          </div>
+        </fieldset>
+      </fieldset>
+      <fieldset class="formControl" data-id="formControl">
+        <div class="content">
+          <button type="submit" name="augmentationFiltersSettings" class="primary icon-run">Save</button>
+        </div>
+      </fieldset>
+    </fieldset>
+  </form>
+  #%env/templates/page-end.template%#
+</body>
 </html>
