@@ -1,73 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>YaCy '#[clientname]#': Crawl Start</title>
-    #%env/templates/metas.template%#
-    <script type="text/javascript" src="/js/ajax.js"></script>
-    <script type="text/javascript" src="/js/IndexCreate.js"></script>
-    <script type="text/javascript">
-        function check(key){
-            document.getElementById(key).checked = 'checked';
-        }
-    </script>
-    <style type="text/css">
-    	.nobr {
-    		white-space: nowrap;
-    	}
-    </style>
-  </head>
-  <body id="IndexCreate">
+<head>
+  <title>YaCy '#[clientname]#': Crawl Start</title>
+  #%env/templates/header-backend.template%#
+  <script type="text/javascript" src="/js/ajax.js"></script>
+  <!--<script type="text/javascript" src="/js/IndexCreate.js"></script>-->
+  <script type="text/javascript" src="/js/yaml/tablesorter/jquery.tablesorter.min.js"></script>
+  <script type="text/javascript">
+  function check(key){
+    document.getElementById(key).checked = 'checked';
+  }
+  </script>
+  <style type="text/css">
+  .nobr {
+    white-space: nowrap;
+  }
+  </style>
+</head>
 
-<div id="api"></div>
+<body id="indexCreate">
+  #%env/templates/page-start.template%#
 
-    #%env/templates/header.template%#
-    <h2>Crawl Check</h2>
+  <div id="devInfo">
+    TODO:
+    - validation, scripts
+  </div>
 
-    <p>This pages gives you an analysis about the possible success for a web crawl on given addresses.</p>
+  <h1>Crawl Check</h1>
+  <p>This pages gives you an analysis about the possible success for a web crawl on given addresses.</p>
 
+  <form id="CrawlCheck" method="post" action="CrawlCheck_p.html#results" enctype="multipart/form-data" accept-charset="UTF-8">
     <fieldset>
-      <legend>
-        <label>Crawl Check</label>
-      </legend>
-      <form id="CrawlCheck" method="post" action="CrawlCheck_p.html" enctype="multipart/form-data" accept-charset="UTF-8">
-      <dl>
-        <dt><label>List of possible crawl start URLs</label></dt>
-        <dd>
-           <textarea name="crawlingURLs" id="crawlingURLs" cols="80" rows="15" size="80">#[starturls]#</textarea>
-        </dd>
-        <dt></dt>
-        <dd><input type="submit" name="crawlcheck" value="Check given urls" class="submitready"/>
-        </dd>
-      </dl>
-
-    </form>
+      <legend>Crawl Check</legend>
+      <fieldset class="formSection">
+        <legend>Possible crawl start URLs</legend>
+        <div class="content">
+          <textarea name="crawlingURLs" id="crawlingURLs">#[starturls]#</textarea>
+        </div>
+      </fieldset>
+      <fieldset class="formControl" data-id="formControl">
+        <div class="content">
+          <button type="submit" name="crawlcheck" class="primary icon-run">Check given urls</button>
+        </div>
+      </fieldset>
     </fieldset>
+  </form>
 
-
-    #(table)#::
-     <fieldset><legend>Analysis</legend>
-      <table border="0" cellpadding="2" cellspacing="2" style="float:left">
+  #(table)#::
+  <h2 id="results">Check Results</h2>
+  <table class="sortable">
+    <thead>
       <tr>
-        <th align="left" width="600" class="listing">URL</th>
+        <th>URL</th>
         <th align="right" width="80" class="listing">Access</th>
         <th align="right" width="80" class="listing">Robots</th>
         <th align="right" width="80" class="listing">Crawl-Delay</th>
         <th align="right" width="200" class="listing">Sitemap</th>
       </tr>
+    </thead>
+    <tbody>
       #{list}#
-        <tr class="TableCell#(dark)#Light::Dark::Summary#(/dark)#">
-          <td align="left" nowrap class="listing"><a href="#[url]#" class="listing">#[url]#</a></td>
-          <td align="right" nowrap class="listing">#[access]#</td>
-          <td align="right" nowrap class="listing">#[robots]#</td>
-          <td align="right" nowrap class="listing">#[crawldelay]#</td>
-          <td align="right" nowrap class="listing">#[sitemap]#</td>
-        </tr>
+      <tr class="TableCell#(dark)#Light::Dark::Summary#(/dark)#">
+        <td class="breakAll"><a href="#[url]#">#[url]#</a></td>
+        <td>#[access]#</td>
+        <td>#[robots]#</td>
+        <td>#[crawldelay]#</td>
+        <td class="breakAll">#[sitemap]#</td>
+      </tr>
       #{/list}#
-      </table>
-    </fieldset>
-    #(/table)#
+    </tbody>
+  </table>
+#(/table)#
 
 
-    #%env/templates/footer.template%#
-  </body>
+#%env/templates/page-end.template%#
+</body>
 </html>
