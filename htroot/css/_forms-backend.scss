@@ -491,6 +491,9 @@ textarea {
 form {
   margin-bottom:1.5em;
 }
+fieldset.main + fieldset.main {
+  margin-top:1.5em;
+}
 
 fieldset.main,
 form > fieldset:not(.formGroup):not(.formSection):first-of-type {
