@@ -1,39 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>YaCy '#[clientname]#': Crawl Start</title>
-    #%env/templates/metas.template%#
-  </head>
-  <body id="IndexCreate">
-    #%env/templates/header.template%#
-    <h2>RegexTest</h2>
+<head>
+  <title>YaCy '#[clientname]#': Crawl Start</title>
+  #%env/templates/header-backend.template%#
+</head>
+
+<body id="regexTest">
+  #%env/templates/page-start.template%#
+
+  <h1>Regular Expression Tester</h1>
+  <form method="get" action="RegexTest.html" accept-charset="UTF-8">
     <fieldset>
-      <form method="get" action="RegexTest.html" accept-charset="UTF-8">
-      <dl>
-        <dt>
-          <label>Test String</label>
-        </dt>
-        <dd>
-          <input name="text" id="text" type="text" size="80" maxlength="256" value="#[text]#" style="font-size:16px"/>
-        </dd>
-        <dt>
-          <label>Regular Expression</label><br />
-          This is a <a href="http://docs.oracle.com/javase/6/docs/api/java/util/regex/Pattern.html">Java Pattern</a>
-        </dt>
-        <dd>
+      <legend>RexEx Tester</legend>
+      <fieldset class="formSection">
+        <legend>Test String</legend>
+        <div class="content">
+          <input name="text" id="text" type="text" maxlength="256" value="#[text]#"/>
+        </div>
+      </fieldset>
+      <fieldset class="formSection">
+        <legend>Regular Expression</legend>
+        <div class="content">
           <textarea name="regex" id="regex" cols="80" rows="5" style="font-size:16px">#[regex]#</textarea>
-        </dd>
-        <dt>
-          <label>Result</label>
-        </dt>
-        #(match)#<dd><img src="/env/grafics/nok.png"> no match</dd>::<dd><img src="/env/grafics/ok.png"> match</dd>::<dd><img src="/env/grafics/bad.png"> error in expression: #[error]#</dd>#(/match)#
-        <dt></dt>
-        <dd>
-          <input name="submit" id="submit" type="submit" />
-        </dd>
-      </dl>
-    </form>
+        </div>
+        <div class="formHelp">
+          <p>
+            This is a <a href="http://docs.oracle.com/javase/6/docs/api/java/util/regex/Pattern.html">Java Pattern</a>.
+          </p>
+        </div>
+      </fieldset>
+      <fieldset class="formSection">
+        <legend>Result</legend>
+        <div class="content">
+          #(match)#
+          <s class="sym sym-hint"></s>
+          no match
+          ::
+          <s class="sym sym-hint"></s>
+          match
+          ::
+          <s class="sym sym-error"></s>
+          error in expression: #[error]#
+          #(/match)#
+        </div>
+      </fieldset>
+      <fieldset class="formControl" data-id="formControl">
+        <div class="content">
+          <button type="submit" name="submit" class="primary icon-run">Run Test</button>
+        </div>
+      </fieldset>
     </fieldset>
-    #%env/templates/footer.template%#
-  </body>
+  </form>
+
+  #%env/templates/page-end.template%#
+</body>
 </html>
