@@ -1,255 +1,598 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
   <title>YaCy '#[clientname]#': Knowledge Loader</title>
-  #%env/templates/metas.template%#
-  </head>
-  <body id="DictionaryLoader">
-    #%env/templates/header.template%#
+  #%env/templates/header-backend.template%#
+</head>
 
-    <h2>Knowledge Loader</h2>
+<body id="dictionaryLoader">
+  #%env/templates/page-start.template%#
 
-	<p>
-	YaCy can use external libraries to enable or enhance some functions. These libraries are not
-	included in the main release of YaCy because they would increase the application file too much.
-	You can download additional files here.
+  <h1>Knowledge Loader</h1>
+  <p>
+   YaCy can use external libraries to enable or enhance some functions. These libraries are not included in the main release of YaCy because they would increase the application file too much.
+   You can download additional files here.
 	</p>
 
+  <form action="DictionaryLoader_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
+    <fieldset>
+      <legend>Persons</legend>
+      <div class="description">
+        <p>
+          Person dictionaries will help YaCy to identify Person names in input documents. As a result, a person Navigator is presented.
+        </p>
+      </div>
 
-    <form action="DictionaryLoader_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
-      <fieldset>
-        <legend>Persons</legend>
-        Person dictionaries will help YaCy to identify Person names in input documents. As a result, a person Navigator is presented
-
-        <h4><a href="http://wiki.dbpedia.org/Downloads37#pnd">PND (Personennamendatei) identifiers from dbPedia - wikipedia extraction</a></h4>
-	    <p>This file provides 150000 person names as an extraction from wikipedia where a PND from the Deutsche Nationalbibliothek is mentioned. It is not the 'raw' PND from d-dnb.de which is much larger but not available in the public.</p><!--http://downloads.dbpedia.org/3.7-i18n/de/pnd_de.nt.bz2-->
-
-        <dl>
-          <dt><label>Download from</label></dt>
-          <dd>#[pnd0URL]#</dd>
-          <dt><label>Storage location</label></dt>
-          <dd>#[pnd0Storage]#</dd>
-          <dt><label>Status</label></dt>
-          <dd>#(pnd0Status)#<div class="info">not loaded</div>::<div class="commit">loaded</div>::deactivated#(/pnd0Status)#</dd>
-          <dt>Action</dt>
-          <dd>#(pnd0Status)#
-          <input type="submit" name="pnd0Load" value="Load" />::
-          <input type="submit" name="pnd0Deactivate" value="Deactivate" />
-          <input type="submit" name="pnd0Remove" value="Remove" />::
-          <input type="submit" name="pnd0Activate" value="Activate" />
-          <input type="submit" name="pnd0Remove" value="Remove" />
-          #(/pnd0Status)#</dd>
-          #(pnd0ActionLoaded)#::
-          <dt>Result</dt><dd><div class="commit">loaded and activated dictionary file</div></dd>::
-          <dt>Result</dt><dd><div class="error">loading of dictionary file failed: #[error]#</div></dd>
-          #(/pnd0ActionLoaded)#
-          #(pnd0ActionRemoved)#::
-          <dt>Result</dt><dd><div class="commit">deactivated and removed dictionary file</div></dd>::
-          <dt>Result</dt><dd><div class="error">cannot remove dictionary file: #[error]#</div></dd>
-          #(/pnd0ActionRemoved)#
-          #(pnd0ActionDeactivated)#::
-          <dt>Result</dt><dd><div class="commit">deactivated dictionary file</div></dd>::
-          <dt>Result</dt><dd><div class="error">cannot deactivate dictionary file: #[error]#</div></dd>
-          #(/pnd0ActionDeactivated)#
-          #(pnd0ActionActivated)#::
-          <dt>Result</dt><dd><div class="commit">activated dictionary file</div></dd>::
-          <dt>Result</dt><dd><div class="error">cannot activate dictionary file: #[error]#</div></dd>
-          #(/pnd0ActionActivated)#
-        </dl>
+      <fieldset class="formGroup">
+        <legend>PND (Personennamendatei)</legend>
+        <div class="description">
+          <a href="http://wiki.dbpedia.org/Downloads37#pnd">PND (Personennamendatei) identifiers from dbPedia - wikipedia extraction</a>
+          <p>
+            This file provides 150.000 person names as an extraction from Wikipedia where a <abbr>PND</abbr> from the Deutsche Nationalbibliothek is mentioned. It is not the <em>raw</em> <abbr>PND</abbr> from <code>d-dnb.de</code> which is much larger but not available in the public.
+          </p>
+        </div>
+        <fieldset class="formSection">
+          <legend>Download location</legend>
+          <div class="content">
+            <a href="#[pnd0URL]#">#[pnd0URL]#</a>
+          </div>
+        </fieldset>
+        <fieldset class="formSection">
+          <legend>Storage location</legend>
+          <div class="content">
+            <code>#[pnd0Storage]#</code>
+          </div>
+        </fieldset>
+        <fieldset class="formSection">
+          <legend>Status</legend>
+          <div class="content">
+            <em>
+              #(pnd0Status)#
+              not loaded
+              ::
+              loaded
+              ::
+              deactivated
+              #(/pnd0Status)#
+            </em>
+          </div>
+        </fieldset>
+        <fieldset class="formControl" data-id="formControl">
+          <div class="description">
+            #(pnd0ActionLoaded)#::
+            <p>
+              <s class="sym sym-hint"></s>
+              Loaded and activated dictionary file.
+            </p>
+            ::
+            <p>
+              <s class="sym sym-error"></s>
+              Loading of dictionary file failed: #[error]#.
+            </p>
+            #(/pnd0ActionLoaded)#
+            #(pnd0ActionRemoved)#::
+            <p>
+              <s class="sym sym-hint"></s>
+              Deactivated and removed dictionary file.
+            </p>
+            ::
+            <p>
+              <s class="sym sym-error"></s>
+              Cannot remove dictionary file: #[error]#.
+            </p>
+            #(/pnd0ActionRemoved)#
+            #(pnd0ActionDeactivated)#::
+            <p>
+              <s class="sym sym-hint"></s>
+              Deactivated dictionary file.
+            </p>
+            ::
+            <p>
+              <s class="sym sym-error"></s>
+              Cannot deactivate dictionary file: #[error]#.
+            </p>
+            #(/pnd0ActionDeactivated)#
+            #(pnd0ActionActivated)#::
+            <p>
+              <s class="sym sym-hint"></s>
+              Activated dictionary file.
+            </p>
+            ::
+            <p>
+              <s class="sym sym-error"></s>
+              Cannot activate dictionary file: #[error]#.
+            </p>
+            #(/pnd0ActionActivated)#
+          </div>
+          <div class="content">
+            #(pnd0Status)#
+            <button type="submit" name="pnd0Load" class="primary icon-run">Load</button>::
+            <button type="submit" name="pnd0Deactivate" class="primary icon-run">Deactivate</button>
+            <button type="submit" name="pnd0Remove" class="primary icon-delete">Remove</button>::
+            <button type="submit" name="pnd0Activate" class="primary icon-run">Activate</button>
+            <button type="submit" name="pnd0Remove" class="primary icon-delete">Remove</button>
+            #(/pnd0Status)#
+          </div>
+        </fieldset>
       </fieldset>
-    </form>
+    </fieldset>
+  </form>
 
-    <form action="DictionaryLoader_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
-      <fieldset>
-        <legend>Geolocalization</legend>
-        Geolocalization will enable YaCy to present locations from OpenStreetMap according to given search words.
+  <form action="DictionaryLoader_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
+    <fieldset>
+      <legend>Geolocalization</legend>
+      <div class="description">
+        <p>
+          Geolocalization will enable YaCy to present locations from OpenStreetMap according to given search words.
+        </p>
+      </div>
 
-        <h4>GeoNames</h4>
-	    <p>With this file it is possible to find cities all over the world.</p>
-
-        <dl>
-          <dt>Content</dt>
-          <dd>cities with a population &gt; 1000 all over the world</dd>
-          <dt><label>Download from</label></dt>
-          <dd>#[geon0URL]#</dd>
-          <dt><label>Storage location</label></dt>
-          <dd>#[geon0Storage]#</dd>
-          <dt><label>Status</label></dt>
-          <dd>#(geon0Status)#<div class="info">not loaded</div>::<div class="commit">loaded</div>::deactivated#(/geon0Status)#</dd>
-          <dt>Action</dt>
-          <dd>#(geon0Status)#
-          <input type="submit" name="geon0Load" value="Load" />::
-          <input type="submit" name="geon0Deactivate" value="Deactivate" />
-          <input type="submit" name="geon0Remove" value="Remove" />::
-          <input type="submit" name="geon0Activate" value="Activate" />
-          <input type="submit" name="geon0Remove" value="Remove" />
-          #(/geon0Status)#</dd>
-          #(geon0ActionLoaded)#::
-          <dt>Result</dt><dd><div class="commit">loaded and activated dictionary file</div></dd>::
-          <dt>Result</dt><dd><div class="error">loading of dictionary file failed: #[error]#</div></dd>
-          #(/geon0ActionLoaded)#
-          #(geon0ActionRemoved)#::
-          <dt>Result</dt><dd><div class="commit">deactivated and removed dictionary file</div></dd>::
-          <dt>Result</dt><dd><div class="error">cannot remove dictionary file: #[error]#</div></dd>
-          #(/geon0ActionRemoved)#
-          #(geon0ActionDeactivated)#::
-          <dt>Result</dt><dd><div class="commit">deactivated dictionary file</div></dd>::
-          <dt>Result</dt><dd><div class="error">cannot deactivate dictionary file: #[error]#</div></dd>
-          #(/geon0ActionDeactivated)#
-          #(geon0ActionActivated)#::
-          <dt>Result</dt><dd><div class="commit">activated dictionary file</div></dd>::
-          <dt>Result</dt><dd><div class="error">cannot activate dictionary file: #[error]#</div></dd>
-          #(/geon0ActionActivated)#
-        </dl>
-        <dl>
-          <dt>Content</dt>
-          <dd>cities with a population &gt; 5000 all over the world</dd>
-          <dt><label>Download from</label></dt>
-          <dd>#[geon1URL]#</dd>
-          <dt><label>Storage location</label></dt>
-          <dd>#[geon1Storage]#</dd>
-          <dt><label>Status</label></dt>
-          <dd>#(geon1Status)#<div class="info">not loaded</div>::<div class="commit">loaded</div>::deactivated#(/geon1Status)#</dd>
-          <dt>Action</dt>
-          <dd>#(geon1Status)#
-          <input type="submit" name="geon1Load" value="Load" />::
-          <input type="submit" name="geon1Deactivate" value="Deactivate" />
-          <input type="submit" name="geon1Remove" value="Remove" />::
-          <input type="submit" name="geon1Activate" value="Activate" />
-          <input type="submit" name="geon1Remove" value="Remove" />
-          #(/geon1Status)#</dd>
-          #(geon1ActionLoaded)#::
-          <dt>Result</dt><dd><div class="commit">loaded and activated dictionary file</div></dd>::
-          <dt>Result</dt><dd><div class="error">loading of dictionary file failed: #[error]#</div></dd>
-          #(/geon1ActionLoaded)#
-          #(geon1ActionRemoved)#::
-          <dt>Result</dt><dd><div class="commit">deactivated and removed dictionary file</div></dd>::
-          <dt>Result</dt><dd><div class="error">cannot remove dictionary file: #[error]#</div></dd>
-          #(/geon1ActionRemoved)#
-          #(geon1ActionDeactivated)#::
-          <dt>Result</dt><dd><div class="commit">deactivated dictionary file</div></dd>::
-          <dt>Result</dt><dd><div class="error">cannot deactivate dictionary file: #[error]#</div></dd>
-          #(/geon1ActionDeactivated)#
-          #(geon1ActionActivated)#::
-          <dt>Result</dt><dd><div class="commit">activated dictionary file</div></dd>::
-          <dt>Result</dt><dd><div class="error">cannot activate dictionary file: #[error]#</div></dd>
-          #(/geon1ActionActivated)#
-        </dl>
-        <dl>
-          <dt>Content</dt>
-          <dd>cities with a population &gt; 100000 all over the world (the set is is reduced to cities &gt; 100000)</dd>
-          <dt><label>Download from</label></dt>
-          <dd>#[geon2URL]#</dd>
-          <dt><label>Storage location</label></dt>
-          <dd>#[geon2Storage]#</dd>
-          <dt><label>Status</label></dt>
-          <dd>#(geon2Status)#<div class="info">not loaded</div>::<div class="commit">loaded</div>::deactivated#(/geon2Status)#</dd>
-          <dt>Action</dt>
-          <dd>#(geon2Status)#
-          <input type="submit" name="geon2Load" value="Load" />::
-          <input type="submit" name="geon2Deactivate" value="Deactivate" />
-          <input type="submit" name="geon2Remove" value="Remove" />::
-          <input type="submit" name="geon2Activate" value="Activate" />
-          <input type="submit" name="geon2Remove" value="Remove" />
-          #(/geon2Status)#</dd>
-          #(geon2ActionLoaded)#::
-          <dt>Result</dt><dd><div class="commit">loaded and activated dictionary file</div></dd>::
-          <dt>Result</dt><dd><div class="error">loading of dictionary file failed: #[error]#</div></dd>
-          #(/geon2ActionLoaded)#
-          #(geon2ActionRemoved)#::
-          <dt>Result</dt><dd><div class="commit">deactivated and removed dictionary file</div></dd>::
-          <dt>Result</dt><dd><div class="error">cannot remove dictionary file: #[error]#</div></dd>
-          #(/geon2ActionRemoved)#
-          #(geon2ActionDeactivated)#::
-          <dt>Result</dt><dd><div class="commit">deactivated dictionary file</div></dd>::
-          <dt>Result</dt><dd><div class="error">cannot deactivate dictionary file: #[error]#</div></dd>
-          #(/geon2ActionDeactivated)#
-          #(geon2ActionActivated)#::
-          <dt>Result</dt><dd><div class="commit">activated dictionary file</div></dd>::
-          <dt>Result</dt><dd><div class="error">cannot activate dictionary file: #[error]#</div></dd>
-          #(/geon2ActionActivated)#
-        </dl>
-
-        <h4>OpenGeoDB</h4>
-	    <p>With this file it is possible to find locations in Germany using the location (city) name, a zip code, a car sign or a telephone pre-dial number.</p>
-
-        <dl>
-          <dt><label>Download from</label></dt>
-          <dd>#[geo1URL]#</dd>
-          <dt><label>Storage location</label></dt>
-          <dd>#[geo1Storage]#</dd>
-          <dt><label>Status</label></dt>
-          <dd>#(geo1Status)#<div class="info">not loaded</div>::<div class="commit">loaded</div>::deactivated#(/geo1Status)#</dd>
-          <dt>Action</dt>
-          <dd>#(geo1Status)#
-          <input type="submit" name="geo1Load" value="Load" />::
-          <input type="submit" name="geo1Deactivate" value="Deactivate" />
-          <input type="submit" name="geo1Remove" value="Remove" />::
-          <input type="submit" name="geo1Activate" value="Activate" />
-          <input type="submit" name="geo1Remove" value="Remove" />
-          #(/geo1Status)#</dd>
-          #(geo1ActionLoaded)#::
-          <dt>Result</dt><dd><div class="commit">loaded and activated dictionary file</div></dd>::
-          <dt>Result</dt><dd><div class="error">loading of dictionary file failed: #[error]#</div></dd>
-          #(/geo1ActionLoaded)#
-          #(geo1ActionRemoved)#::
-          <dt>Result</dt><dd><div class="commit">deactivated and removed dictionary file</div></dd>::
-          <dt>Result</dt><dd><div class="error">cannot remove dictionary file: #[error]#</div></dd>
-          #(/geo1ActionRemoved)#
-          #(geo1ActionDeactivated)#::
-          <dt>Result</dt><dd><div class="commit">deactivated dictionary file</div></dd>::
-          <dt>Result</dt><dd><div class="error">cannot de-activate dictionary file: #[error]#</div></dd>
-          #(/geo1ActionDeactivated)#
-          #(geo1ActionActivated)#::
-          <dt>Result</dt><dd><div class="commit">activated dictionary file</div></dd>::
-          <dt>Result</dt><dd><div class="error">cannot activate dictionary file: #[error]#</div></dd>
-          #(/geo1ActionActivated)#
-        </dl>
+      <fieldset class="formGroup">
+        <legend>GeoNames: population &gt; 1.000</legend>
+        <div class="description">
+          <p>With this file it is possible to find cities with a population &gt; 1.000 all over the world.</p>
+        </div>
+        <fieldset class="formSection">
+          <legend>Download location</legend>
+          <div class="content">
+            <a href="#[geon0URL]#">#[geon0URL]#</a>
+          </div>
+        </fieldset>
+        <fieldset class="formSection">
+          <legend>Storage location</legend>
+          <div class="content">
+            <code>#[geon0Storage]#</code>
+          </div>
+        </fieldset>
+        <fieldset class="formSection">
+          <legend>Status</legend>
+          <div class="content">
+            <em>
+              #(geon0Status)#
+              not loaded
+              ::
+              loaded
+              ::
+              deactivated
+              #(/geon0Status)#
+            </em>
+          </div>
+        </fieldset>
+        <fieldset class="formControl" data-id="formControl">
+          <div class="description">
+            #(geon0ActionLoaded)#::
+            <p>
+              <s class="sym sym-hint"></s>
+              Loaded and activated dictionary file.
+            </p>
+            ::
+            <p>
+              <s class="sym sym-error"></s>
+              Loading of dictionary file failed: #[error]#.
+            </p>
+            #(/geon0ActionLoaded)#
+            #(geon0ActionRemoved)#::
+            <p>
+              <s class="sym sym-hint"></s>
+              Deactivated and removed dictionary file.
+            </p>
+            ::
+            <p>
+              <s class="sym sym-error"></s>
+              Cannot remove dictionary file: #[error]#.
+            </p>
+            #(/geon0ActionRemoved)#
+            #(geon0ActionDeactivated)#::
+            <p>
+              <s class="sym sym-hint"></s>
+              Deactivated dictionary file.
+            </p>
+            ::
+            <p>
+              <s class="sym sym-error"></s>
+              Cannot deactivate dictionary file: #[error]#.
+            </p>
+            #(/geon0ActionDeactivated)#
+            #(geon0ActionActivated)#::
+            <p>
+              <s class="sym sym-hint"></s>
+              Activated dictionary file.
+            </p>
+            ::
+            <p>
+              <s class="sym sym-error"></s>
+              Cannot activate dictionary file: #[error]#.
+            </p>
+            #(/geon0ActionActivated)#
+          </div>
+          <div class="content">
+            #(geon0Status)#
+            <button type="submit" name="geon0Load" class="primary icon-run">Load</button>::
+            <button type="submit" name="geon0Deactivate" class="primary icon-run">Deactivate</button>
+            <button type="submit" name="geon0Remove" class="primary icon-delete">Remove</button>::
+            <button type="submit" name="geon0Activate" class="primary icon-run">Activate</button>
+            <button type="submit" name="geon0Remove" class="primary icon-delete">Remove</button>
+            #(/geon0Status)#
+          </div>
+        </fieldset>
       </fieldset>
-    </form>
 
-    <form action="DictionaryLoader_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
-      <fieldset>
-        <legend>Suggestions</legend>
-        Suggestion dictionaries will help YaCy to provide better suggestions during the input of search words
-
-        <h4><a href="http://www.ids-mannheim.de/kl/derewo/">DeReWo - Korpusbasierte Grund-/Wortformenlisten (German) of 'Institut f&uuml;r Deutsche Sprache'</a></h4>
-	    <p>This file provides 100000 most common german words for suggestions</p>
-
-        <dl>
-          <dt><label>Download from</label></dt>
-          <dd>#[drw0URL]#</dd>
-          <dt><label>Storage location</label></dt>
-          <dd>#[drw0Storage]#</dd>
-          <dt><label>Status</label></dt>
-          <dd>#(drw0Status)#<div class="info">not loaded</div>::<div class="commit">loaded</div>::deactivated#(/drw0Status)#</dd>
-          <dt>Action</dt>
-          <dd>#(drw0Status)#
-          <input type="submit" name="drw0Load" value="Load" />::
-          <input type="submit" name="drw0Deactivate" value="Deactivate" />
-          <input type="submit" name="drw0Remove" value="Remove" />::
-          <input type="submit" name="drw0Activate" value="Activate" />
-          <input type="submit" name="drw0Remove" value="Remove" />
-          #(/drw0Status)#</dd>
-          #(drw0ActionLoaded)#::
-          <dt>Result</dt><dd><div class="commit">loaded and activated dictionary file</div></dd>::
-          <dt>Result</dt><dd><div class="error">loading of dictionary file failed: #[error]#</div></dd>
-          #(/drw0ActionLoaded)#
-          #(drw0ActionRemoved)#::
-          <dt>Result</dt><dd><div class="commit">deactivated and removed dictionary file</div></dd>::
-          <dt>Result</dt><dd><div class="error">cannot remove dictionary file: #[error]#</div></dd>
-          #(/drw0ActionRemoved)#
-          #(drw0ActionDeactivated)#::
-          <dt>Result</dt><dd><div class="commit">deactivated dictionary file</div></dd>::
-          <dt>Result</dt><dd><div class="error">cannot deactivate dictionary file: #[error]#</div></dd>
-          #(/drw0ActionDeactivated)#
-          #(drw0ActionActivated)#::
-          <dt>Result</dt><dd><div class="commit">activated dictionary file</div></dd>::
-          <dt>Result</dt><dd><div class="error">cannot activate dictionary file: #[error]#</div></dd>
-          #(/drw0ActionActivated)#
-        </dl>
+      <fieldset class="formGroup">
+        <legend>GeoNames: population &gt; 5.000</legend>
+        <div class="description">
+          <p>With this file it is possible to find cities with a population &gt; 5.000 all over the world.</p>
+        </div>
+        <fieldset class="formSection">
+          <legend>Download location</legend>
+          <div class="content">
+            <a href="#[geon1URL]#">#[geon1URL]#</a>
+          </div>
+        </fieldset>
+        <fieldset class="formSection">
+          <legend>Storage location</legend>
+          <div class="content">
+            <code>#[geon1Storage]#</code>
+          </div>
+        </fieldset>
+        <fieldset class="formSection">
+          <legend>Status</legend>
+          <div class="content">
+            <em>
+              #(geon1Status)#
+              not loaded
+              ::
+              loaded
+              ::
+              deactivated
+              #(/geon1Status)#
+            </em>
+          </div>
+        </fieldset>
+        <fieldset class="formControl" data-id="formControl">
+          <div class="description">
+            #(geon1ActionLoaded)#::
+            <p>
+              <s class="sym sym-hint"></s>
+              Loaded and activated dictionary file.
+            </p>
+            ::
+            <p>
+              <s class="sym sym-error"></s>
+              Loading of dictionary file failed: #[error]#.
+            </p>
+            #(/geon1ActionLoaded)#
+            #(geon1ActionRemoved)#::
+            <p>
+              <s class="sym sym-hint"></s>
+              Deactivated and removed dictionary file.
+            </p>
+            ::
+            <p>
+              <s class="sym sym-error"></s>
+              Cannot remove dictionary file: #[error]#.
+            </p>
+            #(/geon1ActionRemoved)#
+            #(geon1ActionDeactivated)#::
+            <p>
+              <s class="sym sym-hint"></s>
+              Deactivated dictionary file.
+            </p>
+            ::
+            <p>
+              <s class="sym sym-error"></s>
+              Cannot deactivate dictionary file: #[error]#.
+            </p>
+            #(/geon1ActionDeactivated)#
+            #(geon1ActionActivated)#::
+            <p>
+              <s class="sym sym-hint"></s>
+              Activated dictionary file.
+            </p>
+            ::
+            <p>
+              <s class="sym sym-error"></s>
+              Cannot activate dictionary file: #[error]#.
+            </p>
+            #(/geon1ActionActivated)#
+          </div>
+          <div class="content">
+            #(geon1Status)#
+            <button type="submit" name="geon1Load" class="primary icon-run">Load</button>::
+            <button type="submit" name="geon1Deactivate" class="primary icon-run">Deactivate</button>
+            <button type="submit" name="geon1Remove" class="primary icon-delete">Remove</button>::
+            <button type="submit" name="geon1Activate" class="primary icon-run">Activate</button>
+            <button type="submit" name="geon1Remove" class="primary icon-delete">Remove</button>
+            #(/geon1Status)#
+          </div>
+        </fieldset>
       </fieldset>
-    </form>
-  #%env/templates/footer.template%#
-  </body>
+
+      <fieldset class="formGroup">
+        <legend>GeoNames: population &gt; 100.000</legend>
+        <div class="description">
+          <p>With this file it is possible to find cities with a population &gt; 100.000 all over the world.</p>
+        </div>
+        <fieldset class="formSection">
+          <legend>Download location</legend>
+          <div class="content">
+            <a href="#[geon2URL]#">#[geon2URL]#</a>
+          </div>
+        </fieldset>
+        <fieldset class="formSection">
+          <legend>Storage location</legend>
+          <div class="content">
+            <code>#[geon2Storage]#</code>
+          </div>
+        </fieldset>
+        <fieldset class="formSection">
+          <legend>Status</legend>
+          <div class="content">
+            <em>
+              #(geon2Status)#
+              not loaded
+              ::
+              loaded
+              ::
+              deactivated
+              #(/geon2Status)#
+            </em>
+          </div>
+        </fieldset>
+        <fieldset class="formControl" data-id="formControl">
+          <div class="description">
+            #(geon2ActionLoaded)#::
+            <p>
+              <s class="sym sym-hint"></s>
+              Loaded and activated dictionary file.
+            </p>
+            ::
+            <p>
+              <s class="sym sym-error"></s>
+              Loading of dictionary file failed: #[error]#.
+            </p>
+            #(/geon2ActionLoaded)#
+            #(geon2ActionRemoved)#::
+            <p>
+              <s class="sym sym-hint"></s>
+              Deactivated and removed dictionary file.
+            </p>
+            ::
+            <p>
+              <s class="sym sym-error"></s>
+              Cannot remove dictionary file: #[error]#.
+            </p>
+            #(/geon2ActionRemoved)#
+            #(geon2ActionDeactivated)#::
+            <p>
+              <s class="sym sym-hint"></s>
+              Deactivated dictionary file.
+            </p>
+            ::
+            <p>
+              <s class="sym sym-error"></s>
+              Cannot deactivate dictionary file: #[error]#.
+            </p>
+            #(/geon2ActionDeactivated)#
+            #(geon2ActionActivated)#::
+            <p>
+              <s class="sym sym-hint"></s>
+              Activated dictionary file.
+            </p>
+            ::
+            <p>
+              <s class="sym sym-error"></s>
+              Cannot activate dictionary file: #[error]#.
+            </p>
+            #(/geon2ActionActivated)#
+          </div>
+          <div class="content">
+            #(geon2Status)#
+            <button type="submit" name="geon2Load" class="primary icon-run">Load</button>::
+            <button type="submit" name="geon2Deactivate" class="primary icon-run">Deactivate</button>
+            <button type="submit" name="geon2Remove" class="primary icon-delete">Remove</button>::
+            <button type="submit" name="geon2Activate" class="primary icon-run">Activate</button>
+            <button type="submit" name="geon2Remove" class="primary icon-delete">Remove</button>
+            #(/geon2Status)#
+          </div>
+        </fieldset>
+      </fieldset>
+
+      <fieldset class="formGroup">
+        <legend>OpenGeoDB</legend>
+        <div class="description">
+          <p>
+            With this file it is possible to find locations in Germany using the location (city) name, a zip code, a car sign or a telephone pre-dial number.
+          </p>
+        </div>
+        <fieldset class="formSection">
+          <legend>Download location</legend>
+          <div class="content">
+            <a href="#[geo1URL]#">#[geo1URL]#</a>
+          </div>
+        </fieldset>
+        <fieldset class="formSection">
+          <legend>Storage location</legend>
+          <div class="content">
+            <code>#[geo1Storage]#</code>
+          </div>
+        </fieldset>
+        <fieldset class="formSection">
+          <legend>Status</legend>
+          <div class="content">
+            <em>
+              #(geo1Status)#
+              not loaded
+              ::
+              loaded
+              ::
+              deactivated
+              #(/geo1Status)#
+            </em>
+          </div>
+        </fieldset>
+        <fieldset class="formControl" data-id="formControl">
+          <div class="description">
+            #(geo1ActionLoaded)#::
+            <p>
+              <s class="sym sym-hint"></s>
+              Loaded and activated dictionary file.
+            </p>
+            ::
+            <p>
+              <s class="sym sym-error"></s>
+              Loading of dictionary file failed: #[error]#.
+            </p>
+            #(/geo1ActionLoaded)#
+            #(geo1ActionRemoved)#::
+            <p>
+              <s class="sym sym-hint"></s>
+              Deactivated and removed dictionary file.
+            </p>
+            ::
+            <p>
+              <s class="sym sym-error"></s>
+              Cannot remove dictionary file: #[error]#.
+            </p>
+            #(/geo1ActionRemoved)#
+            #(geo1ActionDeactivated)#::
+            <p>
+              <s class="sym sym-hint"></s>
+              Deactivated dictionary file.
+            </p>
+            ::
+            <p>
+              <s class="sym sym-error"></s>
+              Cannot deactivate dictionary file: #[error]#.
+            </p>
+            #(/geo1ActionDeactivated)#
+            #(geo1ActionActivated)#::
+            <p>
+              <s class="sym sym-hint"></s>
+              Activated dictionary file.
+            </p>
+            ::
+            <p>
+              <s class="sym sym-error"></s>
+              Cannot activate dictionary file: #[error]#.
+            </p>
+            #(/geo1ActionActivated)#
+          </div>
+          <div class="content">
+            #(geo1Status)#
+            <button type="submit" name="geo1Load" class="primary icon-run">Load</button>::
+            <button type="submit" name="geo1Deactivate" class="primary icon-run">Deactivate</button>
+            <button type="submit" name="geo1Remove" class="primary icon-delete">Remove</button>::
+            <button type="submit" name="geo1Activate" class="primary icon-run">Activate</button>
+            <button type="submit" name="geo1Remove" class="primary icon-delete">Remove</button>
+            #(/geo1Status)#
+          </div>
+        </fieldset>
+      </fieldset>
+    </fieldset>
+  </form>
+
+  <form action="DictionaryLoader_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
+    <fieldset>
+      <legend>Suggestions</legend>
+      <div class="description">
+        <p>
+          Suggestion dictionaries will help YaCy to provide better suggestions during the input of search words.
+        </p>
+      </div>
+
+      <fieldset class="formGroup">
+        <legend>DeReWo - Korpusbasierte Grund-/Wortformenlisten (German)</legend>
+        <div class="description">
+          <p>
+            <a href="http://www.ids-mannheim.de/kl/derewo/">DeReWo - Korpusbasierte Grund-/Wortformenlisten (German) of 'Institut f&uuml;r Deutsche Sprache'</a> provides 100000 most common german words for suggestions.
+          </p>
+        </div>
+        <fieldset class="formSection">
+          <legend>Download location</legend>
+          <div class="content">
+            <a href="#[drw0URL]#">#[drw0URL]#</a>
+          </div>
+        </fieldset>
+        <fieldset class="formSection">
+          <legend>Storage location</legend>
+          <div class="content">
+            <code>#[drw0Storage]#</code>
+          </div>
+        </fieldset>
+        <fieldset class="formSection">
+          <legend>Status</legend>
+          <div class="content">
+            <em>
+              #(drw0Status)#
+              not loaded
+              ::
+              loaded
+              ::
+              deactivated
+              #(/drw0Status)#
+            </em>
+          </div>
+        </fieldset>
+        <fieldset class="formControl" data-id="formControl">
+          <div class="description">
+            #(drw0ActionLoaded)#::
+            <p>
+              <s class="sym sym-hint"></s>
+              Loaded and activated dictionary file.
+            </p>
+            ::
+            <p>
+              <s class="sym sym-error"></s>
+              Loading of dictionary file failed: #[error]#.
+            </p>
+            #(/drw0ActionLoaded)#
+            #(drw0ActionRemoved)#::
+            <p>
+              <s class="sym sym-hint"></s>
+              Deactivated and removed dictionary file.
+            </p>
+            ::
+            <p>
+              <s class="sym sym-error"></s>
+              Cannot remove dictionary file: #[error]#.
+            </p>
+            #(/drw0ActionRemoved)#
+            #(drw0ActionDeactivated)#::
+            <p>
+              <s class="sym sym-hint"></s>
+              Deactivated dictionary file.
+            </p>
+            ::
+            <p>
+              <s class="sym sym-error"></s>
+              Cannot deactivate dictionary file: #[error]#.
+            </p>
+            #(/drw0ActionDeactivated)#
+            #(drw0ActionActivated)#::
+            <p>
+              <s class="sym sym-hint"></s>
+              Activated dictionary file.
+            </p>
+            ::
+            <p>
+              <s class="sym sym-error"></s>
+              Cannot activate dictionary file: #[error]#.
+            </p>
+            #(/drw0ActionActivated)#
+          </div>
+          <div class="content">
+            #(drw0Status)#
+            <button type="submit" name="drw0Load" class="primary icon-run">Load</button>::
+            <button type="submit" name="drw0Deactivate" class="primary icon-run">Deactivate</button>
+            <button type="submit" name="drw0Remove" class="primary icon-delete">Remove</button>::
+            <button type="submit" name="drw0Activate" class="primary icon-run">Activate</button>
+            <button type="submit" name="drw0Remove" class="primary icon-delete">Remove</button>
+            #(/drw0Status)#
+          </div>
+        </fieldset>
+      </fieldset>
+    </fieldset>
+  </form>
+  #%env/templates/page-end.template%#
+</body>
 </html>
