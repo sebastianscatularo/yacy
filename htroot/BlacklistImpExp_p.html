@@ -1,101 +1,136 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>YaCy '#[clientname]#': Blacklist Import</title>
-    #%env/templates/metas.template%#
-  </head>
-  <body id="Blacklist">
-    #%env/templates/header.template%#
+<head>
+  <title>YaCy '#[clientname]#': Blacklist Import</title>
+  #%env/templates/header-backend.template%#
+</head>
 
-    <h2>Blacklist Import</h2>
-    <p>Used Blacklist engine: <span class="settingsValue">#[blacklistEngine]#</span></p>
+<body id="blacklistImportExport">
+  #%env/templates/page-start.template%#
 
-    #(disabled)#
-    <fieldset class="importListItems">
-      <legend>Import blacklist items from...</legend>
-      <!-- Blacklist import from other peer -->
-      <form action="sharedBlacklist_p.html" method="get" accept-charset="UTF-8">
-        <fieldset>
-          <legend>other YaCy peers:</legend>
-          <select name="hash">
-            #{otherHosts}#
-            <option value="#[hash]#">#[name]#</option>
-            #{/otherHosts}#
-          </select>
-          <input type="submit" value="Load new blacklist items" />
-        </fieldset>
-      </form>
+  <h1>Blacklist Import</h1>
+  <p>Used Blacklist engine: <em>#[blacklistEngine]#</em></p>
 
-      <!-- blacklist import from url -->
-      <form action="sharedBlacklist_p.html" method="get" accept-charset="UTF-8">
-        <fieldset>
-          <legend>URL:</legend>
+  #(disabled)#
+  <fieldset class="main">
+    <legend>Import</legend>
+    <div class="description">
+      <p>
+        You can import blacklists from various resources. Please pick one from the list below.
+      </p>
+    </div>
+    <fieldset class="formSection">
+      <legend>Other YaCy peer</legend>
+      <div class="content">
+        <form action="sharedBlacklist_p.html" method="get" accept-charset="UTF-8">
+          <p>
+            <select name="hash">
+              #{otherHosts}#
+              <option value="#[hash]#">#[name]#</option>
+              #{/otherHosts}#
+            </select>
+          </p>
+          <p>
+            <button type="submit" class="icon-run">Load new blacklist items</button>
+          </p>
+        </form>
+      </div>
+    </fieldset>
+    <fieldset class="formSection">
+      <legend>URL</legend>
+      <div class="content">
+        <form action="sharedBlacklist_p.html" method="get" accept-charset="UTF-8">
           <input type="hidden" name="currentBlacklist" value="#[currentBlacklist]#" />
-          <input type="text" name="url" />
-          <input type="submit" value="Load new blacklist items" />
-        </fieldset>
-      </form>
-
-      <!-- blacklist import from text file -->
-      <form action="sharedBlacklist_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
-        <fieldset>
-          <legend>plain text file:</legend>
-          Upload a regular text file which contains one blacklist entry per line.<br /><br />
+          <p>
+            <input type="text" name="url" />
+          </p>
+          <p>
+            <button type="submit" class="icon-run">Load new blacklist items</button>
+          </p>
+        </form>
+      </div>
+    </fieldset>
+    <fieldset class="formSection">
+      <legend>Plain text</legend>
+      <div class="content">
+        <form action="sharedBlacklist_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
           <input type="hidden" name="currentBlacklist" value="#[currentBlacklist]#" />
           <input type="hidden" name="type" value="plaintext" />
-          <input type="file" name="file" />
-          <input type="submit" value="Load new blacklist items" />
-        </fieldset>
-      </form>
-
-      <!-- blacklist import from xml file -->
-      <form action="sharedBlacklist_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
-        <fieldset>
-          <legend>XML file:</legend>
-          Upload an XML file which contains one or more blacklists.<br /><br />
+          <p>
+            Upload a regular text file which contains one blacklist entry per line.
+          </p>
+          <p>
+            <input type="file" name="file" />
+          </p>
+          <p>
+            <button type="submit" class="icon-run">Load new blacklist items</button>
+          </p>
+        </form>
+      </div>
+    </fieldset>
+    <fieldset class="formSection">
+      <legend>XML file</legend>
+      <div class="content">
+        <form action="sharedBlacklist_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
           <input type="hidden" name="currentBlacklist" value="#[currentBlacklist]#" />
           <input type="hidden" name="type" value="xml" />
-          <input type="file" name="file" />
-          <input type="submit" value="Load new blacklist items" />
-        </fieldset>
-      </form>
-    </fieldset>::#(/disabled)#
-
-    <fieldset class="exportListItems">
-        <legend>Export blacklist items to...</legend>
-
-        <form action="xml/blacklists_p.xml" method="get" accept-charset="UTF-8">
-            <fieldset>
-                <legend>XML file:</legend>
-                Here you can export a blacklist as an XML file. This file will contain additional
-                information about which cases a blacklist is activated for.<br /><br />
-                <select name="listname">
-                    #{blackListNames}#
-                    <option value="#[blackListName]#">#[blackListName]#</option>
-                    #{/blackListNames}#
-                    <option value="">all</option>
-          </select>
-                <input type="submit" value="Export list as XML" />
-            </fieldset>
+          <p>
+            Upload an <abbr>XML</abbr> file which contains one or more blacklists.
+          </p>
+          <p>
+            <input type="file" name="file" />
+          </p>
+          <p>
+            <button type="submit" class="icon-run">Load new blacklist items</button>
+          </p>
         </form>
-
-        <form action="yacy/list.html" method="get" accept-charset="UTF-8">
-            <fieldset>
-                <legend>plain text file:</legend>
-                Here you can export a blacklist as a regular text file with one blacklist entry per line.
-                This file will not contain any additional information.<br /><br />
-                <select name="listname">
-                    #{blackListNames}#
-                    <option value="#[blackListName]#">#[blackListName]#</option>
-                    #{/blackListNames}#
-                    <option value="">all</option>
-                </select>
-                <input type="hidden" name="col" value="black" />
-                <input type="submit" value="Export list as text" />
-            </fieldset>
-        </form>
-
+      </div>
     </fieldset>
-    #%env/templates/footer.template%#
-  </body>
+  </fieldset>
+  ::#(/disabled)#
+
+  <fieldset class="main">
+    <legend>Export</legend>
+
+    <fieldset class="formSection">
+      <legend>XML file</legend>
+      <div class="content">
+        <p>
+          Here you can export a blacklist as an <abbr>XML</abbr> file. This file will contain additional
+          information about which cases a blacklist is activated for.
+        </p>
+        <form action="xml/blacklists_p.xml" method="get" accept-charset="UTF-8">
+          <select name="listname">
+            #{blackListNames}#
+            <option value="#[blackListName]#">#[blackListName]#</option>
+            #{/blackListNames}#
+            <option value="">all</option>
+          </select>
+          <input type="submit" value="Export list as XML" />
+        </form>
+      </div>
+    </fieldset>
+    <fieldset class="formSection">
+      <legend>Plain text</legend>
+      <div class="content">
+        <p>
+          Here you can export a blacklist as a regular text file with one blacklist entry per line.
+          This file will not contain any additional information.
+        </p>
+        <form action="yacy/list.html" method="get" accept-charset="UTF-8">
+          <input type="hidden" name="col" value="black" />
+          <select name="listname">
+            #{blackListNames}#
+            <option value="#[blackListName]#">#[blackListName]#</option>
+            #{/blackListNames}#
+            <option value="">all</option>
+          </select>
+          <input type="submit" value="Export list as text" />
+        </form>
+      </div>
+    </fieldset>
+
+  </fieldset>
+  #%env/templates/page-end.template%#
+</body>
 </html>
