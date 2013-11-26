@@ -129,7 +129,10 @@ fieldset.formGroup {
     bottom:1px solid $ycu-var-color-fieldset-border;
   }
   background-color:$ycu-var-color-fieldset-formgroup-bg;
-  margin-bottom:$margin-bottom;
+
+  &:not(:last-of-type) {
+    margin-bottom:$margin-bottom;
+  }
 
   // nested fieldsets
   fieldset {
@@ -196,7 +199,7 @@ fieldset.formControl {
 
 // very first fieldset
 fieldset.main,
-form > fieldset:first-child {
+form > fieldset:not(.formGroup):not(.formSection):first-child {
   margin:0;
 
   > .description {
@@ -490,7 +493,7 @@ form {
 }
 
 fieldset.main,
-form > fieldset:first-of-type {
+form > fieldset:not(.formGroup):not(.formSection):first-of-type {
   border: {
     left:1px solid rgba(50,50,50,0.2);
     top:1px solid rgba(50,50,50,0.1);

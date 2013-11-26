@@ -2802,8 +2802,9 @@ fieldset {
 fieldset.formGroup {
   border-top: 1px solid #aabee0;
   border-bottom: 1px solid #aabee0;
-  background-color: #cfdbee;
-  margin-bottom: 1em; }
+  background-color: #cfdbee; }
+  fieldset.formGroup:not(:last-of-type) {
+    margin-bottom: 1em; }
   fieldset.formGroup fieldset {
     background-color: inherit; }
   fieldset.formGroup > legend {
@@ -2837,15 +2838,15 @@ fieldset.formControl {
   margin-top: 1.5em; }
 
 fieldset.main,
-form > fieldset:first-child {
+form > fieldset:not(.formGroup):not(.formSection):first-child {
   margin: 0; }
   fieldset.main > .description,
-  form > fieldset:first-child > .description {
+  form > fieldset:not(.formGroup):not(.formSection):first-child > .description {
     margin-top: 1em;
     font-size: 1em;
     border-left: 0; }
   fieldset.main > legend:first-child,
-  form > fieldset:first-child > legend:first-child {
+  form > fieldset:not(.formGroup):not(.formSection):first-child > legend:first-child {
     font-size: 1.2em;
     font-weight: bold;
     padding: 0.2em 0.5em;
@@ -2854,13 +2855,13 @@ form > fieldset:first-child {
     background-color: #94E84D;
     border-radius: 5px; }
   fieldset.main:not(.collapsible) > legend:before,
-  form > fieldset:first-child:not(.collapsible) > legend:before {
+  form > fieldset:not(.formGroup):not(.formSection):first-child:not(.collapsible) > legend:before {
     content: ''; }
   fieldset.main.collapsible.collapsed,
-  form > fieldset:first-child.collapsible.collapsed {
+  form > fieldset:not(.formGroup):not(.formSection):first-child.collapsible.collapsed {
     padding-bottom: 1em; }
   fieldset.main.collapsible > legend:first-child,
-  form > fieldset:first-child.collapsible > legend:first-child {
+  form > fieldset:not(.formGroup):not(.formSection):first-child.collapsible > legend:first-child {
     width: auto !important; }
 
 fieldset.collapsible {
@@ -2994,12 +2995,12 @@ form {
   margin-bottom: 1.5em; }
 
 fieldset.main,
-form > fieldset:first-of-type {
+form > fieldset:not(.formGroup):not(.formSection):first-of-type {
   border-left: 1px solid rgba(50, 50, 50, 0.2);
   border-top: 1px solid rgba(50, 50, 50, 0.1);
   box-shadow: 5px 5px 5px rgba(50, 50, 50, 0.4); }
   fieldset.main > legend,
-  form > fieldset:first-of-type > legend {
+  form > fieldset:not(.formGroup):not(.formSection):first-of-type > legend {
     box-shadow: 2px 2px 1px rgba(50, 50, 50, 0.4); }
 
 .resourceQueryBox {
