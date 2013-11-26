@@ -52,7 +52,7 @@
 
     #(results)#
     ::<!-- 1: Show results -->
-    <h2 id="checkResults">Check results</h2>
+    <h2 id="checkResults" class="numbered">Check results</h2>
 
     <strong>#[entries]# Illegal Entries in <code>#[blList]#</code> for <em>#[blEngine]#</em>.</strong>
     #(modified)#
@@ -106,11 +106,12 @@
     </table>
     <button type="submit" name="delete" class="icon-delete">Delete Selected</button>
     <button type="submit" name="alter" class="primary icon-run">Change Selected</button>
-    ::#(/disabled)#
-    ::<!-- 2: Error -->
-    <span class="error">No Blacklist selected</span>
-    #(/results)#
   </form>
+  ::#(/disabled)#
+  ::<!-- 2: Error -->
+  <span class="error">No Blacklist selected</span>
+  #(/results)#
+
 
   #%env/templates/page-end.template%#
 </body>

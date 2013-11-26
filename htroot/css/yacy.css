@@ -3245,16 +3245,21 @@ main .ym-wbox:first-of-type h1, main .ym-wbox:first-of-type h2, main .ym-wbox:fi
   text-transform: capitalize; }
 main .ym-wbox:first-of-type h1:before, main .ym-wbox:first-of-type h2:before, main .ym-wbox:first-of-type h3:before {
   opacity: 0.7; }
+main .ym-wbox:first-of-type h1.numbered,
 main .ym-wbox:first-of-type > h1 {
   counter-reset: h2-counter; }
+  main .ym-wbox:first-of-type h1.numbered:not(.noNumber):before,
   main .ym-wbox:first-of-type > h1:not(.noNumber):before {
     content: counter(h1-counter) ".\00a0";
     counter-increment: h1-counter; }
+main .ym-wbox:first-of-type h2.numbered,
 main .ym-wbox:first-of-type > h2 {
   counter-reset: h3-counter; }
+  main .ym-wbox:first-of-type h2.numbered:not(.noNumber):before,
   main .ym-wbox:first-of-type > h2:not(.noNumber):before {
     content: counter(h1-counter) "." counter(h2-counter) ".\00a0";
     counter-increment: h2-counter; }
+main .ym-wbox:first-of-type h3.numbered:not(.noNumber):before,
 main .ym-wbox:first-of-type > h3:not(.noNumber):before {
   content: counter(h1-counter) "." counter(h2-counter) "." counter(h3-counter) ".\00a0";
   counter-increment: h3-counter; }
