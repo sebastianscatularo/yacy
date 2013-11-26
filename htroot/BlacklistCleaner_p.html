@@ -1,71 +1,117 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>YaCy '#[clientname]#': Blacklist Cleaner</title>
-    #%env/templates/metas.template%#
-  </head>
-  <body id="BlacklistCleaner">
-    #%env/templates/header.template%#
+<head>
+  <title>YaCy '#[clientname]#': Blacklist Cleaner</title>
+  #%env/templates/header-backend.template%#
+  <script type="text/javascript" src="/js/yaml/tablesorter/jquery.tablesorter.min.js"></script>
+</head>
 
-    <h2>Blacklist Cleaner</h2>
-    <p>Here you can remove or edit illegal or double blacklist-entries.</p>
+<body id="blacklistCleaner">
+  #%env/templates/page-start.template%#
 
-    <form action="BlacklistCleaner_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">#(disabled)#
-      <fieldset class="selectList"><legend>Check list</legend>
-        <div style="display:inline;">
-          <select name="listNames" size="1">#{blacklists}#
-            <option value="#[name]#"#(selected)#:: selected="selected"#(/selected)#>#[name]#</option>#{/blacklists}#
-          </select>
-            <br /><br />
+  <h1>Blacklist Cleaner</h1>
+  <p>Here you can remove or edit illegal or double blacklist-entries.</p>
+
+  <form action="BlacklistCleaner_p.html#checkResults" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
+    #(disabled)#
+    <fieldset>
+      <legend>Blacklist check</legend>
+      <fieldset class="formSection">
+        <legend>Target list</legend>
+        <div class="content">
+          <p>
+            <select name="listNames" size="1">
+              #{blacklists}#
+              <option value="#[name]#"#(selected)#:: selected="selected"#(/selected)#>#[name]#</option>#{/blacklists}#
+            </select>
+          </p>
+          <p>
             <input type="checkbox" name="allowRegex" #(checked)#:: checked="checked"#(/checked)# />
-                   Allow regular expressions in host part of blacklist entries.
-            <br /><br />
-          <input type="submit" name="list" value="Check" />
-        </div>::
-        <p class="error">The blacklist-cleaner only works for the following blacklist-engines up to now:</p>
-        <ul>#{engines}#
-          <li class="tt">#[name]#</li>#{/engines}#
-        </ul>::
-        #(/disabled)#
+            Allow regular expressions in host part of blacklist entries.
+          </p>
+        </div>
       </fieldset>
 
-      #(results)#
-      ::<!-- 1: Show results -->
-      <fieldset><legend>#[entries]# Illegal Entries in #[blList]# for #[blEngine]#</legend>
-        #(modified)#
-        ::<p>Deleted #[delCount]# entries</p>
-        ::<p>Altered #[alterCount]# entries!</p>
-        #(/modified)#
+      <fieldset class="formControl" data-id="formControl">
+        <div class="content">
+          <button type="submit" name="list" class="primary icon-run">Check blacklist</button>
+        </div>
+      </fieldset>
+      ::
+      <p class="error">
+        The blacklist-cleaner only works for the following blacklist-engines up to now:
+      </p>
+      <ul>
+        #{engines}#
+        <li class="tt">#[name]#</li>
+        #{/engines}#
+      </ul>
+      ::
+      #(/disabled)#
+    </fieldset>
 
-        #(disabled)#
-        <dl>
-          #{entries}#
-          <dt>
-            <label for="select#[entry]#" class="error">
-              #(error)#Two wildcards in host-part
-              ::<!-- no error, should never be visible -->
-              ::Either subdomain <u>or</u> wildcard
-              ::Path is invalid Regex
-              ::Wildcard not on begin or end
-              ::Host contains illegal chars
-              ::Double
-              ::Host is invalid Regex
-              #(/error)#
-            </label>
+    #(results)#
+    ::<!-- 1: Show results -->
+    <h2 id="checkResults">Check results</h2>
+
+    <strong>#[entries]# Illegal Entries in <code>#[blList]#</code> for <em>#[blEngine]#</em>.</strong>
+    #(modified)#
+    ::
+    <p>
+      <s class="sym sym-hint"></s>
+      Deleted #[delCount]# entries
+    </p>
+    ::
+    <p>
+      <s class="sym sym-hint"></s>
+      Altered #[alterCount]# entries!
+    </p>
+    #(/modified)#
+
+    #(disabled)#
+    <table class="sortable">
+      <thead>
+        <tr>
+          <th>
+            <input type="checkbox" data-action="checkAllToggle"/>
+          </th>
+          <th>Error</th>
+          <th>Entry</th>
+        </tr>
+      </thead>
+      <tbody>
+        #{entries}#
+        <tr>
+          <td>
             <input type="checkbox" name="select#[entry]#" id="select#[entry]#" checked="checked" />
-          </dt>
-          <dd><input type="text" name="entry#[entry]#" value="#[entry]#" size="50" /></dd>#{/entries}#
-          <dt>&nbsp;</dt>
-          <dd>
-            <input type="submit" name="alter" value="Change Selected" /> <input type="submit" name="delete" value="Delete Selected" />
-          </dd>
-        </dl>::#(/disabled)#
-      </fieldset>
-      ::<!-- 2: Error -->
-      <span class="error">No Blacklist selected</span>
-      #(/results)#
-    </form>
+          </td>
+          <td>
+            #(error)#
+            Two wildcards in host-part
+            ::<!-- no error, should never be visible -->
+            ::Either subdomain <u>or</u> wildcard
+            ::Path is invalid Regex
+            ::Wildcard not on begin or end
+            ::Host contains illegal chars
+            ::Double
+            ::Host is invalid Regex
+            #(/error)#
+          </td>
+          <td>
+            <input type="text" name="entry#[entry]#" value="#[entry]#"/>
+          </td>
+        </tr>
+        #{/entries}#
+      </tbody>
+    </table>
+    <button type="submit" name="delete" class="icon-delete">Delete Selected</button>
+    <button type="submit" name="alter" class="primary icon-run">Change Selected</button>
+    ::#(/disabled)#
+    ::<!-- 2: Error -->
+    <span class="error">No Blacklist selected</span>
+    #(/results)#
+  </form>
 
-    #%env/templates/footer.template%#
-  </body>
+  #%env/templates/page-end.template%#
+</body>
 </html>
