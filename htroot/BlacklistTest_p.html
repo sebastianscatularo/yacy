@@ -1,41 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>YaCy '#[clientname]#': Blacklist Test</title>
-    #%env/templates/metas.template%#
-  </head>
-  <body id="Blacklist">
-    #%env/templates/header.template%#
+<head>
+  <title>YaCy '#[clientname]#': Blacklist Test</title>
+  #%env/templates/header-backend.template%#
+</head>
 
-    <h2>Blacklist Test</h2>
-    <p>Used Blacklist engine: <span class="settingsValue">#[blacklistEngine]#</span></p>
-    <!-- blacklist selection -->
-    <form action="BlacklistTest_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
-      <fieldset>
-        <legend>Test list:</legend>
-        <input type="text" name="testurl" size="50" value="#[url]#" />
-        <input type="submit" name="testList" value="Test" />
+<body id="blacklistTest">
+  #%env/templates/page-start.template%#
 
-        #(testlist)#::
-          <br /><br />
-          <div>
-            The tested URL was #[url]#<br>
-            #(isnotblocked)#It is blocked for the following cases:<br>::<br><b>is not blocked</b><br>#(/isnotblocked)#
-            <ul>
-              #(listedincrawler)#::<li>Crawling</li>#(/listedincrawler)#
-              #(listedindht)#::<li>DHT</li>#(/listedindht)#
-              #(listedinnews)#::<li>News</li>#(/listedinnews)#
-              #(listedinproxy)#::<li>Proxy</li>#(/listedinproxy)#
-              #(listedinsearch)#::<li>Search</li>#(/listedinsearch)#
-              #(listedinsurftips)#::<li>Surftips</li>#(/listedinsurftips)#
-            </ul>
-          </div>
-          ::
-          <br /><br />
-          <div>The tested URL was not valid.</div>
-        #(/testlist)#
+  <h1>Blacklist Test</h1>
+  <p>Using Blacklist engine: <em>#[blacklistEngine]#</em></p>
+  <form action="BlacklistTest_p.html#testResults" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
+    <fieldset>
+      <legend>Test blacklist</legend>
+
+      <fieldset class="formSection">
+        <legend>Test URL</legend>
+        <div class="content">
+          <input type="text" name="testurl" size="50" value="#[url]#" />
+        </div>
       </fieldset>
-    </form>
-    #%env/templates/footer.template%#
-  </body>
+
+      <fieldset class="formControl" data-id="formControl">
+        <div class="content">
+          <button type="submit" name="testList" class="primary icon-run">Run test</button>
+        </div>
+      </fieldset>
+    </fieldset>
+  </form>
+
+  #(testlist)#::
+  <h2 id="testResults">Test results</h2>
+  <p>
+    The tested <abbr>URL</abbr> was <code>#[url]#</code>.
+  </p>
+  #(isnotblocked)#
+  It is <strong>blocked</strong> for the following cases:
+  ::
+  <s class="sym sym-hint"></s>
+  <strong>The given <abbr>URL</abbr> is not blocked</strong>
+  #(/isnotblocked)#
+  <ul>
+    #(listedincrawler)#::<li>Crawling</li>#(/listedincrawler)#
+    #(listedindht)#::<li>DHT</li>#(/listedindht)#
+    #(listedinnews)#::<li>News</li>#(/listedinnews)#
+    #(listedinproxy)#::<li>Proxy</li>#(/listedinproxy)#
+    #(listedinsearch)#::<li>Search</li>#(/listedinsearch)#
+    #(listedinsurftips)#::<li>Surftips</li>#(/listedinsurftips)#
+  </ul>
+  ::
+  <h2 id="testResults">Test results</h2>
+  <p class="error">The tested URL was not valid.</p>
+  #(/testlist)#
+
+  #%env/templates/page-end.template%#
+</body>
 </html>
