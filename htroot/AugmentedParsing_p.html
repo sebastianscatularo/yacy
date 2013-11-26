@@ -1,47 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>YaCy '#[clientname]#': Augmented Parsing</title>
-    #%env/templates/metas.template%#
-  </head>
-  <body id="Settings">
-    #%env/templates/header.template%#
+<head>
+  <title>YaCy '#[clientname]#': Augmented Parsing</title>
+  #%env/templates/header-backend.template%#
+</head>
 
-    <h2>Augmented Parsing</h2>
+<body id="augmentedParsing">
+  #%env/templates/page-start.template%#
 
-    <form id="parsersettings" action="AugmentedParsing_p.html" method="post" enctype="multipart/form-data">
-<fieldset><legend id="urlproxy">Global Status</legend>
-<p>
-  With this settings you can activate or deactivate augmented parsing which combines the documents with information from external sources (tags etc.).
-</p>
+  <h1>Augmented Parsing</h1>
 
-            <dl>
+  <form id="parsersettings" action="AugmentedParsing_p.html#parsersettings" method="post" enctype="multipart/form-data">
+    <fieldset>
+      <legend>Global Status</legend>
+      <div class="description">
+        <p>
+          With this settings you can activate or deactivate augmented parsing which combines the documents with information from external sources (tags etc.).
+        </p>
+      </div>
 
-            <dt><label for="content">Augmented Parser:</label></dt>
-              <dd>
-                <input type="checkbox" name="augmentedparserenabled" id="augmentedparserenabled" #(augmentedparserenabled_checked)#:: checked="checked"#(/augmentedparserenabled_checked)# />Enabled<br/>
-                <p class="help">
-                  Globally enables or disables the augmented parser. This setting requires a restart.
-                </p>
-              </dd>
+      <fieldset class="formSection">
+        <legend>Augmented Parser</legend>
+        <div class="content">
+          <p>
+            <input type="checkbox" name="augmentedparserenabled" id="augmentedparserenabled" #(augmentedparserenabled_checked)#:: checked="checked"#(/augmentedparserenabled_checked)# />
+            <label for="augmentedparserenabled">Globally enables or disables the augmented parser.</label>
+          </p>
+          <p class="help">
+            <s class="sym sym-hint"></s>
+            This setting requires a restart.
+          </p>
+        </div>
+      </fieldset>
 
-              <dt><label for="content">Augmented Parser - RDFa:</label></dt>
-              <dd>
-                <input type="checkbox" name="augmentedparserRDFenabled" id="augmentedparserRDFenabled" #(augmentedparserRDFenabled_checked)#:: checked="checked"#(/augmentedparserRDFenabled_checked)# />Enabled<br/>
-                <p class="help">
-                  Globally enables or disables the RDFa parser. This setting requires a restart.
-                </p>
-              </dd>
+      <fieldset class="formGroup">
+        <legend>Parser</legend>
+        <fieldset class="formSection">
+          <legend>RDFa</legend>
+          <div class="content">
+            <p>
+              <input type="checkbox" name="augmentedparserRDFenabled" id="augmentedparserRDFenabled" #(augmentedparserRDFenabled_checked)#:: checked="checked"#(/augmentedparserRDFenabled_checked)# />
+              <label for="augmentedparserRDFenabled">Globally enables or disables the <abbr>RDFa</abbr> parser.</label>
+            </p>
+            <p>
+              <s class="sym sym-hint"></s>
+              This setting requires a restart.
+            </p>
+          </div>
+        </fieldset>
+      </fieldset>
+      <fieldset class="formControl" data-id="formControl">
+        <div class="content">
+          <button type="submit" name="augmentedparserSettings" class="primary icon-run">Save</button>
+        </div>
+      </fieldset>
+    </fieldset>
+  </form>
 
 
-            </dl>
-
-
-            <input type="submit" name="augmentedparserSettings" value="Submit"/>
-</fieldset>
-</form>
-
-
-    #%env/templates/footer.template%#
-  </body>
+  #%env/templates/page-end.template%#
+</body>
 </html>
