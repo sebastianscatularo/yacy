@@ -1,0 +1,29 @@
+body#viewLog {
+  #logContent {
+    code {
+      color:#000;
+
+      span {
+        display:block;
+      }
+    }
+
+    .level-debug {
+      opacity:0.7;
+    }
+    .level-info {
+      color:#2250EE;
+    }
+    .level-severe {
+      font-weight:bold;
+      color:#880000;
+    }
+    .level-system {
+      color:#EE22CE;
+    }
+    .level-warning {
+      font-weight:bold;
+      color:#C38411;
+    }
+  }
+}
