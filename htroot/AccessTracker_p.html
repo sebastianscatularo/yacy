@@ -1,22 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>YaCy '#[clientname]#': Access Tracker</title>
-    #%env/templates/metas.template%#
-    <script type="text/javascript" src="/js/yaml/tablesorter/jquery.tablesorter.min.js"></script>
-  </head>
-  <body id="AccessTracker">
-    #%env/templates/header.template%#
+<head>
+  <title>YaCy '#[clientname]#': Access Tracker</title>
+  #%env/templates/header-backend.template%#
+  <script type="text/javascript" src="/js/yaml/tablesorter/jquery.tablesorter.min.js"></script>
+</head>
 
-    #(page)#
-    <h2>Server Access Overview</h2>
-    <p>This is a list of #[num]# requests to the local http server within the last hour.</p>
-    <table border="0" cellpadding="2" cellspacing="1">
-      <tr class="TableHeader">
-        <td rowspan="2">Host</td>
-        <td colspan="4">Access Count During</td>
+<body id="accessTracker">
+  #%env/templates/page-start.template%#
+
+  <div id="devInfo">
+    untested
+  </div>
+
+  #(page)#
+  <h1>Server Access Overview</h1>
+  <p>
+    This is a list of #[num]# requests to the local http server within the last hour.
+  </p>
+  <table>
+    <thead>
+      <tr>
+        <th rowspan="2">Host</th>
+        <th colspan="4">Access Count During</th>
       </tr>
-      <tr class="TableHeader">
+    </thead>
+    <tbody>
+      <tr class="th">
+        <td></td>
         <td>last Second</td>
         <td>last Minute</td>
         <td>last 10 Minutes</td>
@@ -31,30 +42,44 @@
         <td>#[countHour]#</td>
       </tr>
       #{/list}#
-    </table>
-    <p>The following hosts are registered as source for brute-force requests to protected pages</p>
-    <table class="sortable" border="0" cellpadding="2" cellspacing="1">
-      <tr class="TableHeader">
-        <td>Host</td>
-        <td>Access Times</td>
+    </tbody>
+  </table>
+
+  <h2>Malicious Hosts</h2>
+  <p>
+    The following hosts are registered as source for brute-force requests to protected pages.
+  </p>
+  <table class="sortable">
+    <thead>
+      <tr>
+        <th>Host</th>
+        <th>Access Times</th>
       </tr>
+    </thead>
+    <tbody>
       #{bflist}#
       <tr class="TableCell#(dark)#Light::Dark#(/dark)#">
         <td>#[host]#</td>
         <td>#[countSecond]#</td>
       </tr>
       #{/bflist}#
-    </table>
-    ::
-    <h2>Server Access Details</h2>
-    <p>This is a list of requests to the local http server within the last hour.</p>
-    <p>Showing #[num]# requests.</p>
-    <table class="sortable" border="0" cellpadding="2" cellspacing="1">
-      <tr class="TableHeader">
-        <td>Host</td>
-        <td>Date</td>
-        <td>Path</td>
+    </tbody>
+  </table>
+  ::
+  <h2>Server Access Details</h2>
+  <p>
+    This is a list of requests to the local http server within the last hour.
+  </p>
+  <p>Showing #[num]# requests.</p>
+  <table class="sortable">
+    <thead>
+      <tr>
+        <th>Host</th>
+        <th>Date</th>
+        <th>Path</th>
       </tr>
+    </thead>
+    <tbody>
       #{list}#
       <tr class="TableCell#(dark)#Light::Dark#(/dark)#">
         <td><a href="AccessTracker_p.html?page=1&amp;host=#[host]#">#[host]#</a></td>
@@ -62,29 +87,33 @@
         <td><a href="#[path]#">#[path]#</a></td>
       </tr>
       #{/list}#
-    </table>
-    ::
-    <h2>Local Search Log</h2>
-    <p>This is a list of searches that had been requested from this' peer search interface</p>
-    <p>Showing #[num]# entries from a total of #[total]# requests.</p>
-    <table class="sortable" border="0" cellpadding="2" cellspacing="1">
+    </tbody>
+  </table>
+  ::
+  <h2>Local Search Log</h2>
+  <p>
+    This is a list of searches that had been requested from this' peer search interface.
+    <br/>
+    Showing #[num]# entries from a total of #[total]# requests.
+  </p>
+  <table class="sortable">
     <thead>
-      <tr class="TableHeader">
-        <td>Requesting Host</td>
-        <td>Date</td>
-        <td>Offset</td>
-        <td>Expected Results</td>
-        <td>Returned Results</td>
-        <td>Known Results</td>
-        <td>Used Time (ms)</td>
-        <td>URL fetch (ms)</td>
-        <td>Snippet comp (ms)</td>
-        <td>Query</td>
-        <td>User Agent</td>
+      <tr>
+        <th>Requesting Host</th>
+        <th>Date</th>
+        <th>Offset</th>
+        <th>Expected Results</th>
+        <th>Returned Results</th>
+        <th>Known Results</th>
+        <th>Used Time (ms)</th>
+        <th>URL fetch (ms)</th>
+        <th>Snippet comp (ms)</th>
+        <th>Query</th>
+        <th>User Agent</th>
       </tr>
     </thead>
     <tfoot>
-      <tr class="TableHeader">
+      <tr class="th">
         <td></td>
         <td></td>
         <td></td>
@@ -100,7 +129,7 @@
     </tfoot>
     <tbody>
       #{list}#
-      <tr class="TableCell#(dark)#Light::Dark#(/dark)#">
+      <tr>
         <td>#[host]#</td>
         <td>#[date]#</td>
         <td>#[offset]#</td>
@@ -115,22 +144,25 @@
       </tr>
       #{/list}#
     </tbody>
-    </table>
-    ::
-    <h2>Local Search Host Tracker</h2>
-    <p>This is a list of searches that had been requested from this' peer search interface</p>
-    <p>Showing #[num]# entries from a total of #[total]# requests.</p>
-    <table class="sortable" border="0" cellpadding="2" cellspacing="1">
+  </table>
+  ::
+  <h2>Local Search Host Tracker</h2>
+  <p>
+    This is a list of searches that had been requested from this' peer search interface.
+    <br/>
+    Showing #[num]# entries from a total of #[total]# requests.
+  </p>
+  <table class="sortable">
     <thead>
-      <tr class="TableHeader">
-        <td>Requesting Host</td>
-        <td>Count</td>
-        <td>Queries Per Last Hour</td>
-        <td>Access Dates</td>
+      <tr>
+        <th>Requesting Host</th>
+        <th>Count</th>
+        <th>Queries Per Last Hour</th>
+        <th>Access Dates</th>
       </tr>
     </thead>
     <tfoot>
-      <tr class="TableHeader">
+      <tr class="th">
         <td></td>
         <td>&#931; #[total]#</td>
         <td>&#931; #[qph_sum]#</td>
@@ -139,7 +171,7 @@
     </tfoot>
     <tbody>
       #{list}#
-      <tr class="TableCell#(dark)#Light::Dark#(/dark)#">
+      <tr>
         <td>#[host]#</td>
         <td>#[count]#</td>
         <td>#[qph]#</td>
@@ -147,47 +179,58 @@
       </tr>
       #{/list}#
     </tbody>
-    </table>
-    ::
-    <h2>Remote Search Log</h2>
-    <p>This is a list of searches that had been requested from remote peer search interface</p>
-    <p>Showing #[num]# entries from a total of #[total]# requests.</p>
-    <table class="sortable" border="0" cellpadding="2" cellspacing="1">
+  </table>
+  ::
+  <h2>Remote Search Log</h2>
+  <p>
+    This is a list of searches that had been requested from remote peer search interface.
+    <br/>
+    Showing #[num]# entries from a total of #[total]# requests.
+  </p>
+  <table class="sortable">
     <thead>
-      <tr class="TableHeader">
-        <td>Requesting Host</td>
-        <td>Peer Name</td>
-        <td>Date</td>
-        <td>Expected Results</td>
-        <td>Returned Results</td>
-        <td>Used Time (ms)</td>
-        <td>URL fetch (ms)</td>
-        <td>Snippet comp (ms)</td>
-        <td>Search Word Hashes</td>
+      <tr>
+        <th>Requesting Host</th>
+        <th>Peer Name</th>
+        <th>Date</th>
+        <th>Expected Results</th>
+        <th>Returned Results</th>
+        <th>Used Time (ms)</th>
+        <th>URL fetch (ms)</th>
+        <th>Snippet comp (ms)</th>
+        <th>Search Word Hashes</th>
       </tr>
     </thead>
     <tfoot>
-      <tr class="TableHeader">
+      <tr class="th">
         <td>Total: #[num]#
-        <br/>Success: #[resultcount]#</td>
+          <br/>Success: #[resultcount]#
+        </td>
         <td></td>
         <td></td>
-        <td>&#216; #[querycount_avg]#
-        <br/></td>
-        <td><!--&#216; #[resultcount_avg]#-->
-        <br/>&#216; #[transmitcount_avg]#</td>
-        <td>&#216; #[resulttime_avg]#
-        <br/>&#216; #[resulttime_avg1]#</td>
-        <td>&#216; #[urltime_avg]#
-        <br/>&#216; #[urltime_avg1]#</td>
-        <td>&#216; #[snippettime_avg]#
-        <br/>&#216; #[snippettime_avg1]#</td>
+        <td>&#216; #[querycount_avg]#</td>
+        <td>
+          <!--&#216; #[resultcount_avg]#-->
+          <br/>&#216; #[transmitcount_avg]#
+        </td>
+        <td>
+          &#216; #[resulttime_avg]#
+          <br/>&#216; #[resulttime_avg1]#
+        </td>
+        <td>
+          &#216; #[urltime_avg]#
+          <br/>&#216; #[urltime_avg1]#
+        </td>
+        <td>
+          &#216; #[snippettime_avg]#
+          <br/>&#216; #[snippettime_avg1]#
+        </td>
         <td></td>
       </tr>
     </tfoot>
     <tbody>
       #{list}#
-      <tr class="TableCell#(dark)#Light::Dark#(/dark)#">
+      <tr>
         <td>#[host]#</td>
         <td>#[peername]#</td>
         <td>#[date]#</td>
@@ -200,23 +243,26 @@
       </tr>
       #{/list}#
     </tbody>
-    </table>
-    ::
-    <h2>Remote Search Host Tracker</h2>
-    <p>This is a list of searches that had been requested from remote peer search interface</p>
-    <p>Showing #[num]# entries from a total of #[total]# requests.</p>
-    <table class="sortable" border="0" cellpadding="2" cellspacing="1">
+  </table>
+  ::
+  <h2>Remote Search Host Tracker</h2>
+  <p>
+    This is a list of searches that had been requested from remote peer search interface.
+    <br/>
+    Showing #[num]# entries from a total of #[total]# requests.
+  </p>
+  <table class="sortable">
     <thead>
-      <tr class="TableHeader">
-        <td>Requesting Host</td>
-        <td>Peer Name</td>
-        <td>Count</td>
-        <td>Queries Per Last Hour</td>
-        <td>Access Dates</td>
+      <tr>
+        <th>Requesting Host</th>
+        <th>Peer Name</th>
+        <th>Count</th>
+        <th>Queries Per Last Hour</th>
+        <th>Access Dates</th>
       </tr>
     </thead>
     <tfoot>
-      <tr class="TableHeader">
+      <tr class="th">
         <td></td>
         <td></td>
         <td>&#931; #[total]#</td>
@@ -226,7 +272,7 @@
     </tfoot>
     <tbody>
       #{list}#
-      <tr class="TableCell#(dark)#Light::Dark#(/dark)#">
+      <tr>
         <td>#[host]#</td>
         <td>#[peername]#</td>
         <td>#[count]#</td>
@@ -235,8 +281,8 @@
       </tr>
       #{/list}#
     </tbody>
-    </table>
-    #(/page)#
-    #%env/templates/footer.template%#
-  </body>
+  </table>
+  #(/page)#
+  #%env/templates/page-end.template%#
+</body>
 </html>
