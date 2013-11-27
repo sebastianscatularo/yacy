@@ -1,30 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
   <title>YaCy '#[clientname]#': Performance Settings of Search Sequence</title>
-  #%env/templates/metas.template%#
-  </head>
-  <body id="PerformanceSearch">
-    #%env/templates/header.template%#
+  #%env/templates/header-backend.template%#
+</head>
 
-    <h2>Search Sequence Timing</h2>
+<body id="performanceSearch">
+  #%env/templates/page-start.template%#
 
-    <p>
-      <strong>Timing results of latest search request:</strong>
-    </p>
-    <table border="0" cellpadding="2" cellspacing="1">
-      <tr class="TableHeader" valign="bottom">
-        <td>Query</td>
-        <td>Event</td>
-        <td>Comment</td>
-        <td>Time</td>
-        <td>Delta (ms)</td>
-        <td>Duration (ms)</td>
-        <td>Result-Count</td>
+  <h1>Search Sequence Timing</h1>
+
+  <h2>Timing results of latest search request</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Query</th>
+        <th>Event</th>
+        <th>Comment</th>
+        <th>Time</th>
+        <th>Delta (<abbr>ms</abbr>)</th>
+        <th>Duration (ms)</th>
+        <th>Result-Count</th>
       </tr>
-    #{table}#
-      <tr class="TableCellDark" valign="bottom">
-        <td>#[query]#</td>
+    </thead>
+    <tbody>
+      #{table}#
+      <tr>
+        <td class="breakAll">#[query]#</td>
         <td>#[event]#</td>
         <td>#[comment]#</td>
         <td>#[time]#</td>
@@ -32,16 +34,19 @@
         <td>#[duration]#</td>
         <td>#[count]#</td>
       </tr>
-    #{/table}#
-    </table>
+      #{/table}#
+    </tbody>
+  </table>
 
-    <p>
-      The network picture below shows how the latest search query was solved by asking corresponding peers in the DHT:<br/>
-      red -&gt; request list alive<br/>
-      green -&gt; request has terminated<br/>
-      grey -&gt; the search target hash order position(s) (more targets if a dht partition is used)<br/>
-      <img src="SearchEventPicture.png" alt="Search event picture" />
-    </p>
-    #%env/templates/footer.template%#
-  </body>
+  <p>
+    The network picture below shows how the latest search query was solved by asking corresponding peers in the <abbr>DHT</abbr>:
+    <ul>
+      <li>red: Request list alive</li>
+      <li>green: Request has terminated</li>
+      <li>grey: The search target hash order position(s) (more targets if a dht partition is used)</li>
+    </ul>
+    <img src="SearchEventPicture.png" alt="Search event picture" />
+  </p>
+  #%env/templates/page-end.template%#
+</body>
 </html>
