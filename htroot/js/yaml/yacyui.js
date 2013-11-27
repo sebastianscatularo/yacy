@@ -129,6 +129,27 @@ YaCyUi.DataStore = YaCyUi.DataStore || {
   }
 };
 
+YaCyUi.Messages = YaCyUi.Messages || {
+  init: function() {
+    var messages = $('.ycu-message');
+    console.debug('seeking messages -> ',messages.size());
+    if (messages.size() > 0) {
+      messages.each(function() {
+        if ($(this).is('.ycu-message-error')) {
+          $(this).prepend('<span class="type">ERROR:</span>');
+        }
+        if ($(this).is('.ycu-message-warning')) {
+          $(this).prepend('<span class="type">WARNING:</span>');
+        }
+        $(this).appendTo('#ycu-messages');
+      });
+      $('#ycu-messages').show();
+      // jump to messages
+      location.hash = '#ycu-messages';
+    }
+  }
+};
+
 YaCyUi.modules = YaCyUi.modules || {};
 YaCyUi.init = function() {
   // temporary developer info controls
@@ -222,6 +243,9 @@ YaCyUi.init = function() {
       YaCyPage.init();
     }
   }, 125);
+
+  // move important messages to top
+  YaCyUi.Messages.init();
 
   // show footer, if it has content
   if ($('footer').children().size() > 0) {

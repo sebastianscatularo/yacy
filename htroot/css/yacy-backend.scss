@@ -55,6 +55,50 @@
 @import 'jquery-ui';
 
 /* Form result messages */
+#ycu-messages {
+  @extend %font-sans;
+
+  p {
+    border-radius:5px;
+    padding:0.5em;
+
+    &:before {
+      @extend %icon-block;
+    }
+
+    span.type {
+      font-weight:bold;
+      display:inline-block;
+      margin:0 0.3em;
+    }
+
+    &.ycu-message-error {
+      background-color:$ycu-var-color-error-bg;
+      &:before {
+        content:$ycu-var-icon-msg-error;
+      }
+    }
+    &.ycu-message-help {
+      background-color:$ycu-var-color-help-bg;
+      &:before {
+        content:$ycu-var-icon-msg-help;
+      }
+    }
+    &.ycu-message-ok {
+      background-color:$ycu-var-color-ok-bg;
+      &:before {
+        content:$ycu-var-icon-msg-ok;
+      }
+    }
+    &.ycu-message-warning {
+      background-color:$ycu-var-color-warning-bg;
+      &:before {
+        content:$ycu-var-icon-msg-warning;
+      }
+    }
+  }
+}
+
 #formResults {
   @extend %font-sans;
   p {

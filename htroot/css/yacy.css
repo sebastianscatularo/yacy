@@ -2426,7 +2426,7 @@
   padding: 1.5em; }
 
 header .logo, #footerMenu, table th, code.key, fieldset .content, fieldset.formSection > legend, nav,
-#navSub, #breadCrumb, #formResults, body#crawlStartExpert #formReview dt {
+#navSub, #breadCrumb, #ycu-messages, #formResults, body#crawlStartExpert #formReview dt {
   font-family: "Droid Sans", Arial, Helvetica, sans-serif; }
 
 input:not([type="range"]),
@@ -2445,7 +2445,7 @@ a[href^="http://"]:before,
 a[href^="https://"]:before, table.sortable th:not(.noSort):after, .formHint > *:before, .resourceQueryBox .queryBox:after, #breadCrumb span:not(:last-of-type):after, #breadCrumb:before, .icon-item-new:before, .icon-item-queued:before, .icon-item-done:before, body#crawlStartExpert #startPointDetails .ycu-data-true:before,
 body#crawlStartSite #startPointDetails .ycu-data-true:before, body#crawlStartExpert #startPointDetails .ycu-data-false:before,
 body#crawlStartSite #startPointDetails .ycu-data-false:before, body#crawlStartExpert #formReview dt:not(.notConfigured):before, body#crawlStartExpert .ycu-data-true:before, body#crawlStartExpert .ycu-data-false:before, fieldset.collapsible > legend:before, fieldset.formSection .hasHelp:before, #navSub li a:after,
-#navSub li span:after, fieldset.formGroup > legend:before, fieldset.formGroup > legend:after, .formHint:before {
+#navSub li span:after, #ycu-messages p:before, #ycu-messages div.p:before, fieldset.formGroup > legend:before, fieldset.formGroup > legend:after, .formHint:before {
   font-family: FontAwesome;
   font-style: normal;
   font-size: 0.85em; }
@@ -2454,7 +2454,7 @@ a[href^="http://"]:before,
 a[href^="https://"]:before, table.sortable th:not(.noSort):after, .formHint > *:before, .resourceQueryBox .queryBox:after, #breadCrumb span:not(:last-of-type):after, #breadCrumb:before, .icon-item-new:before, .icon-item-queued:before, .icon-item-done:before, body#crawlStartExpert #startPointDetails .ycu-data-true:before,
 body#crawlStartSite #startPointDetails .ycu-data-true:before, body#crawlStartExpert #startPointDetails .ycu-data-false:before,
 body#crawlStartSite #startPointDetails .ycu-data-false:before, body#crawlStartExpert #formReview dt:not(.notConfigured):before, body#crawlStartExpert .ycu-data-true:before, body#crawlStartExpert .ycu-data-false:before, fieldset.collapsible > legend:before, fieldset.formSection .hasHelp:before, #navSub li a:after,
-#navSub li span:after {
+#navSub li span:after, #ycu-messages p:before, #ycu-messages div.p:before {
   display: inline-block; }
 
 /**
@@ -2532,6 +2532,8 @@ button {
     content: "\f013\00a0"; }
   button.icon-check:before {
     content: "\f00c\00a0"; }
+  button.icon-add:before {
+    content: "\f067\00a0"; }
   button.icon-config:before {
     content: "\f0ad\00a0"; }
   button.icon-manual:before {
@@ -3226,6 +3228,30 @@ s.sym-warning i:last-of-type:before {
   display: none; }
 
 /* Form result messages */
+#ycu-messages p, #ycu-messages div.p {
+  border-radius: 5px;
+  padding: 0.5em; }
+  #ycu-messages p span.type, #ycu-messages div.p span.type {
+    font-weight: bold;
+    display: inline-block;
+    margin: 0 0.3em; }
+  #ycu-messages p.ycu-message-error, #ycu-messages div.ycu-message-error.p {
+    background-color: #d39583; }
+    #ycu-messages p.ycu-message-error:before, #ycu-messages div.ycu-message-error.p:before {
+      content: "\f056"; }
+  #ycu-messages p.ycu-message-help, #ycu-messages div.ycu-message-help.p {
+    background-color: #aad2e6; }
+    #ycu-messages p.ycu-message-help:before, #ycu-messages div.ycu-message-help.p:before {
+      content: "\f05a"; }
+  #ycu-messages p.ycu-message-ok, #ycu-messages div.ycu-message-ok.p {
+    background-color: #94e84d; }
+    #ycu-messages p.ycu-message-ok:before, #ycu-messages div.ycu-message-ok.p:before {
+      content: "\f058"; }
+  #ycu-messages p.ycu-message-warning, #ycu-messages div.ycu-message-warning.p {
+    background-color: #ced452; }
+    #ycu-messages p.ycu-message-warning:before, #ycu-messages div.ycu-message-warning.p:before {
+      content: "\f059"; }
+
 #formResults p, #formResults div.p {
   border-radius: 5px;
   padding: 0.5em; }

@@ -2526,6 +2526,8 @@ button {
     content: "\f013\00a0"; }
   button.icon-check:before {
     content: "\f00c\00a0"; }
+  button.icon-add:before {
+    content: "\f067\00a0"; }
   button.icon-config:before {
     content: "\f0ad\00a0"; }
   button.icon-manual:before {

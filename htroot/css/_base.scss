@@ -19,6 +19,15 @@ $ycu-var-color-link:#4D87C7;
 $ycu-var-color-sumbenu-bg:#666;
 $ycu-var-color-nav-bg:#222;
 $ycu-var-color-nav-border:#94C6E4;
+// feedback colors
+$ycu-var-color-error-bg:#D39583;
+$ycu-var-color-help-bg:#AAD2E6;
+$ycu-var-color-ok-bg:#94E84D;
+$ycu-var-color-warning-bg:#CED452;
+$ycu-var-icon-msg-ok:$fa-var-check-circle;
+$ycu-var-icon-msg-help:$fa-var-info-circle;
+$ycu-var-icon-msg-warning:$fa-var-question-circle;
+$ycu-var-icon-msg-error:$fa-var-minus-circle;
 
 .ym-wbox {
   padding:1.5em;

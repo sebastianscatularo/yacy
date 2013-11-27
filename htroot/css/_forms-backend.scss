@@ -313,14 +313,6 @@ fieldset.collapsible > legend:hover {
 }
 .formHint {
   $hint-tip-fontsize:1.5em;
-  $color-help-bg:#AAD2E6;
-  $color-warn-bg:#CED452;
-  $color-ok-bg:$ycu-var-color-validation-valid;
-  $color-err-bg:$ycu-var-color-validation-invalid;
-  $icon-msg-ok:$fa-var-check-circle;
-  $icon-msg-help:$fa-var-info-circle;
-  $icon-msg-warn:$fa-var-question-circle;
-  $icon-msg-err:$fa-var-minus-circle;
   $icon-msg_more:$fa-var-ellipsis-horizontal;
 
   margin: {
@@ -371,48 +363,48 @@ fieldset.collapsible > legend:hover {
   }
 
   .help {
-    background-color:$color-help-bg;
+    background-color:$ycu-var-color-help-bg;
 
     &:before {
-      content:'#{$icon-msg-help}';
-      background-color:$color-help-bg;
+      content:'#{$ycu-var-icon-msg-help}';
+      background-color:$ycu-var-color-help-bg;
     }
   }
   &.help:before {
-    color:$color-help-bg;
+    color:$ycu-var-color-help-bg;
   }
 
   .warning {
-    background-color:$color-warn-bg;
+    background-color:$ycu-var-color-warning-bg;
 
     &:before {
-      content:'#{$icon-msg-warn}';
+      content:'#{$ycu-var-icon-msg-warning}';
     }
   }
   &.warning:before {
-    color:$color-warn-bg;
+    color:$ycu-var-color-warning-bg;
   }
 
   .ok {
-    background-color:$color-ok-bg;
+    background-color:$ycu-var-color-ok-bg;
 
     &:before {
-      content:'#{$icon-msg-ok}';
+      content:'#{$ycu-var-icon-msg-ok}';
     }
   }
   &.ok:before {
-    color:$color-ok-bg;
+    color:$ycu-var-color-ok-bg;
   }
 
   .error {
-    background-color:$color-err-bg;
+    background-color:$ycu-var-color-error-bg;
 
     &:before {
-      content:'#{$icon-msg-err}';
+      content:'#{$ycu-var-icon-msg-error}';
     }
   }
   &.error:before {
-    color:$color-err-bg;
+    color:$ycu-var-color-error-bg;
   }
 
   &.none:before {
@@ -480,11 +472,11 @@ fieldset.toggleable {
 input,
 textarea {
   &.valid {
-    box-shadow:0 0 5px $ycu-var-color-validation-valid;
+    box-shadow:0 0 5px $ycu-var-color-ok-bg;
   }
 
   &.invalid {
-    box-shadow:0 0 5px $ycu-var-color-validation-invalid;
+    box-shadow:0 0 5px $ycu-var-color-error-bg;
   }
 }
 
