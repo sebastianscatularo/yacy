@@ -267,8 +267,6 @@ YaCyUi.init = function() {
       console.debug("iFrame height ", height);
       $(this).css({height: height});
     });
-    //console.debug("iFrame ", this);
-    //this.height = $(this.contentWindow.document).height();
   });
 
   // finished loading
