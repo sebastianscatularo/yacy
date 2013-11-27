@@ -2426,7 +2426,7 @@
   padding: 1.5em; }
 
 header .logo, #footerMenu, table th, code.key, fieldset .content, fieldset.formSection > legend, nav,
-#navSub, #breadCrumb, #ycu-messages, #formResults, body#crawlStartExpert #formReview dt {
+#navSub, #breadCrumb, #ycu-messages, #formResults, body#crawlStartExpert #formReview dt, body#network .extNodeInfo {
   font-family: "Droid Sans", Arial, Helvetica, sans-serif; }
 
 input:not([type="range"]),
@@ -2435,14 +2435,14 @@ select,
 .ui-spinner {
   font-family: Arial, Helvetica, sans-serif; }
 
-a[href^="http://"]:before,
-a[href^="https://"]:before, table.sortable th:not(.noSort):after, .formHint > *:before, .resourceQueryBox .queryBox:after, #breadCrumb span:not(:last-of-type):after, #breadCrumb:before, .icon-item-new:before, .icon-item-queued:before, .icon-item-done:before, body#crawlStartExpert #startPointDetails .ycu-data-true:before,
+a[href^="http://"]:not(.noExt):before,
+a[href^="https://"]:not(.noExt):before, table.sortable th:not(.noSort):after, .formHint > *:before, .resourceQueryBox .queryBox:after, #breadCrumb span:not(:last-of-type):after, #breadCrumb:before, .icon-item-new:before, .icon-item-queued:before, .icon-item-done:before, body#crawlStartExpert #startPointDetails .ycu-data-true:before,
 body#crawlStartSite #startPointDetails .ycu-data-true:before, body#crawlStartExpert #startPointDetails .ycu-data-false:before,
 body#crawlStartSite #startPointDetails .ycu-data-false:before, body#crawlStartExpert #formReview dt:not(.notConfigured):before, body#crawlStartExpert .ycu-data-true:before, body#crawlStartExpert .ycu-data-false:before, button[class*='icon-']:before, fieldset.collapsible > legend:hover:before, fieldset.collapsible.collapsed > legend:before {
   opacity: 0.7; }
 
-a[href^="http://"]:before,
-a[href^="https://"]:before, table.sortable th:not(.noSort):after, .formHint > *:before, .resourceQueryBox .queryBox:after, #breadCrumb span:not(:last-of-type):after, #breadCrumb:before, .icon-item-new:before, .icon-item-queued:before, .icon-item-done:before, body#crawlStartExpert #startPointDetails .ycu-data-true:before,
+a[href^="http://"]:not(.noExt):before,
+a[href^="https://"]:not(.noExt):before, table.sortable th:not(.noSort):after, .formHint > *:before, .resourceQueryBox .queryBox:after, #breadCrumb span:not(:last-of-type):after, #breadCrumb:before, .icon-item-new:before, .icon-item-queued:before, .icon-item-done:before, body#crawlStartExpert #startPointDetails .ycu-data-true:before,
 body#crawlStartSite #startPointDetails .ycu-data-true:before, body#crawlStartExpert #startPointDetails .ycu-data-false:before,
 body#crawlStartSite #startPointDetails .ycu-data-false:before, body#crawlStartExpert #formReview dt:not(.notConfigured):before, body#crawlStartExpert .ycu-data-true:before, body#crawlStartExpert .ycu-data-false:before, fieldset.collapsible > legend:before, fieldset.formSection .hasHelp:before, #navSub li a:after,
 #navSub li span:after, #ycu-messages p:before, #ycu-messages div.p:before, fieldset.formGroup > legend:before, fieldset.formGroup > legend:after, .formHint:before {
@@ -2450,8 +2450,8 @@ body#crawlStartSite #startPointDetails .ycu-data-false:before, body#crawlStartEx
   font-style: normal;
   font-size: 0.85em; }
 
-a[href^="http://"]:before,
-a[href^="https://"]:before, table.sortable th:not(.noSort):after, .formHint > *:before, .resourceQueryBox .queryBox:after, #breadCrumb span:not(:last-of-type):after, #breadCrumb:before, .icon-item-new:before, .icon-item-queued:before, .icon-item-done:before, body#crawlStartExpert #startPointDetails .ycu-data-true:before,
+a[href^="http://"]:not(.noExt):before,
+a[href^="https://"]:not(.noExt):before, table.sortable th:not(.noSort):after, .formHint > *:before, .resourceQueryBox .queryBox:after, #breadCrumb span:not(:last-of-type):after, #breadCrumb:before, .icon-item-new:before, .icon-item-queued:before, .icon-item-done:before, body#crawlStartExpert #startPointDetails .ycu-data-true:before,
 body#crawlStartSite #startPointDetails .ycu-data-true:before, body#crawlStartExpert #startPointDetails .ycu-data-false:before,
 body#crawlStartSite #startPointDetails .ycu-data-false:before, body#crawlStartExpert #formReview dt:not(.notConfigured):before, body#crawlStartExpert .ycu-data-true:before, body#crawlStartExpert .ycu-data-false:before, fieldset.collapsible > legend:before, fieldset.formSection .hasHelp:before, #navSub li a:after,
 #navSub li span:after, #ycu-messages p:before, #ycu-messages div.p:before {
@@ -2538,6 +2538,8 @@ button {
     content: "\f0ad\00a0"; }
   button.icon-manual:before {
     content: "\f02d\00a0"; }
+  button.icon-save:before {
+    content: "\f013\00a0"; }
   button.icon-stop:before {
     content: "\f011\00a0"; }
   button.icon-edit:before {
@@ -2606,8 +2608,8 @@ a {
     background-color: transparent;
     color: #4d87c7; }
 
-a[href^="http://"]:before,
-a[href^="https://"]:before {
+a[href^="http://"]:not(.noExt):before,
+a[href^="https://"]:not(.noExt):before {
   font-size: 0.7em;
   content: "\f045\00a0"; }
 
@@ -3243,6 +3245,10 @@ s.sym-warning i:last-of-type:before {
     background-color: #aad2e6; }
     #ycu-messages p.ycu-message-help:before, #ycu-messages div.ycu-message-help.p:before {
       content: "\f05a"; }
+  #ycu-messages p.ycu-message-info, #ycu-messages div.ycu-message-info.p {
+    background-color: #d7ff9e; }
+    #ycu-messages p.ycu-message-info:before, #ycu-messages div.ycu-message-info.p:before {
+      content: "\f05a"; }
   #ycu-messages p.ycu-message-ok, #ycu-messages div.ycu-message-ok.p {
     background-color: #94e84d; }
     #ycu-messages p.ycu-message-ok:before, #ycu-messages div.ycu-message-ok.p:before {
@@ -3264,11 +3270,11 @@ iframe {
 iframe.border {
   border: 1px solid #ccc; }
 
-main .ym-wbox:first-of-type *:not(#api) + h1 {
+main .ym-wbox:first-of-type *:not(#api):not(#ycu-messages) + h1 {
   margin-top: 2em; }
-main .ym-wbox:first-of-type *:not(#api) + h2 {
+main .ym-wbox:first-of-type *:not(#api):not(#ycu-messages) + h2 {
   margin-top: 1.5em; }
-main .ym-wbox:first-of-type *:not(#api) + h3, main .ym-wbox:first-of-type *:not(#api) + h4, main .ym-wbox:first-of-type *:not(#api) + h5, main .ym-wbox:first-of-type *:not(#api) + h6 {
+main .ym-wbox:first-of-type *:not(#api):not(#ycu-messages) + h3, main .ym-wbox:first-of-type *:not(#api):not(#ycu-messages) + h4, main .ym-wbox:first-of-type *:not(#api):not(#ycu-messages) + h5, main .ym-wbox:first-of-type *:not(#api):not(#ycu-messages) + h6 {
   margin-top: 1em; }
 main .ym-wbox:first-of-type h1, main .ym-wbox:first-of-type h2, main .ym-wbox:first-of-type h3, main .ym-wbox:first-of-type h4, main .ym-wbox:first-of-type h5, main .ym-wbox:first-of-type h6 {
   text-transform: capitalize; }
@@ -3415,3 +3421,11 @@ body#crawlStartExpert .reviewHeader {
   padding: 1.5em 1em; }
 body#crawlStartExpert .reviewContent {
   clear: both; }
+
+body#network a.updated {
+  color: #EE9922; }
+body#network .extNodeInfo {
+  font-size: 0.8em; }
+body#network .nodeInfo {
+  display: block;
+  white-space: nowrap; }

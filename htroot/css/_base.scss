@@ -22,10 +22,12 @@ $ycu-var-color-nav-border:#94C6E4;
 // feedback colors
 $ycu-var-color-error-bg:#D39583;
 $ycu-var-color-help-bg:#AAD2E6;
+$ycu-var-color-info-bg:#D7FF9E;
 $ycu-var-color-ok-bg:#94E84D;
 $ycu-var-color-warning-bg:#CED452;
 $ycu-var-icon-msg-ok:$fa-var-check-circle;
 $ycu-var-icon-msg-help:$fa-var-info-circle;
+$ycu-var-icon-msg-info:$fa-var-info-circle;
 $ycu-var-icon-msg-warning:$fa-var-question-circle;
 $ycu-var-icon-msg-error:$fa-var-minus-circle;
 
@@ -84,7 +86,7 @@ a {
 }
 a[href^="http://"],
 a[href^="https://"] {
-  &:before {
+  &:not(.noExt):before {
     @extend %icon-block-light;
     font-size:0.7em;
     content:'#{$fa-var-share-square-o}\00a0';

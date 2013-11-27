@@ -116,6 +116,10 @@ button {
     content:'#{$fa-var-book}\00a0';
   }
 
+  &.icon-save:before {
+    content:'#{$fa-var-cog}\00a0';
+  }
+
   &.icon-stop:before {
     content:'#{$fa-var-power-off}\00a0';
   }

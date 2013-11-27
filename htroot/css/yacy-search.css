@@ -2437,18 +2437,18 @@ select,
 .ui-spinner {
   font-family: Arial, Helvetica, sans-serif; }
 
-a[href^="http://"]:before,
-a[href^="https://"]:before, table.sortable th:not(.noSort):after, button[class*='icon-']:before {
+a[href^="http://"]:not(.noExt):before,
+a[href^="https://"]:not(.noExt):before, table.sortable th:not(.noSort):after, button[class*='icon-']:before {
   opacity: 0.7; }
 
-a[href^="http://"]:before,
-a[href^="https://"]:before, table.sortable th:not(.noSort):after, body#yacySearch #messages > p:before, body#yacySearch #messages > div.p:before {
+a[href^="http://"]:not(.noExt):before,
+a[href^="https://"]:not(.noExt):before, table.sortable th:not(.noSort):after, body#yacySearch #messages > p:before, body#yacySearch #messages > div.p:before {
   font-family: FontAwesome;
   font-style: normal;
   font-size: 0.85em; }
 
-a[href^="http://"]:before,
-a[href^="https://"]:before, table.sortable th:not(.noSort):after, body#yacySearch #messages > p:before, body#yacySearch #messages > div.p:before {
+a[href^="http://"]:not(.noExt):before,
+a[href^="https://"]:not(.noExt):before, table.sortable th:not(.noSort):after, body#yacySearch #messages > p:before, body#yacySearch #messages > div.p:before {
   display: inline-block; }
 
 /**
@@ -2532,6 +2532,8 @@ button {
     content: "\f0ad\00a0"; }
   button.icon-manual:before {
     content: "\f02d\00a0"; }
+  button.icon-save:before {
+    content: "\f013\00a0"; }
   button.icon-stop:before {
     content: "\f011\00a0"; }
   button.icon-edit:before {
@@ -2600,8 +2602,8 @@ a {
     background-color: transparent;
     color: #4d87c7; }
 
-a[href^="http://"]:before,
-a[href^="https://"]:before {
+a[href^="http://"]:not(.noExt):before,
+a[href^="https://"]:not(.noExt):before {
   font-size: 0.7em;
   content: "\f045\00a0"; }
 

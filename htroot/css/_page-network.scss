@@ -1,0 +1,13 @@
+body#network {
+  a.updated {
+    color:#EE9922;
+  }
+  .extNodeInfo {
+    @extend %font-sans;
+    font-size:0.8em;
+  }
+  .nodeInfo {
+    display:block;
+    white-space:nowrap;
+  }
+}
