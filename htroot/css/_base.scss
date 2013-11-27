@@ -21,6 +21,7 @@ $ycu-var-color-nav-bg:#222;
 $ycu-var-color-nav-border:#94C6E4;
 $ycu-var-color-fieldset-bg:#DEE6F3;
 $ycu-var-color-fieldset-fg:#18294A;
+$ycu-var-color-table-cell-base:$ycu-var-color-fieldset-bg;
 // feedback colors
 $ycu-var-color-error-bg:#D39583;
 $ycu-var-color-help-bg:#AAD2E6;
@@ -136,7 +137,7 @@ h4, h5, h6 {
 }
 
 /**********
- * Page layout. */
+* Page layout. */
 header {
   background-color:$ycu-var-color-header-bg;
   color:$ycu-var-color-header-fg;
@@ -188,7 +189,7 @@ footer {
 }
 
 /**********
- * Special elements. */
+* Special elements. */
 // no link styling for special elements
 a.yacyLogo,
 #api > a {
@@ -214,22 +215,20 @@ a.yacyLogo,
 }
 
 /**********
- * Tables. */
+* Tables. */
 // general tables
 table {
-  $color-cell-base:$ycu-var-color-fieldset-bg;
-
   tbody {
     tr:not(.th):nth-child(odd) {
-      background-color:darken($color-cell-base, 5);
+      background-color:darken($ycu-var-color-table-cell-base, 5);
     }
 
     tr:not(.th):nth-child(even) {
-      background-color:darken($color-cell-base, 10);
+      background-color:darken($ycu-var-color-table-cell-base, 10);
     }
 
     tr:not(.th):hover {
-      background-color:lighten($color-cell-base, 5);
+      background-color:lighten($ycu-var-color-table-cell-base, 5);
     }
   }
 
@@ -262,6 +261,26 @@ table.sortable th:not(.noSort) {
   padding:0.25em 0.15em;
   &.headerSortUp:after {
     content:'#{$fa-var-caret-up}';
+  }
+}
+// tables with multiple bodys
+table.multiBody {
+  tbody {
+    &:nth-child(odd) {
+      tr {
+        background-color:darken($ycu-var-color-table-cell-base, 5) !important;
+      }
+    }
+    &:nth-child(even) {
+      tr {
+        background-color:darken($ycu-var-color-table-cell-base, 10) !important;
+      }
+    }
+    &:hover {
+      tr {
+        background-color:lighten($ycu-var-color-table-cell-base, 5) !important;
+      }
+    }
   }
 }
 

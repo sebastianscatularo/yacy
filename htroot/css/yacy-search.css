@@ -2637,7 +2637,7 @@ h4, h5, h6 {
   font-size: 130%; }
 
 /**********
- * Page layout. */
+* Page layout. */
 header {
   background-color: #444444;
   color: #cccccc;
@@ -2677,7 +2677,7 @@ footer {
   color: #69DE6B; }
 
 /**********
- * Special elements. */
+* Special elements. */
 a.yacyLogo:before,
 #api > a:before {
   display: none; }
@@ -2695,7 +2695,7 @@ a.yacyLogo:active, a.yacyLogo:hover,
     cursor: pointer; }
 
 /**********
- * Tables. */
+* Tables. */
 table tbody tr:not(.th):nth-child(odd) {
   background-color: #cbd8ec; }
 table tbody tr:not(.th):nth-child(even) {
@@ -2721,6 +2721,13 @@ table.sortable th:not(.noSort) {
     content: "\f0d7"; }
   table.sortable th:not(.noSort).headerSortUp:after {
     content: "\f0d8"; }
+
+table.multiBody tbody:nth-child(odd) tr {
+  background-color: #cbd8ec !important; }
+table.multiBody tbody:nth-child(even) tr {
+  background-color: #b9cae5 !important; }
+table.multiBody tbody:hover tr {
+  background-color: #f1f4fa !important; }
 
 code.key {
   background: linear-gradient(to bottom, #cccccc 0%, white 20%);
