@@ -2425,7 +2425,8 @@
 .ym-wbox {
   padding: 1.5em; }
 
-header .logo, #footerMenu, table th, code.key, fieldset .content, fieldset.formSection > legend, nav,
+header .logo, #footerMenu, table tr.th td,
+table th, code.key, fieldset .content, fieldset.formSection > legend, nav,
 #navSub, #breadCrumb, #ycu-messages, #formResults, body#crawlStartExpert #formReview dt, body#network .extNodeInfo {
   font-family: "Droid Sans", Arial, Helvetica, sans-serif; }
 
@@ -2701,16 +2702,18 @@ a.yacyLogo:active, a.yacyLogo:hover,
 
 /**********
  * Tables. */
-table tbody tr:nth-child(odd) {
+table tbody tr:not(.th):nth-child(odd) {
   background-color: #cbd8ec; }
-table tbody tr:nth-child(even) {
+table tbody tr:not(.th):nth-child(even) {
   background-color: #b9cae5; }
-table tbody tr:hover {
+table tbody tr:not(.th):hover {
   background-color: #f1f4fa; }
+table tr.th td,
 table th {
   vertical-align: bottom;
   color: #555;
-  border-color: #555; }
+  border-color: #555;
+  font-weight: bold; }
 table td.breakAll {
   word-break: break-all; }
 

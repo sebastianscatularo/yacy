@@ -218,24 +218,26 @@ table {
   $color-cell-base:$ycu-var-color-fieldset-bg;
 
   tbody {
-    tr:nth-child(odd) {
+    tr:not(.th):nth-child(odd) {
       background-color:darken($color-cell-base, 5);
     }
 
-    tr:nth-child(even) {
+    tr:not(.th):nth-child(even) {
       background-color:darken($color-cell-base, 10);
     }
 
-    tr:hover {
+    tr:not(.th):hover {
       background-color:lighten($color-cell-base, 5);
     }
   }
 
+  tr.th td,
   th {
     @extend %font-sans;
     vertical-align:bottom;
     color:#555;
     border-color:#555;
+    font-weight:bold;
   }
 
   td.breakAll {
