@@ -6,29 +6,15 @@
   <link rel="stylesheet" media="screen" type="text/css" href="/js/yaml/minicolors/jquery.minicolors.css" />
   <script type="text/javascript" src="/js/yaml/minicolors/jquery.minicolors.min.js"></script>
   <script type="text/javascript" src="/js/WatchWebStructure.js"></script>
+  <script type="text/javascript">
+    $(document).ready(function(){
+      $('#colorback, #colortext, #colorline, #colordot0, #colordota, #colorlineend').minicolors();
+    });
+  </script>
 </head>
 
 <body id="watchWebStructure">
   #%env/templates/page-start.template%#
-
-  <script type="text/javascript">
-  $(document).ready(function(){
-    $('#colorback, #colortext, #colorline, #colordot0, #colordota, #colorlineend').minicolors();
-    /*
-    $('#colorback, #colortext, #colorline, #colordot0, #colordota, #colorlineend').ColorPicker({
-     onSubmit: function(hsb, hex, rgb, el) {
-      $(el).val(hex);
-      $(el).ColorPickerHide();
-    },
-    onBeforeShow: function () {
-      $(this).ColorPickerSetColor(this.value);
-    }
-  })
-    .bind('keyup', function(){
-     $(this).ColorPickerSetColor(this.value);
-   });*/
-  });
-  </script>
 
   <div id="api">
     <img src="env/grafics/api.png" width="60" height="40" alt="API" />
