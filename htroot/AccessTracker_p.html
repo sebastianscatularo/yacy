@@ -9,10 +9,6 @@
 <body id="accessTracker">
   #%env/templates/page-start.template%#
 
-  <div id="devInfo">
-    untested
-  </div>
-
   #(page)#
   <h1>Server Access Overview</h1>
   <p>
@@ -66,11 +62,12 @@
     </tbody>
   </table>
   ::
-  <h2>Server Access Details</h2>
+  <h1>Server Access Details</h1>
   <p>
     This is a list of requests to the local http server within the last hour.
+    <br/>
+    Showing #[num]# requests.
   </p>
-  <p>Showing #[num]# requests.</p>
   <table class="sortable">
     <thead>
       <tr>
@@ -84,13 +81,13 @@
       <tr class="TableCell#(dark)#Light::Dark#(/dark)#">
         <td><a href="AccessTracker_p.html?page=1&amp;host=#[host]#">#[host]#</a></td>
         <td>#[date]#</td>
-        <td><a href="#[path]#">#[path]#</a></td>
+        <td class="breakAll"><a href="#[path]#">#[path]#</a></td>
       </tr>
       #{/list}#
     </tbody>
   </table>
   ::
-  <h2>Local Search Log</h2>
+  <h1>Local Search Log</h1>
   <p>
     This is a list of searches that had been requested from this' peer search interface.
     <br/>
@@ -139,14 +136,14 @@
         <td>#[resulttime]#</td>
         <td>#[urltime]#</td>
         <td>#[snippettime]#</td>
-        <td><a href="/yacysearch.html?query=#[querystring]#&amp;resource=local">#[querystring]#</a></td>
-        <td>#[userAgent]#</td>
+        <td class="breakAll"><a href="/yacysearch.html?query=#[querystring]#&amp;resource=local">#[querystring]#</a></td>
+        <td class="breakAll">#[userAgent]#</td>
       </tr>
       #{/list}#
     </tbody>
   </table>
   ::
-  <h2>Local Search Host Tracker</h2>
+  <h1>Local Search Host Tracker</h1>
   <p>
     This is a list of searches that had been requested from this' peer search interface.
     <br/>
@@ -181,7 +178,7 @@
     </tbody>
   </table>
   ::
-  <h2>Remote Search Log</h2>
+  <h1>Remote Search Log</h1>
   <p>
     This is a list of searches that had been requested from remote peer search interface.
     <br/>
@@ -245,7 +242,7 @@
     </tbody>
   </table>
   ::
-  <h2>Remote Search Host Tracker</h2>
+  <h1>Remote Search Host Tracker</h1>
   <p>
     This is a list of searches that had been requested from remote peer search interface.
     <br/>
