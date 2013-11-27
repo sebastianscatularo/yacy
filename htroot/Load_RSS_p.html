@@ -10,295 +10,295 @@
 <body id="loadRss">
   #%env/templates/page-start.template%#
 
-<div id="devInfo">
-TODO:
- - in feed contents list: only activate index button, if an entry is selected
- - set different link anchors for submit buttons to jump to relevant entries on update (muste be done via JS)
- - sortable tables do not respect multiple 'tbody' tags (sorting first columns is messed up)
- Code:
-  - make #'[collectionEnabled]'#, #'[collection]'# available on toplevel (currently only as showload_*)
-  - set #'[defaultCollection]'# on toplevel to default collection name (should be user)
-</div>
+  <div id="devInfo">
+    TODO:
+    - in feed contents list: only activate index button, if an entry is selected
+    - set different link anchors for submit buttons to jump to relevant entries on update (muste be done via JS)
+    - sortable tables do not respect multiple 'tbody' tags (sorting first columns is messed up)
+    Code:
+    - make #'[collectionEnabled]'#, #'[collection]'# available on toplevel (currently only as showload_*)
+    - set #'[defaultCollection]'# on toplevel to default collection name (should be user)
+  </div>
 
-        <h1>Loading of RSS Feeds</h1>
-        <p>
-          RSS feeds can be loaded into the YaCy search index.
-          This does not load the rss file as such into the index but all the messages inside the RSS feeds as individual documents.
-        </p>
+  <h1>Loading of RSS Feeds</h1>
+  <p>
+    RSS feeds can be loaded into the YaCy search index.
+    This does not load the rss file as such into the index but all the messages inside the RSS feeds as individual documents.
+  </p>
 
-        <h2>RSS Loader</h2>
-        By using the RSS Loader
+  <h2>RSS Loader</h2>
+  By using the RSS Loader
 
-        <form action="Load_RSS_p.html" method="get" accept-charset="UTF-8">
-          <fieldset>
-            <legend>RSS loader</legend>
-            <fieldset class="formGroup">
-              <legend>Start Point</legend>
-              <fieldset class="formSection">
-                <legend>RSS feed URL</legend>
-                <div class="content">
-                  <input type="text" name="url" value="#[url]#" maxlength="256"/>
-                  <div class="formHint hidden">
-                    <p class="ok">
-                      The entered location looks correct.
-                    </p>
-                    <p class="error" data-id="invalid">
-                      The entered URL is not valid.
-                    </p>
-                    <p class="error" data-id="empty">
-                      You need to enter a URLs to start your crawl.
-                    </p>
-                    <p class="help">
-                      Please define a start-url for your crawl.
-                    </p>
-                  </div>
-                </div>
-              </fieldset>
-            </fieldset>
+  <form action="Load_RSS_p.html" method="get" accept-charset="UTF-8">
+    <fieldset>
+      <legend>RSS loader</legend>
+      <fieldset class="formGroup">
+        <legend>Start Point</legend>
+        <fieldset class="formSection">
+          <legend>RSS feed URL</legend>
+          <div class="content">
+            <input type="text" name="url" value="#[url]#" maxlength="256"/>
+            <div class="formHint hidden">
+              <p class="ok">
+                The entered location looks correct.
+              </p>
+              <p class="error" data-id="invalid">
+                The entered URL is not valid.
+              </p>
+              <p class="error" data-id="empty">
+                You need to enter a URLs to start your crawl.
+              </p>
+              <p class="help">
+                Please define a start-url for your crawl.
+              </p>
+            </div>
+          </div>
+        </fieldset>
+      </fieldset>
 
-            <fieldset class="formGroup">
-              <legend>Indexing</legend>
-              <fieldset class="formSection">
-                <legend>Only once</legend>
-                <div class="content">
-                  <input type="radio" id="indexOnce" name="repeat" value="off" checked="checked"/>
-                  <label for="indexOnce">Only index the current feed entries.</label>
-                </div>
-              </fieldset>
-              <fieldset class="formSection">
-                <legend>Scheduled</legend>
-                <div class="content">
-                  <input type="radio" name="repeat" id="indexRepeat" value="on"/>
-                  <label for="indexRepeat">Repeat the loading and indexing of the feed every</label>
-                  <select name="repeat_time" data-toggle-id="indexRepeat">
-                    <option value="1">1</option><option value="2">2</option><option value="3">3</option>
-                    <option value="4">4</option><option value="5">5</option><option value="6">6</option>
-                    <option value="7" selected="selected">7</option>
-                    <option value="8">8</option><option value="9">9</option><option value="10">10</option>
-                    <option value="12">12</option><option value="14">14</option><option value="21">21</option>
-                    <option value="28">28</option><option value="30">30</option>
-                  </select>
-                  <select name="repeat_unit" data-toggle-id="indexRepeat">
-                    <option value="selminutes">minutes</option>
-                    <option value="selhours">hours</option>
-                    <option value="seldays" selected="selected">days</option>
-                  </select> automatically.
-                </div>
-              </fieldset>
-            </fieldset>
+      <fieldset class="formGroup">
+        <legend>Indexing</legend>
+        <fieldset class="formSection">
+          <legend>Only once</legend>
+          <div class="content">
+            <input type="radio" id="indexOnce" name="repeat" value="off" checked="checked"/>
+            <label for="indexOnce">Only index the current feed entries.</label>
+          </div>
+        </fieldset>
+        <fieldset class="formSection">
+          <legend>Scheduled</legend>
+          <div class="content">
+            <input type="radio" name="repeat" id="indexRepeat" value="on"/>
+            <label for="indexRepeat">Repeat the loading and indexing of the feed every</label>
+            <select name="repeat_time" data-toggle-id="indexRepeat">
+              <option value="1">1</option><option value="2">2</option><option value="3">3</option>
+              <option value="4">4</option><option value="5">5</option><option value="6">6</option>
+              <option value="7" selected="selected">7</option>
+              <option value="8">8</option><option value="9">9</option><option value="10">10</option>
+              <option value="12">12</option><option value="14">14</option><option value="21">21</option>
+              <option value="28">28</option><option value="30">30</option>
+            </select>
+            <select name="repeat_unit" data-toggle-id="indexRepeat">
+              <option value="selminutes">minutes</option>
+              <option value="selhours">hours</option>
+              <option value="seldays" selected="selected">days</option>
+            </select> automatically.
+          </div>
+        </fieldset>
+      </fieldset>
 
-            <!-- #_(collectionEnabled)#:: -->
-            <fieldset class="formGroup">
-              <legend>Results</legend>
-              <fieldset class="formSection toggleable">
-                <legend>Result collection(s)</legend>
-                <div class="content">
-                  <div class="control-group">
-                    <label for="collection">Target collection(s)</label>
-                    <input name="collection" id="collection" type="text" size="60" maxlength="100" value="#[collection]#" placeholder="#[defaultCollection]#"/>
-                    <div class="formHint hidden">
-                      <p class="help">
-                        Please enter a comma seperated list of collections, where the results should be added.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <div class="formHelp hidden">
-                  <p>
-                    A crawl result can be tagged with names which are candidates for a collection request.
-                  </p>
-                  <p>
-                    These tags can be selected with the <a href="/gsa/search?q=www&site=#[collection]#">GSA interface</a> using the 'site' operator.
-                    To use this option, the 'collection_sxt'-field must be switched on in the <a href="/IndexFederated_p.html">Solr Schema</a>
-                  </p>
-                </div>
-              </fieldset>
-            </fieldset>
-            <!-- #_(collectionEnabled)#:: -->
-
-            <fieldset class="formControl" data-id="formControl">
-              <div class="content">
-                <button type="submit" class="icon-showMore">Show RSS items</button>
-                <button type="submit" name="indexAllItemContent" class="primary icon-run">Add All Items to Index (full content of url)</button>
+      <!-- #_(collectionEnabled)#:: -->
+      <fieldset class="formGroup">
+        <legend>Results</legend>
+        <fieldset class="formSection toggleable">
+          <legend>Result collection(s)</legend>
+          <div class="content">
+            <div class="control-group">
+              <label for="collection">Target collection(s)</label>
+              <input name="collection" id="collection" type="text" size="60" maxlength="100" value="#[collection]#" placeholder="#[defaultCollection]#"/>
+              <div class="formHint hidden">
+                <p class="help">
+                  Please enter a comma seperated list of collections, where the results should be added.
+                </p>
               </div>
-            </fieldset>
-          </fieldset>
-        </form>
-
-        #(showscheduledfeeds)#::
-        <form id="scheduledfeeds" action="Load_RSS_p.html">
-          <fieldset>
-            <legend>List of Scheduled RSS Feed Load Targets</legend>
-            <table class="sortable">
-              <thead>
-                <tr valign="bottom">
-                  <th>
-                    <input type="checkbox" data-action="checkAllToggle"/>
-                  </th>
-                  <th>Title</th>
-                  <th>URL/Referrer</th>
-                  <th>Recording</th>
-                  <th>Last Load</th>
-                  <th>Next Load</th>
-                  <th>Last Count</th>
-                  <th>All Count</th>
-                  <th>Avg. Update/Day</th>
-                </tr>
-              </thead>
-              <tbody>
-                #{list}#
-                <tr>
-                  <td align="left"><input type="checkbox" name="item_#[count]#" value="mark_#[pk]#" /></td>
-                  <td><a href="/Load_RSS_p.html?showrss=&amp;url=#[rss]#">#[title]#</a></td>
-                  <td class="breakAll"><a href="/Load_RSS_p.html?showrss=&amp;url=#[rss]#">#[rss]#</a><br/><a href="#[referrer]#">#[referrer]#</a></td>
-                  <td>#[recording]#</td>
-                  <td>#[lastload]#</td>
-                  <td>#[nextload]#</td>
-                  <td>#[lastcount]#</td>
-                  <td>#[allcount]#</td>
-                  <td>#[updperday]#</td>
-                </tr>
-                #{/list}#
-              </tbody>
-            </table>
+            </div>
+          </div>
+          <div class="formHelp hidden">
             <p>
-              <input type="hidden" name="num" value="#[num]#" />
-              <input type="submit" name="removeSelectedFeedsScheduler" value="Remove Selected Feeds from Scheduler" />
-              <input type="submit" name="removeAllFeedsScheduler" value="Remove All Feeds from Scheduler" />
+              A crawl result can be tagged with names which are candidates for a collection request.
             </p>
-          </fieldset>
-        </form>
-        #(/showscheduledfeeds)#
-
-        #(shownewfeeds)#::
-        <form id="newfeeds" action="Load_RSS_p.html">
-          <fieldset>
-            <legend>Available RSS Feed List</legend>
-            <table class="sortable">
-              <thead>
-                <tr valign="bottom">
-                  <th>
-                    <input type="checkbox"data-action="checkAllToggle"/>
-                  </th>
-                  <th>Title</th>
-                  <th>URL/Referrer</th>
-                  <th>Recording</th>
-                </tr>
-              </thead>
-              <tbody>
-                #{list}#
-                <tr>
-                  <td align="left"><input type="checkbox" name="item_#[count]#" value="mark_#[pk]#" /></td>
-                  <td><a href="/Load_RSS_p.html?showrss=&amp;url=#[rss]#">#[title]#</a></td>
-                  <td class="breakAll"><a href="/Load_RSS_p.html?showrss=&amp;url=#[rss]#">#[rss]#</a><br/><a href="#[referrer]#">#[referrer]#</a></td>
-                  <td>#[recording]#</td>
-                </tr>
-                #{/list}#
-              </tbody>
-            </table>
             <p>
-              <input type="hidden" name="num" value="#[num]#" />
-              <button type="submit" name="removeSelectedFeedsNewList">Remove Selected Feeds from Feed List</button>
-              <button type="submit" name="removeAllFeedsNewList">Remove All Feeds from Feed List</button>
-              <button type="submit" name="addSelectedFeedScheduler" class="primary">Add Selected Feeds to Scheduler</button>
+              These tags can be selected with the <a href="/gsa/search?q=www&site=#[collection]#">GSA interface</a> using the 'site' operator.
+              To use this option, the 'collection_sxt'-field must be switched on in the <a href="/IndexFederated_p.html">Solr Schema</a>
             </p>
-          </fieldset>
-        </form>
-        #(/shownewfeeds)#
+          </div>
+        </fieldset>
+      </fieldset>
+      <!-- #_(collectionEnabled)#:: -->
 
-        #(showitems)#::
-        <form id="rssFeedItems" action="Load_RSS_p.html">
-          <fieldset>
-            <legend>RSS Feed Items</legend>
-            <fieldset class="formGroup">
-              <legend>Feed Information</legend>
-              <fieldset class="formSection">
-                <legend>Title</legend>
-                <div class="content">#[title]#</div>
-              </fieldset>
-              <fieldset class="formSection">
-                <legend>Author</legend>
-                <div class="content">#[author]#</div>
-              </fieldset>
-              <fieldset class="formSection">
-                <legend>Description</legend>
-                <div class="content">#[description]#</div>
-              </fieldset>
-              <fieldset class="formSection">
-                <legend>Language</legend>
-                <div class="content">#[language]#</div>
-              </fieldset>
-              <fieldset class="formSection">
-                <legend>Date</legend>
-                <div class="content">#[date]#</div>
-              </fieldset>
-              <fieldset class="formSection">
-                <legend>Time-to-live</legend>
-                <div class="content">#[ttl]#</div>
-              </fieldset>
-              <fieldset class="formSection">
-                <legend>Docs</legend>
-                <div class="content">#[docs]#</div>
-              </fieldset>
-            </fieldset>
+      <fieldset class="formControl" data-id="formControl">
+        <div class="content">
+          <button type="submit" class="icon-showMore">Show RSS items</button>
+          <button type="submit" name="indexAllItemContent" class="primary icon-run">Add All Items to Index (full content of url)</button>
+        </div>
+      </fieldset>
+    </fieldset>
+  </form>
 
-            <fieldset class="formGroup">
-              <legend>Feed contents</legend>
-              <div class="content noIndent">
-                <table class="sortable">
-                  <thead>
-                    <tr>
-                      <th>
-                        <input type="checkbox" data-action="checkAllToggle"/>
-                      </th>
-                      <th>State</th>
-                      <th>Title</th>
-                      <th>URL</th>
-                      <th>Author</th>
-                      <th>Language</th>
-                      <th>Date</th>
-                    </tr>
-                  </thead>
-                  #{item}#
-                  <tbody>
-                    <tr>
-                      <td>
-                        #(state)#<input type="checkbox" name="item_#[count]#" value="mark_#[guid]#" />::&nbsp;::&nbsp;#(/state)#
-                      </td>
-                      <td>
-                        #(state)#
-                        <i class="fa icon-item-new" title="new"></i>::
-                        <i class="fa icon-item-queued" title="enqued"></i>::
-                        <i class="fa icon-item-done" title="indexed"></i>
-                        #(/state)#
-                      </td>
-                      <td><a href="#[link]#">#[title]#</a></td>
-                      <td class="breakAll"><a href="#[link]#">#[link]#</a></td>
-                      <td>#[author]#</td>
-                      <td>#[language]#</td>
-                      <td>#[date]#</td>
-                    </tr>
-                    <tr>
-                      <td colspan="2"></td>
-                      <td colspan="5">#[description]#</td>
-                    </tr>
-                  </tbody>
-                  #{/item}#
-                </table>
-              </div>
-            </fieldset>
+  #(showscheduledfeeds)#::
+  <form id="scheduledfeeds" action="Load_RSS_p.html">
+    <fieldset>
+      <legend>List of Scheduled RSS Feed Load Targets</legend>
+      <table class="sortable">
+        <thead>
+          <tr valign="bottom">
+            <th>
+              <input type="checkbox" data-action="checkAllToggle"/>
+            </th>
+            <th>Title</th>
+            <th>URL/Referrer</th>
+            <th>Recording</th>
+            <th>Last Load</th>
+            <th>Next Load</th>
+            <th>Last Count</th>
+            <th>All Count</th>
+            <th>Avg. Update/Day</th>
+          </tr>
+        </thead>
+        <tbody>
+          #{list}#
+          <tr>
+            <td align="left"><input type="checkbox" name="item_#[count]#" value="mark_#[pk]#" /></td>
+            <td><a href="/Load_RSS_p.html?showrss=&amp;url=#[rss]#">#[title]#</a></td>
+            <td class="breakAll"><a href="/Load_RSS_p.html?showrss=&amp;url=#[rss]#">#[rss]#</a><br/><a href="#[referrer]#">#[referrer]#</a></td>
+            <td>#[recording]#</td>
+            <td>#[lastload]#</td>
+            <td>#[nextload]#</td>
+            <td>#[lastcount]#</td>
+            <td>#[allcount]#</td>
+            <td>#[updperday]#</td>
+          </tr>
+          #{/list}#
+        </tbody>
+      </table>
+      <p>
+        <input type="hidden" name="num" value="#[num]#" />
+        <input type="submit" name="removeSelectedFeedsScheduler" value="Remove Selected Feeds from Scheduler" />
+        <input type="submit" name="removeAllFeedsScheduler" value="Remove All Feeds from Scheduler" />
+      </p>
+    </fieldset>
+  </form>
+  #(/showscheduledfeeds)#
 
-            <input type="hidden" name="num" value="#[num]#" />
-            <input type="hidden" name="url" value="#[rss]#" />
+  #(shownewfeeds)#::
+  <form id="newfeeds" action="Load_RSS_p.html">
+    <fieldset>
+      <legend>Available RSS Feed List</legend>
+      <table class="sortable">
+        <thead>
+          <tr valign="bottom">
+            <th>
+              <input type="checkbox"data-action="checkAllToggle"/>
+            </th>
+            <th>Title</th>
+            <th>URL/Referrer</th>
+            <th>Recording</th>
+          </tr>
+        </thead>
+        <tbody>
+          #{list}#
+          <tr>
+            <td align="left"><input type="checkbox" name="item_#[count]#" value="mark_#[pk]#" /></td>
+            <td><a href="/Load_RSS_p.html?showrss=&amp;url=#[rss]#">#[title]#</a></td>
+            <td class="breakAll"><a href="/Load_RSS_p.html?showrss=&amp;url=#[rss]#">#[rss]#</a><br/><a href="#[referrer]#">#[referrer]#</a></td>
+            <td>#[recording]#</td>
+          </tr>
+          #{/list}#
+        </tbody>
+      </table>
+      <p>
+        <input type="hidden" name="num" value="#[num]#" />
+        <button type="submit" name="removeSelectedFeedsNewList">Remove Selected Feeds from Feed List</button>
+        <button type="submit" name="removeAllFeedsNewList">Remove All Feeds from Feed List</button>
+        <button type="submit" name="addSelectedFeedScheduler" class="primary">Add Selected Feeds to Scheduler</button>
+      </p>
+    </fieldset>
+  </form>
+  #(/shownewfeeds)#
 
-            <fieldset class="formControl" data-id="formControl">
-              <div class="content">
-                <button type="submit" name="indexSelectedItemContent" class="primary icon-run">Add Selected Items to Index (full content of url)</button>
-              </div>
-            </fieldset>
-          </fieldset>
-        </form>
-        #(/showitems)#
+  #(showitems)#::
+  <form id="rssFeedItems" action="Load_RSS_p.html">
+    <fieldset>
+      <legend>RSS Feed Items</legend>
+      <fieldset class="formGroup">
+        <legend>Feed Information</legend>
+        <fieldset class="formSection">
+          <legend>Title</legend>
+          <div class="content">#[title]#</div>
+        </fieldset>
+        <fieldset class="formSection">
+          <legend>Author</legend>
+          <div class="content">#[author]#</div>
+        </fieldset>
+        <fieldset class="formSection">
+          <legend>Description</legend>
+          <div class="content">#[description]#</div>
+        </fieldset>
+        <fieldset class="formSection">
+          <legend>Language</legend>
+          <div class="content">#[language]#</div>
+        </fieldset>
+        <fieldset class="formSection">
+          <legend>Date</legend>
+          <div class="content">#[date]#</div>
+        </fieldset>
+        <fieldset class="formSection">
+          <legend>Time-to-live</legend>
+          <div class="content">#[ttl]#</div>
+        </fieldset>
+        <fieldset class="formSection">
+          <legend>Docs</legend>
+          <div class="content">#[docs]#</div>
+        </fieldset>
+      </fieldset>
+
+      <fieldset class="formGroup">
+        <legend>Feed contents</legend>
+        <div class="content noIndent">
+          <table class="sortable">
+            <thead>
+              <tr>
+                <th>
+                  <input type="checkbox" data-action="checkAllToggle"/>
+                </th>
+                <th>State</th>
+                <th>Title</th>
+                <th>URL</th>
+                <th>Author</th>
+                <th>Language</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            #{item}#
+            <tbody>
+              <tr>
+                <td>
+                  #(state)#<input type="checkbox" name="item_#[count]#" value="mark_#[guid]#" />::&nbsp;::&nbsp;#(/state)#
+                </td>
+                <td>
+                  #(state)#
+                  <i class="fa icon-item-new" title="new"></i>::
+                  <i class="fa icon-item-queued" title="enqued"></i>::
+                  <i class="fa icon-item-done" title="indexed"></i>
+                  #(/state)#
+                </td>
+                <td><a href="#[link]#">#[title]#</a></td>
+                <td class="breakAll"><a href="#[link]#">#[link]#</a></td>
+                <td>#[author]#</td>
+                <td>#[language]#</td>
+                <td>#[date]#</td>
+              </tr>
+              <tr>
+                <td colspan="2"></td>
+                <td colspan="5">#[description]#</td>
+              </tr>
+            </tbody>
+            #{/item}#
+          </table>
+        </div>
+      </fieldset>
+
+      <input type="hidden" name="num" value="#[num]#" />
+      <input type="hidden" name="url" value="#[rss]#" />
+
+      <fieldset class="formControl" data-id="formControl">
+        <div class="content">
+          <button type="submit" name="indexSelectedItemContent" class="primary icon-run">Add Selected Items to Index (full content of url)</button>
+        </div>
+      </fieldset>
+    </fieldset>
+  </form>
+  #(/showitems)#
   #%env/templates/page-end.template%#
 </body>
 </html>
