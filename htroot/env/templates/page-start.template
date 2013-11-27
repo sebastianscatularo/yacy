@@ -7,3 +7,4 @@
 <main>
   <div class="ym-wrapper">
     <div class="ym-wbox">
+      <div id="ycu-messages" class="hidden"></div>
