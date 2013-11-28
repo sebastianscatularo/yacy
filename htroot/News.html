@@ -1,82 +1,87 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>YaCy '#[clientname]#': News Monitor</title>
-    #(table)#
-    <link rel="alternate" type="application/rss+xml" title="Incoming News" href="News.rss?page=1" />
-    <link rel="alternate" type="application/rss+xml" title="Processed News" href="News.rss?page=2" />
-    <link rel="alternate" type="application/rss+xml" title="Outgoing News" href="News.rss?page=3" />
-    <link rel="alternate" type="application/rss+xml" title="Published News" href="News.rss?page=4" />
-    ::
-    <link rel="alternate" type="application/rss+xml" title="#(page)#News Overview::Incoming News::Processed News::Outgoing News::Published News#(/page)#" href="News.rss?page=#[page]#" />
-    #(/table)#
-    #%env/templates/metas.template%#
-  </head>
-  <body id="News">
-    #%env/templates/header.template%#
+<head>
+  <title>YaCy '#[clientname]#': News Monitor</title>
+  #(table)#
+  <link rel="alternate" type="application/rss+xml" title="Incoming News" href="News.rss?page=1" />
+  <link rel="alternate" type="application/rss+xml" title="Processed News" href="News.rss?page=2" />
+  <link rel="alternate" type="application/rss+xml" title="Outgoing News" href="News.rss?page=3" />
+  <link rel="alternate" type="application/rss+xml" title="Published News" href="News.rss?page=4" />
+  ::
+  <link rel="alternate" type="application/rss+xml" title="#(page)#News Overview::Incoming News::Processed News::Outgoing News::Published News#(/page)#" href="News.rss?page=#[page]#" />
+  #(/table)#
+  #%env/templates/header-backend.template%#
+</head>
 
-    #(page)#
-    <h2>Overview</h2>
-    ::
-    <h2>Incoming&nbsp;News</h2>
-    ::
-    <h2>Processed&nbsp;News</h2>
-    ::
-    <h2>Outgoing&nbsp;News</h2>
-    ::
-    <h2>Published&nbsp;News</h2>
-    #(/page)#
-    #(table)#
-    <p>
+<body id="news">
+  #%env/templates/page-start.template%#
+
+  #(page)#
+  <h1>Overview</h1>
+  ::
+  <h1>Incoming News</h1>
+  ::
+  <h1>Processed News</h1>
+  ::
+  <h1>Outgoing News</h1>
+  ::
+  <h1>Published News</h1>
+  #(/page)#
+
+  #(table)#<!-- overview -->
+  <p>
     This is the YaCyNews system (currently under testing).
-    </p>
-    <p>
+  </p>
+  <p>
     The news service is controlled by several entry points:
-    </p>
-    <ul>
-      <li>
-        A crawl start with activated remote indexing will automatically create a news entry.
-        Other peers may use this information to prevent double-crawls from the same start point.
-        A table with recently started crawls is presented on the Index Create - page
-      </li>
-      <li>
-        A change in the personal profile will create a news entry. You can see recently made changes of
-        profile entries on the Network page, where that profile change is visualized with a '*' beside the 'P' (profile) - selector.
-      </li>
-    </ul>
+  </p>
+  <ul>
+    <li>
+      A crawl start with activated remote indexing will automatically create a news entry.
+      Other peers may use this information to prevent double-crawls from the same start point.
+      A table with recently started crawls is presented on the Index Create - page
+    </li>
+    <li>
+      A change in the personal profile will create a news entry. You can see recently made changes of
+      profile entries on the Network page, where that profile change is visualized with a <code>*</code> beside the <code>P</code> (profile) - selector.
+    </li>
+  </ul>
+  <p>
+    More news services will follow.
+  </p>
+  <ul>
+    <li>
+      <strong><a href="News.html?page=1">Incoming News</a> (#[insize]#)</strong>:
+      latest news that arrived your peer.
+      Only these news will be used to display specific news services as explained above.
+      You can process these news with a button on the page to remove their appearance from the IndexCreate and Network page.
+    </li>
+    <li>
+      <strong><a href="News.html?page=2">Processed News</a> (#[prsize]#)</strong>:
+      this is simply an archive of incoming news that you removed by processing.
+    </li>
+    <li>
+      <strong><a href="News.html?page=3">Outgoing News</a> (#[ousize]#)</strong>:
+      here your can see news entries that you have created.
+      These news are currently broadcasted to other peers.
+      You can stop the broadcast if you want.
+    </li>
+    <li>
+      <strong><a href="News.html?page=4">Published News</a> (#[pusize]#)</strong>:
+      your news that have been broadcasted sufficiently or that you have removed from the broadcast list.
+    </li>
+  </ul>
+  ::
+  <form action="News.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
     <p>
-      More news services will follow.
+      <input type="hidden" name="page" value="#[page]#" />
+      <button type="submit" name="deleteall"  class="icon-run">#(page)#::Process All News::Delete All News::Abort Publication of All News::Delete All News#(/page)#</button>
+      <button type="submit" name="deletespecific" class="icon-run">#(page)#::Process Selected News::Delete Selected News::Abort Publication of Selected News::Delete Selected News#(/page)#</button>
     </p>
-    <p>
-      Above you can see four menues:
-    </p>
-    <ul>
-      <li>
-        <strong>Incoming News (#[insize]#)</strong>: latest news that arrived your peer.
-        Only these news will be used to display specific news services as explained above.
-        You can process these news with a button on the page to remove their appearance from the IndexCreate and Network page
-      </li>
-      <li>
-        <strong>Processed News (#[prsize]#)</strong>: this is simply an archive of incoming news that you removed by processing.
-      </li>
-      <li>
-        <strong>Outgoing News (#[ousize]#)</strong>: here your can see news entries that you have created. These news are currently broadcasted to other peers.
-        you can stop the broadcast if you want.
-      </li>
-      <li>
-        <strong>Published News (#[pusize]#)</strong>: your news that have been broadcasted sufficiently or that you have removed from the broadcast list.
-      </li>
-    </ul>
-    ::
-    <form action="News.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
-      <fieldset>
-        <input type="hidden" name="page" value="#[page]#" />
-        <input type="submit" name="deletespecific" value="#(page)#::Process Selected News::Delete Selected News::Abort Publication of Selected News::Delete Selected News#(/page)#" />
-        <input type="submit" name="deleteall" value="#(page)#::Process All News::Delete All News::Abort Publication of All News::Delete All News#(/page)#" />
-      </fieldset>
-      <table border="0" cellpadding="2" cellspacing="1">
+    <table class="sortable">
+      <thead>
         <tr class="TableHeader" valign="bottom">
-          <td>&nbsp;</td>
+          <td><input type="checkbox" data-action="checkAllToggle"/></td>
           <td>Originator</td>
           <td>Created</td>
           <td>Category</td>
@@ -84,20 +89,25 @@
           <td>Distributed</td>
           <td>Attributes</td>
         </tr>
+      </thead>
+      <tbody>
         #{list}#
-        <tr class="TableCell#(dark)#Light::Dark::Summary#(/dark)#">
-          <td align="left"><input type="checkbox" name="del_#[id]#" /></td>
-          <td align="left">#[ori]#</td>
-          <td align="left">#[cre]#</td>
-          <td align="left">#[cat]#</td>
-          <td align="left">#[rec]#</td>
+        <tr>
+          <td><input type="checkbox" name="del_#[id]#" /></td>
+          <td>#[ori]#</td>
+          <td>#[cre]#</td>
+          <td>#[cat]#</td>
+          <td>#[rec]#</td>
           <td align="right">#[dis]#</td>
-          <td align="left">#[att]#</td>
+          <td>#[att]#</td>
         </tr>
         #{/list}#
-      </table>
-    </form>
-    #(/table)#
-    #%env/templates/footer.template%#
-  </body>
+      </tbody>
+    </table>
+    <button type="submit" name="deleteall"  class="icon-run">#(page)#::Process All News::Delete All News::Abort Publication of All News::Delete All News#(/page)#</button>
+    <button type="submit" name="deletespecific" class="icon-run">#(page)#::Process Selected News::Delete Selected News::Abort Publication of Selected News::Delete Selected News#(/page)#</button>
+  </form>
+  #(/table)#
+  #%env/templates/page-end.template%#
+</body>
 </html>
