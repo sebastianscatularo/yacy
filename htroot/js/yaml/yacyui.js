@@ -136,9 +136,10 @@ YaCyUi.Messages = YaCyUi.Messages || {
       messages.each(function() {
         if ($(this).is('.ycu-message-error')) {
           $(this).prepend('<span class="type">ERROR:</span>');
-        }
-        if ($(this).is('.ycu-message-warning')) {
+        } else if ($(this).is('.ycu-message-warning')) {
           $(this).prepend('<span class="type">WARNING:</span>');
+        } else {
+          $(this).prepend('<span class="type">&nbsp;</span>');
         }
         $(this).appendTo('#ycu-messages');
       });
