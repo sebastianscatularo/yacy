@@ -132,7 +132,6 @@ YaCyUi.DataStore = YaCyUi.DataStore || {
 YaCyUi.Messages = YaCyUi.Messages || {
   init: function() {
     var messages = $('.ycu-message');
-    console.debug('seeking messages -> ',messages.size());
     if (messages.size() > 0) {
       messages.each(function() {
         if ($(this).is('.ycu-message-error')) {
