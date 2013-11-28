@@ -33,13 +33,11 @@ YaCyUi.Func.MainMenu = function() {
   /** Create the breadcrumb path and mark active menu entries. */
   function createBreadCrumbAndMarkActive() {
     var current = null;
-    //var urlExp = '.*' + location.pathname.split(/\?|#/)[0] + '.*';
-    var urlExpNew = '.*' + location.pathname +  '.*';
+    var urlExp = '.*' + location.pathname +  '.*';
     var candidates = [];
 
-    console.debug("MenuMatch check", urlExpNew);
     $('#nav .main a[href!="#"]').each(function() {
-      if (this.href.match(urlExpNew)) {
+      if (this.href.match(urlExp)) {
         if (location.search.length === 0) {
           // plain page
           current = $(this);
