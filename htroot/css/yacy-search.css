@@ -2421,6 +2421,41 @@
 .fa-try:before {
   content: "\f195"; }
 
+@font-face {
+  font-family: 'Droid Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: url("font-droid/DroidSans-webfont.eot");
+  src: local("Droid Sans"), local("DroidSans"), url("font-droid/DroidSans-webfont.eot?#iefix") format("embedded-opentype"), url("font-droid/DroidSans-webfont.woff") format("woff"), url("font-droid/DroidSans-webfont.ttf") format("truetype"), url("font-droid/DroidSans-webfont.svg#droid_sansregular") format("svg"); }
+
+@font-face {
+  font-family: 'Droid Sans';
+  font-style: normal;
+  font-weight: 700;
+  src: url("font-droid/DroidSans-Bold-webfont.eot");
+  src: local("Droid Sans Bold"), local("DroidSans-Bold"), url("font-droid/DroidSans-Bold-webfont.eot?#iefix") format("embedded-opentype"), url("font-droid/DroidSans-Bold-webfont.woff") format("woff"), url("font-droid/DroidSans-Bold-webfont.ttf") format("truetype"), url("font-droid/DroidSans-Bold-webfont.svg#droid_sansbold") format("svg"); }
+
+@font-face {
+  font-family: 'Droid Serif';
+  font-style: normal;
+  font-weight: 400;
+  src: url("font-droid/DroidSerif-webfont.eot");
+  src: local("Droid Serif"), local("DroidSerif"), url("font-droid/DroidSerif-webfont.eot?#iefix") format("embedded-opentype"), url("font-droid/DroidSerif-webfont.woff") format("woff"), url("font-droid/DroidSerif-webfont.ttf") format("truetype"), url("font-droid/DroidSerif-webfont.svg#droid_serifregular") format("svg"); }
+
+@font-face {
+  font-family: 'Droid Serif';
+  font-style: normal;
+  font-weight: 700;
+  src: url("font-droid/DroidSerif-Bold-webfont.eot");
+  src: local("Droid Serif Bold"), local("DroidSerif-Bold"), url("font-droid/DroidSerif-Bold-webfont.eot?#iefix") format("embedded-opentype"), url("font-droid/DroidSerif-Bold-webfont.woff") format("woff"), url("font-droid/DroidSerif-Bold-webfont.ttf") format("truetype"), url("font-droid/DroidSerif-Bold-webfont.svg#droid_serifbold") format("svg"); }
+
+@font-face {
+  font-family: 'Droid Serif';
+  font-style: normal;
+  font-weight: 400;
+  src: url("font-droid/DroidSerif-Italic-webfont.eot");
+  src: local("Droid Serif Italic"), local("DroidSerif-Italic"), url("font-droid/DroidSerif-Italic-webfont.eot?#iefix") format("embedded-opentype"), url("font-droid/DroidSerif-Italic-webfont.woff") format("woff"), url("font-droid/DroidSerif-Italic-webfont.ttf") format("truetype"), url("font-droid/DroidSerif-Italic-webfont.svg#droid_serifitalic") format("svg"); }
+
 .ym-wbox {
   padding: 1.5em; }
 
