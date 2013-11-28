@@ -170,12 +170,7 @@ main .ym-wbox:first-of-type {
 }
 
 /** Pages specific CSS */
-// body#crawlStartExpert
-// body#crawlStartSite
 @import 'page-crawl-start';
-
-// body#network
 @import 'page-network';
-
-// body#viewLog
 @import 'page-view-log';
+@import 'page-terminal';
