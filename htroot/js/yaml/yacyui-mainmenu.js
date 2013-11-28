@@ -33,17 +33,48 @@ YaCyUi.Func.MainMenu = function() {
   /** Create the breadcrumb path and mark active menu entries. */
   function createBreadCrumbAndMarkActive() {
     var current = null;
-    var urlExp = '.*' + location.pathname.split(/\?|#/)[0] + '.*';
+    //var urlExp = '.*' + location.pathname.split(/\?|#/)[0] + '.*';
+    var urlExpNew = '.*' + location.pathname +  '.*';
+    var candidates = [];
 
+    console.debug("MenuMatch check", urlExpNew);
     $('#nav .main a[href!="#"]').each(function() {
-      if ($(this).attr('href').match(urlExp)) {
-        current = $(this);
-        return false; // break loop
+      if (this.href.match(urlExpNew)) {
+        if (location.search.length === 0) {
+          // plain page
+          current = $(this);
+          return false; // break loop
+        } else {
+          // with query string
+          candidates.push($(this));
+        }
       }
     });
 
     if (current === null) {
-      // nothing found
+      if (candidates.length === 1) {
+        currrent = candidates[0];
+      } else {
+        var currentMatches = 0;
+        var matchesCount = 0;
+        var urlQuery = location.search.substr(1).split('&');
+        for (var i=0; i<candidates.length; i++) {
+          var candidate = candidates[i];
+          currentMatches = 0;
+          for (var j=0; j<urlQuery.length; j++) {
+            var queryItem = urlQuery[j];
+            if (candidate.attr('href').match('.*' + queryItem + '.*')) {
+              currentMatches++;
+            }
+            if (currentMatches > matchesCount) {
+              current = candidate;
+            }
+          }
+        }
+      }
+    }
+
+    if (current === null) { // nothing found
       return;
     }
 
