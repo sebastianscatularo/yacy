@@ -2504,6 +2504,7 @@ input[type="checkbox"] {
   background: transparent; }
 
 input[type='text'],
+input[type='password'],
 input[type="range"],
 textarea {
   width: 70%; }
