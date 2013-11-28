@@ -1,0 +1,22 @@
+body#status {
+  #infoHeader fieldset {
+    display:inline-block;
+    margin-bottom:1em;
+    width:600px;
+  }
+  #banner {
+    border:1px solid #5090d0;
+    * {
+      margin:0;
+    }
+  }
+  #sidebar {
+    float:left;
+  }
+
+  #queueMeters {
+    progress {
+      width:50%;
+    }
+  }
+}

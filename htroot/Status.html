@@ -1,223 +1,194 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    #(forwardToConfigBasic)#::<meta http-equiv="REFRESH" content="0; url=/ConfigBasic.html" />#(/forwardToConfigBasic)#
-    <title>YaCy '#[clientname]#': Console Status</title>
-    #%env/templates/metas.template%#
-    <script type="text/javascript">
-      <!--
-      function loadBanner() {
-        for (var i = 0; i < document.images.length; i++) {
-          if (document.images[i].src.indexOf("Banner.png") > 0) {
-            document.images[i].src = "/Banner.png?textcolor=000000&bgcolor=e7effc&bordercolor=5090d0&time=" + (new Date()).getTime();
-            break;
-          }
-        }
+<head>
+  #(forwardToConfigBasic)#::<meta http-equiv="REFRESH" content="0; url=/ConfigBasic.html" />#(/forwardToConfigBasic)#
+  <title>YaCy '#[clientname]#': Console Status</title>
+  #%env/templates/header-backend.template%#
+  <script type="text/javascript">
+  <!--
+  function loadBanner() {
+    for (var i = 0; i < document.images.length; i++) {
+      if (document.images[i].src.indexOf("Banner.png") > 0) {
+        document.images[i].src = "/Banner.png?textcolor=000000&bgcolor=DEE6F3&bordercolor=DEE6F3&time=" + (new Date()).getTime();
+        break;
       }
-      function reloadGraph() {
-	    document.images["graph"].src="PerformanceGraph.png?nomem=&time="+(new Date()).getTime();
-	    window.status="";
-	  }
-      function init() {
-        loaderBanner = window.setInterval("loadBanner()", 20000);
-        window.setInterval("reloadGraph()", 8000);
-      }
-      -->
-    </script>
-  </head>
-  <body onload="init();">
-	#%env/templates/header.template%#
+    }
+  }
+  function reloadGraph() {
+    document.images["graph"].src="PerformanceGraph.png?nomem=&time="+(new Date()).getTime();
+    window.status="";
+  }
+  function init() {
+    loaderBanner = window.setInterval("loadBanner()", 20000);
+    window.setInterval("reloadGraph()", 8000);
+  }
+  -->
+  </script>
+</head>
 
-    <a href="https://gitorious.org/yacy/rc1" target="_blank" class="forceNoExternalIcon"><img src="env/grafics/forkme.png" style="position:absolute;top:0px;right:0px;z-index: 100;"/></a>
+<body id="status" onload="init();">
+  #%env/templates/page-start.template%#
 
-    #(showPrivateTable)#
-    <div class="SubMenu">
-      <ul class="SubMenu">
-      <li><a href="Status.html?login=" class="MenuItemLink lock">Log-in as administrator to see full status</a></li>
-      </ul>
-    </div>
-    ::
-    #(/showPrivateTable)#
+  <div id="devInfo">
+    Banner image generator does not respect set border color
+  </div>
 
-    <!--[if IE]>
-    <div style="clear:left;" class="gainlayout">
-    <![endif]-->
+  <a href="https://gitorious.org/yacy/rc1" target="_blank" class="noExt">
+    <img src="env/grafics/forkme.png" style="position:absolute;top:0px;right:0px;z-index: 100;"/>
+  </a>
 
-    <div class="welcome">
-    <div style="margin:auto;text-align:center;">
-      <h2><img src="/env/grafics/kaskelix.png" width="128" height="64" alt="YaCy Websearch" style="margin-right:5px; vertical-align:middle;" />Welcome to YaCy!</h2>
-      <iframe src="rssTerminal.html?set=PEERNEWS,REMOTESEARCH,LOCALSEARCH,REMOTEINDEXING,LOCALINDEXING,DHTRECEIVE,DHTSEND,PROXY&amp;width=600px&amp;height=180px&amp;maxlines=20&amp;maxwidth=120" class="autoSize" scrolling="no"></iframe><br />
-      <img src="PerformanceGraph.png?nomem=" id="graph" alt="PerformanceGraph" width="660" height="240"/><br />
-      <img src="Banner.png?textcolor=000000&amp;bgcolor=e7effc&amp;bordercolor=5090d0" alt="banner" width="468" height="60"/>
-    </div>
+  <!-- urgent -->
+  #(urgentSetPassword)#::
+  <p class="ycu-message ycu-message-warning">
+    <span class="header"><strong>Your settings are _not_ protected!</strong></span>
+    <span class="content">
+      Please open the <a href="ConfigAccounts_p.html">accounts configuration</a> page <strong>immediately</strong> and set an administration password.
+    </span>
+  </p>
+  #(/urgentSetPassword)#
 
-    <dl>
+  #(urgentStatusVirgin)#::
+  <p class="ycu-message ycu-message-info">
+    You have not published your peer seed yet. This happens automatically, just wait.
+  </p>
+  #(/urgentStatusVirgin)#
 
-    <!-- urgent -->
+  #(hintStatusPrivate)#::
+  <p class="ycu-message ycu-message-info">
+    Your network configuration is in private mode. Your peer seed will not be published.
+  </p>
+  #(/hintStatusPrivate)#
 
-    #(urgentSetPassword)#::
-    <dt class="hintIcon"><img src="env/grafics/bad.png" width="32" height="32" alt="bad" /></dt>
-    <dd class="hint"><strong>Your settings are _not_ protected!</strong>
-    Please open the <a href="ConfigAccounts_p.html">accounts configuration</a> page <strong>immediately</strong>
-    and set an administration password.
-    </dd>
-    #(/urgentSetPassword)#
+  <!-- warnings -->
+  #(warningGoOnline)#::
+  <p class="ycu-message ycu-message-warning">
+    Your peer must go online to get a peer address.
+  </p>
+  #(/warningGoOnline)#
 
-    #(urgentStatusVirgin)#::
-    <dt class="hintIcon"><img src="env/grafics/bad.png" width="32" height="32" alt="bad"/></dt>
-    <dd class="hint">You have not published your peer seed yet. This happens automatically, just wait.
-    </dd>
-    #(/urgentStatusVirgin)#
+  #(warningStatusJunior)#::
+  <p class="ycu-message ycu-message-warning">
+    <span class="header">You cannot be reached from outside.</span>
+    <span class="content">
+      A possible reason is that you are behind a firewall, <abbr>NAT</abbr> or Router.
+      But you can <a href="index.html">search the internet</a> using the other peers'
+      global index on your own search page.
+      <br/>
+      We encourage you to open your firewall for the port you configured (usually: <code>8090</code>),
+      or to set up a <em>virtual server</em> in your router settings (often called <abbr>DMZ</abbr>).
+      Please be fair, contribute your own index to the global index.
+    </span>
+  </p>
+  #(/warningStatusJunior)#
 
-    #(hintStatusPrivate)#::
-    <dt class="hintIcon"><img src="env/grafics/bad.png" width="32" height="32" alt="idea"/></dt>
-    <dd class="hint">Your network configuration is in private mode. Your peer seed will not be published.
-    </dd>
-    #(/hintStatusPrivate)#
+  #(warningDiskSpaceLow)#::
+  <p class="ycu-message ycu-message-warning">
+    <span class="header">Free disk space is lower than <code>#[minSpace]#</code>.</span>
+    <span class="content">
+      Crawling has been disabled. Please fix it as soon as possible and restart YaCy.
+    </span>
+  </p>
+  #(/warningDiskSpaceLow)#
 
-    <!-- warnings -->
+  #(warningMemoryLow)#::
+  <p class="ycu-message ycu-message-warning">
+    <span class="header">Free memory is lower than <code>#[minSpace]#</code>.</span>
+    <span class="content">
+      <abbr>DHT</abbr> has been disabled. Please fix it as soon as possible and restart YaCy.
+    </span>
+  </p>
+  #(/warningMemoryLow)#
 
-    #(warningGoOnline)#::
-    <dt class="hintIcon"><img src="env/grafics/bad.png" width="32" height="32" alt="bad"/></dt>
-    <dd class="hint">The peer must go online to get a peer address.
-    </dd>
-    #(/warningGoOnline)#
+  #(warningCrawlPaused)#::
+  <p class="ycu-message ycu-message-warning">
+    Crawling is paused! If the crawling was paused automatically, please check your disk space.
+  </p>
+  #(/warningCrawlPaused)#
 
-    #(warningStatusJunior)#::
-    <dt class="hintIcon"><img src="env/grafics/bad.png" width="32" height="32" alt="bad"/></dt>
-    <dd class="hint">You cannot be reached from outside.
-    A possible reason is that you are behind a firewall, NAT or Router.
-    But you can <a href="index.html">search the internet</a> using the other peers'
-    global index on your own search page.
-    We encourage you to open your firewall for the port you configured (usually: 8090),
-    or to set up a 'virtual server' in your router settings (often called DMZ).
-    Please be fair, contribute your own index to the global index.
-    </dd>
-    #(/warningStatusJunior)#
-
-    #(warningDiskSpaceLow)#::
-    <dt class="hintIcon"><img src="env/grafics/bad.png" width="32" height="32" alt="bad"/></dt>
-    <dd class="hint">Free disk space is lower than #[minSpace]#. Crawling has been disabled. Please fix
-    it as soon as possible and restart YaCy.
-    </dd>
-    #(/warningDiskSpaceLow)#
-
-    #(warningMemoryLow)#::
-    <dt class="hintIcon"><img src="env/grafics/bad.png" width="32" height="32" alt="bad"/></dt>
-    <dd class="hint">Free memory is lower than #[minSpace]#. DHT has been disabled. Please fix
-    it as soon as possible and restart YaCy.
-    </dd>
-    #(/warningMemoryLow)#
-
-    #(warningCrawlPaused)#::
-    <dt class="hintIcon"><img src="env/grafics/bad.png" width="32" height="32" alt="bad"/></dt>
-    <dd class="hint">Crawling is paused! If the crawling was paused automatically, please check your disk space.
-    </dd>
-    #(/warningCrawlPaused)#
-
-     <!-- hints -->
-
-    #(hintVersionAvailable)#::
-    <dt class="hintIcon"><img src="env/grafics/idea.png" width="32" height="32" alt="idea"/></dt>
-    <dd class="hint">Latest public version is v#[latestVersion]#.
-      You can download a more recent version of YaCy. Click here to install this update and restart YaCy:
-      <form action="Status.html" method="get" class="PeerControl" accept-charset="UTF-8">
-
-<!-- Is this line here on purpose or by accident?
-      <form action="Table_API_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8" name="apilist">
--->
-        <button type="submit" name="aquirerelease" value="Update YaCy">
-          <img src="/env/grafics/lock.gif" alt="lock icon"/>
+  <!-- hints -->
+  #(hintVersionAvailable)#::
+  <div class="p ycu-message ycu-message-info">
+    <span class="header">Latest public version is <code>v#[latestVersion]#</code>.</span>
+    <div class="content">
+      You can download a more recent version of YaCy (you'll need Admin rights to do so).
+      <form action="Status.html" method="get" class="noSpace" accept-charset="UTF-8">
+        <button type="submit" name="aquirerelease" class="icon-run">
           Install YaCy v#[latestVersion]#
         </button>
       </form>
-    </dd>
-    #(/hintVersionAvailable)#
+    </div>
+  </div>
+  #(/hintVersionAvailable)#
 
-    <!--
-    #(hintVersionDownload)#::
-    <dt class="hintIcon"><img src="env/grafics/start.gif" alt="Start"/></dt>
-    <dd class="hint">You can download the latest releases here:
-      #[versionResMain]# or #[versionResDev]#
-    </dd>
-    #(/hintVersionDownload)#
-    -->
+  #(hintStatusSenior)#::
+  <p class="ycu-message ycu-message-info">
+    You are running a server in senior mode and you support the global internet index, which you can also <a href="index.html">search yourself</a>.
+  </p>
+  #(/hintStatusSenior)#
 
-    #(hintStatusSenior)#::
-    <dt class="hintIcon"><img src="env/grafics/good.png" width="32" height="32" alt="good"/></dt>
-    <dd class="hint">You are running a server in senior mode and you support the global internet index,
-    which you can also <a href="index.html">search yourself</a>.
-    </dd>
-    #(/hintStatusSenior)#
+  #(hintStatusPrincipal)#::
+  <p class="ycu-message ycu-message-info">
+    You have a principal peer because you publish your seed-list to a public accessible server where it can be retrieved using the <abbr>URL</abbr> <a href="#[seedURL]#">#[seedURL]#</a>.
+  </p>
+  #(/hintStatusPrincipal)#
 
-    #(hintStatusPrincipal)#::
-    <dt class="hintIcon"><img src="env/grafics/good.png" width="32" height="32" alt="good"/></dt>
-    <dd class="hint">You have a principal peer because you publish your seed-list to a public accessible server
-    where it can be retrieved using the URL <a href="#[seedURL]#">#[seedURL]#</a>.
-    </dd>
-    #(/hintStatusPrincipal)#
+  #(hintCrawlStart)#::
+  <p class="ycu-message ycu-message-info">
+    Your Web Page Indexer is idle. You can start your own web crawl <a href="CrawlStartSite_p.html">here</a>.
+  </p>
+  #(/hintCrawlStart)#
 
-    #(hintCrawlStart)#::
-    <dt class="hintIcon"><img src="env/grafics/idea.png" width="32" height="32" alt="idea"/></dt>
-    <dd class="hint">Your Web Page Indexer is idle. You can start your own web crawl <a href="CrawlStartSite_p.html">here</a>.
-    </dd>
-    #(/hintCrawlStart)#
+  #(hintCrawlMonitor)#::
+  <p class="ycu-message ycu-message-info">
+    Your Web Page Indexer is busy. You can <a href="Crawler_p.html">monitor your web crawl</a> here.
+  </p>
+  #(/hintCrawlMonitor)#
 
-    #(hintCrawlMonitor)#::
-    <dt class="hintIcon"><img src="env/grafics/idea.png" width="32" height="32" alt="idea"/></dt>
-	<dd class="hint">Your Web Page Indexer is busy. You can <a href="Crawler_p.html">monitor your web crawl</a> here.
-    </dd>
-    #(/hintCrawlMonitor)#
+  #(hintSupport)#::
+  <p class="ycu-message ycu-message-info">
+    If you need professional support, please write to <span class="tt">support@yacy.net</span>
+    <br/>
+    For community support, please visit our <a href="http://forum.yacy.de">forum</a>.
+  </p>
+  #(/hintSupport)#
 
-    #(hintSupport)#::
-    <dt class="hintIcon"><img src="env/grafics/idea.png" width="32" height="32" alt="idea"/></dt>
-	<dd class="hint">If you need professional support, please write to <tt>support@yacy.net</tt><br>For community support, please visit our <a href="http://forum.yacy.de">forum</a>.
-    </dd>
-    #(/hintSupport)#
-
-    <!-- Social Networking -->
+  <!-- Social Networking -->
     <!--
     <dt class="hintIcon"><img src="env/grafics/idea.png" width="32" height="32" alt="idea"/></dt>
     <dd class="hint"><a href="http://twitter.com/yacy_search"><img src="/env/grafics/twitter_followme.png" alt="Follow YaCy on Twitter"/></a>
     </dd>
-    -->
-
-    <!-- templates
-    #(hint)#::
-    <dt class="hintIcon"><img src="env/grafics/idea.png" width="32" height="32" alt="idea"/></dt>
-    <dd class="hint">
-    </dd>
-    #(/hint)#
+  -->
 
 
-    #(hint)#::
-    <dt class="hintIcon"><img src="env/grafics/good.png" width="32" height="32" alt="good"/></dt>
-    <dd class="hint">
-    </dd>
-    #(/hint)#
+  #(showPrivateTable)#
+  <p class="ycu-message ycu-message-info">
+    <a href="Status.html?login=" class="MenuItemLink lock">Log-in as administrator to see full status</a>
+  </p>
+  ::#(/showPrivateTable)#
 
-    #(hint)#::
-    <dt class="hintIcon"><img src="env/grafics/start.png" width="32" height="32" alt="start" /></dt>
-    <dd class="hint">
-    </dd>
-    #(/hint)#
+  <div class="center" id="infoHeader">
+    <h1>
+      <img src="/env/grafics/kaskelix.png" width="128" height="64" alt="YaCy Websearch" style="margin-right:5px; vertical-align:middle;" />
+      Welcome to YaCy!
+    </h1>
+    <fieldset class="framed">
+      <legend class="light">Terminal</legend>
+      <iframe src="rssTerminal.html?set=PEERNEWS,REMOTESEARCH,LOCALSEARCH,REMOTEINDEXING,LOCALINDEXING,DHTRECEIVE,DHTSEND,PROXY&amp;width=600px&amp;height=180px&amp;maxlines=20&amp;maxwidth=120" class="autoSize" scrolling="no" style="width:600px;"></iframe>
+    </fieldset>
+    <fieldset class="framed">
+      <legend class="light">Performance Graph</legend>
+      <img src="PerformanceGraph.png?width=600&nomem=" id="graph" alt="PerformanceGraph" width="600" height="240"/>
+    </fieldset>
+    <br />
+    <fieldset class="framed" id="banner">
+      <div class="center" id="banner">
+        <img src="Banner.png?textcolor=000000&amp;bgcolor=DEE6F3&amp;bordercolor=DEE6F3" alt="YaCy banner" width="468" height="60"/>
+      </div>
+    </fieldset>
+  </div>
 
-    #(hint)#::
-    <dt class="hintIcon"><img src="env/grafics/bad.png" width="32" height="32" alt="bad" /></dt>
-    <dd class="hint">
-    </dd>
-    #(/hint)#
-       -->
-    </dl>
+  #%[privateStatusTable]%#
 
-    </div>
-
-    #%[privateStatusTable]%#
-
-    <!--[if IE]>
-    </div>
-    <![endif]-->
-
-    #%env/templates/footer.template%#
-  </body>
+  #%env/templates/page-end.template%#
+</body>
 </html>

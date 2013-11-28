@@ -790,7 +790,7 @@
     margin: 0 0 1.5em 0.8em; }
 
   /* --- general text formatting | Allgemeine Textauszeichnung ------------------------------------------ */
-  p, div.p {
+  p, div .p {
     font-size: 100%;
     line-height: 1.5;
     margin: 0 0 1.5em 0; }
@@ -2442,13 +2442,13 @@ a[href^="https://"]:not(.noExt):before, table.sortable th:not(.noSort):after, bu
   opacity: 0.7; }
 
 a[href^="http://"]:not(.noExt):before,
-a[href^="https://"]:not(.noExt):before, table.sortable th:not(.noSort):after, body#yacySearch #messages > p:before, body#yacySearch #messages > div.p:before {
+a[href^="https://"]:not(.noExt):before, table.sortable th:not(.noSort):after, body#yacySearch #messages > p:before, body#yacySearch div #messages > .p:before, div body#yacySearch #messages > .p:before {
   font-family: FontAwesome;
   font-style: normal;
   font-size: 0.85em; }
 
 a[href^="http://"]:not(.noExt):before,
-a[href^="https://"]:not(.noExt):before, table.sortable th:not(.noSort):after, body#yacySearch #messages > p:before, body#yacySearch #messages > div.p:before {
+a[href^="https://"]:not(.noExt):before, table.sortable th:not(.noSort):after, body#yacySearch #messages > p:before, body#yacySearch div #messages > .p:before, div body#yacySearch #messages > .p:before {
   display: inline-block; }
 
 /**
@@ -2619,6 +2619,10 @@ div.clear {
   height: 0;
   width: 0;
   clear: both; }
+div .center {
+  text-align: center; }
+  div .center iframe {
+    display: block; }
 
 .nobr {
   white-space: nowrap; }
@@ -2926,17 +2930,17 @@ body#yacySearch {
         content: '\2026'; }
     body#yacySearch .searchResult h1 {
       display: inline-block; }
-    body#yacySearch .searchResult p, body#yacySearch .searchResult div.p {
+    body#yacySearch .searchResult p, body#yacySearch .searchResult div .p, div body#yacySearch .searchResult .p {
       margin-bottom: 0.5em; }
-      body#yacySearch .searchResult p.url, body#yacySearch .searchResult div.url.p {
+      body#yacySearch .searchResult p.url, body#yacySearch .searchResult div .url.p, div body#yacySearch .searchResult .url.p {
         font-size: 0.9em;
         white-space: nowrap;
         text-overflow: ellipsis;
         overflow: hidden; }
-        body#yacySearch .searchResult p.url:hover, body#yacySearch .searchResult div.url.p:hover {
+        body#yacySearch .searchResult p.url:hover, body#yacySearch .searchResult div .url.p:hover, div body#yacySearch .searchResult .url.p:hover {
           text-overflow: inherit;
           white-space: inherit; }
-    body#yacySearch .searchResult p:last-of-type, body#yacySearch .searchResult div.p:last-of-type {
+    body#yacySearch .searchResult p:last-of-type, body#yacySearch .searchResult div .p:last-of-type, div body#yacySearch .searchResult .p:last-of-type {
       margin-bottom: 0; }
   body#yacySearch .urlActions {
     margin-bottom: 0.3em;
@@ -3000,7 +3004,7 @@ body#yacySearch {
     display: inline-block; }
   body#yacySearch #resNavBottom {
     float: right; }
-  body#yacySearch #messages > p, body#yacySearch #messages > div.p {
+  body#yacySearch #messages > p, body#yacySearch div #messages > .p, div body#yacySearch #messages > .p {
     padding: 0.3em 1em;
     border-radius: 5px; }
   body#yacySearch #messages .error:before {

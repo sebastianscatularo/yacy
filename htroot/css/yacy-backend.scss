@@ -58,18 +58,26 @@
 #ycu-messages {
   @extend %font-sans;
 
-  p {
+  > * {
     border-radius:5px;
     padding:0.5em;
 
     &:before {
       @extend %icon-block;
+      margin-right:0.3em;
     }
 
-    span.type {
+    .type {
       font-weight:bold;
       display:inline-block;
       margin:0 0.3em;
+    }
+    .header {
+      display:inline-block;
+    }
+    .content {
+      display:block;
+      margin-left:1.5em;
     }
 
     &.ycu-message-error {
@@ -115,8 +123,9 @@
 
 iframe {
   display:block;
-  width:100%;
+  //width:100%;
   border-width:0;
+  margin:0 auto;
 }
 iframe.border {
   border:1px solid #ccc;
@@ -172,5 +181,11 @@ main .ym-wbox:first-of-type {
 /** Pages specific CSS */
 @import 'page-crawl-start';
 @import 'page-network';
-@import 'page-view-log';
+@import 'page-status';
 @import 'page-terminal';
+@import 'page-view-log';
+
+
+body#rssTerminal {
+  background:transparent;
+}

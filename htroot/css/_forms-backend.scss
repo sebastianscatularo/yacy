@@ -139,6 +139,10 @@ fieldset.framed {
     @extend %font-sans;
     font-weight:bold;
     padding:0 0.5em;
+
+    &.light {
+      opacity:0.7;
+    }
   }
 }
 
@@ -501,7 +505,7 @@ textarea {
   }
 }
 
-form {
+form:not(.noSpace) {
   margin-bottom:1.5em;
 }
 fieldset.main + fieldset.main {
@@ -518,6 +522,13 @@ form > fieldset:not(.formGroup):not(.formSection):first-of-type {
 
   > legend {
     box-shadow:2px 2px 1px rgba(50,50,50,0.4);
+  }
+}
+
+form.inline {
+  display:inline-block;
+  &:not(:first-of-type) {
+    margin-left:1em;
   }
 }
 

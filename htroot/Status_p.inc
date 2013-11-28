@@ -1,125 +1,259 @@
-<div class="sidebar">
-<fieldset style="width: 230px;">
+<fieldset class="main">
   <legend>System Status</legend>
-  <dl>
 
-    <dt>System</dt>
-    <dd>YaCy version #[versionpp]#
-    #(peerStatistics)#
-      Unknown
-      ::
-      <div>Uptime: #[uptime]#</div>
+  <fieldset class="formGroup collapsible">
+    <legend>System</legend>
+    <fieldset class="formSection">
+      <legend>YaCy Version</legend>
+      <div class="content">#[versionpp]#</div>
+    </fieldset>
+    #(peerStatistics)#::
+    <fieldset class="formSection">
+      <legend>Uptime</legend>
+      <div class="content">#[uptime]#</div>
+    </fieldset>
     #(/peerStatistics)#
-    <div>Processors: #[processors]#</div>
-    <div>Load: #[load]#</div>
-    
-    </dd>
-    <dt>Protection</dt>
-    <dd>#(protection)#
-      <strong>Password is missing.</strong>
-      ::
-      password-protected
-      #(/protection)#
+    <fieldset class="formSection">
+      <legend>Processors</legend>
+      <div class="content">#[processors]#</div>
+    </fieldset>
+    <fieldset class="formSection">
+      <legend>System Load</legend>
+      <div class="content">#[load]#</div>
+    </fieldset>
+  </fieldset>
 
-      #(unrestrictedLocalAccess)#
-      ::
-      <br />Unrestricted access from localhost.
-      #(/unrestrictedLocalAccess)#
-      <a href="ConfigAccounts_p.html">[Configure]</a>
-    </dd>
-    
-    <dt>Address</dt>
-    <dd>Host: #[host]#:#[port]# #(extPortFormat)#::| (Binding to interface: #[extPort]#)#(/extPortFormat)# #(sslSupport)#::| SSL: enabled#(/sslSupport)#<br />
-    #(peerAddress)#
-      peer address not assigned
-      ::
-      Public Address: http://#[address]#<br/>
-      YaCy Address: http://#[peername]#.yacy
-      #(/peerAddress)#</dd>
-    
+  <fieldset class="formGroup collapsible">
+    <legend>Memory Usage</legend>
+    <fieldset class="formSection">
+      <legend>Free</legend>
+      <div class="content">#[freeMemory]#</div>
+    </fieldset>
+    <fieldset class="formSection">
+      <legend>Total</legend>
+      <div class="content">#[totalMemory]#</div>
+    </fieldset>
+    <fieldset class="formSection">
+      <legend>Max</legend>
+      <div class="content">#[maxMemory]#</div>
+    </fieldset>
+    <fieldset class="formControl" data-id="formControl">
+      <div class="content">
+        <form class="noSpace" action="PerformanceMemory_p.html">
+          <button class="icon-showMore" type="submit">View Memory Details</button>
+        </form>
+      </div>
+    </fieldset>
+  </fieldset>
+
+  <fieldset class="formGroup collapsible">
+    <legend>Protection</legend>
+    <fieldset class="formSection">
+      <legend>Protection</legend>
+      <div class="content">
+        #(protection)#
+        <strong>Password is missing.</strong>
+        ::
+        password-protected
+        #(/protection)#
+      </div>
+    </fieldset>
+    #(unrestrictedLocalAccess)#::
+    <fieldset class="formSection">
+      <legend>Access</legend>
+      <div class="content">Unrestricted access from localhost.</div>
+    </fieldset>
+    #(/unrestrictedLocalAccess)#
+    <fieldset class="formControl" data-id="formControl">
+      <div class="content">
+        <form class="noSpace" action="ConfigAccounts_p.html">
+          <button class="icon-config" type="submit">Configure accounts</button>
+        </form>
+      </div>
+    </fieldset>
+  </fieldset>
+
+  <fieldset class="formGroup collapsible">
+    <legend>Network</legend>
+    <fieldset class="formSection">
+      <legend>Host</legend>
+      <div class="content">
+        #[host]#:#[port]#
+        #(extPortFormat)#::
+        &nbsp;, Binding to interface: #[extPort]#
+        #(/extPortFormat)#
+        #(sslSupport)#::
+        &nbsp;, SSL: enabled
+        #(/sslSupport)#
+      </div>
+    </fieldset>
+    <fieldset class="formSection">
+      <legend>Public Address</legend>
+      <div class="content">
+        #(peerAddress)#
+        peer address not assigned
+        ::
+        <a href="http://#[address]#">http://#[address]#</a>
+        <br/>
+        <a href="http://#[peername]#.yacy">http://#[peername]#.yacy</a> <em>(YaCy Address)</em>
+        #(/peerAddress)#
+      </div>
+    </fieldset>
     #(portForwarding)#::
-    <dt>Port Forwarding Host</dt>
-    <dd>#[host]#:#[port]# (#(status)#broken::connected#(/status)#)</dd>
+    <fieldset class="formSection">
+      <legend>Port Forwarding Host</legend>
+      <div class="content">
+        #[host]#:#[port]# <em>(#(status)#broken::connected#(/status)#)</em>
+      </div>
+    </fieldset>
     #(/portForwarding)#
-    
-    <dt>Remote Proxy</dt>
-    <dd>#(remoteProxy)#not used::#[host]#:#[port]# | Used for YaCy -> YaCy communication: #(4Yacy)#Yes::No #(/4Yacy)# #(/remoteProxy)#</dd>
-    
-    <dt>Auto-popup on start-up</dt>
-    <dd>
-    #(popup)#
-    Disabled <a href="Status.html?popup=true">[Enable]</a>
-    ::
-    Enabled <a href="Status.html?popup=false">[Disable]</a>
-    #(/popup)#
-    </dd>
-    
-    <dt>Tray-Icon</dt>
-    <dd>
-    #(tray)#
-    Disabled <a href="Status.html?tray=true">[Enable]</a>
-    ::
-    Enabled <a href="Status.html?tray=false">[Disable]</a>
-    ::
-    <a href="ConfigProperties_p.html" onclick="alert('Set\ntray.icon.force = true\n\nWARNING:\nYou do this on your own risk. If you do this without YaCy running on a desktop-pc, this will possibly break startup. In this case, you will have to edit the configuration manually in DATA/SETTINGS/yacy.conf');">Experimental</a>
-    #(/tray)#
-    </dd>
-      
-    <dt><a href="PerformanceMemory_p.html">Memory Usage</a></dt>
-    <dd>
-    free: #[freeMemory]#<br/>
-    total: #[totalMemory]#<br/>
-    max: #[maxMemory]#</dd>
-    
-    <dt>Traffic [<a href="Status.html?ResetTraffic=">Reset</a>]</dt>
-    <dd>Proxy: #[trafficProxy]#<br/>Crawler: #[trafficCrawler]#</dd>
-    
-    <dt><a href="Connections_p.html">Incoming Connections</a></dt>
-    <dd>Active: #[connectionsActive]# | Max: #[connectionsMax]#</dd>
-    
-    <dt>Queues</dt>
-    <dd>
-    <a href="IndexCreateLoaderQueue_p.html">Loader Queue</a>:
-    <table>
-      <tr>
-        <td><div class="ProgressBar"><div class="ProgressBarFill" style="width:#[loaderQueuePercent]#%;" ></div></div></td>
-        <td><div class="ProgressBarCaption">#[loaderQueueSize]#&nbsp;|&nbsp;#[loaderQueueMax]#</div></td>
-      </tr>
-      <tr>
-        <td><a href="IndexCreateQueues_p.html?stack=LOCAL">Local Crawl</a></td>
-        <td>#[localCrawlQueueSize]#</td>
-        <td><a href="Status.html?#(localCrawlPaused)#pauseCrawlJob::continueCrawlJob#(/localCrawlPaused)#=&amp;jobType=localCrawl" title="#(localCrawlPaused)#pause local crawl::continue local crawl#(/localCrawlPaused)#"><img src="env/grafics/#(localCrawlPaused)#stop.gif::start.gif#(/localCrawlPaused)#" alt="#(localCrawlPaused)#pause local crawl::continue local crawl#(/localCrawlPaused)#" style="width:12px;height:12px;" /></a></td>
-        <td>#(localCrawlPaused)#&nbsp;::(paused)#(/localCrawlPaused)#</td>
-      </tr>
-      <tr>
-        <td><a href="IndexCreateQueues_p.html?stack=REMOTE">Remote triggered Crawl</a></td>
-        <td>#[remoteTriggeredCrawlQueueSize]#</td>
-        <td><a href="Status.html?#(remoteTriggeredCrawlPaused)#pauseCrawlJob::continueCrawlJob#(/remoteTriggeredCrawlPaused)#=&amp;jobType=remoteTriggeredCrawl" title="#(remoteTriggeredCrawlPaused)#pause remote triggered crawl::continue remote triggered crawl#(/remoteTriggeredCrawlPaused)#"><img src="env/grafics/#(remoteTriggeredCrawlPaused)#stop.gif::start.gif#(/remoteTriggeredCrawlPaused)#" alt="#(remoteTriggeredCrawlPaused)#pause remote triggered crawl::continue remote triggered crawl#(/remoteTriggeredCrawlPaused)#" style="width:12px;height:12px;" /></a></td>
-        <td>#(remoteTriggeredCrawlPaused)#&nbsp;::(paused)#(/remoteTriggeredCrawlPaused)#</td>
-      </tr>
-      <tr>
-        <td>Pre-Queueing</td>
-        <td>#[stackCrawlQueueSize]#</td>
-        <td></td>
-        <td></td>
-      </tr>  
-      </table>
-    </dd>
-    
-    <dt>Seed server</dt>
-    <dd>
-    #(seedServer)#
-      Disabled.
-      <a href="Settings_p.html?page=seed">[Configure]</a>
+    <fieldset class="formSection">
+      <legend>Traffic</legend>
+      <div class="content">
+        <p>
+          Proxy: #[trafficProxy]#
+          <br/>
+          Crawler: #[trafficCrawler]#
+        </p>
+        <p>
+          <form class="noSpace" action="Status.html?ResetTraffic=true">
+            <button class="icon-delete" type="submit">Reset traffic counters</button>
+          </form>
+        </p>
+      </div>
+    </fieldset>
+    <fieldset class="formSection">
+      <legend>Incoming Connections</legend>
+      <div class="content">
+        <p>
+          Active: #[connectionsActive]#
+          <br/>
+          Max: #[connectionsMax]#
+        </p>
+        <p>
+          <form class="noSpace" action="Connections_p.html">
+            <button class="icon-showMore" type="submit">View details</button>
+          </form>
+        </p>
+      </div>
+    </fieldset>
+    <fieldset class="formSection">
+      <legend>Port Forwarding Host</legend>
+      <div class="content">
+        #(seedServer)#
+        <form class="noSpace" action="Settings_p.html?page=seed">
+          <em>Disabled</em>&nbsp;&nbsp;<button class="icon-config" type="submit">Configure</button>
+        </form>
+        ::
+        Enabled: Updating to server #[seedServer]#.
+        <br/>
+        Last upload: #[lastUpload]# ago.
+        ::
+        Enabled: Updating to file #[seedFile]#.
+        <br/>
+        Last upload: #[lastUpload]# ago.
+        #(/seedServer)#
+      </div>
+    </fieldset>
+    <fieldset class="formSection">
+      <legend>Remote Proxy</legend>
+      <div class="content">
+        #(remoteProxy)#
+        <em>not used</em>
+        ::
+        #[host]#:#[port]# <br/>
+        Used for YaCy <i class="fa fa-arrow-right"></i> YaCy communication: #(4Yacy)#Yes::No #(/4Yacy)#
+        #(/remoteProxy)#
+      </div>
+    </fieldset>
+  </fieldset>
+
+  <fieldset class="formGroup collapsible" id="queueMeters">
+    <legend>Queues</legend>
+    <fieldset class="formSection">
+      <legend>Loader queue</legend>
+      <div class="content">
+        #[loaderQueueSize]#&nbsp;<progress max="#[loaderQueueMax]#" value="#[loaderQueueSize]#"></progress>&nbsp;#[loaderQueueMax]#
+        <p>
+          <form class="noSpace" action="IndexCreateLoaderQueue_p.html">
+            <button type="submit" class="icon-showMore">View loader queue</button>
+          </form>
+        </p>
+      </div>
+    </fieldset>
+    <fieldset class="formSection">
+      <legend>Local crawl</legend>
+      <div class="content">
+        Size: #[localCrawlQueueSize]#
+        #(localCrawlPaused)#::<em>(paused)</em>#(/localCrawlPaused)#
+        <p>
+          <form class="noSpace inline" action="Status.html?#(localCrawlPaused)#pauseCrawlJob::continueCrawlJob#(/localCrawlPaused)#=&amp;jobType=localCrawl">
+            <button type="submit" class="icon-run">#(localCrawlPaused)#pause local crawl::continue local crawl#(/localCrawlPaused)#</button>
+          </form>
+          <form class="noSpace inline" action="IndexCreateQueues_p.html?stack=LOCAL">
+            <button type="submit" class="icon-run">View local queue</button>
+          </form>
+        </p>
+      </div>
+      <fieldset class="formSection">
+        <legend>Remote crawl</legend>
+        <div class="content">
+          Size: #[remoteTriggeredCrawlQueueSize]#
+          #(localCrawlPaused)#::<em>(paused)</em>#(/localCrawlPaused)#
+          <p>
+            <form class="noSpace inline" action="Status.html?#(remoteTriggeredCrawlPaused)#pauseCrawlJob::continueCrawlJob#(/remoteTriggeredCrawlPaused)#=&amp;jobType=remoteTriggeredCrawl">
+              <button type="submit" class="icon-run">#(remoteTriggeredCrawlPaused)#pause remote crawl::continue remote crawl#(/remoteTriggeredCrawlPaused)#</button>
+            </form>
+            <form class="noSpace inline" action="IndexCreateQueues_p.html?stack=REMOTE">
+              <button type="submit" class="icon-run">View remote queue</button>
+            </form>
+          </p>
+        </div>
+      </fieldset>
+      <fieldset class="formSection">
+        <legend>Pre-Queueing</legend>
+        <div class="content">
+          #[stackCrawlQueueSize]#
+        </div>
+      </fieldset>
+    </fieldset>
+  </fieldset>
+
+  <fieldset class="formSection">
+    <legend>Auto-popup on start-up</legend>
+    <div class="content">
+      #(popup)#
+      <form class="noSpace" action="Status.html?popup=true">
+        <em>Disabled</em>&nbsp;&nbsp;<button type="submit" class="icon-config">Enable</button>
+      </form>
       ::
-      Enabled: Updating to server #[seedServer]#.
-      Last upload: #[lastUpload]# ago.
+      <form class="noSpace" action="Status.html?popup=false">
+        <em>Enabled</em>&nbsp;&nbsp;<button type="submit" class="icon-config">Disable</button>
+      </form>
+      #(/popup)#
+    </div>
+  </fieldset>
+
+  <fieldset class="formSection">
+    <legend>Tray-Icon</legend>
+    <div class="content">
+      #(tray)#
+      <form class="noSpace" action="ConfigProperties_p.html?tray=true">
+        <em>Disabled</em>&nbsp;&nbsp;<button type="submit" class="icon-config">Enable</button>
+      </form>
       ::
-      Enabled: Updating to file #[seedFile]#.
-      Last upload: #[lastUpload]# ago.
-    #(/seedServer)#
-    </dd>
-    
-  </dl>
-</fieldset>
+      <form class="noSpace" action="ConfigProperties_p.html?tray=false">
+        <em>Enabled</em>&nbsp;&nbsp;<button type="submit" class="icon-config">Disable</button>
+      </form>
+      ::
+      <p>
+        <s class="sym sym-warning"></s>
+        <em>WARNING:</em> You do this on your own risk. If you do this without YaCy running on a desktop-pc, this will possibly break startup. In this case, you will have to edit the configuration manually in <code>DATA/SETTINGS/yacy.conf</code>.
+      </p>
+      <form class="noSpace" action="Status.html?tray=true">
+        <button type="submit" class="icon-config">Enable</button>
+      </form>
+      #(/tray)#
+    </div>
+  </fieldset>
 </div>

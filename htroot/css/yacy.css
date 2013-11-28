@@ -790,7 +790,7 @@
     margin: 0 0 1.5em 0.8em; }
 
   /* --- general text formatting | Allgemeine Textauszeichnung ------------------------------------------ */
-  p, div.p {
+  p, div .p {
     font-size: 100%;
     line-height: 1.5;
     margin: 0 0 1.5em 0; }
@@ -2445,7 +2445,7 @@ a[href^="http://"]:not(.noExt):before,
 a[href^="https://"]:not(.noExt):before, table.sortable th:not(.noSort):after, .formHint > *:before, .resourceQueryBox .queryBox:after, #breadCrumb span:not(:last-of-type):after, #breadCrumb:before, .icon-item-new:before, .icon-item-queued:before, .icon-item-done:before, body#crawlStartExpert #startPointDetails .ycu-data-true:before,
 body#crawlStartSite #startPointDetails .ycu-data-true:before, body#crawlStartExpert #startPointDetails .ycu-data-false:before,
 body#crawlStartSite #startPointDetails .ycu-data-false:before, body#crawlStartExpert #formReview dt:not(.notConfigured):before, body#crawlStartExpert .ycu-data-true:before, body#crawlStartExpert .ycu-data-false:before, fieldset.collapsible > legend:before, fieldset.formSection .hasHelp:before, #navSub li a:after,
-#navSub li span:after, #ycu-messages p:before, #ycu-messages div.p:before, fieldset.formGroup > legend:before, fieldset.formGroup > legend:after, .formHint:before {
+#navSub li span:after, #ycu-messages > *:before, fieldset.formGroup > legend:before, fieldset.formGroup > legend:after, .formHint:before {
   font-family: FontAwesome;
   font-style: normal;
   font-size: 0.85em; }
@@ -2454,7 +2454,7 @@ a[href^="http://"]:not(.noExt):before,
 a[href^="https://"]:not(.noExt):before, table.sortable th:not(.noSort):after, .formHint > *:before, .resourceQueryBox .queryBox:after, #breadCrumb span:not(:last-of-type):after, #breadCrumb:before, .icon-item-new:before, .icon-item-queued:before, .icon-item-done:before, body#crawlStartExpert #startPointDetails .ycu-data-true:before,
 body#crawlStartSite #startPointDetails .ycu-data-true:before, body#crawlStartExpert #startPointDetails .ycu-data-false:before,
 body#crawlStartSite #startPointDetails .ycu-data-false:before, body#crawlStartExpert #formReview dt:not(.notConfigured):before, body#crawlStartExpert .ycu-data-true:before, body#crawlStartExpert .ycu-data-false:before, fieldset.collapsible > legend:before, fieldset.formSection .hasHelp:before, #navSub li a:after,
-#navSub li span:after, #ycu-messages p:before, #ycu-messages div.p:before {
+#navSub li span:after, #ycu-messages > *:before {
   display: inline-block; }
 
 /**
@@ -2625,6 +2625,10 @@ div.clear {
   height: 0;
   width: 0;
   clear: both; }
+div .center {
+  text-align: center; }
+  div .center iframe {
+    display: block; }
 
 .nobr {
   white-space: nowrap; }
@@ -2805,9 +2809,9 @@ fieldset {
           margin-top: 0.5em; }
       fieldset .content fieldset + hr {
         margin-top: 1em; }
-    fieldset .content p, fieldset .content div.p {
+    fieldset .content p, fieldset .content div .p, div fieldset .content .p {
       margin-bottom: 1em; }
-      fieldset .content p:last-child, fieldset .content div.p:last-child {
+      fieldset .content p:last-child, fieldset .content div .p:last-child, div fieldset .content .p:last-child {
         margin-bottom: 0; }
   fieldset + fieldset.formGroup {
     border-top: 1px dotted #aabee0; }
@@ -2818,6 +2822,8 @@ fieldset.framed {
   fieldset.framed > legend {
     font-weight: bold;
     padding: 0 0.5em; }
+    fieldset.framed > legend.light {
+      opacity: 0.7; }
 
 fieldset.formGroup {
   border-top: 1px solid #aabee0;
@@ -2835,7 +2841,7 @@ fieldset.formGroup {
     border-left: 0.5em solid #94e84d;
     border-top-right-radius: 5px;
     padding: 0.5em 1.5em; }
-  fieldset.formGroup > p, fieldset.formGroup > div.p {
+  fieldset.formGroup > p, div fieldset.formGroup > .p {
     padding: 0 1.7em; }
   fieldset.formGroup + fieldset.formSection {
     margin-top: 2em; }
@@ -2950,14 +2956,14 @@ fieldset.collapsible > legend:hover {
   .formHint .help {
     background-color: #aad2e6; }
     .formHint .help:before {
-      content: "\f05a";
+      content: "\f059";
       background-color: #aad2e6; }
   .formHint.help:before {
     color: #aad2e6; }
   .formHint .warning {
     background-color: #ced452; }
     .formHint .warning:before {
-      content: "\f059"; }
+      content: "\f071"; }
   .formHint.warning:before {
     color: #ced452; }
   .formHint .ok {
@@ -3011,7 +3017,7 @@ input.invalid,
 textarea.invalid {
   box-shadow: 0 0 5px #d39583; }
 
-form {
+form:not(.noSpace) {
   margin-bottom: 1.5em; }
 
 fieldset.main + fieldset.main {
@@ -3025,6 +3031,11 @@ form > fieldset:not(.formGroup):not(.formSection):first-of-type {
   fieldset.main > legend,
   form > fieldset:not(.formGroup):not(.formSection):first-of-type > legend {
     box-shadow: 2px 2px 1px rgba(50, 50, 50, 0.4); }
+
+form.inline {
+  display: inline-block; }
+  form.inline:not(:first-of-type) {
+    margin-left: 1em; }
 
 .resourceQueryBox {
   display: inline-block;
@@ -3246,42 +3257,49 @@ s.sym-warning i:last-of-type:before {
   display: none; }
 
 /* Form result messages */
-#ycu-messages p, #ycu-messages div.p {
+#ycu-messages > * {
   border-radius: 5px;
   padding: 0.5em; }
-  #ycu-messages p span.type, #ycu-messages div.p span.type {
+  #ycu-messages > *:before {
+    margin-right: 0.3em; }
+  #ycu-messages > * .type {
     font-weight: bold;
     display: inline-block;
     margin: 0 0.3em; }
-  #ycu-messages p.ycu-message-error, #ycu-messages div.ycu-message-error.p {
+  #ycu-messages > * .header {
+    display: inline-block; }
+  #ycu-messages > * .content {
+    display: block;
+    margin-left: 1.5em; }
+  #ycu-messages > *.ycu-message-error {
     background-color: #d39583; }
-    #ycu-messages p.ycu-message-error:before, #ycu-messages div.ycu-message-error.p:before {
+    #ycu-messages > *.ycu-message-error:before {
       content: "\f056"; }
-  #ycu-messages p.ycu-message-help, #ycu-messages div.ycu-message-help.p {
+  #ycu-messages > *.ycu-message-help {
     background-color: #aad2e6; }
-    #ycu-messages p.ycu-message-help:before, #ycu-messages div.ycu-message-help.p:before {
-      content: "\f05a"; }
-  #ycu-messages p.ycu-message-info, #ycu-messages div.ycu-message-info.p {
-    background-color: #d7ff9e; }
-    #ycu-messages p.ycu-message-info:before, #ycu-messages div.ycu-message-info.p:before {
-      content: "\f05a"; }
-  #ycu-messages p.ycu-message-ok, #ycu-messages div.ycu-message-ok.p {
-    background-color: #94e84d; }
-    #ycu-messages p.ycu-message-ok:before, #ycu-messages div.ycu-message-ok.p:before {
-      content: "\f058"; }
-  #ycu-messages p.ycu-message-warning, #ycu-messages div.ycu-message-warning.p {
-    background-color: #ced452; }
-    #ycu-messages p.ycu-message-warning:before, #ycu-messages div.ycu-message-warning.p:before {
+    #ycu-messages > *.ycu-message-help:before {
       content: "\f059"; }
+  #ycu-messages > *.ycu-message-info {
+    background-color: #d7ff9e; }
+    #ycu-messages > *.ycu-message-info:before {
+      content: "\f05a"; }
+  #ycu-messages > *.ycu-message-ok {
+    background-color: #94e84d; }
+    #ycu-messages > *.ycu-message-ok:before {
+      content: "\f058"; }
+  #ycu-messages > *.ycu-message-warning {
+    background-color: #ced452; }
+    #ycu-messages > *.ycu-message-warning:before {
+      content: "\f071"; }
 
-#formResults p, #formResults div.p {
+#formResults p, #formResults div .p, div #formResults .p {
   border-radius: 5px;
   padding: 0.5em; }
 
 iframe {
   display: block;
-  width: 100%;
-  border-width: 0; }
+  border-width: 0;
+  margin: 0 auto; }
 
 iframe.border {
   border: 1px solid #ccc; }
@@ -3446,22 +3464,18 @@ body#network .nodeInfo {
   display: block;
   white-space: nowrap; }
 
-body#viewLog #logContent code {
-  color: #000; }
-  body#viewLog #logContent code span {
-    display: block; }
-body#viewLog #logContent .level-debug {
-  opacity: 0.7; }
-body#viewLog #logContent .level-info {
-  color: #2250EE; }
-body#viewLog #logContent .level-severe {
-  font-weight: bold;
-  color: #880000; }
-body#viewLog #logContent .level-system {
-  color: #EE22CE; }
-body#viewLog #logContent .level-warning {
-  font-weight: bold;
-  color: #C38411; }
+body#status #infoHeader fieldset {
+  display: inline-block;
+  margin-bottom: 1em;
+  width: 600px; }
+body#status #banner {
+  border: 1px solid #5090d0; }
+  body#status #banner * {
+    margin: 0; }
+body#status #sidebar {
+  float: left; }
+body#status #queueMeters progress {
+  width: 50%; }
 
 body#terminal {
   background-color: #3d3d3d;
@@ -3474,7 +3488,7 @@ body#terminal {
     color: #239AFF;
     font-size: 10px;
     border-bottom: 1px solid #239AFF; }
-  body#terminal p, body#terminal div.p {
+  body#terminal p, body#terminal div .p, div body#terminal .p {
     margin: 5px 0 5px;
     padding: 0; }
   body#terminal a {
@@ -3504,6 +3518,9 @@ body#terminal {
     padding: 0 2px 0 2px;
     color: #666;
     font-size: 10px; }
+    body#terminal #location a {
+      display: inline-block;
+      margin-right: 0.5em; }
   body#terminal #left {
     margin: 5px 5px 0;
     padding: 0 2px 0 2px;
@@ -3560,3 +3577,23 @@ body#terminal {
     text-align: left;
     font-size: 10px;
     color: #666; }
+
+body#viewLog #logContent code {
+  color: #000; }
+  body#viewLog #logContent code span {
+    display: block; }
+body#viewLog #logContent .level-debug {
+  opacity: 0.7; }
+body#viewLog #logContent .level-info {
+  color: #2250EE; }
+body#viewLog #logContent .level-severe {
+  font-weight: bold;
+  color: #880000; }
+body#viewLog #logContent .level-system {
+  color: #EE22CE; }
+body#viewLog #logContent .level-warning {
+  font-weight: bold;
+  color: #C38411; }
+
+body#rssTerminal {
+  background: transparent; }
