@@ -165,7 +165,7 @@ YaCyUi.Func.Form.CollapseableFieldset.prototype = {
     fieldset
       .removeClass('collapsed')
       .children().not('legend, .hidden')
-      .show('slow');
+      .slideDown('slow');
     YaCyUi.DataStore.set(fieldset, {
       space: 'toggle',
       data: {
@@ -180,7 +180,7 @@ YaCyUi.Func.Form.CollapseableFieldset.prototype = {
     fieldset
       .addClass('collapsed')
       .children().not('legend')
-      .hide('slow');
+      .slideUp('slow');
     YaCyUi.DataStore.set(fieldset, {
       space: 'toggle',
       data: {
@@ -270,7 +270,7 @@ YaCyUi.Func.Form.ToggleableFormSection.prototype = {
         toggles.each(function(){
         $(this).hasClass('on') ? $(this).hide() : $(this).show();
       });
-    content.show('slow', function() {
+    content.slideDown('slow', function() {
       $(this).removeClass('hidden');
       YaCyUi.DataStore.set(content.parent(), {
         space: 'toggle',
@@ -296,7 +296,7 @@ YaCyUi.Func.Form.ToggleableFormSection.prototype = {
     var content = formSection.find('.ycu-toggle');
     var toggles = formSection.find('.ycu-toggle-controls').children('button');
 
-    content.hide(speed, function() {
+    content.slideUp(speed, function() {
       toggles.each(function(){
         $(this).hasClass('on') ? $(this).show() : $(this).hide();
       });
