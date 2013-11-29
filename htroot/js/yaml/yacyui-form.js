@@ -76,7 +76,7 @@ YaCyUi.Func.Form = {
     }
 
     // form elements (checkbox/radio) that enable/disable other elements
-    var toggleableElements = $('input, select, textarea, button')
+    var toggleableElements = $('button, fieldset, input, select, textarea')
       .filter('[data-toggle-id]');
     if (toggleableElements.size() > 0) {
       modules.ToggleableFormElement =
