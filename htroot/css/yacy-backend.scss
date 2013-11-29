@@ -66,49 +66,61 @@
       @extend %icon-block;
       margin-right:0.3em;
     }
+  }
 
-    .type {
-      font-weight:bold;
-      display:inline-block;
-      margin:0 0.3em;
-    }
-    .header {
-      display:inline-block;
-    }
-    .content {
-      display:block;
-      margin-left:1.5em;
-    }
+  .closeBtn {
+    float:right;
+    cursor:pointer;
+    display:inline-block;
+    padding-right:0.5em;
 
-    &.ycu-message-error {
-      background-color:$ycu-var-color-error-bg;
-      &:before {
-        content:$ycu-var-icon-msg-error;
-      }
+    &:before {
+      @extend %icon-block-light;
+      content:'#{$fa-var-times}';
     }
-    &.ycu-message-help {
-      background-color:$ycu-var-color-help-bg;
-      &:before {
-        content:$ycu-var-icon-msg-help;
-      }
+  }
+
+  .type {
+    font-weight:bold;
+    display:inline-block;
+    margin:0 0.3em;
+  }
+  .header {
+    display:inline-block;
+  }
+  .content {
+    display:block;
+    margin-left:1.5em;
+  }
+
+  .ycu-message-error {
+    background-color:$ycu-var-color-error-bg;
+    &:before {
+      content:$ycu-var-icon-msg-error;
     }
-    &.ycu-message-info {
-      background-color:$ycu-var-color-info-bg;
-      &:before {
-        content:$ycu-var-icon-msg-info;
-      }
+  }
+  .ycu-message-help {
+    background-color:$ycu-var-color-help-bg;
+    &:before {
+      content:$ycu-var-icon-msg-help;
     }
-    &.ycu-message-ok {
-      background-color:$ycu-var-color-ok-bg;
-      &:before {
-        content:$ycu-var-icon-msg-ok;
-      }
+  }
+  .ycu-message-info {
+    background-color:$ycu-var-color-info-bg;
+    &:before {
+      content:$ycu-var-icon-msg-info;
     }
-    &.ycu-message-warning {
-      background-color:$ycu-var-color-warning-bg;
-      &:before {
-        content:$ycu-var-icon-msg-warning;
-      }
+  }
+  .ycu-message-ok {
+    background-color:$ycu-var-color-ok-bg;
+    &:before {
+      content:$ycu-var-icon-msg-ok;
+    }
+  }
+  .ycu-message-warning {
+    background-color:$ycu-var-color-warning-bg;
+    &:before {
+      content:$ycu-var-icon-msg-warning;
     }
   }
 }

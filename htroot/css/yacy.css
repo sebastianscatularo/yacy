@@ -2471,13 +2471,13 @@ select,
   font-family: Arial, Helvetica, sans-serif; }
 
 a[href^="http://"]:not(.noExt):before,
-a[href^="https://"]:not(.noExt):before, table.sortable th:not(.noSort):after, .formHint > *:before, .resourceQueryBox .queryBox:after, #breadCrumb span:not(:last-of-type):after, #breadCrumb:before, .icon-item-new:before, .icon-item-queued:before, .icon-item-done:before, body#crawlStartExpert #startPointDetails .ycu-data-true:before,
+a[href^="https://"]:not(.noExt):before, table.sortable th:not(.noSort):after, .formHint > *:before, .resourceQueryBox .queryBox:after, #breadCrumb span:not(:last-of-type):after, #breadCrumb:before, .icon-item-new:before, .icon-item-queued:before, .icon-item-done:before, #ycu-messages .closeBtn:before, body#crawlStartExpert #startPointDetails .ycu-data-true:before,
 body#crawlStartSite #startPointDetails .ycu-data-true:before, body#crawlStartExpert #startPointDetails .ycu-data-false:before,
 body#crawlStartSite #startPointDetails .ycu-data-false:before, body#crawlStartExpert #formReview dt:not(.notConfigured):before, body#crawlStartExpert .ycu-data-true:before, body#crawlStartExpert .ycu-data-false:before, button[class*='icon-']:before, fieldset.collapsible > legend:hover:before, fieldset.collapsible.collapsed > legend:before {
   opacity: 0.7; }
 
 a[href^="http://"]:not(.noExt):before,
-a[href^="https://"]:not(.noExt):before, table.sortable th:not(.noSort):after, .formHint > *:before, .resourceQueryBox .queryBox:after, #breadCrumb span:not(:last-of-type):after, #breadCrumb:before, .icon-item-new:before, .icon-item-queued:before, .icon-item-done:before, body#crawlStartExpert #startPointDetails .ycu-data-true:before,
+a[href^="https://"]:not(.noExt):before, table.sortable th:not(.noSort):after, .formHint > *:before, .resourceQueryBox .queryBox:after, #breadCrumb span:not(:last-of-type):after, #breadCrumb:before, .icon-item-new:before, .icon-item-queued:before, .icon-item-done:before, #ycu-messages .closeBtn:before, body#crawlStartExpert #startPointDetails .ycu-data-true:before,
 body#crawlStartSite #startPointDetails .ycu-data-true:before, body#crawlStartExpert #startPointDetails .ycu-data-false:before,
 body#crawlStartSite #startPointDetails .ycu-data-false:before, body#crawlStartExpert #formReview dt:not(.notConfigured):before, body#crawlStartExpert .ycu-data-true:before, body#crawlStartExpert .ycu-data-false:before, fieldset.collapsible > legend:before, fieldset.formSection .hasHelp:before, #navSub li a:after,
 #navSub li span:after, #ycu-messages > *:before, fieldset.formGroup > legend:before, fieldset.formGroup > legend:after, .formHint:before {
@@ -2486,7 +2486,7 @@ body#crawlStartSite #startPointDetails .ycu-data-false:before, body#crawlStartEx
   font-size: 0.85em; }
 
 a[href^="http://"]:not(.noExt):before,
-a[href^="https://"]:not(.noExt):before, table.sortable th:not(.noSort):after, .formHint > *:before, .resourceQueryBox .queryBox:after, #breadCrumb span:not(:last-of-type):after, #breadCrumb:before, .icon-item-new:before, .icon-item-queued:before, .icon-item-done:before, body#crawlStartExpert #startPointDetails .ycu-data-true:before,
+a[href^="https://"]:not(.noExt):before, table.sortable th:not(.noSort):after, .formHint > *:before, .resourceQueryBox .queryBox:after, #breadCrumb span:not(:last-of-type):after, #breadCrumb:before, .icon-item-new:before, .icon-item-queued:before, .icon-item-done:before, #ycu-messages .closeBtn:before, body#crawlStartExpert #startPointDetails .ycu-data-true:before,
 body#crawlStartSite #startPointDetails .ycu-data-true:before, body#crawlStartExpert #startPointDetails .ycu-data-false:before,
 body#crawlStartSite #startPointDetails .ycu-data-false:before, body#crawlStartExpert #formReview dt:not(.notConfigured):before, body#crawlStartExpert .ycu-data-true:before, body#crawlStartExpert .ycu-data-false:before, fieldset.collapsible > legend:before, fieldset.formSection .hasHelp:before, #navSub li a:after,
 #navSub li span:after, #ycu-messages > *:before {
@@ -3298,35 +3298,42 @@ s.sym-warning i:last-of-type:before {
   padding: 0.5em; }
   #ycu-messages > *:before {
     margin-right: 0.3em; }
-  #ycu-messages > * .type {
-    font-weight: bold;
-    display: inline-block;
-    margin: 0 0.3em; }
-  #ycu-messages > * .header {
-    display: inline-block; }
-  #ycu-messages > * .content {
-    display: block;
-    margin-left: 1.5em; }
-  #ycu-messages > *.ycu-message-error {
-    background-color: #d39583; }
-    #ycu-messages > *.ycu-message-error:before {
-      content: "\f056"; }
-  #ycu-messages > *.ycu-message-help {
-    background-color: #aad2e6; }
-    #ycu-messages > *.ycu-message-help:before {
-      content: "\f059"; }
-  #ycu-messages > *.ycu-message-info {
-    background-color: #d7ff9e; }
-    #ycu-messages > *.ycu-message-info:before {
-      content: "\f05a"; }
-  #ycu-messages > *.ycu-message-ok {
-    background-color: #94e84d; }
-    #ycu-messages > *.ycu-message-ok:before {
-      content: "\f058"; }
-  #ycu-messages > *.ycu-message-warning {
-    background-color: #ced452; }
-    #ycu-messages > *.ycu-message-warning:before {
-      content: "\f071"; }
+#ycu-messages .closeBtn {
+  float: right;
+  cursor: pointer;
+  display: inline-block;
+  padding-right: 0.5em; }
+  #ycu-messages .closeBtn:before {
+    content: "\f00d"; }
+#ycu-messages .type {
+  font-weight: bold;
+  display: inline-block;
+  margin: 0 0.3em; }
+#ycu-messages .header {
+  display: inline-block; }
+#ycu-messages .content {
+  display: block;
+  margin-left: 1.5em; }
+#ycu-messages .ycu-message-error {
+  background-color: #d39583; }
+  #ycu-messages .ycu-message-error:before {
+    content: "\f056"; }
+#ycu-messages .ycu-message-help {
+  background-color: #aad2e6; }
+  #ycu-messages .ycu-message-help:before {
+    content: "\f059"; }
+#ycu-messages .ycu-message-info {
+  background-color: #d7ff9e; }
+  #ycu-messages .ycu-message-info:before {
+    content: "\f05a"; }
+#ycu-messages .ycu-message-ok {
+  background-color: #94e84d; }
+  #ycu-messages .ycu-message-ok:before {
+    content: "\f058"; }
+#ycu-messages .ycu-message-warning {
+  background-color: #ced452; }
+  #ycu-messages .ycu-message-warning:before {
+    content: "\f071"; }
 
 #formResults p, #formResults div .p, div #formResults .p {
   border-radius: 5px;
