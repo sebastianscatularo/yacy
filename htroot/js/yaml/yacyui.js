@@ -132,17 +132,23 @@ YaCyUi.DataStore = YaCyUi.DataStore || {
 YaCyUi.Messages = YaCyUi.Messages || {
   init: function() {
     var messages = $('.ycu-message');
+    var closeBtn = $('<span class="closeBtn"></span>');
     if (messages.size() > 0) {
       messages.each(function() {
-        if ($(this).is('.ycu-message-error')) {
-          $(this).prepend('<span class="type">ERROR:</span>');
-        } else if ($(this).is('.ycu-message-warning')) {
-          $(this).prepend('<span class="type">WARNING:</span>');
+        var msgItem = $(this);
+        msgItem.prepend(closeBtn.clone().on('click', function() {
+          msgItem.slideUp('slow');
+        }));
+        if (msgItem.is('.ycu-message-error')) {
+          msgItem.prepend('<span class="type">ERROR:</span>');
+        } else if (msgItem.is('.ycu-message-warning')) {
+          msgItem.prepend('<span class="type">WARNING:</span>');
         } else {
-          $(this).prepend('<span class="type">&nbsp;</span>');
+          msgItem.prepend('<span class="type">&nbsp;</span>');
         }
-        $(this).appendTo('#ycu-messages');
+        msgItem.appendTo('#ycu-messages');
       });
+
       $('#ycu-messages').show();
       // jump to messages
       location.hash = '#ycu-messages';
@@ -254,6 +260,7 @@ YaCyUi.init = function() {
   }
 
   // symbols content, actual styles are set via CSS
+  // TODO: ugly! replace this
   $('#formResults').find('p.error').prepend('<s class="sym sym-error" title="Error"></s>');
   $('#formResults').find('p.warning').prepend('<s class="sym sym-warning" title="Warning"></s>');
   $('#formResults').find('p.hint').prepend('<s class="sym sym-hint" title="Hint"></s>');
