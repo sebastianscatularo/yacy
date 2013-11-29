@@ -51,7 +51,7 @@ YaCyUi.Func.MainMenu = function() {
 
     if (current === null) {
       if (candidates.length === 1) {
-        currrent = candidates[0];
+        current = candidates[0];
       } else {
         var currentMatches = 0;
         var matchesCount = 0;
