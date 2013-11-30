@@ -82,6 +82,7 @@ import java.util.zip.GZIPOutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import org.apache.lucene.search.FieldCache;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrInputDocument;
 
@@ -509,7 +510,7 @@ public final class Switchboard extends serverSwitch {
         // set up the solr interface
         final String solrurls = getConfig(SwitchboardConstants.FEDERATED_SERVICE_SOLR_INDEXING_URL, "http://127.0.0.1:8983/solr");
         final boolean usesolr = getConfigBool(SwitchboardConstants.FEDERATED_SERVICE_SOLR_INDEXING_ENABLED, false) & solrurls.length() > 0;
-        final int solrtimeout = getConfigInt(SwitchboardConstants.FEDERATED_SERVICE_SOLR_INDEXING_TIMEOUT, 10000);
+        final int solrtimeout = getConfigInt(SwitchboardConstants.FEDERATED_SERVICE_SOLR_INDEXING_TIMEOUT, 60000);
 
         if (usesolr && solrurls != null && solrurls.length() > 0) {
             try {
@@ -1332,7 +1333,7 @@ public final class Switchboard extends serverSwitch {
             // set up the solr interface
             final String solrurls = getConfig(SwitchboardConstants.FEDERATED_SERVICE_SOLR_INDEXING_URL, "http://127.0.0.1:8983/solr");
             final boolean usesolr = getConfigBool(SwitchboardConstants.FEDERATED_SERVICE_SOLR_INDEXING_ENABLED, false) & solrurls.length() > 0;
-            final int solrtimeout = getConfigInt(SwitchboardConstants.FEDERATED_SERVICE_SOLR_INDEXING_TIMEOUT, 10000);
+            final int solrtimeout = getConfigInt(SwitchboardConstants.FEDERATED_SERVICE_SOLR_INDEXING_TIMEOUT, 60000);
 
             if (usesolr && solrurls != null && solrurls.length() > 0) {
                 try {
@@ -2027,7 +2028,8 @@ public final class Switchboard extends serverSwitch {
             // clear caches
             if (WordCache.sizeCommonWords() > 1000) WordCache.clearCommonWords();
             Word.clearCache();
-            // Domains.clear();
+            // Domains.clear();            
+            FieldCache.DEFAULT.purgeAllCaches();
             
             // clean up image stack
             ResultImages.clearQueues();
