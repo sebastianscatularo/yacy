@@ -3,31 +3,43 @@
 <html lang="en">
 <head>
 	<title>YaCy Debugging: Thread Dump</title>
-	#%env/templates/metas.template%#
+	#%env/templates/header-backend.template%#
 </head>
-<body id="Threaddump">
-	#%env/templates/header.template%#
 
-    <h2>Threaddump</h2>
-    <table border="0" cellpadding="0" cellspacing="0"><tr>
-    <td><form action="Threaddump_p.html" method="get" accept-charset="UTF-8">
-      <fieldset>
-        <input type="submit" name="singleThreaddump" value="Single Threaddump" />
-      </fieldset>
-    </form></td>
+<body id="threaddump">
+	#%env/templates/page-start.template%#
 
-    <td><form action="Threaddump_p.html" method="get" accept-charset="UTF-8">
-      <fieldset>
-        <input type="text" name="count" value="#[count]#" size="4" maxlength="4" />
-        <input type="submit" name="multipleThreaddump" value="Multiple Dump Statistic" />
-      </fieldset>
-    </form></td>
-    </tr></table>
+  <h1>Threaddump</h1>
+  <fieldset class="main">
+    <legend>Settings</legend>
+    <fieldset class="formSection">
+      <legend>Single Dump</legend>
+      <div class="content">
+        <fieldset>
+          <form action="Threaddump_p.html" method="get" accept-charset="UTF-8">
+            <button type="submit" name="singleThreaddump" class="icon-run">Generate Single Threaddump</button>
+          </form>
+        </fieldset>
+      </div>
+    </fieldset>
+    <fieldset class="formSection">
+      <legend>Mutiple Dumps</legend>
+      <div class="content">
+        <form action="Threaddump_p.html" method="get" accept-charset="UTF-8">
+          <input type="text" name="count" value="#[count]#" size="4" maxlength="4" class="spinner"/>
+          <button type="submit" name="multipleThreaddump" class="icon-run">Generate Multiple Dump Statistic</button>
+        </form>
+      </div>
+    </fieldset>
+  </fieldset>
 
-    <div>
-    <tt>#[content]#</tt>
-    </div>
-    #%env/templates/footer.template%#
+  <br/>
+
+  <fieldset class="framed" style="width:600px;">
+    <legend class="light">Thread Dump</legend>
+    <pre>#[content]#</pre>
+  </fieldset>
+  #%env/templates/page-end.template%#
 </body>
 </html>
 ::
