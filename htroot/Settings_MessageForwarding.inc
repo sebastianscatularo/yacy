@@ -1,31 +1,49 @@
+<h2>Message Forwarding</h2>
 <form action="SettingsAck_p.html" method="post" enctype="multipart/form-data">
-<fieldset><legend id="messageForwarding">Message Forwarding</legend>
-<p>With this settings you can activate or deactivate forwarding of yacy-messages via email.</p>
-<table border="0" cellspacing="5">
-  <tr valign="top">
-    <td><label for="msg_forwarding">Enable message forwarding</label>:</td>
-    <td><input type="checkbox" name="msgForwardingEnabled" id="msg_forwarding" #(msgForwardingEnabled)#::checked="checked" #(/msgForwardingEnabled)#/></td>
-    <td><i>Enabling/Disabling message forwarding via email.</i></td>
-  </tr>
-  <tr valign="top">
-    <td><label for="fwd_cmd">Forwarding Command</label>:</td>
-    <td><input name="msgForwardingCmd" id="fwd_cmd" type="text" size="32" value="#[msgForwardingCmd]#" /></td>
-    <td>
-      <i>The command-line program that should be used to forward the message.<br />
-      e.g.:</i> <code>/usr/sbin/sendmail</code>
-    </td>
-  </tr>
-  <tr valign="top">
-    <td><label for="fwd_to">Forwarding To</label>:</td>
-    <td><input name="msgForwardingTo" id="fwd_to" type="text" size="32" maxlength="128" value="#[msgForwardingTo]#" /></td>
-    <td>
-      <i>The recipient email-address.<br />
-      e.g.:</i> <code>root@localhost</code>
-    </td>
-  </tr>
-  <tr valign="top">
-    <td colspan="3"><input type="submit" name="msgForwarding" value="Submit" /> <em>Changes will take effect immediately.</em></td>
-  </tr>
-</table>
+  <fieldset>
+    <legend>Configuration</legend>
+    <div class="description">
+      <p>
+        With this settings you can activate or deactivate forwarding of YaCy-messages via email.
+      </p>
+    </div>
+    <fieldset class="formSection">
+      <legend>Enable / Disable</legend>
+      <div class="content">
+        <input type="checkbox" name="msgForwardingEnabled" id="msg_forwarding" #(msgForwardingEnabled)#::checked="checked" #(/msgForwardingEnabled)#/>
+        <label for="msg_forwarding">Enable message forwarding via email.</label>
+      </div>
+    </fieldset>
+    <fieldset class="formSection">
+      <legend>Forwarding Command</legend>
+      <div class="content">
+        <input name="msgForwardingCmd" id="fwd_cmd" type="text" size="32" value="#[msgForwardingCmd]#" />
+        <p>
+          The command-line program that should be used to forward the message.
+          E.g.: <code>/usr/sbin/sendmail</code>.
+        </p>
+      </div>
+    </fieldset>
+    <fieldset class="formSection">
+      <legend>Forwarding To</legend>
+      <div class="content">
+        <input name="msgForwardingTo" id="fwd_to" type="text" maxlength="128" value="#[msgForwardingTo]#" />
+        <p>
+         The recipient email-address.
+         E.g.: <code>root@localhost</code>.
+       </p>
+     </div>
+   </fieldset>
+   <fieldset class="formControl">
+    <div class="description">
+      <p>
+        <s class="sym sym-hint"></s>
+        Changes will take effect immediately.
+      </p>
+    </div>
+    <div class="content">
+      <button type="submit" name="msgForwarding" class="primary icon-save">Save configuration</button>
+    </div>
+  </fieldset>
 </fieldset>
-</form><br />
+</form>
