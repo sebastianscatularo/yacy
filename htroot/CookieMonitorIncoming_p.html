@@ -1,37 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-   <title>YaCy '#[clientname]#': Incoming Cookies Monitor</title>
-   #%env/templates/metas.template%#
-  </head>
-  <body id="CookieMonitorIncoming">
-    #%env/templates/header.template%#
-    #%env/templates/submenuCookie.template%#
-    <h2>Cookie Monitor: Incoming Cookies</h2>
-    <p>This is a list of Cookies that a web server has sent to clients of the YaCy Proxy:</p>
-    <p>Showing #[num]# entries from a total of #[total]# Cookies.</p>
-    <table border="0" cellpadding="2" cellspacing="1">
-      <tr class="TableHeader">
-        <td>Sending Host</td>
-        <td>Date</td>
-        <td>Receiving Client</td>
-        <td>Cookie</td>
+<head>
+  <title>YaCy '#[clientname]#': Incoming Cookies Monitor</title>
+  #%env/templates/header-backend.template%#
+  <script type="text/javascript" src="/js/yaml/tablesorter/jquery.tablesorter.min.js"></script>
+</head>
+
+<body id="cookieMonitorIncoming">
+  #%env/templates/page-start.template%#
+
+  <h1>Cookie Monitor: Incoming Cookies</h1>
+  <p>
+    This is a list of Cookies that a web server has sent to clients of the YaCy Proxy.
+    <form action="" method="post" accept-charset="UTF-8">
+      #(monitorCookies.off)#::
+      <button type="submit" name="enableCookieMonitoring" class="icon-run">Enable Cookie Monitoring</button>
+      #(/monitorCookies.off)#
+      #(monitorCookies.on)#::
+      <button type="submit" name="disableCookieMonitoring" class="icon-run">Disable Cookie Monitoring</button>
+      #(/monitorCookies.on)#
+    </form>
+  </p>
+  <p>
+    Showing #[num]# entries from a total of #[total]# Cookies.
+  </p>
+  <table class="sortable">
+    <thead>
+      <tr>
+        <th>Sending Host</th>
+        <th>Date</th>
+        <th>Receiving Client</th>
+        <th>Cookie</th>
       </tr>
+    </thead>
+    <tbody>
       #{list}#
-      <tr class="TableCell#(dark)#Light::Dark#(/dark)#">
+      <tr>
         <td>#[host]#</td>
         <td>#[date]#</td>
         <td>#[client]#</td>
-        <td><ul>#{cookies}#<li>#[item]#</li>#{/cookies}#</ul></td>
+        <td>
+          <ul>#{cookies}#<li>#[item]#</li>#{/cookies}#</ul>
+        </td>
       </tr>
       #{/list}#
-    </table>
-    <form action="" method="post" accept-charset="UTF-8">
-      <fieldset>
-        #(monitorCookies.off)#::<input type="submit" name="enableCookieMonitoring" value="Enable Cookie Monitoring" class="submitready" style="width:240px"/>#(/monitorCookies.off)#
-        #(monitorCookies.on)#::<input type="submit" name="disableCookieMonitoring" value="Disable Cookie Monitoring" class="submitready" style="width:240px"/>#(/monitorCookies.on)#
-      </fieldset>
-    </form>
-    #%env/templates/footer.template%#
-  </body>
+    </tbody>
+  </table>
+
+  #%env/templates/page-end.template%#
+</body>
 </html>
