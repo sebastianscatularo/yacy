@@ -178,126 +178,131 @@
         <li><span>YaCy Network</span>
           <ul class="hidden">
             <li><a href="/Network.html">Network Overview</a>
-            <li><a href="/Network.html?page=1&maxCount=1000">Active Peers</a></li>
-            <li><a href="/Network.html?page=2&maxCount=1000">Passive Peers</a></li>
-            <li><a href="/Network.html?page=3&maxCount=1000">Potential Peers</a></li>
-          </ul>
-        </li>
-        <li><span>Web Visualization</span>
-          <ul class="hidden">
-            <li><a href="/WatchWebStructure_p.html?host=auto&amp;depth=3&amp;time=1000" class="lock">Web Structure</a></li>
-            <li><a href="/Collage.html">Image Collage</a></li>
-          </ul>
-        </li>
-        <li><span>Network Access</span>
-          <ul class="hidden">
-            <li><span>Server Access</span>
-              <ul class="hidden">
-                <li><a href="/AccessGrid_p.html" class="lock">Access Grid</a></li>
-                <li><a href="/AccessTracker_p.html?page=0" class="lock">Incoming Requests Overview</a></li>
-                <li><a href="/AccessTracker_p.html?page=1" class="lock">Incoming Requests Details</a></li>
-                <li><a href="/Connections_p.html" class="lock">All Connections</a></li>
-              </ul>
-            </li>
-            <li><span>Local Search</span>
-              <ul class="hidden">
-                <li><a href="/AccessTracker_p.html?page=2" class="lock">Log</a></li>
-                <li><a href="/AccessTracker_p.html?page=3" class="lock">Host Tracker</a></li>
-              </ul>
-            </li>
-            <li><span>Remote Search</span>
-              <ul class="hidden">
-                <li><a href="/AccessTracker_p.html?page=4" class="lock">Log</a></li>
-                <li><a href="/AccessTracker_p.html?page=5" class="lock">Host Tracker</a></li>
-              </ul>
-            </li>
-          </ul>
-        </li>
-        <li><span>Computation</span>
-          <ul class="hidden">
-            <li><span>Processes</span>
-              <ul class="hidden">
-                <li><a href="/ViewLog_p.html" class="lock">Server Log</a></li>
-                <li><a href="/PerformanceConcurrency_p.html" class="lock">Concurrent Indexing</a></li>
-                <li><a href="/PerformanceMemory_p.html" class="lock">Memory Usage</a></li>
-                <li><a href="/PerformanceSearch_p.html" class="lock">Search Sequence</a></li>
-              </ul>
-            </li>
-            <li><span>Messages</span>
-              <ul class="hidden">
-                <li><a href="/News.html">Overview</a></li>
-                <li><a href="/News.html?page=1">Incoming&nbsp;News</a></li>
-                <li><a href="/News.html?page=2">Processed&nbsp;News</a></li>
-                <li><a href="/News.html?page=3">Outgoing&nbsp;News</a></li>
-                <li><a href="/News.html?page=4">Published&nbsp;News</a></li>
-              </ul>
-            </li>
-            <li><span>Community Data</span>
-              <ul class="hidden">
-                <li><a href="/Surftips.html">Surftips</a></li>
-                <li><a href="/Wiki.html?display=1">Local Peer Wiki</a></li>
-              </ul>
-            </li>
-          </ul>
-        </li>
-        <li><a href="/terminal_p.html" class="lock">Terminal</a></li>
-      </ul>
-    </li>
-    <li><span>Peer</span>
-      <ul class="hidden">
-        <li><span>Admin Console</span>
-          <ul class="hidden">
-            <li><span>Peer Administration Console</span>
-              <ul class="hidden">
-                <li><a href="/Status.html">Status</a></li>
-                <li><a href="/ConfigBasic.html" class="lock">Basic Configuration</a></li>
-                <li><a href="/ConfigAccounts_p.html" class="lock">Accounts</a></li>
-                <li><a href="/ConfigNetwork_p.html" class="lock">Network Configuration</a></li>
-                <li><a href="/ConfigUpdate_p.html" class="lock">Download System Update</a></li>
-              </ul>
-            </li>
-            <li><span>Advanced Settings</span>
-              <ul class="hidden">
-                <li><a href="/Performance_p.html" class="lock">Performance</a></li>
-                <li><a href="/ConfigRobotsTxt_p.html" class="lock">Local robots.txt</a></li>
-                <li><a href="/ConfigProperties_p.html" class="lock">Advanced Properties</a></li>
-                <li><a href="/Threaddump_p.html" class="lock">Thread Dump</a></li>
-                <li><a href="PerformanceQueues_p.html" class="lock">Performance Settings of Busy Queues</a></li>
-                <li><a href="Tables_p.html" class="lock">Viewer and administration for database tables</a></li>
-                <li><a href="CookieMonitorIncoming_p.html" class="lock">Viewer for Cookies in Proxy</a></li>
-                <li><a href="/Settings_p.html?page=ServerAccess" class="lock">Server Access Settings</a></li>
-                <li><a href="/Settings_p.html?page=ProxyAccess" class="lock">Proxy Access Settings</a></li>
-                <li><a href="/Settings_p.html?page=crawler" class="lock">Crawler Settings</a></li>
-                <li><a href="/Settings_p.html?page=http" class="lock">HTTP Networking</a></li>
-                <li><a href="/Settings_p.html?page=proxy" class="lock">Remote Proxy (optional)</a></li>
-                <li><a href="/Settings_p.html?page=seed" class="lock">Seed Upload Settings</a></li>
-                <li><a href="/Settings_p.html?page=messageForwarding" class="lock">Message Forwarding (optional)</a></li>
-              </ul>
-            </li>
-          </ul>
-        </li>
-        <li><a href="/Steering.html?restart=" class="lock" onclick="return confirm('Confirm Restart')">Re-Start</a></li>
-        <li><a href="/Steering.html?shutdown=" class="lock" onclick="return confirm('Confirm Shutdown')">Shutdown</a></li>
-      </ul>
-    </li>
-    <li><span>Project</span>
-      <ul class="hidden">
-        <li><a href="http://www.yacy.net/" target="_blank">Project Home</a></li>
-        <li><a href="/Help.html" target="_blank">Tutorials</a></li>
-        <li><a href="http://forum.yacy.de" target="_blank">Forum/Discussion</a></li>
-        <li><a href="http://wiki.yacy.de" target="_blank">Project Wiki</a></li>
-        <li><a href="https://gitorious.org/yacy/rc1/commits/master" target="_blank">Git Repository</a></li>
-        <li><a href="http://bugs.yacy.net" target="_blank">Bugtracker</a></li>
-        <li><a href="#(newpeer)#http://www.yacystats.de/peer/#[peerhash]#::http://www.yacystats.de#(/newpeer)#" target="_blank">#(newpeer)#Peer Statistics::YaCy Statistics#(/newpeer)#</a></li>
-      </ul>
-    </li>
-  </ul>
-  <div id="navSub" class="hidden">
-    <div class="wrap">
-      <div class="content"></div>
+              <li><a href="/Network.html?page=1&maxCount=1000">Active Peers</a></li>
+              <li><a href="/Network.html?page=2&maxCount=1000">Passive Peers</a></li>
+              <li><a href="/Network.html?page=3&maxCount=1000">Potential Peers</a></li>
+            </ul>
+          </li>
+          <li><span>Web Visualization</span>
+            <ul class="hidden">
+              <li><a href="/WatchWebStructure_p.html?host=auto&amp;depth=3&amp;time=1000" class="lock">Web Structure</a></li>
+              <li><a href="/Collage.html">Image Collage</a></li>
+            </ul>
+          </li>
+          <li><span>Network Access</span>
+            <ul class="hidden">
+              <li><span>Server Access</span>
+                <ul class="hidden">
+                  <li><a href="/AccessGrid_p.html" class="lock">Access Grid</a></li>
+                  <li><a href="/AccessTracker_p.html?page=0" class="lock">Incoming Requests Overview</a></li>
+                  <li><a href="/AccessTracker_p.html?page=1" class="lock">Incoming Requests Details</a></li>
+                  <li><a href="/Connections_p.html" class="lock">All Connections</a></li>
+                </ul>
+              </li>
+              <li><span>Local Search</span>
+                <ul class="hidden">
+                  <li><a href="/AccessTracker_p.html?page=2" class="lock">Log</a></li>
+                  <li><a href="/AccessTracker_p.html?page=3" class="lock">Host Tracker</a></li>
+                </ul>
+              </li>
+              <li><span>Remote Search</span>
+                <ul class="hidden">
+                  <li><a href="/AccessTracker_p.html?page=4" class="lock">Log</a></li>
+                  <li><a href="/AccessTracker_p.html?page=5" class="lock">Host Tracker</a></li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li><span>Computation</span>
+            <ul class="hidden">
+              <li><span>Processes</span>
+                <ul class="hidden">
+                  <li><a href="/ViewLog_p.html" class="lock">Server Log</a></li>
+                  <li><a href="/PerformanceConcurrency_p.html" class="lock">Concurrent Indexing</a></li>
+                  <li><a href="/PerformanceMemory_p.html" class="lock">Memory Usage</a></li>
+                  <li><a href="/PerformanceSearch_p.html" class="lock">Search Sequence</a></li>
+                </ul>
+              </li>
+              <li><span>Messages</span>
+                <ul class="hidden">
+                  <li><a href="/News.html">Overview</a></li>
+                  <li><a href="/News.html?page=1">Incoming&nbsp;News</a></li>
+                  <li><a href="/News.html?page=2">Processed&nbsp;News</a></li>
+                  <li><a href="/News.html?page=3">Outgoing&nbsp;News</a></li>
+                  <li><a href="/News.html?page=4">Published&nbsp;News</a></li>
+                </ul>
+              </li>
+              <li><span>Community Data</span>
+                <ul class="hidden">
+                  <li><a href="/Surftips.html">Surftips</a></li>
+                  <li><a href="/Wiki.html?display=1">Local Peer Wiki</a></li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li><a href="/terminal_p.html" class="lock">Terminal</a></li>
+        </ul>
+      </li>
+      <li><span>Peer</span>
+        <ul class="hidden">
+          <li><span>Admin Console</span>
+            <ul class="hidden">
+              <li><span>Peer Administration Console</span>
+                <ul class="hidden">
+                  <li><a href="/Status.html">Status</a></li>
+                  <li><a href="/ConfigBasic.html" class="lock">Basic Configuration</a></li>
+                  <li><a href="/ConfigAccounts_p.html" class="lock">Accounts</a></li>
+                  <li><a href="/ConfigNetwork_p.html" class="lock">Network Configuration</a></li>
+                  <li><a href="/ConfigUpdate_p.html" class="lock">Download System Update</a></li>
+                </ul>
+              </li>
+              <li><span>Advanced Settings</span>
+                <ul class="hidden">
+                  <li><a href="/Performance_p.html" class="lock">Performance</a></li>
+                  <li><a href="/ConfigRobotsTxt_p.html" class="lock">Local robots.txt</a></li>
+                  <li><a href="/ConfigProperties_p.html" class="lock">Advanced Properties</a></li>
+                  <li><a href="/Threaddump_p.html" class="lock">Thread Dump</a></li>
+                  <li><a href="PerformanceQueues_p.html" class="lock">Performance Settings of Busy Queues</a></li>
+                  <li><a href="Tables_p.html" class="lock">Viewer and administration for database tables</a></li>
+                  <li><a href="/Settings_p.html?page=ServerAccess" class="lock">Server Access Settings</a></li>
+                  <li><a href="/Settings_p.html?page=ProxyAccess" class="lock">Proxy Access Settings</a></li>
+                  <li><a href="/Settings_p.html?page=crawler" class="lock">Crawler Settings</a></li>
+                  <li><a href="/Settings_p.html?page=http" class="lock">HTTP Networking</a></li>
+                  <li><a href="/Settings_p.html?page=proxy" class="lock">Remote Proxy (optional)</a></li>
+                  <li><a href="/Settings_p.html?page=seed" class="lock">Seed Upload Settings</a></li>
+                  <li><a href="/Settings_p.html?page=messageForwarding" class="lock">Message Forwarding (optional)</a></li>
+                </ul>
+              </li>
+              <li><span>Cookies</span>
+                <ul class="hidden">
+                  <li><a href="/CookieMonitorIncoming_p.html" class="lock">Incoming Cookies</a></li>
+                  <li><a href="/CookieMonitorOutgoing_p.html" class="lock">Outgoing Cookies</a></li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li><a href="/Steering.html?restart=" class="lock" onclick="return confirm('Confirm Restart')">Re-Start</a></li>
+          <li><a href="/Steering.html?shutdown=" class="lock" onclick="return confirm('Confirm Shutdown')">Shutdown</a></li>
+        </ul>
+      </li>
+      <li><span>Project</span>
+        <ul class="hidden">
+          <li><a href="http://www.yacy.net/" target="_blank">Project Home</a></li>
+          <li><a href="/Help.html" target="_blank">Tutorials</a></li>
+          <li><a href="http://forum.yacy.de" target="_blank">Forum/Discussion</a></li>
+          <li><a href="http://wiki.yacy.de" target="_blank">Project Wiki</a></li>
+          <li><a href="https://gitorious.org/yacy/rc1/commits/master" target="_blank">Git Repository</a></li>
+          <li><a href="http://bugs.yacy.net" target="_blank">Bugtracker</a></li>
+          <li><a href="#(newpeer)#http://www.yacystats.de/peer/#[peerhash]#::http://www.yacystats.de#(/newpeer)#" target="_blank">#(newpeer)#Peer Statistics::YaCy Statistics#(/newpeer)#</a></li>
+        </ul>
+      </li>
+    </ul>
+    <div id="navSub" class="hidden">
+      <div class="wrap">
+        <div class="content"></div>
+      </div>
     </div>
-  </div>
-  <div class="clear"></div>
-</nav>
-<div id="menuToggle" class="hidden"></div>
-<div id="breadCrumb"></div>
+    <div class="clear"></div>
+  </nav>
+  <div id="menuToggle" class="hidden"></div>
+  <div id="breadCrumb"></div>
