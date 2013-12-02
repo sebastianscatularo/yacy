@@ -521,10 +521,10 @@ YaCyUi.Func.Form.Hints.prototype = {
       // smoothness: hide all first (animated), then show new
       $(hide).map(function() {
         return $(this).toArray();
-      }).stop().hide(hideDelay).promise().done(function() {
+      }).stop().slideUp(hideDelay).promise().done(function() {
         $.each(show, function(i, e) {
           var jObj = $(e[0]);
-          e[1] === true ? jObj.show() : jObj.show(350);
+          e[1] === true ? jObj.show() : jObj.slideDown(350);
         });
       });
 
@@ -548,7 +548,7 @@ YaCyUi.Func.Form.Hints.prototype = {
   update: function(formElements) {
     formElements.each(function() {
       if ($(this).next('.formHint').is(':visible')) {
-        YaCyUi.Form.Hints.show($(this));
+        YaCyUi.Form.Hints.slideDown($(this));
       }
     });
   },
@@ -559,7 +559,7 @@ YaCyUi.Func.Form.Hints.prototype = {
     var self = this;
     formElements.each(function() {
       if (self.private.set($(this)) > 0) {
-        $(this).next('.formHint').show('slow');
+        $(this).next('.formHint').slideDown('slow');
       }
     });
   },
@@ -592,7 +592,7 @@ YaCyUi.Func.Form.Hints.prototype = {
         // there are still errors / warnings set
         return;
       }
-      $(this).next('.formHint').hide('slow');
+      $(this).next('.formHint').slideUp('slow');
     });
   }
 };
