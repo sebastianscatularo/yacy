@@ -37,7 +37,7 @@
       <legend>Max</legend>
       <div class="content">#[maxMemory]#</div>
     </fieldset>
-    <fieldset class="formControl" data-id="formControl">
+    <fieldset class="formControl">
       <div class="content">
         <form class="noSpace" action="PerformanceMemory_p.html">
           <button class="icon-showMore" type="submit">View Memory Details</button>
@@ -64,7 +64,7 @@
       <div class="content">Unrestricted access from localhost.</div>
     </fieldset>
     #(/unrestrictedLocalAccess)#
-    <fieldset class="formControl" data-id="formControl">
+    <fieldset class="formControl">
       <div class="content">
         <form class="noSpace" action="ConfigAccounts_p.html">
           <button class="icon-config" type="submit">Configure accounts</button>
