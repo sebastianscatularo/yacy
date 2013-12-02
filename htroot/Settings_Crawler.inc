@@ -1,53 +1,87 @@
 <form action="SettingsAck_p.html" method="post" enctype="multipart/form-data">
-<fieldset><legend id="admin">Crawler Settings</legend>
-<table border="0" cellspacing="5" width="100%">
-  <tr><td colspan="3"><p><strong>Generic Crawler Settings</strong>:</p></td></tr>
-  <tr valign="top">
-    <td>Timeout:</td>
-    <td><input name="crawler.clientTimeout" type="text" size="16" maxlength="16" value="#[crawler.clientTimeout]#" /></td>
-    <td><em>Connection timeout in ms. <code>0</code> means unlimited.</em></td>
-  </tr>
-  <tr><td colspan="3"><hr /></td></tr>
+  <fieldset>
+    <legend>Crawler Settings</legend>
 
-  <tr><td colspan="3"><p><b>HTTP Crawler Settings:</b></p></td></tr>
-  <tr valign="top">
-    <td>Maximum Filesize:</td>
-    <td><input name="crawler.http.maxFileSize" type="text" size="16" maxlength="16" value="#[crawler.http.maxFileSize]#" /></td>
-    <td><em>Maximum allowed file size in bytes that should be downloaded. Larger files will be skipped. <code>-1</code> means unlimited.<br />
-    Please note that if the crawler uses content compression, this limit is used to check the compressed content size.</em></td>
-  </tr>
-  <tr><td colspan="3"><hr /></td></tr>
+    <fieldset class="formGroup">
+      <legend>Generic</legend>
+      <fieldset class="formSection">
+        <legend>Timeout</legend>
+        <div class="content">
+          <input name="crawler.clientTimeout" type="text" size="16" maxlength="16" value="#[crawler.clientTimeout]#" class="spinner"/>
+          <p>
+            Connection timeout in ms. <code>0</code> means unlimited.
+          </p>
+        </div>
+      </fieldset>
+    </fieldset>
 
-  <tr><td colspan="3"><p><strong>FTP Crawler Settings</strong>:</p></td></tr>
-  <tr valign="top">
-    <td>Maximum Filesize:</td>
-    <td><input name="crawler.ftp.maxFileSize" type="text" size="16" maxlength="16" value="#[crawler.ftp.maxFileSize]#" /></td>
-    <td><em>Maximum allowed file size in bytes that should be downloaded. Larger files will be skipped. <code>-1</code> means unlimited.</em></td>
-  </tr>
-  <tr><td colspan="3"><hr /></td></tr>
-  
-  <tr><td colspan="3"><p><strong>SMB Crawler Settings</strong>:</p></td></tr>
-  <tr valign="top">
-    <td>Maximum Filesize:</td>
-    <td><input name="crawler.smb.maxFileSize" type="text" size="16" maxlength="16" value="#[crawler.smb.maxFileSize]#" /></td>
-    <td><em>Maximum allowed file size in bytes that should be downloaded. Larger files will be skipped. <code>-1</code> means unlimited.</em></td>
-  </tr>
-  <tr><td colspan="3"><hr /></td></tr>
-  
-  <tr><td colspan="3"><p><strong>Local File Crawler Settings</strong>:</p></td></tr>
-  <tr valign="top">
-    <td>Maximum Filesize:</td>
-    <td><input name="crawler.file.maxFileSize" type="text" size="16" maxlength="16" value="#[crawler.file.maxFileSize]#" /></td>
-    <td><em>Maximum allowed file size in bytes that should be downloaded. Larger files will be skipped. <code>-1</code> means unlimited.</em></td>
-  </tr>
-  <tr><td colspan="3"><hr /></td></tr>
-  
-  <tr valign="top">
-    <td>&nbsp;</td>
-    <td><input type="submit" name="crawlerSettings" value="Submit" /></td>
-    <td><em>Changes will take effect immediately.</em></td>
-  </tr>  
-</table>
+    <fieldset class="formGroup">
+      <legend>HTTP Crawler Settings</legend>
+      <fieldset class="formSection">
+        <legend>Maximum Filesize</legend>
+        <div class="content">
+          <input name="crawler.http.maxFileSize" type="text" size="16" maxlength="16" value="#[crawler.http.maxFileSize]#" class="spinner"/>
+          <p>
+            Maximum allowed file size in bytes that should be downloaded. Larger files will be skipped. <code>-1</code> means unlimited.
+            <br />
+            <s class="sym sym-hint"></s>
+            Please note that if the crawler uses content compression, this limit is used to check the compressed content size.
+          </p>
+        </div>
+      </fieldset>
+    </fieldset>
+
+    <fieldset class="formGroup">
+      <legend>FTP Crawler Settings</legend>
+      <fieldset class="formSection">
+        <legend>Maximum Filesize</legend>
+        <div class="content">
+          <input name="crawler.ftp.maxFileSize" type="text" size="16" maxlength="16" value="#[crawler.ftp.maxFileSize]#" class="spinner"/>
+          <p>
+            Maximum allowed file size in bytes that should be downloaded. Larger files will be skipped. <code>-1</code> means unlimited.
+          </p>
+        </div>
+      </fieldset>
+    </fieldset>
+
+    <fieldset class="formGroup">
+      <legend>SMB Crawler Settings</legend>
+      <fieldset class="formSection">
+        <legend>Maximum Filesize</legend>
+        <div class="content">
+          <input name="crawler.smb.maxFileSize" type="text" size="16" maxlength="16" value="#[crawler.smb.maxFileSize]#" class="spinner"/>
+          <p>
+            Maximum allowed file size in bytes that should be downloaded. Larger files will be skipped. <code>-1</code> means unlimited.
+          </p>
+        </div>
+      </fieldset>
+    </fieldset>
+
+    <fieldset class="formGroup">
+      <legend>Local File Crawler Settings</legend>
+      <fieldset class="formSection">
+        <legend>Maximum Filesize</legend>
+        <div class="content">
+          <input name="crawler.file.maxFileSize" type="text" size="16" maxlength="16" value="#[crawler.file.maxFileSize]#" />
+          <p>
+            Maximum allowed file size in bytes that should be downloaded. Larger files will be skipped. <code>-1</code> means unlimited.
+          </p>
+        </div>
+      </fieldset>
+    </fieldset>
+
+    <fieldset class="formControl">
+      <div class="description">
+        <p>
+          <s class="sym sym-hint"></s>
+          Changes take effect immediately.
+        </p>
+      </div>
+      <div class="content">
+        <button type="submit" name="crawlerSettings" class="primary icon-run"/>Save Configuration</button>
+      </div>
+    </fieldset>
+  </fieldset>
 
 </fieldset>
 </form>
