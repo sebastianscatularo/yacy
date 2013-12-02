@@ -4,225 +4,226 @@
   <title>YaCy '#[clientname]#': Performance Settings</title>
   #%env/templates/header-backend.template%#
   <script type="text/javascript" src="js/html.js"></script>
-  <script type="text/javascript"><!--
+  <script type="text/javascript">
   function reloadGraph() {
-    if(document.forms["optionreloadGraph"].option.checked)
+    if($('#autoReload').is(':checked')) {
       document.images["graph"].src="PerformanceGraph.png?time="+(new Date()).getTime();
+    }
     window.status="";
   }
   window.setInterval("reloadGraph()", 1000);
-    //-->
-    </script>
-  </head>
+  </script>
+</head>
 
-  <body id="performance">
-    #%env/templates/page-start.template%#
+<body id="performance">
+  #%env/templates/page-start.template%#
 
-    <h1>Performance Settings</h1>
+  #(setStartupCommit)#::
+  <p class="ycu-message ycu-message-info">
+    Accepted change. This will take effect after <strong>restart</strong> of YaCy.
+    <br/>
+    <a href="/Steering.html?restart=" onclick="return confirm('Confirm Restart')">restart now</a>
+  </p>
+  ::
+  <p class="ycu-message ycu-message-error"></p>
+  #(/setStartupCommit)#
 
-    <fieldset class="framed" style="width:600px;">
-      <legend class="light">Performance Graph</legend>
-      <img src="PerformanceGraph.png" id="graph" alt="PerformanceGraph" width="660" height="240"/>
-    </fieldset>
-    <form id="optionreloadGraph" action="" method="get"><p><input type="checkbox" name="option" id="autoreload"/> <label for="autoreload">refresh graph</label></p></form>
+  <h1>Performance Settings</h1>
 
-
-    #(setStartupCommit)#::
-    <p class="ycu-message ycu-message-info">
-      Accepted change. This will take effect after <strong>restart</strong> of YaCy.
-      <br/>
-      <a href="/Steering.html?restart=" onclick="return confirm('Confirm Restart')">restart now</a>
-    </p>
-    ::
-    <p class="ycu-message ycu-message-error"></p>
-    #(/setStartupCommit)#
-
-    <form action="Performance_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
-      <fieldset>
-        <legend>Memory Settings</legend>
-        <fieldset class="formSection">
-          <legend>Memory reserved for <abbr>JVM</abbr></legend>
-          <div class="content">
-            <input name="Xmx" id="Xmx" type="text" size="5" maxlength="5" value="#[Xmx]#" class="spinner"/> <abbr>MByte</abbr>
-          </div>
-        </fieldset>
-        <fieldset class="formControl" data-id="formControl">
-          <div class="content">
-            <button type="submit" name="setStartup" class="primary icon-save">Save configuration</button>
-          </div>
-        </fieldset>
-      </fieldset>
-    </form>
-
-
-    <fieldset class="main">
-      <legend>Resource Observer</legend>
-      <fieldset class="formSection">
-        <legend>DHT-Trigger</legend>
-        <div class="content">
-          <p>
-            #(observerTrigger)#not triggered::<strong>triggered</strong>#(/observerTrigger)#
-          </p>
-          <form action="?resetObserver=">
-            <button class="icon-run">reset state</button>
-          </form>
-        </div>
-      </fieldset>
-      <form action="Performance_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
-        <fieldset class="formGroup">
-          <legend>Disk space</legend>
-          <fieldset class="formSection">
-            <legend>disable crawls</legend>
-            <div class="content">
-              <label for="diskFree">If free disk space is below</label>
-              <input name="diskFree" id="diskFree" type="text" size="4" value="#[diskFree]#" class="spinner"/> <abbr>MiB</abbr>
-            </div>
-          </fieldset>
-          <fieldset class="formSection">
-            <legend>disable <abbr>DHT</abbr>-in</legend>
-            <div class="content">
-              <label for="diskFreeHardlimit">If free disk space is below</label>
-              <input name="diskFreeHardlimit" id="diskFreeHardlimit" type="text" size="4" value="#[diskFreeHardlimit]#" class="spinner"/> <abbr>MiB</abbr>
-            </div>
-          </fieldset>
-        </fieldset>
-
-        <fieldset class="formGroup">
-          <legend>Memory</legend>
-          <fieldset class="formSection">
-            <legend>disable <abbr>DHT</abbr>-in</legend>
-            <div class="content">
-              <label for="memoryAcceptDHT">If free memory space is below</label>
-              <input name="memoryAcceptDHT" id="memoryAcceptDHT" type="text" size="4" value="#[memoryAcceptDHT]#" class="spinner"/> <abbr>MiB</abbr>
-            </div>
-          </fieldset>
-        </fieldset>
-
-        <fieldset class="formControl" data-id="formControl">
-          <div class="content">
-            <button type="submit" name="setObserver" class="primary icon-save">Save configuration</button>
-          </div>
-        </fieldset>
-      </form>
-    </fieldset>
-
-    <form action="Performance_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
-      <fieldset>
-        <legend>Use Default Profile</legend>
-        <fieldset class="formSection">
-          <legend>Profile</legend>
-          <div class="content">
-            Use profile
-            <select name="defaultFile">
-             #{profile}#
-             <option value="#[filename]#"#(used)#:: selected="selected"#(/used)#>#[description]#</option>
-             #{/profile}#
-           </select>
-           and use
-           <select name="profileSpeed">
-             #{speed}#
-             <option value="#[value]#"#(used)#:: selected="selected"#(/used)#>#[label]#</option>
-             #{/speed}#
-           </select>
-           of the defined performance.
-         </div>
-       </fieldset>
-       <fieldset class="formControl" data-id="formControl">
-        <div class="description">
-          <p>
-            <s class="sym sym-hint"></s>
-            Changes take effect immediately.
-          </p>
-        </div>
-        <div class="content">
-          <button type="submit" name="submitdefault" class="primary icon-run">Set Profile</button>
-        </div>
-      </fieldset>
-    </fieldset>
-  </form>
+  <fieldset class="framed" style="width:600px;">
+    <legend class="light">Performance Graph</legend>
+    <img src="PerformanceGraph.png" id="graph" alt="PerformanceGraph" width="660" height="240"/>
+    <br/>
+    <input type="checkbox" id="autoReload"/>
+    <label for="autoreload">refresh graph</label>
+  </fieldset>
 
   <form action="Performance_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
     <fieldset>
-      <legend>YaCy Priority Settings</legend>
+      <legend>Memory Settings</legend>
       <fieldset class="formSection">
-        <legend>Process priority</legend>
+        <legend>Memory reserved for <abbr>JVM</abbr></legend>
         <div class="content">
-          <select id="priority" name="YaCyPriority">
-            <option value="0"#(priority_normal)#:: selected="selected"#(/priority_normal)#>Normal</option>
-            <option value="10"#(priority_below)#:: selected="selected"#(/priority_below)#>Below normal</option>
-            <option value="20"#(priority_low)#:: selected="selected"#(/priority_low)#>Idle</option>
-          </select>
+          <input name="Xmx" id="Xmx" type="text" size="5" maxlength="5" value="#[Xmx]#" class="spinner"/> <abbr>MByte</abbr>
         </div>
       </fieldset>
       <fieldset class="formControl" data-id="formControl">
-        <div class="description">
-          <p>
-            <s class="sym sym-hint"></s>
-            Changes take effect after <strong>restart</strong> of YaCy.
-          </p>
-        </div>
         <div class="content">
-          <button type="submit" name="PrioritySubmit" class="primary icon-save">Set Priority</button>
+          <button type="submit" name="setStartup" class="primary icon-save">Save configuration</button>
         </div>
       </fieldset>
     </fieldset>
   </form>
+
+
+  <fieldset class="main">
+    <legend>Resource Observer</legend>
+    <fieldset class="formSection">
+      <legend>DHT-Trigger</legend>
+      <div class="content">
+        <p>
+          #(observerTrigger)#not triggered::<strong>triggered</strong>#(/observerTrigger)#
+        </p>
+        <form action="?resetObserver=">
+          <button class="icon-run">reset state</button>
+        </form>
+      </div>
+    </fieldset>
+    <form action="Performance_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
+      <fieldset class="formGroup">
+        <legend>Disk space</legend>
+        <fieldset class="formSection">
+          <legend>disable crawls</legend>
+          <div class="content">
+            <label for="diskFree">If free disk space is below</label>
+            <input name="diskFree" id="diskFree" type="text" size="4" value="#[diskFree]#" class="spinner"/> <abbr>MiB</abbr>
+          </div>
+        </fieldset>
+        <fieldset class="formSection">
+          <legend>disable <abbr>DHT</abbr>-in</legend>
+          <div class="content">
+            <label for="diskFreeHardlimit">If free disk space is below</label>
+            <input name="diskFreeHardlimit" id="diskFreeHardlimit" type="text" size="4" value="#[diskFreeHardlimit]#" class="spinner"/> <abbr>MiB</abbr>
+          </div>
+        </fieldset>
+      </fieldset>
+
+      <fieldset class="formGroup">
+        <legend>Memory</legend>
+        <fieldset class="formSection">
+          <legend>disable <abbr>DHT</abbr>-in</legend>
+          <div class="content">
+            <label for="memoryAcceptDHT">If free memory space is below</label>
+            <input name="memoryAcceptDHT" id="memoryAcceptDHT" type="text" size="4" value="#[memoryAcceptDHT]#" class="spinner"/> <abbr>MiB</abbr>
+          </div>
+        </fieldset>
+      </fieldset>
+
+      <fieldset class="formControl" data-id="formControl">
+        <div class="content">
+          <button type="submit" name="setObserver" class="primary icon-save">Save configuration</button>
+        </div>
+      </fieldset>
+    </form>
+  </fieldset>
 
   <form action="Performance_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
     <fieldset>
-      <legend>Online Caution</legend>
+      <legend>Use Default Profile</legend>
+      <fieldset class="formSection">
+        <legend>Profile</legend>
+        <div class="content">
+          Use profile
+          <select name="defaultFile">
+           #{profile}#
+           <option value="#[filename]#"#(used)#:: selected="selected"#(/used)#>#[description]#</option>
+           #{/profile}#
+         </select>
+         and use
+         <select name="profileSpeed">
+           #{speed}#
+           <option value="#[value]#"#(used)#:: selected="selected"#(/used)#>#[label]#</option>
+           #{/speed}#
+         </select>
+         of the defined performance.
+       </div>
+     </fieldset>
+     <fieldset class="formControl" data-id="formControl">
       <div class="description">
         <p>
-          This is the time that the crawler idles when the proxy is accessed, or a local or remote search is done.
-          The delay is extended by this time each time the proxy is accessed afterwards.
-          This shall improve performance of the affected process (proxy or search).
-        </p>
-        <p>
           <s class="sym sym-hint"></s>
-          current delta is #[crawlPauseProxyCurrent]#/#[crawlPauseLocalsearchCurrent]#/#[crawlPauseRemotesearchCurrent]# seconds since last proxy/local-search/remote-search access.
+          Changes take effect immediately.
         </p>
       </div>
-      <fieldset class="formGroup">
-        <legend>Indexer delay</legend>
-        <fieldset class="formSection">
-          <legend>Case</legend>
-          <div class="content">
-            Indexer delay (milliseconds) after case occurency.
-          </div>
-        </fieldset>
-        <fieldset class="formSection">
-          <legend>Proxy</legend>
-          <div class="content">
-            <input id="crawlPauseProxy" name="crawlPauseProxy" type="text" size="20" maxlength="100" value="#[crawlPauseProxy]#" class="spinner"/>
-          </div>
-        </fieldset>
-        <fieldset class="formSection">
-          <legend>Local Search</legend>
-          <div class="content">
-            <input id="crawlPauseLocalsearch" name="crawlPauseLocalsearch" type="text" size="20" maxlength="100" value="#[crawlPauseLocalsearch]#" class="spinner"/>
-          </div>
-        </fieldset>
-        <fieldset class="formSection">
-          <legend>Remote Search</legend>
-          <div class="content">
-            <input id="crawlPauseRemotesearch" name="crawlPauseRemotesearch" type="text" size="20" maxlength="100" value="#[crawlPauseRemotesearch]#" class="spinner"/>
-          </div>
-        </fieldset>
-      </fieldset>
-      <fieldset class="formControl">
-        <div class="description">
-          <p>
-            <s class="sym sym-hint"></s>
-            Changes take effect immediately.
-          </p>
-        </div>
+      <div class="content">
+        <button type="submit" name="submitdefault" class="primary icon-run">Set Profile</button>
+      </div>
+    </fieldset>
+  </fieldset>
+</form>
+
+<form action="Performance_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
+  <fieldset>
+    <legend>YaCy Priority Settings</legend>
+    <fieldset class="formSection">
+      <legend>Process priority</legend>
+      <div class="content">
+        <select id="priority" name="YaCyPriority">
+          <option value="0"#(priority_normal)#:: selected="selected"#(/priority_normal)#>Normal</option>
+          <option value="10"#(priority_below)#:: selected="selected"#(/priority_below)#>Below normal</option>
+          <option value="20"#(priority_low)#:: selected="selected"#(/priority_low)#>Idle</option>
+        </select>
+      </div>
+    </fieldset>
+    <fieldset class="formControl" data-id="formControl">
+      <div class="description">
+        <p>
+          <s class="sym sym-hint"></s>
+          Changes take effect after <strong>restart</strong> of YaCy.
+        </p>
+      </div>
+      <div class="content">
+        <button type="submit" name="PrioritySubmit" class="primary icon-save">Set Priority</button>
+      </div>
+    </fieldset>
+  </fieldset>
+</form>
+
+<form action="Performance_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
+  <fieldset>
+    <legend>Online Caution</legend>
+    <div class="description">
+      <p>
+        This is the time that the crawler idles when the proxy is accessed, or a local or remote search is done.
+        The delay is extended by this time each time the proxy is accessed afterwards.
+        This shall improve performance of the affected process (proxy or search).
+      </p>
+      <p>
+        <s class="sym sym-hint"></s>
+        current delta is #[crawlPauseProxyCurrent]#/#[crawlPauseLocalsearchCurrent]#/#[crawlPauseRemotesearchCurrent]# seconds since last proxy/local-search/remote-search access.
+      </p>
+    </div>
+    <fieldset class="formGroup">
+      <legend>Indexer delay</legend>
+      <fieldset class="formSection">
+        <legend>Case</legend>
         <div class="content">
-          <button type="submit" name="onlineCautionSubmit" class="primary icon-save">Set new parameters</button>
+          Indexer delay (milliseconds) after case occurency.
+        </div>
+      </fieldset>
+      <fieldset class="formSection">
+        <legend>Proxy</legend>
+        <div class="content">
+          <input id="crawlPauseProxy" name="crawlPauseProxy" type="text" size="20" maxlength="100" value="#[crawlPauseProxy]#" class="spinner"/>
+        </div>
+      </fieldset>
+      <fieldset class="formSection">
+        <legend>Local Search</legend>
+        <div class="content">
+          <input id="crawlPauseLocalsearch" name="crawlPauseLocalsearch" type="text" size="20" maxlength="100" value="#[crawlPauseLocalsearch]#" class="spinner"/>
+        </div>
+      </fieldset>
+      <fieldset class="formSection">
+        <legend>Remote Search</legend>
+        <div class="content">
+          <input id="crawlPauseRemotesearch" name="crawlPauseRemotesearch" type="text" size="20" maxlength="100" value="#[crawlPauseRemotesearch]#" class="spinner"/>
         </div>
       </fieldset>
     </fieldset>
-  </form>
+    <fieldset class="formControl">
+      <div class="description">
+        <p>
+          <s class="sym sym-hint"></s>
+          Changes take effect immediately.
+        </p>
+      </div>
+      <div class="content">
+        <button type="submit" name="onlineCautionSubmit" class="primary icon-save">Set new parameters</button>
+      </div>
+    </fieldset>
+  </fieldset>
+</form>
 
-  #%env/templates/page-end.template%#
+#%env/templates/page-end.template%#
 </body>
 </html>
