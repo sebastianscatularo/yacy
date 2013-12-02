@@ -259,10 +259,19 @@
             <li><span>Advanced Settings</span>
               <ul class="hidden">
                 <li><a href="/Performance_p.html" class="lock">Performance</a></li>
-                <li><a href="/Settings_p.html" class="lock">Advanced Settings</a></li>
                 <li><a href="/ConfigRobotsTxt_p.html" class="lock">Local robots.txt</a></li>
                 <li><a href="/ConfigProperties_p.html" class="lock">Advanced Properties</a></li>
                 <li><a href="/Threaddump_p.html" class="lock">Thread Dump</a></li>
+                <li><a href="PerformanceQueues_p.html" class="lock">Performance Settings of Busy Queues</a></li>
+                <li><a href="Tables_p.html" class="lock">Viewer and administration for database tables</a></li>
+                <li><a href="CookieMonitorIncoming_p.html" class="lock">Viewer for Cookies in Proxy</a></li>
+                <li><a href="/Settings_p.html?page=ServerAccess" class="lock">Server Access Settings</a></li>
+                <li><a href="/Settings_p.html?page=ProxyAccess" class="lock">Proxy Access Settings</a></li>
+                <li><a href="/Settings_p.html?page=crawler" class="lock">Crawler Settings</a></li>
+                <li><a href="/Settings_p.html?page=http" class="lock">HTTP Networking</a></li>
+                <li><a href="/Settings_p.html?page=proxy" class="lock">Remote Proxy (optional)</a></li>
+                <li><a href="/Settings_p.html?page=seed" class="lock">Seed Upload Settings</a></li>
+                <li><a href="/Settings_p.html?page=messageForwarding" class="lock">Message Forwarding (optional)</a></li>
               </ul>
             </li>
           </ul>
