@@ -83,6 +83,7 @@ a {
   color:$ycu-var-color-link;
 
   // icon-only links
+  &.iconic:active,
   &.iconic:hover {
     background-color:transparent;
     color:$ycu-var-color-link;
@@ -205,7 +206,7 @@ footer {
 /**********
 * Special elements. */
 // no link styling for special elements
-a.yacyLogo,
+.noHover,
 #api > a {
   &:before {
     display:none;
@@ -256,8 +257,13 @@ table {
   }
 
   td.breakAll {
-    word-break:break-all;
+    //word-break:break-all;
+    word-wrap:break-word;
   }
+}
+// fixed width table
+table.fixed {
+  table-layout:fixed;
 }
 // sortable tables
 table.sortable th:not(.noSort) {

@@ -146,7 +146,7 @@ iframe.border {
 // number & spacing for top level headings
 main .ym-wbox:first-of-type {
   // header spacing
-  *:not(#api):not(#ycu-messages) {
+  *:not(#api):not(#ycu-messages):not(script) {
     + h1 {
       margin-top:2em;
     }

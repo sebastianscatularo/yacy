@@ -153,7 +153,8 @@ fieldset.formGroup {
     top:1px solid $ycu-var-color-fieldset-border;
     bottom:1px solid $ycu-var-color-fieldset-border;
   }
-  background-color:$ycu-var-color-fieldset-formgroup-bg;
+  //background-color:$ycu-var-color-fieldset-formgroup-bg;
+  background:linear-gradient(to right, darken($ycu-var-color-fieldset-formgroup-bg, 7) 0%, $ycu-var-color-fieldset-formgroup-bg 0.4em);
 
   &:not(:last-of-type) {
     margin-bottom:$margin-bottom;
@@ -174,6 +175,7 @@ fieldset.formGroup {
     border: {
       left:0.5em solid $ycu-var-color-legend-marker-bg;
       top-right-radius:5px;
+      image:linear-gradient(to right, darken($ycu-var-color-fieldset-formgroup-bg, 7) 0%, $ycu-var-color-fieldset-formgroup-bg 0.4em);
     }
     padding:0.5em $ycu-var-fieldset-legend-padding-leftright;
 
@@ -508,7 +510,8 @@ textarea {
 form:not(.noSpace) {
   margin-bottom:1.5em;
 }
-fieldset.main + fieldset.main {
+fieldset.main + fieldset.main,
+fieldset + form {
   margin-top:1.5em;
 }
 

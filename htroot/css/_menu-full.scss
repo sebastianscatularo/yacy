@@ -104,6 +104,12 @@
   }
 }
 
+#nav a.lock:before,
+#navSub a.lock:before {
+  @extend %icon-block-light;
+  content:'#{$fa-var-lock}\00a0';
+}
+
 #breadCrumb {
   @extend %font-sans;
   z-index:-1;

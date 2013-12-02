@@ -2634,7 +2634,7 @@ label.disabled {
 
 a {
   color: #4d87c7; }
-  a.iconic:hover {
+  a.iconic:active, a.iconic:hover {
     background-color: transparent;
     color: #4d87c7; }
 
@@ -2717,10 +2717,10 @@ footer {
 
 /**********
 * Special elements. */
-a.yacyLogo:before,
+.noHover:before,
 #api > a:before {
   display: none; }
-a.yacyLogo:active, a.yacyLogo:hover,
+.noHover:active, .noHover:hover,
 #api > a:active,
 #api > a:hover {
   background-color: transparent; }
@@ -2748,7 +2748,10 @@ table th {
   border-color: #555;
   font-weight: bold; }
 table td.breakAll {
-  word-break: break-all; }
+  word-wrap: break-word; }
+
+table.fixed {
+  table-layout: fixed; }
 
 table.sortable th:not(.noSort) {
   cursor: pointer;
