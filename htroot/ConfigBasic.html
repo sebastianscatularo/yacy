@@ -1,254 +1,288 @@
 <!DOCTYPE html>
+<!--YCU-COMPLETE-->
 <html lang="en">
 <head>
   <title>YaCy '#[clientname]#': Access Configuration</title>
   #%env/templates/header-backend.template%#
-  <script type="text/javascript">
-    //<![CDATA[
-    function element_clicked(element){
-      document.getElementById("key").value=element.id;
-      document.getElementById("value").value=element.value;
-    }
-    //]]>
-    </script>
-    <!-- redirecting browser if port was changed -->
-    #(reconnect)#::
-    <meta http-equiv="refresh" content="10; url=#(sslSupport)#http::https#(/sslSupport)#://#[host]#:#[port]#/ConfigBasic.html" />
-    #(/reconnect)#
-    <!-- redirecting browser if language was changed -->
-    #(changedLanguage)#::
-    <meta http-equiv="refresh" content="0; url=ConfigBasic.html" />
-    #(/changedLanguage)#
-  </head>
+  <script type="text/javascript" src="/js/yaml/pages/configBasic.js"></script>
+  <!-- redirecting browser if port was changed -->
+  #(reconnect)#::
+  <meta http-equiv="refresh" content="10; url=#(sslSupport)#http::https#(/sslSupport)#://#[host]#:#[port]#/ConfigBasic.html" />
+  #(/reconnect)#
+  <!-- redirecting browser if language was changed -->
+  #(changedLanguage)#::
+  <meta http-equiv="refresh" content="0; url=ConfigBasic.html" />
+  #(/changedLanguage)#
+</head>
 
-  <body id="configBasic">
-    #%env/templates/page-start.template%#
+<body id="configBasic">
+  #%env/templates/page-start.template%#
 
-    <h1>Basic Configuration</h1>
+  <h1>Basic Configuration</h1>
 
-    #(reconnect)#::
-    <p class="ycu-message ycu-message-info">
-      <strong>Your port has changed. Please wait 10 seconds.</strong>
-    </p>
-    #(/reconnect)#
+  #(reconnect)#::
+  <p class="ycu-message ycu-message-info">
+    <strong>Your port has changed. Please wait 10 seconds.</strong>
+  </p>
+  #(/reconnect)#
 
-    <p>
-      #(nextStep)#<!-- [0] -->
-      <p>
-        Your basic configuration is complete! You can now (for example):
-      </p>
-      <ul>
-        <li>
-          <a href="index.html">start an uncensored search</a>
-        </li>
-        <li>
-          <a href="CrawlStartSite_p.html">start your own crawl</a> and contribute to the global index, or create your own private web index
-        </li>
-        <li>
-          <a href="ConfigProfile_p.html">set a personal peer profile</a> (optional settings)
-        </li>
-        <li>
-          just <a href="Network.html">monitor at the network page</a> what the other peers are doing.
-        </li>
-      </ul>
-      ::<!-- [1]: password not proper -->
-      <div class="p">
-        Your YaCy Peer needs some basic information to operate properly:
-        <ul>
-          <li>
-            <s class="sym sym-warning"></s>
-            You did not set a user name and/or a password. Some pages are protected by passwords. You should set a password at the <a href="ConfigAccounts_p.html">Accounts Menu</a> to secure your YaCy peer.
-          </li>
-        </ul>
-      </div>
-      ::<!-- [2]: peername not proper -->
-      <div class="p">
-        Your YaCy Peer needs some basic information to operate properly:
-        <ul>
-          <li>Your Peer name is a default name; please set an individual peer name.</li>
-        </ul>
-      </div>
-      ::<!-- [3]: port not proper -->
-      <div class="p">
-        Your YaCy Peer needs some basic information to operate properly:
-        <ul>
-          <li>
-            You did not open a port in your firewall or your router does not forward the server port to your peer. This is needed if you want to fully participate in the YaCy network. You can also use your peer without opening it, but this is not recomended.
-          </li>
-        </ul>
-      </div>
-      ::<!-- [4]: reconnect to different port -->
-      <p class="ycu-message ycu-message-info">
-        The peer port was changed successfully. Your browser will be redirected to the new <a href="#(sslSupport)#http::https#(/sslSupport)#://#[host]#:#[port]#/ConfigBasic.html">location</a> in 5 seconds.
-      </p>
-      #(/nextStep)#
+  #(nextStep)#<!-- [0] -->
+  <p>
+    Your basic configuration is complete! You can now (for example):
+  </p>
+  <ul>
+    <li>
+      <a href="index.html">start an uncensored search</a>
+    </li>
+    <li>
+      <a href="CrawlStartSite_p.html">start your own crawl</a> and contribute to the global index, or create your own private web index
+    </li>
+    <li>
+      <a href="ConfigProfile_p.html">set a personal peer profile</a> (optional settings)
+    </li>
+    <li>
+      just <a href="Network.html">monitor at the network page</a> what the other peers are doing.
+    </li>
+  </ul>
+  ::<!-- [1]: password not proper -->
+  <div class="p">
+    Your YaCy Peer needs some basic information to operate properly:
+    <ul>
+      <li>
+        <s class="sym sym-warning"></s>
+        You did not set a user name and/or a password. Some pages are protected by passwords. You should set a password at the <a href="ConfigAccounts_p.html">Accounts Menu</a> to secure your YaCy peer.
+      </li>
+    </ul>
+  </div>
+  ::<!-- [2]: peername not proper -->
+  <div class="p">
+    Your YaCy Peer needs some basic information to operate properly:
+    <ul>
+      <li>Your Peer name is a default name; please set an individual peer name.</li>
+    </ul>
+  </div>
+  ::<!-- [3]: port not proper -->
+  <div class="p">
+    Your YaCy Peer needs some basic information to operate properly:
+    <ul>
+      <li>
+        You did not open a port in your firewall or your router does not forward the server port to your peer. This is needed if you want to fully participate in the YaCy network. You can also use your peer without opening it, but this is not recomended.
+      </li>
+    </ul>
+  </div>
+  ::<!-- [4]: reconnect to different port -->
+  <p class="ycu-message ycu-message-info">
+    The peer port was changed successfully. Your browser will be redirected to the new <a href="#(sslSupport)#http::https#(/sslSupport)#://#[host]#:#[port]#/ConfigBasic.html">location</a> in 5 seconds.
+  </p>
+  #(/nextStep)#
 
-      <form action="ConfigBasic.html" method="get" accept-charset="UTF-8">
-        <fieldset>
-          <legend>Basic Configuration</legend>
+  <form action="ConfigBasic.html" method="get" accept-charset="UTF-8">
+    <fieldset>
+      <legend>Basic Configuration</legend>
 
-          <fieldset class="formGroup">
-            <legend>Interface</legend>
-            <div class="description">
-              <p>
-                Please select a language for the interface. Your changes will be applied immediately.
-              </p>
-            </div>
-            <fieldset class="formSection">
-              <legend>Languages</legend>
-              <div class="content">
-                <p>
-                  <input type="radio" name="language" value="de" id="lang_de" onchange="this.form.submit()" #(lang_de)#::checked="checked"#(/lang_de)# />
-                  <label for="lang_de">Deutsch</label>
-                </p>
-                <p>
-                  <input type="radio" name="language" value="fr" id="lang_fr" onchange="this.form.submit()" #(lang_fr)#::checked="checked"#(/lang_fr)# />
-                  <label for="lang_fr">Fran&ccedil;ais</label>
-                </p>
-                <p>
-                  <input type="radio" name="language" value="cn" id="lang_cn" onchange="this.form.submit()" #(lang_cn)#::checked="checked"#(/lang_cn)# />
-                  <label for="lang_cn">&#27721;&#35821;/&#28450;&#35486</label>
-                </p>
-                <p>
-                  <input type="radio" name="language" value="ru" id="lang_ru" onchange="this.form.submit()" #(lang_ru)#::checked="checked"#(/lang_ru)# />
-                  <label for="lang_ru">&#1056;&#1091;&#1089;&#1089;&#1082;&#1080;&#1081;</label>
-                </p>
-                <p>
-                  <input type="radio" name="language" value="uk" id="lang_uk" onchange="this.form.submit()" #(lang_uk)#::checked="checked"#(/lang_uk)# />
-                  <label for="lang_uk">&#1059;&#1082;&#1088;&#1072;&#1111;&#1085;&#1089;&#1100;&#1082;&#1072;</label>
-                </p>
-                <p>
-                  <input type="radio" name="language" value="hi" id="lang_hi" onchange="this.form.submit()" #(lang_hi)#::checked="checked"#(/lang_hi)# />
-                  <label for="lang_hi">&#2361;&#2367;&#2344;&#2381;&#2342;&#2368;</label>
-                </p>
-                <p>
-                  <input type="radio" name="language" value="default" id="lang_en" onchange="this.form.submit()" #(lang_en)#::checked="checked"#(/lang_en)# />
-                  <label for="lang_en">English</label>
-                </p>
-              </div>
-            </fieldset>
-          </fieldset>
-        </fieldset>
-      </form>
-
-      <form action="ConfigBasic.html" method="get" accept-charset="UTF-8">
-        #(setUseCase)#::
-        <fieldset>
-          <legend>Peer Configuration</legend>
-
-          <fieldset class="formGroup">
-            <legend>Use Case</legend>
-            <fieldset class="formSection">
-              <legend>Community Based</legend>
-              <div class="content">
-                <img style="float:right;padding-left:1em;" src="/img/usecase_freeworld.png" alt="Usecase Freeworld"/>
-                <p>
-                  <input type="radio" name="usecase" value="freeworld" id="usecaseFreeworld" #(freeworldChecked)#::checked="checked"#(/freeworldChecked)# />
-                  <label for="usecaseFreeworld">Community-based web search</label>
-                </p>
-                <p>
-                  Join and support the global network 'freeworld', search the web with an uncensored user-owned search network
-                </p>
-              </div>
-            </fieldset>
-            <fieldset class="formSection">
-              <legend>Search Portal</legend>
-              <div class="content">
-                <img style="float:right;padding-left:1em;width:145px;" src="/img/usecase_webportal.png" alt="Usecase Portal" />
-                <p>
-                  <input type="radio" name="usecase" value="portal" id="usecasePortal" #(portalChecked)#::checked="checked"#(/portalChecked)# />
-                  <label for="usecasePortal">Search portal for your own web pages</label>
-                </p>
-                <p>
-                  Your YaCy installation behaves independently from other peers and you define your own web index by starting your own web crawl. This can be used to search your own web pages or to define a topic-oriented search portal.
-                </p>
-              </div>
-            </fieldset>
-            <fieldset class="formSection">
-              <legend>Intranet Indexing</legend>
-              <div class="content">
-                <img style="float:right;padding-left:1em;width:145px;" src="/img/usecase_intranet.png" alt="Usecase Intranet" />
-                <p>
-                  <input type="radio" name="usecase" value="intranet" id="usecaseIntranet" #(intranetChecked)#::checked="checked"#(/intranetChecked)# />
-                  <label for="usecaseIntranet">Intranet Indexing</label>
-                </p>
-                <p>
-                  Create a search portal for your intranet or web pages or your (shared) file system. URLs may be used with http/https/ftp and a local domain name or IP, or with an URL of the form <code>file:///&lt;path&gt;</code> or <code>smb://&lt;server&gt;/&lt;path&gt;</code>
-                </p>
-                <p>
-                  Files may also be shared with the YaCy server, assign a path here:
-                  <input type="text" name="repositoryPath" value="#[repositoryPath]#" data-toggle-id="usecaseIntranet"/>
-                  <br/>
-                  This path can be accessed at <a href="http://localhost:#[port]#/repository/">http://localhost:#[port]#/repository</a>. Use that path as crawl start point.
-                </p>
-              </div>
-            </fieldset>
-          </fieldset>
-          #(/setUseCase)#
-
-          <fieldset class="formGroup">
-            <legend>Peer Customization</legend>
-            <div class="description">
-              <p>
-                #(statusName)#
-                <s class="sym sym-warning" title="warning"></s>
-                Your peer name has not been customized; please set your own peer name
-                ::
-                You may change your peer name
-                #(/statusName)#
-              </p>
-            </div>
-            <fieldset class="formSection">
-              <legend>Name</legend>
-              <div class="content">
-                <input type="text" name="peername" id="peername" value="#[defaultName]#" maxlength="32" />
-              </div>
-            </fieldset>
-            <fieldset class="formSection">
-              <legend>Port</legend>
-              <div class="content">
-                <p>
-                  <input type="text" name="port" id="port" value="#[defaultPort]#" maxlength="5" />
-                  <br/>
-                  <input type="checkbox" name="withssl" id="withssl" #(withsslenabled)#::checked="checked"#(/withsslenabled)#>
-                  <label for="withssl">with SSL (https enabled)</label>
-                </p>
-                <p>
-                  #(statusPort)#
-                  <s class="sym sym-warning" title="warning"></s>
-                  Your peer cannot be reached from outside (which is not fatal, but would be good for the YaCy network); please open your firewall for this port and/or set a virtual server option in your router to allow connections on this port.
-                  ::
-                  Your peer can be reached by other peers.
-                  #(/statusPort)#
-                </p>
-              </div>
-            </fieldset>
-            <fieldset class="formSection">
-              <legend>Router Configuration</legend>
-              <div class="content">
-                <p>
-                  <input type="checkbox" name="enableUpnp" id="enableUpnp" #(enabled)#::checked="checked"#(/enabled)# />
-                  <label for="enableUpnp">Try to configure the router via <abbr>UPNP</abbr></label>
-                </p>
-                <p>
-                  #(success)#::
-                  <s class="sym sym-warning" title="warning"></s>
-                  Configuration was not successful. This may take a moment.
-                  ::
-                  Router is configured.
-                  #(/success)#
-                </p>
-              </div>
-            </fieldset>
-          </fieldset>
-          <fieldset class="formControl">
-            <div class="content">
-              <button type="submit" name="set" class="primary icon-save">Save Configuration</button>
-            </div>
-          </fieldset>
+      <fieldset class="formGroup">
+        <legend>Interface</legend>
+        <div class="description">
+          <p>
+            Please select a language for the interface. Your changes will be applied immediately.
+          </p>
+        </div>
+        <fieldset class="formSection">
+          <legend>Languages</legend>
+          <div class="content">
+            <p>
+              <input type="radio" name="language" value="de" id="lang_de" onchange="this.form.submit()" #(lang_de)#::checked="checked"#(/lang_de)# />
+              <label for="lang_de">Deutsch</label>
+            </p>
+            <p>
+              <input type="radio" name="language" value="fr" id="lang_fr" onchange="this.form.submit()" #(lang_fr)#::checked="checked"#(/lang_fr)# />
+              <label for="lang_fr">Fran&ccedil;ais</label>
+            </p>
+            <p>
+              <input type="radio" name="language" value="cn" id="lang_cn" onchange="this.form.submit()" #(lang_cn)#::checked="checked"#(/lang_cn)# />
+              <label for="lang_cn">&#27721;&#35821;/&#28450;&#35486;</label>
+            </p>
+            <p>
+              <input type="radio" name="language" value="ru" id="lang_ru" onchange="this.form.submit()" #(lang_ru)#::checked="checked"#(/lang_ru)# />
+              <label for="lang_ru">&#1056;&#1091;&#1089;&#1089;&#1082;&#1080;&#1081;</label>
+            </p>
+            <p>
+              <input type="radio" name="language" value="uk" id="lang_uk" onchange="this.form.submit()" #(lang_uk)#::checked="checked"#(/lang_uk)# />
+              <label for="lang_uk">&#1059;&#1082;&#1088;&#1072;&#1111;&#1085;&#1089;&#1100;&#1082;&#1072;</label>
+            </p>
+            <p>
+              <input type="radio" name="language" value="hi" id="lang_hi" onchange="this.form.submit()" #(lang_hi)#::checked="checked"#(/lang_hi)# />
+              <label for="lang_hi">&#2361;&#2367;&#2344;&#2381;&#2342;&#2368;</label>
+            </p>
+            <p>
+              <input type="radio" name="language" value="default" id="lang_en" onchange="this.form.submit()" #(lang_en)#::checked="checked"#(/lang_en)# />
+              <label for="lang_en">English</label>
+            </p>
+          </div>
         </fieldset>
       </fieldset>
-    </form>
-    #%env/templates/page-end.template%#
-  </body>
-  </html>
+    </fieldset>
+  </form>
+
+  <form action="ConfigBasic.html" method="get" accept-charset="UTF-8">
+    #(setUseCase)#::
+    <fieldset>
+      <legend>Peer Configuration</legend>
+
+      <fieldset class="formGroup">
+        <legend>Use Case</legend>
+        <fieldset class="formSection">
+          <legend>Community Based</legend>
+          <div class="content">
+            <img style="float:right;padding-left:1em;" src="/img/usecase_freeworld.png" alt="Usecase Freeworld"/>
+            <p>
+              <input type="radio" name="usecase" value="freeworld" id="usecaseFreeworld" #(freeworldChecked)#::checked="checked"#(/freeworldChecked)# />
+              <label for="usecaseFreeworld">Community-based web search</label>
+            </p>
+            <p>
+              Join and support the global network 'freeworld', search the web with an uncensored user-owned search network
+            </p>
+          </div>
+        </fieldset>
+        <fieldset class="formSection">
+          <legend>Search Portal</legend>
+          <div class="content">
+            <img style="float:right;padding-left:1em;width:145px;" src="/img/usecase_webportal.png" alt="Usecase Portal" />
+            <p>
+              <input type="radio" name="usecase" value="portal" id="usecasePortal" #(portalChecked)#::checked="checked"#(/portalChecked)# />
+              <label for="usecasePortal">Search portal for your own web pages</label>
+            </p>
+            <p>
+              Your YaCy installation behaves independently from other peers and you define your own web index by starting your own web crawl. This can be used to search your own web pages or to define a topic-oriented search portal.
+            </p>
+          </div>
+        </fieldset>
+        <fieldset class="formSection">
+          <legend>Intranet Indexing</legend>
+          <div class="content">
+            <img style="float:right;padding-left:1em;width:145px;" src="/img/usecase_intranet.png" alt="Usecase Intranet" />
+            <p>
+              <input type="radio" name="usecase" value="intranet" id="usecaseIntranet" #(intranetChecked)#::checked="checked"#(/intranetChecked)# />
+              <label for="usecaseIntranet">Intranet Indexing</label>
+            </p>
+            <p>
+              Create a search portal for your intranet or web pages or your (shared) file system. <abbr>URLs</abbr> may be used with http/https/ftp and a local domain name or <abbr>IP</abbr>, or with an <abbr>URL</abbr> of the form <code>file:///&lt;path&gt;</code> or <code>smb://&lt;server&gt;/&lt;path&gt;</code>
+            </p>
+            <p>
+              Files may also be shared with the YaCy server, assign a path here:
+              <input type="text" name="repositoryPath" value="#[repositoryPath]#" data-toggle-id="usecaseIntranet"/>
+              <br/>
+              This path can be accessed at <a href="http://localhost:#[port]#/repository/">http://localhost:#[port]#/repository</a>. Use that path as crawl start point.
+            </p>
+          </div>
+        </fieldset>
+      </fieldset>
+      #(/setUseCase)#
+
+      <fieldset class="formGroup">
+        <legend>Peer Customization</legend>
+        <div class="description">
+          <p>
+            #(statusName)#
+            <s class="sym sym-warning" title="warning"></s>
+            Your peer name has not been customized; please set your own peer name
+            ::
+            You may change your peer name
+            #(/statusName)#
+          </p>
+        </div>
+        <fieldset class="formSection">
+          <legend>Name</legend>
+          <div class="content">
+            <input type="text" name="peername" id="peerName" value="#[defaultName]#" maxlength="80" />
+            <div class="formHint hidden">
+              <p class="error" data-id="empty">
+                You must specify a valid peer name.
+              </p>
+              <p class="error" data-id="length">
+                Your peers name must contain at least 3 characters, up to a maximum of 80 characters.
+              </p>
+              <p class="error" data-id="characters">
+                Your peers name contains invalid characters.
+                Allowed characters are: <code>a-Z</code>, <code>0-9</code>, <code>-</code>, <code>_</code>.
+              </p>
+              <p class="ok">
+                Your peer name looks right.
+              </p>
+              <p class="help">
+                Your peers name must contain at least 3 characters, up to a maximum of 80 characters.
+                <br/>
+                Allowed characters are: <code>a-Z</code>, <code>0-9</code>, <code>-</code>, <code>_</code>.
+              </p>
+            </div>
+          </div>
+        </fieldset>
+        <fieldset class="formSection">
+          <legend>Port</legend>
+          <div class="content">
+            <div class="p">
+              <input type="text" name="port" id="peerPort" value="#[defaultPort]#" maxlength="5"/>
+              <div class="formHint hidden">
+                <p class="error" data-id="empty">
+                  You must specify a valid port number.
+                </p>
+                <p class="error" data-id="nan">
+                  The entered port is not a number.
+                </p>
+                <p class="error">
+                  The entered port number is not in the range 0&mdash;65535.
+                </p>
+                <p class="warning">
+                  The entered port number is in the range between 0&mdash;1023.
+                  Please remember that ports in this range are well-known ports usually owned by system processes.
+                </p>
+                <p class="ok">
+                  The entered port number is ok.
+                </p>
+                <p class="help">
+                  Please enter a port number between 0&mdash;65535. Please remember that ports between 0&mdash;1023 are well-known ports usually owned by system processes.
+                </p>
+              </div>
+              <br/>
+              <input type="checkbox" name="withssl" id="withssl" #(withsslenabled)#::checked="checked"#(/withsslenabled)#>
+              <label for="withssl">with <abbr>SSL</abbr> (<abbr>HTTPS</abbr> enabled)</label>
+            </div>
+            <p>
+              #(statusPort)#
+              <s class="sym sym-warning" title="warning"></s>
+              Your peer cannot be reached from outside (which is not fatal, but would be good for the YaCy network); please open your firewall for this port and/or set a virtual server option in your router to allow connections on this port.
+              ::
+              Your peer can be reached by other peers.
+              #(/statusPort)#
+            </p>
+          </div>
+        </fieldset>
+        <fieldset class="formSection">
+          <legend>Router Configuration</legend>
+          <div class="content">
+            <p>
+              <input type="checkbox" name="enableUpnp" id="enableUpnp" #(enabled)#::checked="checked"#(/enabled)# />
+              <label for="enableUpnp">Try to configure the router via <abbr>UPNP</abbr></label>
+            </p>
+            <p>
+              #(success)#::
+              <s class="sym sym-warning" title="warning"></s>
+              Configuration was not successful. This may take a moment.
+              ::
+              Router is configured.
+              #(/success)#
+            </p>
+          </div>
+        </fieldset>
+      </fieldset>
+      <fieldset class="formControl">
+        <div id="ycu-error-count" class="description hiddden"></div>
+        <div class="content">
+          <button type="submit" id="submitConfig" name="set" class="primary icon-save">Save Configuration</button>
+        </div>
+      </fieldset>
+    </fieldset>
+  </form>
+  #%env/templates/page-end.template%#
+</body>
+</html>
