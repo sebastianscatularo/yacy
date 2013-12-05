@@ -1,685 +1,719 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	#%env/templates/header-backend.template%#
-	<title>YaCy '#[clientname]#': Crawl Start</title>
-	<script type="text/javascript" src="/js/yaml/pages/crawlStart.js"></script>
-	<script type="text/javascript" src="/js/yaml/pages/crawlStartExpert.js"></script>
+  #%env/templates/header-backend.template%#
+  <title>YaCy '#[clientname]#': Crawl Start</title>
+  <script type="text/javascript" src="/js/yaml/pages/crawlStart.js"></script>
+  <script type="text/javascript" src="/js/yaml/pages/crawlStartExpert.js"></script>
 </head>
 
 <body id="crawlStartExpert">
-	#%env/templates/page-start.template%#
+  #%env/templates/page-start.template%#
 
-				<div id="api">
-					<a href="http://www.yacy-websuche.de/wiki/index.php/Dev:API#Managing_crawl_jobs" title="Click on this API button to see a documentation of the POST request parameter for crawl starts."><img src="/env/grafics/api.png" width="60" height="40" alt="API"/></a>
-				</div>
+  <div id="api">
+    <a href="http://www.yacy-websuche.de/wiki/index.php/Dev:API#Managing_crawl_jobs" title="Click on this API button to see a documentation of the POST request parameter for crawl starts."><img src="/env/grafics/api.png" width="60" height="40" alt="API"/></a>
+  </div>
 
-<div id="devInfo">
-Todo:
- - allow setting bookmark-title through post vars
- - better help strings
- - handle 'robots not allowed' when starting a crawl
- - remove unneccesary id attributes
-Non working:
- - form submission will be intercepted (URL given in dev-console)
-</div>
+  <div id="devInfo">
+    Todo:
+    - allow setting bookmark-title through post vars
+    - better help strings
+    - handle 'robots not allowed' when starting a crawl
+    - remove unneccesary id attributes
+    Non working:
+    - form submission will be intercepted (URL given in dev-console)
+  </div>
 
-				<h1>Expert Crawl Start</h1>
-				<p>
-					You can define URLs as start points for Web page crawling and start crawling here.
-					"Crawling" means that YaCy will download the given website, extract all links in it and then download the content behind these links.
-					This is repeated as long as specified under <em>"Crawling Depth"</em>.
-					A crawl can also be started using wget and the <a href="http://www.yacy-websuche.de/wiki/index.php/Dev:API#Managing_crawl_jobs">post arguments</a> for this web page.
-				</p>
-				<br/>
-				<form action="Crawler_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
+  <h1>Expert Crawl Start</h1>
+  <p>
+    You can define <abbr>URLs</abbr> as start points for Web page crawling and start crawling here.
+    <em>Crawling</em> means that <abbr>YaCy</abbr> will download the given website, extract all links in it and then download the content behind these links.
+    This is repeated as long as specified under <em>Crawling Depth</em>.
+    A crawl can also be started using <a href="http://www.gnu.org/s/wget/">wget</a> and the <a href="http://www.yacy-websuche.de/wiki/index.php/Dev:API#Managing_crawl_jobs">post arguments</a> for this web page.
+  </p>
 
-					<fieldset class="main" data-id="main">
-						<legend>Crawl Job</legend>
-						<div class="description">
-							<p>
-								A Crawl Job consist of one or more start point, crawl limitations and document freshness rules.
-							</p>
-						</div>
+  <form action="Crawler_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
 
-						<fieldset id="startPoint" class="formGroup">
-							<legend>Start Point</legend>
-							<fieldset class="formSection" data-id="startPoint">
-								<legend>Crawl start point</legend>
-								<div class="content">
-									<label for="crawlingURL" class="hidden">Crawl start point</label>
-									<textarea name="crawlingURL" id="crawlingURL">#[starturl]#</textarea>
-									<div class="formHint hidden">
-										<p class="ok">
-											The entered locations are looking correct.
-										</p>
-										<p class="error" data-id="invalid-list">
-											One or more URLs entered are not valid.
-										</p>
-										<p class="error" data-id="empty">
-											You need to enter one or more URLs to start a crawl.
-										</p>
-										<p class="error" data-id="invalid">
-											The entered URL is not valid.
-										</p>
-										<p class="help">
-											Please define one or more start-urls for your crawl.
-										</p>
-									</div>
-									<div data-id="getSiteData" class="hidden">
-										<button data-id="robots" class="icon-run">Check robots.txt</button>
-										<button data-id="robotsAndStructure" class="icon-run">Check robots.txt &amp; get site structure</button>
-									</div>
-									<div id="startPointDetails" class="hidden">
-										<dl>
-											<dt data-id="bookmarkTitle">Bookmark title:</dt>
-											<dd data-id="bookmarkTitle"></dd>
-											<dt data-id="robotsAllowed">Robots allowed:</dt>
-											<dd data-id="robotsAllowed" class="listContent"></dd>
-											<dt data-id="linkList">Link-list:</dt>
-											<dd data-id="linkList" class="listContent"></dd>
-											<dt data-id="siteList">Site-list:</dt>
-											<dd data-id="siteList" class="listContent"></dd>
-										</dl>
-									</div>
-								</div>
-								<div class="formHelp hidden">
-									<p>
-										You can submit more than one URL, each line one URL please. Each of these URLs are the root for a crawl start, existing start URLs are always re-loaded.
-										Other already visited URLs are sorted out as "double", if they are not allowed using the re-crawl option.
-									</p>
-									<p>
-										URLs must start with <em>http://…</em>, <em>https://…</em>, <em>ftp://…</em>, <em>smb://…</em> or <em>file://…</em>.
-									</p>
-								</div>
-							</fieldset>
-							<fieldset id="startPointSelect" class="formSection hidden">
-								<legend>Start point selection</legend>
-								<div class="content">
-									<label for="startPointSelectBox">Start crawl from</label>
-									<select id="startPointSelectBox" data-review="custom">
-										<option data-id="urlList" selected="selected">URL-list</option>
-										<option data-id="linkList">Link-list</option>
-										<option data-id="siteList">Site-list</option>
-									</select>
-								</div>
-							</fieldset>
-						</fieldset>
+    <fieldset data-id="main">
+      <legend>Crawl Job</legend>
+      <div class="description">
+        <p>
+          A Crawl Job consist of one or more start point, crawl limitations and document freshness rules.
+        </p>
+      </div>
 
-						<fieldset id="#crawlerFilter" class="formGroup collapsible">
-							<legend>Crawler Filter</legend>
-							<div class="description">
-								<p>
-									These are limitations on the crawl stacker. The filters will be applied before a web page is loaded.
-								</p>
-							</div>
-							<fieldset class="formSection toggleable">
-								<legend>Crawling Depth</legend>
-								<div class="content">
-									<fieldset>
-										<div class="control-group">
-											<p>
-												<label for="crawlingDepth">Crawl to a maximum depth of</label>
-												<input name="crawlingDepth" id="crawlingDepth" type="text" size="2" maxlength="2" value="#[crawlingDepth]#" class="spinner" />
-											</p>
-											<p>
-												<input type="checkbox" name="directDocByURL" id="directDocByURL" #(directDocByURLChecked)#::checked="checked"#(/directDocByURLChecked)# />
-												<label for="directDocByURL">include all linked non-parsable documents</label>
-											</p>
-										</div>
-									</fieldset>
-									<hr/>
-									<fieldset>
-										<div class="control-group">
-											<label for="crawlingDepthExtension">Ignore the crawling depth for URLs matching with</label>:
-											<input name="crawlingDepthExtension" id="crawlingDepthExtension" type="text" maxlength="100" value="#[crawlingDepthExtension]#" />
-											<div class="formHint hidden">
-												<p class="help">
-													Please enter a regular expression for URLs, where the crawling depth should be not limited.
-												</p>
-											</div>
-										</div>
-									</fieldset>
-								</div>
-								<div class="formHelp hidden">
-									<h1>Depth number</h1>
-									<p>
-										This defines how often the Crawler will follow links (of links..) embedded in websites.
-									</p>
-									<p>
-										<strong>0</strong> means that only the page you enter under "Starting Point" will be added to the index.
-									</p>
-									<p>
-										<strong>2&mdash;4</strong> is good for normal indexing.
-									</p>
-									<p>
-										Values <strong>over 8</strong> are not useful, since a depth of <em>8</em> will index approximately <em>25.600.000.000</em> pages, maybe this is the whole WWW.
-									</p>
-									<h1>Linked documents</h1>
-									<p>[TODO: help needed to describe this]</p>
-									<h1>Exception</h1>
-									<p>
-										Ignore the <em>Crawling Depth</em> limit for URLs matching the given regular expression.
-									</p>
-									<p>[TODO: examples needed here..]
-									</p>
-								</div>
-							</fieldset>
-							<fieldset class="formSection toggleable" data-toggle-type="activate" data-toggle-fieldid="maxPagesPerDomain">
-								<legend>Maximum Pages per Domain</legend>
-								<div class="content">
-									<div class="control-group">
-										<label for="crawlingDomMaxPages">Set the maximum number of loaded pages to</label>
-										<input name="crawlingDomMaxPages" id="crawlingDomMaxPages" type="text" size="6" maxlength="6" value="#[crawlingDomMaxPages]#" class="spinner"/>.
-									</div>
-								</div>
-								<div class="formHelp hidden">
-									<p>
-										You can limit the maximum number of pages that are fetched and indexed from a single domain with this option.
-									</p>
-									<p>
-										You can combine this limitation with the 'Auto-Dom-Filter', so that the limit is applied to all the domains within the given depth. Domains outside the given depth are then sorted-out anyway.
-									</p>
-								</div>
-							</fieldset>
-							<fieldset class="formSection toggleable">
-								<legend>Constraints</legend>
-								<div class="content">
-									<div class="control-group">
-										<p>
-											<input type="checkbox" name="crawlingQ" id="crawlingQ" #(crawlingQChecked)#::checked="checked"#(/crawlingQChecked)#/>
-											<label for="crawlingQ">Accept URLs with query-part ('<code>?</code>')</label>
-										</p><p>
-										<input type="checkbox" name="obeyHtmlRobotsNoindex" id="obeyHtmlRobotsNoindex" #(obeyHtmlRobotsNoindexChecked)#::checked="checked"#(/obeyHtmlRobotsNoindexChecked)# />
-										<label for ="obeyHtmlRobotsNoindex">Obey html-robots-noindex</label>
-									</p>
-								</div>
-							</div>
-							<div class="formHelp hidden">
-								<h1>Query Part URLs</h1>
-								<p>
-									A questionmark is usually a hint for a dynamic page. URLs pointing to dynamic content should usually not be crawled.
-								</p>
-								<p>
-									However, there are sometimes web pages with static content that is accessed with URLs containing question marks. If you are unsure, do not check this to avoid crawl loops.
-								</p>
-								<h1>No-Follow</h1>
-								<p>
-									'nofollow' in robots metadata can be overridden; this does not affect obeying of the robots.txt which is never ignored.
-								</p>
-							</div>
-						</fieldset>
-						<fieldset class="formSection toggleable">
-							<legend>Load Filter on URLs</legend>
-							<div class="content">
-								<fieldset class="group">
-									<legend>
-										<i class="fa fa-plus-square light"></i>
-										Must match
-									</legend>
-									<p>
-										<label class="indent">
-											<input type="radio" name="range" id="rangeDomain" value="domain" #(range_domain)#::checked="checked"#(/range_domain)#/>
-											Restrict to start domain(s)
-										</label>.
-									</p>
-									<p>
-										<label class="indent">
-											<input type="radio" name="range" id="rangeSubpath" value="subpath" #(range_subpath)#::checked="checked"#(/range_subpath)#/>
-											Restrict to sub-path(s)
-										</label>.
-									</p>
-									<div>
-										<label class="indent">
-											<input type="radio" name="range" id="rangeWide" value="wide" #(range_wide)#::checked="checked"#(/range_wide)#/>
-											Use custom match filter
-										</label>.
-										<label for="mustmatch">Filter expression for URL inclusion</label>:
-										<input name="mustmatch" id="mustmatch" type="text" size="55" maxlength="100000" value="#[mustmatch]#" data-toggle-id="rangeWide" data-toggle-focus="true" placeholder="#[matchAllStr]#"/>
-										<div class="formHint hidden">
-											<p class="error">
-												An empty expression is not allowed, as it would exclude all URLs.
-											</p>
-											<p class="help">
-												Please enter a custom filter as regular expression.
-											</p>
-										</div>
-									</div>
-								</fieldset>
-								<fieldset class="group">
-									<legend>
-										<i class="fa fa-minus-square light"></i>
-										Must-not match
-									</legend>
-									<label for="mustnotmatch">Filter expression for URL exclusion</label>:
-									<input name="mustnotmatch" id="mustnotmatch" type="text" size="55" maxlength="100000" value="#[mustnotmatch]#" placeholder="#[matchNoneStr]#"/>
-									<div class="formHint hidden">
-										<p class="help">
-											Please enter a custom filter as regular expression.
-										</p>
-									</div>
-								</fieldset>
-							</div>
-							<div class="formHelp hidden">
-								<p>
-									The filter is a <b><a href="http://download.oracle.com/javase/6/docs/api/java/util/regex/Pattern.html">regular expression</a></b>.
-								</p>
-								<p>
-									<i>Example:</i> to allow only urls that contain the word 'science', set the must-match filter to '<code>.*science.*</code>'.
-								</p>
-								<p>
-									You can also use an automatic domain-restriction to fully crawl a single domain.
-								</p>
-							</div>
-						</fieldset>
-						<fieldset class="formSection toggleable">
-							<legend>Load Filter on IPs</legend>
-							<div class="content">
-								<fieldset class="group">
-									<legend>
-										<i class="fa fa-plus-square light"></i>
-										Must match
-									</legend>
-									<label for="ipMustmatch">Filter expression for IP inclusion</label>:
-									<input name="ipMustmatch" id="ipMustmatch" type="text" maxlength="100000" value="#[ipMustmatch]#" placeholder="#[matchAllStr]#"/>
-									<div class="formHint hidden">
-										<p class="error">
-											An empty expression is not allowed, as it would exclude all IPs.
-										</p>
-										<p class="help">
-											Please enter a custom filter as regular expression.
-										</p>
-									</div>
-								</fieldset>
-								<fieldset class="group">
-									<legend>
-										<i class="fa fa-minus-square light"></i>
-										Must-not match
-									</legend>
-									<label for="ipMustnotmatch">Filter expression for IP exclusion</label>:
-									<input name="ipMustnotmatch" id="ipMustnotmatch" type="text" maxlength="100000" value="#[ipMustnotmatch]#" placeholder="#[matchNoneStr]#"/>
-								</fieldset>
-							</div>
-						</fieldset>
-						<fieldset class="formSection toggleable" data-toggle-type="activate" data-toggle-fieldid="countryCodes">
-							<legend>Country Codes</legend>
-							<div class="content">
-								<div class="control-group">
-									<label for="countryMustMatchList">Only allow domains matching the following country codes</label>:
-									<input name="countryMustMatchList" id="countryMustMatchList" type="text" maxlength="256" value="#[countryMustMatch]#" data-review="validable"/>
-									<div class="formHint hidden">
-										<p class="error" data-id="invalid-cc">
-											One or more entries are no valid country codes.
-										</p>
-										<p class="error" data-id="empty">
-											An empty expression is not allowed, as it would exclude all domains.
-										</p>
-										<p class="ok">
-											The entered codes are looking correct.
-										</p>
-										<p class="help">
-											Please enter a list of country codes, separated by comma.
-										</p>
-									</div>
-								</div>
-							</div>
-							<div class="formHelp hidden">
-								<p>
-									Crawls can be restricted to specific countries. This uses the <a href="https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2">ISO 3166-1 alpha-2 country code</a> that can be computed from the IP of the server that hosts the page.
-								</p>
-								<p>
-									The filter is not a regular expressions but a list of country codes, separated by comma.
-								</p>
-							</div>
-						</fieldset>
-					</fieldset>
+      <fieldset id="startPoint" class="formGroup">
+        <legend>Start Point</legend>
+        <fieldset class="formSection" data-id="startPoint">
+          <legend>Crawl start point</legend>
+          <div class="content">
+            <label for="crawlingURL" class="hidden">Crawl start point</label>
+            <textarea name="crawlingURL" id="crawlingURL">#[starturl]#</textarea>
+            <div class="formHint hidden">
+              <p class="ok">
+                The entered locations are looking correct.
+              </p>
+              <p class="error" data-id="invalid">
+                One or more <abbr>URLs</abbr> entered are not valid.
+              </p>
+              <p class="error" data-id="empty">
+                You need to enter one or more <abbr>URLs</abbr> to start a crawl.
+              </p>
+              <p class="error" data-id="protocol">
+                One or more <abbr>URLs</abbr> entered have an unknown or missing protocol.
+              </p>
+              <p class="help">
+                Please define one or more start-<abbr>URLs</abbr> for your crawl.
+              </p>
+            </div>
+            <div data-id="getSiteData" class="hidden">
+              <button data-id="robots" class="icon-run">Check robots.txt</button>
+              <button data-id="robotsAndStructure" class="icon-run">Check robots.txt &amp; get site structure</button>
+            </div>
+            <div id="startPointDetails" class="hidden">
+              <dl>
+                <dt data-id="bookmarkTitle">Bookmark title:</dt>
+                <dd data-id="bookmarkTitle"></dd>
+                <dt data-id="robotsAllowed">Robots allowed:</dt>
+                <dd data-id="robotsAllowed" class="listContent"></dd>
+                <dt data-id="linkList">Link-list:</dt>
+                <dd data-id="linkList" class="listContent"></dd>
+                <dt data-id="siteList">Site-list:</dt>
+                <dd data-id="siteList" class="listContent"></dd>
+              </dl>
+            </div>
+          </div>
+          <div class="formHelp hidden">
+            <p>
+              You can submit more than one <abbr>URL</abbr>, each line one <abbr>URL</abbr> please. Each of these <abbr>URLs</abbr> are the root for a crawl start, existing start <abbr>URLs</abbr> are always re-loaded.
+              Other already visited <abbr>URLs</abbr> are sorted out as <em>double</em>, if they are not allowed using the re-crawl option.
+            </p>
+            <p>
+              <abbr>URLs</abbr> must start with <em>http://…</em>, <em>https://…</em>, <em>ftp://…</em>, <em>smb://…</em> or <em>file://…</em>.
+            </p>
+          </div>
+        </fieldset>
+        <fieldset id="startPointSelect" class="formSection hidden">
+          <legend>Start point selection</legend>
+          <div class="content">
+            <label for="startPointSelectBox">Start crawl from</label>
+            <select id="startPointSelectBox" data-review="custom">
+              <option data-id="urlList" selected="selected">URL-list</option>
+              <option data-id="linkList">Link-list</option>
+              <option data-id="siteList">Site-list</option>
+            </select>
+          </div>
+        </fieldset>
+      </fieldset>
 
-					<fieldset class="formGroup collapsible">
-						<legend>Document Filter</legend>
-						<div class="description">
-							<p>
-								These are limitations on index feeder. The filters will be applied after a web page was loaded.
-							</p>
-						</div>
-						<fieldset class="formSection toggleable">
-							<legend>Filter on URLs</legend>
-							<div class="content">
-								<fieldset class="group">
-									<legend>
-										<i class="fa fa-plus-square light"></i>
-										Must match
-									</legend>
-									<label for="indexmustmatch">Filter expression for URL inclusion</label>:
-									<input name="indexmustmatch" id="indexmustmatch" type="text" size="55" maxlength="100000" value="#[indexmustmatch]#" placeholder="#[matchAllStr]#"/>
-									<div class="formHint hidden">
-										<p class="warning">
-											Beware: An empty expression would exclude all URLs from indexing.
-										</p>
-										<p class="help">
-											Please enter a custom filter as regular expression.
-										</p>
-									</div>
-								</fieldset>
-								<fieldset class="group">
-									<legend>
-										<i class="fa fa-minus-square light"></i>
-										Must-not match
-									</legend>
-									<label for="indexmustnotmatch">Filter expression for URL exclusion</label>:
-									<input name="indexmustnotmatch" id="indexmustnotmatch" type="text" size="55" maxlength="100000" value="#[indexmustnotmatch]#" placeholder="#[matchNoneStr]#"/>
-									<div class="formHint hidden">
-										<p class="help">
-											Please enter a custom filter as regular expression.
-										</p>
-									</div>
-								</fieldset>
-							</div>
-							<div class="formHelp hidden">
-								<p>
-									The filter is a <b><a href="http://download.oracle.com/javase/6/docs/api/java/util/regex/Pattern.html">regular expression</a></b> that <b>must not match</b> with the URLs to allow that the content of the url is indexed.
-								</p>
-							</div>
-						</fieldset>
-						<fieldset class="formSection toggleable">
-							<legend>Filter on content</legend>
-							<div class="content">
-								<fieldset class="group">
-									<legend>
-										<i class="fa fa-plus-square light"></i>
-										Must match
-									</legend>
-									<label for="indexcontentmustmatch">Filter expression for content inclusion</label>:
-									<input name="indexcontentmustmatch" id="indexcontentmustmatch" type="text" maxlength="100000" value="#[indexcontentmustmatch]#" placeholder="#[matchAllStr]#"/>
-									<div class="formHint hidden">
-										<p class="warning">
-											Beware: An empty expression would exclude all documents from indexing.
-										</p>
-										<p class="help">
-											Please enter a custom filter as regular expression.
-										</p>
-									</div>
-								</fieldset>
-								<fieldset class="group">
-									<legend>
-										<i class="fa fa-minus-square light"></i>
-										Must-not match
-									</legend>
-									<label for="indexcontentmustnotmatch">Filter expression for content exclusion</label>:
-									<input name="indexcontentmustnotmatch" id="indexcontentmustnotmatch" type="text" maxlength="100000" value="#[indexcontentmustnotmatch]#" placeholder="#[matchNoneStr]#"/>
-									<div class="formHint hidden">
-										<p class="help">
-											Please enter a custom filter as regular expression.
-										</p>
-									</div>
-								</fieldset>
-							</div>
-							<div class="formHelp hidden">
-								<p>
-									Filter on Content of Document<br/>(all visible text, including camel-case-tokenized url and title).
-								</p>
-							</div>
-						</fieldset>
-					</fieldset>
+      <fieldset id="#crawlerFilter" class="formGroup collapsible">
+        <legend>Crawler Filter</legend>
+        <div class="description">
+          <p>
+            These are limitations on the crawl stacker. The filters will be applied before a web page is loaded.
+          </p>
+        </div>
+        <fieldset class="formSection toggleable">
+          <legend>Crawling Depth</legend>
+          <div class="content">
+            <fieldset>
+              <div class="control-group">
+                <div class="p">
+                  <label for="crawlingDepth">Crawl to a maximum depth of</label>
+                  <input name="crawlingDepth" id="crawlingDepth" type="text" maxlength="2" min="0" max="99" value="#[crawlingDepth]#" class="spinner" />
+                  <div class="formHint hidden">
+                    <p class="error" data-id="range">
+                      Please enter a number between <code>0&mdash;99</code>
+                    </p>
+                    <p class="help">
+                      Value <code>0</code> means only start-<abbr>URL</abbr>, <code>2&mdash;4</code> are good for normal indexing, values over <code>8</code> are not recommended.
+                    </p>
+                  </div>
+                </div>
+                <p>
+                  <input type="checkbox" name="directDocByURL" id="directDocByURL" #(directDocByURLChecked)#::checked="checked"#(/directDocByURLChecked)# />
+                  <label for="directDocByURL">include all linked non-parsable documents</label>
+                </p>
+              </div>
+            </fieldset>
+            <hr/>
+            <fieldset>
+              <div class="control-group">
+                <label for="crawlingDepthExtension">Ignore the crawling depth for <abbr>URLs</abbr> matching with</label>:
+                <input name="crawlingDepthExtension" id="crawlingDepthExtension" type="text" maxlength="100" value="#[crawlingDepthExtension]#" />
+                <div class="formHint hidden">
+                  <p class="help">
+                    Please enter a regular expression for <abbr>URLs</abbr>, where the crawling depth should not be limited.
+                  </p>
+                </div>
+              </div>
+            </fieldset>
+          </div>
+          <div class="formHelp hidden">
+            <h1>Depth number</h1>
+            <p>
+              This defines how often the Crawler will follow links (of links..) embedded in websites.
+            </p>
+            <p>
+              <strong>0</strong> means that only the page you enter under <em>Starting Point</em> will be added to the index.
+            </p>
+            <p>
+              <strong>2&mdash;4</strong> is good for normal indexing.
+            </p>
+            <p>
+              Values <strong>over 8</strong> are not useful, since a depth of <em>8</em> will index approximately <em>25.600.000.000</em> pages, maybe this is the whole <abbr>WWW</abbr>.
+            </p>
+            <h1>Linked documents</h1>
+            <p>[TODO: help needed to describe this]</p>
+            <h1>Exception</h1>
+            <p>
+              Ignore the <em>Crawling Depth</em> limit for <abbr>URLs</abbr> matching the given regular expression.
+            </p>
+            <p>[TODO: examples needed here..]
+            </p>
+          </div>
+        </fieldset>
+        <fieldset class="formSection toggleable" data-toggle-type="activate" data-toggle-fieldid="maxPagesPerDomain">
+          <legend>Maximum Pages per Domain</legend>
+          <div class="content">
+            <div class="control-group">
+              <label for="crawlingDomMaxPages">Set the maximum number of loaded pages to</label>
+              <input name="crawlingDomMaxPages" id="crawlingDomMaxPages" type="text" size="6" maxlength="6" min="-1" max="999999" value="#[crawlingDomMaxPages]#" class="spinner"/>.
+              <div class="formHint hidden">
+                <p class="error">
+                  Please enter a value in the range <code>-1&mdash;999999</code>.
+                </p>
+                <p class="help">
+                  Please enter a value in the range <code>-1&mdash;999999</code>. The special value <code>-1</code> will remove any limit on loaded pages.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="formHelp hidden">
+            <p>
+              You can limit the maximum number of pages that are fetched and indexed from a single domain with this option.
+            </p>
+            <p>
+              You can combine this limitation with the <em>Auto-Dom-Filter</em>, so that the limit is applied to all the domains within the given depth. Domains outside the given depth are then sorted-out anyway.
+            </p>
+          </div>
+        </fieldset>
+        <fieldset class="formSection toggleable">
+          <legend>Constraints</legend>
+          <div class="content">
+            <div class="control-group">
+              <p>
+                <input type="checkbox" name="crawlingQ" id="crawlingQ" #(crawlingQChecked)#::checked="checked"#(/crawlingQChecked)#/>
+                <label for="crawlingQ">Accept URLs with query-part ('<code>?</code>')</label>
+              </p><p>
+              <input type="checkbox" name="obeyHtmlRobotsNoindex" id="obeyHtmlRobotsNoindex" #(obeyHtmlRobotsNoindexChecked)#::checked="checked"#(/obeyHtmlRobotsNoindexChecked)# />
+              <label for ="obeyHtmlRobotsNoindex">Obey html-robots-noindex</label>
+            </p>
+          </div>
+        </div>
+        <div class="formHelp hidden">
+          <h1>Query Part URLs</h1>
+          <p>
+            A questionmark is usually a hint for a dynamic page. <abbr>URLs</abbr> pointing to dynamic content should usually not be crawled.
+          </p>
+          <p>
+            However, there are sometimes web pages with static content that is accessed with <abbr>URLs</abbr> containing question marks. If you are unsure, do not check this to avoid crawl loops.
+          </p>
+          <h1>No-Follow</h1>
+          <p>
+            <code>nofollow</code> in robots metadata can be overridden; this does not affect obeying of the <code>robots.txt</code> which is never ignored.
+          </p>
+        </div>
+      </fieldset>
+      <fieldset class="formSection toggleable">
+        <legend>Load Filter on URLs</legend>
+        <div class="content">
+          <fieldset class="group">
+            <legend>
+              <i class="fa fa-plus-square light"></i>
+              Must match
+            </legend>
+            <p>
+              <label class="indent">
+                <input type="radio" name="range" id="rangeDomain" value="domain" #(range_domain)#::checked="checked"#(/range_domain)#/>
+                Restrict to start domain(s)
+              </label>.
+            </p>
+            <p>
+              <label class="indent">
+                <input type="radio" name="range" id="rangeSubpath" value="subpath" #(range_subpath)#::checked="checked"#(/range_subpath)#/>
+                Restrict to sub-path(s)
+              </label>.
+            </p>
+            <div>
+              <label class="indent">
+                <input type="radio" name="range" id="rangeWide" value="wide" #(range_wide)#::checked="checked"#(/range_wide)#/>
+                Use custom match filter
+              </label>.
+              <label for="mustmatch">Filter expression for URL inclusion</label>:
+              <input name="mustmatch" id="mustmatch" type="text" maxlength="100000" value="#[mustmatch]#" data-toggle-id="rangeWide" data-toggle-focus="true" placeholder="#[matchAllStr]#"/>
+              <div class="formHint hidden">
+                <p class="error" data-id="empty">
+                  An empty expression is not allowed, as it would exclude all <abbr>URLs</abbr>.
+                </p>
+                <p class="help">
+                  Please enter a custom filter as regular expression.
+                </p>
+              </div>
+            </div>
+          </fieldset>
+          <fieldset class="group">
+            <legend>
+              <i class="fa fa-minus-square light"></i>
+              Must-not match
+            </legend>
+            <label for="mustnotmatch">Filter expression for URL exclusion</label>:
+            <input name="mustnotmatch" id="mustnotmatch" type="text" size="55" maxlength="100000" value="#[mustnotmatch]#" placeholder="#[matchNoneStr]#"/>
+            <div class="formHint hidden">
+              <p class="warning">
+                Beware: this expression will exclude all <abbr>URLs</abbr>.
+              </p>
+              <p class="help">
+                Please enter a custom filter as regular expression.
+              </p>
+            </div>
+          </fieldset>
+        </div>
+        <div class="formHelp hidden">
+          <p>
+            The filter is a <b><a href="http://download.oracle.com/javase/6/docs/api/java/util/regex/Pattern.html">regular expression</a></b>.
+          </p>
+          <p>
+            <i>Example:</i> to allow only urls that contain the word 'science', set the must-match filter to '<code>.*science.*</code>'.
+          </p>
+          <p>
+            You can also use an automatic domain-restriction to fully crawl a single domain.
+          </p>
+        </div>
+      </fieldset>
+      <fieldset class="formSection toggleable">
+        <legend>Load Filter on IPs</legend>
+        <div class="content">
+          <fieldset class="group">
+            <legend>
+              <i class="fa fa-plus-square light"></i>
+              Must match
+            </legend>
+            <label for="ipMustmatch">Filter expression for <abbr>IP</abbr> inclusion</label>:
+            <input name="ipMustmatch" id="ipMustmatch" type="text" maxlength="100000" value="#[ipMustmatch]#" placeholder="#[matchAllStr]#"/>
+            <div class="formHint hidden">
+              <p class="error" data-id="empty">
+                An empty expression is not allowed, as it would exclude all <abbr>IPs</abbr>.
+              </p>
+              <p class="help">
+                Please enter a custom filter as regular expression.
+              </p>
+            </div>
+          </fieldset>
+          <fieldset class="group">
+            <legend>
+              <i class="fa fa-minus-square light"></i>
+              Must-not match
+            </legend>
+            <label for="ipMustnotmatch">Filter expression for <abbr>IP</abbr> exclusion</label>:
+            <input name="ipMustnotmatch" id="ipMustnotmatch" type="text" maxlength="100000" value="#[ipMustnotmatch]#" placeholder="#[matchNoneStr]#"/>
+            <div class="formHint">
+              <p class="warning">
+                Beware: this expression will exclude all <abbr>IPs</abbr>.
+              </p>
+              <p class="help">
+                Please enter a custom filter as regular expression.
+              </p>
+            </div>
+          </fieldset>
+        </div>
+      </fieldset>
+      <fieldset class="formSection toggleable" data-toggle-type="activate" data-toggle-fieldid="countryCodes">
+        <legend>Country Codes</legend>
+        <div class="content">
+          <div class="control-group">
+            <label for="countryMustMatchList">Only allow domains matching the following country codes</label>:
+            <input name="countryMustMatchList" id="countryMustMatchList" type="text" maxlength="256" value="#[countryMustMatch]#" data-review="validable"/>
+            <div class="formHint hidden">
+              <p class="error" data-id="invalid">
+                One or more entries are no valid country codes.
+              </p>
+              <p class="error" data-id="empty">
+                An empty string is not allowed, as it would exclude all domains.
+              </p>
+              <p class="ok">
+                The entered codes are looking correct.
+              </p>
+              <p class="help">
+                Please enter a list of country codes, separated by comma.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="formHelp hidden">
+          <p>
+            Crawls can be restricted to specific countries. This uses the <a href="https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2">ISO 3166-1 alpha-2 country code</a> that can be computed from the <abbr>IP</abbr> of the server that hosts the page.
+          </p>
+          <p>
+            The filter is not a regular expressions but a list of country codes, separated by comma.
+          </p>
+        </div>
+      </fieldset>
+    </fieldset>
 
-					<fieldset class="formGroup collapsible">
-						<legend>Clean-Up before Crawl Start</legend>
-						<div class="description">
-							<p>
-								After a crawl was done in the past, document may become stale and eventually they are also deleted on the target host.
-								<br/>
-								To remove old files from the search index it is not sufficient to just consider them for re-load but it may be necessary to delete them because they simply do not exist any more. Use this in combination with re-crawl while this time should be longer.
-							</p>
-						</div>
-						<fieldset class="formSection control-group" data-review="skip-title">
-							<legend>No deletion</legend>
-							<div class="content">
-								<label class="indent">
-									<input type="radio" name="deleteold" id="deleteoldoff" value="off" #(deleteold_off)#::checked="checked"#(/deleteold_off)#/>
-									Do not delete any document before the crawl is started.
-								</label>
-							</div>
-						</fieldset>
-						<fieldset class="formSection control-group" data-review="skip-title">
-							<legend>Delete old</legend>
-							<div class="content">
-								<label class="indent">
-									<input type="radio" name="deleteold" id="deleteoldon" value="on" #(deleteold_on)#::checked="checked"#(/deleteold_on)#/>
-									For each host in the start URL list, delete all documents (in the given subpath) from that host.
-								</label>
-							</div>
-						</fieldset>
-						<fieldset class="formSection control-group" data-review="skip-title">
-							<legend>Delete aged</legend>
-							<div class="content">
-								<label class="indent">
-									<input type="radio" name="deleteold" id="deleteoldage" value="age" #(deleteold_age)#::checked="checked"#(/deleteold_age)# data-review="custom"/>
-									Treat documents older than
-								</label>
-								<select name="deleteIfOlderNumber" id="deleteIfOlderNumber" data-toggle-id="deleteoldage" data-review="skip">
-									#(deleteIfOlderSelect)#::
-									#{list}#<option value="#[name]#" #(default)#::selected="selected"#(/default)#>#[name]#</option>#{/list}#
-									#(/deleteIfOlderSelect)#
-								</select>
-								<select name="deleteIfOlderUnit" id="deleteIfOlderUnit" data-toggle-id="deleteoldage" data-review="skip">
-									#(deleteIfOlderUnitSelect)#::
-									#{list}#<option value="#[value]#" #(default)#::selected="selected"#(/default)#>#[name]#</option>#{/list}#
-									#(/deleteIfOlderUnitSelect)#
-								</select> as stale and delete them before the crawl is started.
-							</div>
-						</fieldset>
-					</fieldset>
+    <fieldset class="formGroup collapsible">
+      <legend>Document Filter</legend>
+      <div class="description">
+        <p>
+          These are limitations on index feeder. The filters will be applied after a web page was loaded.
+        </p>
+      </div>
+      <fieldset class="formSection toggleable">
+        <legend>Filter on URLs</legend>
+        <div class="content">
+          <fieldset class="group">
+            <legend>
+              <i class="fa fa-plus-square light"></i>
+              Must match
+            </legend>
+            <label for="indexmustmatch">Filter expression for <abbr>URL</abbr> inclusion</label>:
+            <input name="indexmustmatch" id="indexmustmatch" type="text" size="55" maxlength="100000" value="#[indexmustmatch]#" placeholder="#[matchAllStr]#"/>
+            <div class="formHint hidden">
+              <p class="warning">
+                Beware: An empty expression would exclude all <abbr>URLs</abbr> from indexing.
+              </p>
+              <p class="help">
+                Please enter a custom filter as regular expression.
+              </p>
+            </div>
+          </fieldset>
+          <fieldset class="group">
+            <legend>
+              <i class="fa fa-minus-square light"></i>
+              Must-not match
+            </legend>
+            <label for="indexmustnotmatch">Filter expression for <abbr>URL</abbr> exclusion</label>:
+            <input name="indexmustnotmatch" id="indexmustnotmatch" type="text" size="55" maxlength="100000" value="#[indexmustnotmatch]#" placeholder="#[matchNoneStr]#"/>
+            <div class="formHint hidden">
+              <p class="warning">
+                Beware: this expression will exclude all <abbr>URLs</abbr>.
+              </p>
+              <p class="help">
+                Please enter a custom filter as regular expression.
+              </p>
+            </div>
+          </fieldset>
+        </div>
+        <div class="formHelp hidden">
+          <p>
+            The filter is a <b><a href="http://download.oracle.com/javase/6/docs/api/java/util/regex/Pattern.html">regular expression</a></b> that <b>must not match</b> with the <abbr>URLs</abbr> to allow that the content of the <abbr>URL</abbr> is indexed.
+          </p>
+        </div>
+      </fieldset>
+      <fieldset class="formSection toggleable">
+        <legend>Filter on content</legend>
+        <div class="content">
+          <fieldset class="group">
+            <legend>
+              <i class="fa fa-plus-square light"></i>
+              Must match
+            </legend>
+            <label for="indexcontentmustmatch">Filter expression for content inclusion</label>:
+            <input name="indexcontentmustmatch" id="indexcontentmustmatch" type="text" maxlength="100000" value="#[indexcontentmustmatch]#" placeholder="#[matchAllStr]#"/>
+            <div class="formHint hidden">
+              <p class="warning">
+                Beware: An empty expression would exclude all documents from indexing.
+              </p>
+              <p class="help">
+                Please enter a custom filter as regular expression.
+              </p>
+            </div>
+          </fieldset>
+          <fieldset class="group">
+            <legend>
+              <i class="fa fa-minus-square light"></i>
+              Must-not match
+            </legend>
+            <label for="indexcontentmustnotmatch">Filter expression for content exclusion</label>:
+            <input name="indexcontentmustnotmatch" id="indexcontentmustnotmatch" type="text" maxlength="100000" value="#[indexcontentmustnotmatch]#" placeholder="#[matchNoneStr]#"/>
+            <div class="formHint hidden">
+              <p class="warning">
+                Beware: this expression will exclude all content.
+              </p>
+              <p class="help">
+                Please enter a custom filter as regular expression.
+              </p>
+            </div>
+          </fieldset>
+        </div>
+        <div class="formHelp hidden">
+          <p>
+            Filter on Content of Document<br/>(all visible text, including camel-case-tokenized <abbr>URL</abbr> and title).
+          </p>
+        </div>
+      </fieldset>
+    </fieldset>
 
-					<fieldset class="formGroup collapsible">
-						<legend>Double-Check Rules</legend>
-						<div class="description">
-							<p>
-								A web crawl performs a double-check on all links found in the internet against the internal database. If the same url is found again, then the url is treated as double when you check the 'No doubles' option.
-								<br/>
-								A url may be loaded again when it has reached a specific age, to use that check the 'Re-load' option.
-							</p>
-						</div>
-						<fieldset class="formSection control-group" data-review="skip-title">
-							<legend>No doubles</legend>
-							<div class="content">
-								<label class="indent">
-									<input type="radio" name="recrawl" id="reloadoldoff" value="nodoubles" #(recrawl_nodoubles)#::checked="checked"#(/recrawl_nodoubles)#/>
-									Never load any page that is already known. Only the start-url may be loaded again.
-								</label>
-							</div>
-						</fieldset>
-						<fieldset class="formSection control-group" data-review="skip-title">
-							<legend>Re-load</legend>
-							<div class="content">
-								<input type="radio" name="recrawl" id="reloadoldage" value="reload" #(recrawl_reload)#::checked="checked"#(/recrawl_reload)# data-review="custom"/>
-								Treat documents that are loaded
-								<select name="reloadIfOlderNumber" id="reloadIfOlderNumber" data-review="skip" data-toggle-id="reloadoldage">
-									#(reloadIfOlderSelect)#::
-									#{list}#<option value="#[name]#" #(default)#::selected="selected"#(/default)#>#[name]#</option>#{/list}#
-									#(/reloadIfOlderSelect)#
-								</select>
-								<select name="reloadIfOlderUnit" id="reloadIfOlderUnit" data-review="skip" data-toggle-id="reloadoldage">
-									#(reloadIfOlderUnitSelect)#::
-									#{list}#<option value="#[value]#" #(default)#::selected="selected"#(/default)#>#[name]#</option>#{/list}#
-									#(/reloadIfOlderUnitSelect)#
-								</select> ago as stale and load them again. If they are younger, they are ignored.
-							</div>
-						</fieldset>
-					</fieldset>
+    <fieldset class="formGroup collapsible">
+      <legend>Clean-Up before Crawl Start</legend>
+      <div class="description">
+        <p>
+          After a crawl was done in the past, document may become stale and eventually they are also deleted on the target host.
+          <br/>
+          To remove old files from the search index it is not sufficient to just consider them for re-load but it may be necessary to delete them because they simply do not exist any more. Use this in combination with re-crawl while this time should be longer.
+        </p>
+      </div>
+      <fieldset class="formSection control-group" data-review="skip-title">
+        <legend>No deletion</legend>
+        <div class="content">
+          <label class="indent">
+            <input type="radio" name="deleteold" id="deleteoldoff" value="off" #(deleteold_off)#::checked="checked"#(/deleteold_off)#/>
+            Do not delete any document before the crawl is started.
+          </label>
+        </div>
+      </fieldset>
+      <fieldset class="formSection control-group" data-review="skip-title">
+        <legend>Delete old</legend>
+        <div class="content">
+          <label class="indent">
+            <input type="radio" name="deleteold" id="deleteoldon" value="on" #(deleteold_on)#::checked="checked"#(/deleteold_on)#/>
+            For each host in the start <abbr>URL</abbr> list, delete all documents (in the given subpath) from that host.
+          </label>
+        </div>
+      </fieldset>
+      <fieldset class="formSection control-group" data-review="skip-title">
+        <legend>Delete aged</legend>
+        <div class="content">
+          <label class="indent">
+            <input type="radio" name="deleteold" id="deleteoldage" value="age" #(deleteold_age)#::checked="checked"#(/deleteold_age)# data-review="custom"/>
+            Treat documents older than
+          </label>
+          <select name="deleteIfOlderNumber" id="deleteIfOlderNumber" data-toggle-id="deleteoldage" data-review="skip">
+            #(deleteIfOlderSelect)#::
+            #{list}#<option value="#[name]#" #(default)#::selected="selected"#(/default)#>#[name]#</option>#{/list}#
+            #(/deleteIfOlderSelect)#
+          </select>
+          <select name="deleteIfOlderUnit" id="deleteIfOlderUnit" data-toggle-id="deleteoldage" data-review="skip">
+            #(deleteIfOlderUnitSelect)#::
+            #{list}#<option value="#[value]#" #(default)#::selected="selected"#(/default)#>#[name]#</option>#{/list}#
+            #(/deleteIfOlderUnitSelect)#
+          </select> as stale and delete them before the crawl is started.
+        </div>
+      </fieldset>
+    </fieldset>
 
-					<fieldset class="formGroup collapsible">
-						<legend>Document Cache</legend>
-						<fieldset class="formSection control-group">
-							<legend>Store to Web Cache</legend>
-							<div class="content">
-								<input type="checkbox" name="storeHTCache" id="storeHTCache" #(storeHTCacheChecked)#::checked="checked"#(/storeHTCacheChecked)# />
-								<label for="storeHTCache">Store crawled documents in Web Cache</label>
-							</div>
-							<div class="formHelp hidden">
-								This option is used by default for proxy prefetch, but is not needed for explicit crawling.
-							</div>
-						</fieldset>
-						<fieldset class="formSection toggleable control-group">
-							<legend>Policy for usage of Web Cache</legend>
-							<div class="content">
-								<p>
-									<label class="indent">
-										<input type="radio" name="cachePolicy" value="nocache" id="cachePolicy-noCache" #(cachePolicy_nocache)#::checked="checked"#(/cachePolicy_nocache)#/>
-										Do not use any caches, always download fresh documents.
-									</label>
-								</p>
-								<p>
-									<label class="indent">
-										<input type="radio" name="cachePolicy" value="iffresh" id="cachePolicy-ifFresh" #(cachePolicy_iffresh)#::checked="checked"#(/cachePolicy_iffresh)# />
-										Use cache, if document is fresh.
-									</label>
-								</p>
-								<p>
-									<label class="indent">
-										<input type="radio" name="cachePolicy" value="ifexist" id="cachePolicy-ifExist" #(cachePolicy_ifexist)#::checked="checked"#(/cachePolicy_ifexist)#/>
-										Use cache, if document exist.
-									</label>
-								</p>
-								<p>
-									<label class="indent">
-										<input type="radio" name="cachePolicy" value="cacheonly" id="cachePolicy-cacheOnly" #(cachePolicy_cacheonly)#::checked="checked"#(/cachePolicy_cacheonly)#/>
-										Use the cache only, do not download any new documents.
-									</label>
-								</p>
-							</div>
-							<div class="formHelp hidden">
-								The caching policy states when to use the cache during crawling:
-								<ul>
-									<li>
-										<b>no cache</b>: never use the cache, all content from fresh internet source,
-									</li>
-									<li>
-										<b>if fresh</b>: use the cache if the cache exists and is fresh using the proxy-fresh rules,
-									</li>
-									<li>
-										<b>if exist</b>: use the cache if the cache exist. Do no check freshness. Otherwise use online source,
-									</li>
-									<li>
-										<b>cache&nbsp;only</b>: never go online, use all content from cache. If no cache exist, treat content as unavailable.
-									</li>
-								</div>
-							</fieldset>
-						</fieldset>
+    <fieldset class="formGroup collapsible">
+      <legend>Double-Check Rules</legend>
+      <div class="description">
+        <p>
+          A web crawl performs a double-check on all links found in the internet against the internal database. If the same url is found again, then the url is treated as double when you check the <em>No doubles</em> option.
+          <br/>
+          A url may be loaded again when it has reached a specific age, to use that check the <em>Re-load</em> option.
+        </p>
+      </div>
+      <fieldset class="formSection control-group" data-review="skip-title">
+        <legend>No doubles</legend>
+        <div class="content">
+          <label class="indent">
+            <input type="radio" name="recrawl" id="reloadoldoff" value="nodoubles" #(recrawl_nodoubles)#::checked="checked"#(/recrawl_nodoubles)#/>
+            Never load any page that is already known. Only the start-url may be loaded again.
+          </label>
+        </div>
+      </fieldset>
+      <fieldset class="formSection control-group" data-review="skip-title">
+        <legend>Re-load</legend>
+        <div class="content">
+          <input type="radio" name="recrawl" id="reloadoldage" value="reload" #(recrawl_reload)#::checked="checked"#(/recrawl_reload)# data-review="custom"/>
+          Treat documents that are loaded
+          <select name="reloadIfOlderNumber" id="reloadIfOlderNumber" data-review="skip" data-toggle-id="reloadoldage">
+            #(reloadIfOlderSelect)#::
+            #{list}#<option value="#[name]#" #(default)#::selected="selected"#(/default)#>#[name]#</option>#{/list}#
+            #(/reloadIfOlderSelect)#
+          </select>
+          <select name="reloadIfOlderUnit" id="reloadIfOlderUnit" data-review="skip" data-toggle-id="reloadoldage">
+            #(reloadIfOlderUnitSelect)#::
+            #{list}#<option value="#[value]#" #(default)#::selected="selected"#(/default)#>#[name]#</option>#{/list}#
+            #(/reloadIfOlderUnitSelect)#
+          </select> ago as stale and load them again. If they are younger, they are ignored.
+        </div>
+      </fieldset>
+    </fieldset>
 
-						#(agentSelect)#<input type="hidden" name="agentName" id="agentName" value="#[defaultAgentName]#" />::
-						<fieldset class="formGroup collapsible">
-							<legend>Robot Behaviour</legend>
-							<fieldset class="formSection control-group">
-								<legend>User agent & robot identifier</legend>
-								<div class="content">
-									<label for="agentName">Identify as</label>
-									<select name="agentName" id="agentName">
-										#{list}#
-										<option value="#[name]#">#[name]#</option>
-										#{/list}#
-									</select>
-								</div>
-								<div class="formHelp hidden">
-									<p>
-										You are running YaCy in non-p2p mode and because YaCy can be used as replacement for commercial search appliances (like the GSA) the user must be able to crawl all web pages that are granted to such commercial plattforms.
-									</p>
-									<p>
-										Not having this option would be a strong handicap for professional usage of this software. Therefore you are able to select alternative user agents here which have different crawl timings and also identify itself with another user agent and obey the corresponding robots rule.
-									</p>
-								</div>
-							</fieldset>
-						</fieldset>
-						#(/agentSelect)#
+    <fieldset class="formGroup collapsible">
+      <legend>Document Cache</legend>
+      <fieldset class="formSection control-group">
+        <legend>Store to Web Cache</legend>
+        <div class="content">
+          <input type="checkbox" name="storeHTCache" id="storeHTCache" #(storeHTCacheChecked)#::checked="checked"#(/storeHTCacheChecked)# />
+          <label for="storeHTCache">Store crawled documents in Web Cache</label>
+        </div>
+        <div class="formHelp hidden">
+          This option is used by default for proxy prefetch, but is not needed for explicit crawling.
+        </div>
+      </fieldset>
+      <fieldset class="formSection toggleable control-group">
+        <legend>Policy for usage of Web Cache</legend>
+        <div class="content">
+          <p>
+            <label class="indent">
+              <input type="radio" name="cachePolicy" value="nocache" id="cachePolicy-noCache" #(cachePolicy_nocache)#::checked="checked"#(/cachePolicy_nocache)#/>
+              Do not use any caches, always download fresh documents.
+            </label>
+          </p>
+          <p>
+            <label class="indent">
+              <input type="radio" name="cachePolicy" value="iffresh" id="cachePolicy-ifFresh" #(cachePolicy_iffresh)#::checked="checked"#(/cachePolicy_iffresh)# />
+              Use cache, if document is fresh.
+            </label>
+          </p>
+          <p>
+            <label class="indent">
+              <input type="radio" name="cachePolicy" value="ifexist" id="cachePolicy-ifExist" #(cachePolicy_ifexist)#::checked="checked"#(/cachePolicy_ifexist)#/>
+              Use cache, if document exist.
+            </label>
+          </p>
+          <p>
+            <label class="indent">
+              <input type="radio" name="cachePolicy" value="cacheonly" id="cachePolicy-cacheOnly" #(cachePolicy_cacheonly)#::checked="checked"#(/cachePolicy_cacheonly)#/>
+              Use the cache only, do not download any new documents.
+            </label>
+          </p>
+        </div>
+        <div class="formHelp hidden">
+          The caching policy states when to use the cache during crawling:
+          <ul>
+            <li>
+              <b>no cache</b>: never use the cache, all content from fresh internet source,
+            </li>
+            <li>
+              <b>if fresh</b>: use the cache if the cache exists and is fresh using the proxy-fresh rules,
+            </li>
+            <li>
+              <b>if exist</b>: use the cache if the cache exist. Do no check freshness. Otherwise use online source,
+            </li>
+            <li>
+              <b>cache&nbsp;only</b>: never go online, use all content from cache. If no cache exist, treat content as unavailable.
+            </li>
+          </div>
+        </fieldset>
+      </fieldset>
 
-						<fieldset class="formGroup collapsible">
-							<legend>Index Administration</legend>
-							<fieldset class="formSection toggleable">
-								<legend>Local indexing</legend>
-								<div class="content">
-									<p>
-										<input type="checkbox" name="indexText" id="indexText" #(indexingTextChecked)#::checked="checked"#(/indexingTextChecked)# />
-										<label for="indexText">index text</label>
-									</p>
-									<p>
-										<input type="checkbox" name="indexMedia" id="indexMedia" #(indexingMediaChecked)#::checked="checked"#(/indexingMediaChecked)# />
-										<label for="indexMedia">index media</label>
-									</p>
-								</div>
-								<div class="formHelp hidden">
-									<p>
-										This enables indexing of the webpages the crawler will download. This should be switched on by default, unless you want to crawl only to fill the Document Cache without indexing.
-									</p>
-								</div>
-							</fieldset>
-							<fieldset class="formSection toggleable" data-toggle-type="activate" data-toggle-fieldid="remoteIndex">
-								<legend>Remote Indexing</legend>
-								<div class="content">
-									<fieldset class="group control-group">
-										<legend>Intention</legend>
-										Describe your intention to start this global crawl <em>(optional)</em>. This message will appear in the <em>'Other Peer Crawl Start'</em> table of other peers.
-										<br/>
-										<label for="intention">Crawl intention</label>:
-										<input name="intention" id="intention" type="text" size="40" maxlength="100" value="#[intention]#" /><br />
-									</fieldset>
-								</div>
-								<div class="formHelp hidden">
-									<p>
-										If checked, the crawler will contact other peers and use them as remote indexers for your crawl.
-									</p>
-									<p>
-										If you need your crawling results locally, you should switch this off.
-									</p>
-									<p>
-										Only senior and principal peers can initiate or receive remote crawls.
-										<strong>A YaCyNews message will be created to inform all peers about a global crawl</strong>, so they can omit starting a crawl with the same start point.
-									</p>
-								</div>
-							</fieldset>
-							<fieldset class="formSection toggleable">
-								<legend>Result collection(s)</legend>
-								<div class="content">
-									<div class="control-group">
-										<label for="collection">Target collection(s)</label>
-										<input name="collection" id="collection" type="text" size="60" maxlength="100" value="#[collection]#" #(collectionEnabled)#disabled="disabled"::#(/collectionEnabled)# placeholder="#[defaultCollection]#"/>
-										<div class="formHint hidden">
-											<p class="help">
-												Please enter a comma seperated list of collections, where the results should be added.
-											</p>
-										</div>
-									</div>
-								</div>
-								<div class="formHelp hidden">
-									<p>
-										A crawl result can be tagged with names which are candidates for a collection request.
-									</p>
-									<p>
-										These tags can be selected with the <a href="/gsa/search?q=www&site=#[collection]#">GSA interface</a> using the 'site' operator.
-										To use this option, the 'collection_sxt'-field must be switched on in the <a href="/IndexFederated_p.html">Solr Schema</a>
-									</p>
-								</div>
-							</fieldset>
-						</fieldset>
+      #(agentSelect)#<input type="hidden" name="agentName" id="agentName" value="#[defaultAgentName]#" />::
+      <fieldset class="formGroup collapsible">
+        <legend>Robot Behaviour</legend>
+        <fieldset class="formSection control-group">
+          <legend>User agent & robot identifier</legend>
+          <div class="content">
+            <label for="agentName">Identify as</label>
+            <select name="agentName" id="agentName">
+              #{list}#
+              <option value="#[name]#">#[name]#</option>
+              #{/list}#
+            </select>
+          </div>
+          <div class="formHelp hidden">
+            <p>
+              You are running <abbr>YaCy</abbr> in non-<abbr>P2P</abbr> mode and because <abbr>YaCy</abbr> can be used as replacement for commercial search appliances (like the <abbr>GSA</abbr>) the user must be able to crawl all web pages that are granted to such commercial plattforms.
+            </p>
+            <p>
+              Not having this option would be a strong handicap for professional usage of this software. Therefore you are able to select alternative user agents here which have different crawl timings and also identify itself with another user agent and obey the corresponding robots rule.
+            </p>
+          </div>
+        </fieldset>
+      </fieldset>
+      #(/agentSelect)#
 
-						<div id="formReview" class="hidden">
-							<div class="reviewHeader">
-								<div class="controls">
-									<button data-id="hideDefaults" class="icon-showLess">Hide default settings</button>
-									<button data-id="showDefaults" class="hidden icon-showMore">Show default settings</button>
-								</div>
-							</div>
-							<div class="reviewContent">
-							</div>
-						</div>
+      <fieldset class="formGroup collapsible">
+        <legend>Index Administration</legend>
+        <fieldset class="formSection toggleable">
+          <legend>Local indexing</legend>
+          <div class="content">
+            <p>
+              <input type="checkbox" name="indexText" id="indexText" #(indexingTextChecked)#::checked="checked"#(/indexingTextChecked)# />
+              <label for="indexText">index text</label>
+            </p>
+            <p>
+              <input type="checkbox" name="indexMedia" id="indexMedia" #(indexingMediaChecked)#::checked="checked"#(/indexingMediaChecked)# />
+              <label for="indexMedia">index media</label>
+            </p>
+          </div>
+          <div class="formHelp hidden">
+            <p>
+              This enables indexing of the webpages the crawler will download. This should be switched on by default, unless you want to crawl only to fill the Document Cache without indexing.
+            </p>
+          </div>
+        </fieldset>
+        <fieldset class="formSection toggleable" data-toggle-type="activate" data-toggle-fieldid="remoteIndex">
+          <legend>Remote Indexing</legend>
+          <div class="content">
+            <fieldset class="group control-group">
+              <legend>Intention</legend>
+              Describe your intention to start this global crawl <em>(optional)</em>. This message will appear in the <em>Other Peer Crawl Start</em> table of other peers.
+              <br/>
+              <label for="intention">Crawl intention</label>:
+              <input name="intention" id="intention" type="text" size="40" maxlength="100" value="#[intention]#" /><br />
+            </fieldset>
+          </div>
+          <div class="formHelp hidden">
+            <p>
+              If checked, the crawler will contact other peers and use them as remote indexers for your crawl.
+            </p>
+            <p>
+              If you need your crawling results locally, you should switch this off.
+            </p>
+            <p>
+              Only senior and principal peers can initiate or receive remote crawls.
+              <strong>A <em>YaCyNews</em> message will be created to inform all peers about a global crawl</strong>, so they can omit starting a crawl with the same start point.
+            </p>
+          </div>
+        </fieldset>
+        <fieldset class="formSection toggleable">
+          <legend>Result collection(s)</legend>
+          <div class="content">
+            <div class="control-group">
+              <label for="collection">Target collection(s)</label>
+              <input name="collection" id="collection" type="text" size="60" maxlength="100" value="#[collection]#" #(collectionEnabled)#disabled="disabled"::#(/collectionEnabled)# placeholder="#[defaultCollection]#"/>
+              <div class="formHint hidden">
+                <p class="help">
+                  Please enter a comma seperated list of collections, where the results should be added.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="formHelp hidden">
+            <p>
+              A crawl result can be tagged with names which are candidates for a collection request.
+            </p>
+            <p>
+              These tags can be selected with the <a href="/gsa/search?q=www&site=#[collection]#"><abbr>GSA</abbr> interface</a> using the <code>site</code> operator.
+              To use this option, the <code>collection_sxt</code>-field must be switched on in the <a href="/IndexFederated_p.html">Solr Schema</a>
+            </p>
+          </div>
+        </fieldset>
+      </fieldset>
 
-						<fieldset class="formControl" data-id="formControl">
-							<div class="content">
-								<input type="hidden" name="crawlingstart" value="1"/>
-								<button data-id="check" class="icon-check">Review job details</button>
-								<button data-id="edit" class="icon-config hidden">Edit job details</button>
-								<button type="submit" class="primary icon-run">Start crawl job <span class="errors"></span></button>
-							</div>
-						</fieldset>
-					</fieldset>
-				</form>
-	#%env/templates/page-end.template%#
+      <div id="formReview" class="hidden">
+        <div class="reviewHeader">
+          <div class="controls">
+            <button data-id="hideDefaults" class="icon-showLess">Hide default settings</button>
+            <button data-id="showDefaults" class="hidden icon-showMore">Show default settings</button>
+          </div>
+        </div>
+        <div class="reviewContent">
+        </div>
+      </div>
+
+      <fieldset class="formControl" data-id="formControl">
+        <div id="ycu-error-count" class="description hiddden"></div>
+        <div class="content">
+          <input type="hidden" name="crawlingstart" value="1"/>
+          <button data-id="check" class="icon-check">Review job details</button>
+          <button data-id="edit" class="icon-config hidden">Edit job details</button>
+          <button type="submit" id="submitCrawlStart" class="primary icon-run">Start crawl job</button>
+        </div>
+      </fieldset>
+    </fieldset>
+  </form>
+  #%env/templates/page-end.template%#
 </body>
 </html>
