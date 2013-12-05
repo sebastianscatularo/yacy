@@ -339,31 +339,25 @@ fieldset.collapsible > legend:hover {
   cursor:help;
 }
 .formHint {
-  $hint-tip-fontsize:1.5em;
   $icon-msg_more:$fa-var-ellipsis-horizontal;
 
   margin: {
     top:0.5em;
     right:1em;
   }
-  display:inline-block;
+  line-height:1.3;
+  display:block;
   background:transparent;
 
-  &:before {
-    @extend %icon;
-    font: {
-      size:$hint-tip-fontsize;
-    }
-    margin: {
-      bottom:-0.5em;
-      top:- $hint-tip-fontsize / 2;
-    }
-    display:block;
-    content:'#{$fa-var-caret-up}';
+  > .tip {
+    $hint-tip-fontsize:1.5em;
+    font-size:$hint-tip-fontsize;
+    height:$hint-tip-fontsize / 2;
+    margin-top:-($hint-tip-fontsize / 2);
   }
 
   // hint elements
-  > * {
+  > *:not(.clear):not(.tip) {
     $icon-width:1.5em;
     $icon-space:0.25em;
     float:left;
@@ -397,7 +391,7 @@ fieldset.collapsible > legend:hover {
       background-color:$ycu-var-color-help-bg;
     }
   }
-  &.help:before {
+  &.help .tip {
     color:$ycu-var-color-help-bg;
   }
 
@@ -408,7 +402,7 @@ fieldset.collapsible > legend:hover {
       content:'#{$ycu-var-icon-msg-warning}';
     }
   }
-  &.warning:before {
+  &.warning .tip {
     color:$ycu-var-color-warning-bg;
   }
 
@@ -419,7 +413,7 @@ fieldset.collapsible > legend:hover {
       content:'#{$ycu-var-icon-msg-ok}';
     }
   }
-  &.ok:before {
+  &.ok .tip {
     color:$ycu-var-color-ok-bg;
   }
 
@@ -430,11 +424,11 @@ fieldset.collapsible > legend:hover {
       content:'#{$ycu-var-icon-msg-error}';
     }
   }
-  &.error:before {
+  &.error .tip {
     color:$ycu-var-color-error-bg;
   }
 
-  &.none:before {
+  &.none .tip {
     visibility:hidden;
   }
 
@@ -497,7 +491,8 @@ fieldset.toggleable {
 
 // Form element validation
 input,
-textarea {
+textarea,
+.ui-widget {
   &.valid {
     box-shadow:0 0 5px $ycu-var-color-ok-bg;
   }

@@ -2519,6 +2519,7 @@ label.indent {
   text-indent: -2em;
   padding-left: 2em; }
 
+.ui-spinner:hover,
 input:not([type="range"]):focus:enabled,
 select:focus:enabled,
 textarea:focus:enabled,
@@ -2528,8 +2529,10 @@ textarea:hover:enabled,
 input:not([type="range"]):active:enabled,
 select:active:enabled,
 textarea:active:enabled {
-  border: 1px #758aac solid;
-  background: #fff; }
+  border: 1px #758aac solid; }
+
+.ui-spinner input {
+  border-width: 0px !important; }
 
 input[type="image"],
 input[type="radio"],

@@ -44,6 +44,7 @@ label.indent {
   padding-left:2em;
 }
 
+.ui-spinner:hover,
 input:not([type="range"]):focus:enabled,
 select:focus:enabled,
 textarea:focus:enabled,
@@ -54,7 +55,9 @@ input:not([type="range"]):active:enabled,
 select:active:enabled,
 textarea:active:enabled {
   border:1px $ycu-var-color-input-border solid;
-  background:#fff;
+}
+.ui-spinner input {
+  border-width:0px !important;
 }
 
 input[type="image"],
