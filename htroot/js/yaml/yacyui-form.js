@@ -92,7 +92,6 @@ YaCyUi.Func.Form = {
 
     // set checkAll button action for tables with checkboxes
     $('table th input[type="checkbox"][data-action~="checkAllToggle"]').on('change', function() {
-      console.debug("parent table",$(this).closest('table'), "state ",$(this).is(':checked'));
       YaCyUi.Tools.checkAllBoxes($(this).closest('table'), $(this).is(':checked'));
     });
 
@@ -283,6 +282,10 @@ YaCyUi.Func.Form.ToggleableFormSection.prototype = {
       if(typeof header.data('uiTooltip') !== 'undefined'){
         header.tooltip("option", "disabled", false);
       }
+      // enable contained form elements
+      var inputs = content.find('input, textarea, select');
+      inputs.prop('disabled', false);
+      YaCyUi.Event.trigger('toggle-section-elements', ['enable', inputs]);
     });
   },
 
@@ -303,6 +306,11 @@ YaCyUi.Func.Form.ToggleableFormSection.prototype = {
       formSection
         .addClass('ycu-toggle-hidden')
         .removeClass('ycu-toggle-visible');
+
+      // disable contained form elements
+      var inputs = content.find('input, textarea, select');
+      inputs.prop('disabled', true);
+      YaCyUi.Event.trigger('toggle-section-elements', ['disable', inputs]);
 
       YaCyUi.DataStore.set(content.parent(), {
         space: 'toggle',
@@ -374,7 +382,16 @@ YaCyUi.Func.Form.Hints = function(hintElements) {
 
     hintElements.each(function() {
       var prev = $(this).prev('input[type="text"], textarea');
+      var hintElement = $(this);
+      hintElement.append('<div class="clear"></div>')
+        .prepend('<div class="tip"><i class="fa fa-caret-up"></i></div>');
       if (prev.size() > 0) {
+        YaCyUi.DataStore.set(prev, {
+          space: 'hints',
+          data: {
+            element: hintElement
+          }
+        });
         prev.on('focus', function() {
           YaCyUi.DataStore.set(prev, {
             space: 'hints',
@@ -383,15 +400,14 @@ YaCyUi.Func.Form.Hints = function(hintElements) {
               show: true
             }
           });
-        });
-        prev.on('blur', function() {
+        }).on('blur', function() {
           YaCyUi.DataStore.set(prev, {
             space: 'hints',
             data: {
               show: false
             }
           });
-        });
+        });;
       }
     }).promise().done(function() {
       self.loaded = true;
@@ -423,7 +439,7 @@ YaCyUi.Func.Form.Hints.prototype = {
     set: function(formElement) {
       var data = YaCyUi.DataStore.get(formElement, 'hints');
       var hideDelay = 10;
-      var hint = formElement.next('.formHint');
+      var hint = YaCyUi.DataStore.get(formElement, 'hints', 'element');
       var state = { // previous hint states
         ok: false,
         warning: false,
@@ -548,7 +564,7 @@ YaCyUi.Func.Form.Hints.prototype = {
   update: function(formElements) {
     formElements.each(function() {
       if ($(this).next('.formHint').is(':visible')) {
-        YaCyUi.Form.Hints.slideDown($(this));
+        YaCyUi.Form.Hints.show($(this));
       }
     });
   },
@@ -559,7 +575,16 @@ YaCyUi.Func.Form.Hints.prototype = {
     var self = this;
     formElements.each(function() {
       if (self.private.set($(this)) > 0) {
-        $(this).next('.formHint').slideDown('slow');
+        var leftOffset = $(this).offset().left;
+        YaCyUi.DataStore.get($(this), 'hints', 'element').slideDown('fast', function() {
+          var offset = leftOffset - $(this).offset().left;
+          if (offset > 0) {
+            $(this).find('.error, .help, .ok, .warning').css('min-width', offset + 'px');
+            if ($(this).offset().left < leftOffset) {
+              $(this).find('.tip').css('margin-left', offset + 'px');
+            }
+          }
+        });
       }
     });
   },
@@ -592,7 +617,7 @@ YaCyUi.Func.Form.Hints.prototype = {
         // there are still errors / warnings set
         return;
       }
-      $(this).next('.formHint').slideUp('slow');
+      YaCyUi.DataStore.get($(this), 'hints', 'element').slideUp('slow');
     });
   }
 };
@@ -693,7 +718,13 @@ YaCyUi.Func.Form.Validate.prototype = {
         }
       };
       formElements.each(function() {
-        $(this).removeClass('invalid').addClass('valid');
+        // special case for spinner widget
+        var parent = $(this).parent();
+        if (parent.hasClass('ui-widget')) {
+          parent.removeClass('invalid').addClass('valid');
+        } else {
+          $(this).removeClass('invalid').addClass('valid');
+        }
         if (setData) {
           YaCyUi.DataStore.set($(this), elementData);
         }
@@ -714,7 +745,13 @@ YaCyUi.Func.Form.Validate.prototype = {
         }
       };
       formElements.each(function() {
-        $(this).removeClass('valid').addClass('invalid');
+        // special case for spinner widget
+        var parent = $(this).parent();
+        if (parent.hasClass('ui-widget')) {
+          parent.removeClass('valid').addClass('invalid');
+        } else {
+          $(this).removeClass('valid').addClass('invalid');
+        }
         if (setData) {
           YaCyUi.DataStore.set($(this), elementData);
         }
@@ -797,106 +834,6 @@ YaCyUi.Func.Form.Validate.prototype = {
     }
   },
 
-  Validators: {
-    private: {
-      okState: {
-        hints: {
-          ok: true,
-          clear: true,
-          help: false,
-          show: true
-        },
-        validation: {
-          valid: true
-        }
-      },
-
-      setFailState: function(stateObj) {
-        stateObj.hints.show = true;
-        stateObj.hints.clear = true;
-        stateObj.validation = {
-          valid: false
-        };
-      }
-    },
-
-    /** Check if the text input is non empty.
-      * @param {object} Hints to set
-      * @param {boolean} Validation state. (default: false) */
-    notEmpty: function(hints, valid) {
-      this.validate = function(jObj) {
-        var state = {
-          hints: hints
-        };
-        jObj.val().trim().length === 0 ?
-          YaCyUi.Form.Validate.Validators.private.setFailState(state)
-          : state = YaCyUi.Form.Validate.Validators.private.okState;
-        if (typeof valid === 'boolean') {
-          state.validation.valid = valid;
-        }
-        if (!state.validation.valid) {
-          YaCyUi.Form.digOut(jObj.attr('id'));
-        }
-        return state;
-      };
-    },
-
-    /** Check if the text input contains a valid URL. */
-    url: function() {
-      this.validate = function(jObj, evObj) {
-        var content = jObj.val().trim();
-        var state; // final elements state to return
-
-        if (content.length === 0) {
-          // empty
-          state = {
-            hints: {
-              help: true,
-              show: true,
-              clear: true,
-              error: 'empty'
-            },
-            validation: {
-              valid: false
-            }
-          };
-        } else if (YaCyUi.Tools.Validation.isCrawlerUrl(content)) {
-          // correct entry
-          state = {
-            hints: {
-              ok: true,
-              clear: true,
-              help: false,
-              show: true
-            },
-            validation: {
-              valid: true
-            }
-          };
-        } else {
-          // single entry, not a url
-          state = {
-            hints: {
-              error: 'invalid',
-              help: true,
-              show: true,
-              clear: true
-            },
-            validation: {
-              valid: false
-            }
-          };
-        }
-
-        if (!jObj.is(':focus')) {
-          state.hints.show = false;
-        }
-
-        return state;
-      };
-    }
-  },
-
   /** Add a validator to the given form element.
     * @param {jQuery} Form elements
     * @param {object}
@@ -907,7 +844,9 @@ YaCyUi.Func.Form.Validate.prototype = {
     *   delay {int} milliseconds to delay the validation (default: 700)
     *   events {String} space delimited events to trigger the validation.
     *   (default: focus, keyup)
-    *   onload {boolean} Immediatly validate (default: false)*/
+    *   onload {boolean} Immediatly validate (default: false)
+    *   scope {object} Scope for callback function
+    */
   addValidator: function(formElements, param) {
     var validators = [];
     var self = this;
@@ -949,7 +888,12 @@ YaCyUi.Func.Form.Validate.prototype = {
             window.clearTimeout(timeout);
           }
           timeout = window.setTimeout(function() {
-            var state = param.func(e, evObj);
+            var state;
+            if ('scope' in param) {
+              state = param.func.call(param.scope, e, evObj);
+            } else {
+              state = param.func(e, evObj);
+            }
             if (typeof state === 'object' && state !== null) {
               self.private.setState.call(self, e, state);
             }
@@ -959,7 +903,12 @@ YaCyUi.Func.Form.Validate.prototype = {
       });
 
       if (param.onload === true) {
-        var state = param.func(e, null);
+        var state;
+        if ('scope' in param) {
+          state = param.func.call(param.scope, e, null);
+        } else {
+          state = param.func(e, null);
+        }
         if (typeof state === 'object' && state !== null) {
           self.private.setState.call(self, e, state);
         }
@@ -1102,7 +1051,6 @@ YaCyUi.Func.Form.ToggleableFormElement = function(toggleableElements) {
         toggles[toggleElementId].push($(this));
         // attach handler
         toggleElement.on('change', function() {
-          console.debug("sTOGGLE ", $(this).is(':checked'));
           $(this).is(':checked') ? toggleOn(toggles[this.id]) :
             toggleOff(toggles[this.id]);
         });
@@ -1271,5 +1219,447 @@ YaCyUi.Func.Form.Button.prototype = {
       });
       element.text(newText);
     }
+  }
+};
+
+YaCyUi.Form.ValidatorFunc = {
+  /** Test if given string length is in range.
+    * @param {string} String to test
+    * @param {number} Minimum length
+    * @param {number} Maximum length (optional)
+    * @return {number} 0, if in range, 1 if too short, 2 if too large
+    */
+  length: function(data, min, max) {
+    if (data.length < min) {
+      return 1;
+    }
+    if (typeof max !== 'undefined' && data.length > max) {
+      return 2;
+    }
+    return 0;
+  },
+
+  notEmpty: function(data) {
+    if (typeof data === 'string') {
+      return data.trim().length === 0 ? false : true;
+    }
+    return data.length === 0 ? false : true;
+  },
+
+  /** Test if given number is in range.
+    * @param {string} String to test
+    * @param {number} Minimum value
+    * @param {number} Maximum number (optional)
+    * @param {boolean} If true, invert this range () default false
+    * @return {number} 0, if in range, -1 if NaN, -2 if empty, 1 if too low,
+    * 2 if too high, 3 if invert is used and value is in range
+    */
+  range: function(data, min, max, invert) {
+    invert = invert || false;
+    if (isNaN(data)) {
+      return -1;
+    }
+    if (data.trim().length === 0) {
+      return -2;
+    }
+    if (invert) {
+      if (data > min && data < max) {
+        return 3;
+      }
+    } else {
+      if (data < min) {
+        return 1;
+      }
+      if (typeof max !== 'undefined' && data > max) {
+        return 2;
+      }
+    }
+    return 0;
+  },
+
+  /** Test against a custom regular expression
+    * @param {string} String to test
+    * @param {regex} Regular expression
+    * @param {boolean} If true, invert the matching (not matching is true)
+    * @return {boolean} True if matched, false otherwise
+    */
+  regEx: function(data, regEx, invert) {
+    invert = invert || false;
+    return invert ? !regEx.test(data.trim()) : regEx.test(data.trim());
+  },
+
+  /** Check if the given string(s) look like URLs. This simply checks for spaces
+    * in URLs, because URL validation is error prone.
+    * @param {string, array} Strings to test
+    */
+  url: function(data) {
+    data = YaCyUi.Tools.toArray(data);
+    var regEx = /\s/;
+    var valid = true;
+    for (var i=0;i<data.length;i++) {
+      if (regEx.test(data[i].trim())) {
+        valid = false;
+        break;
+      }
+    }
+    return valid;
+  },
+
+  /** Check the given URLs for valid protocols.
+    * @param {string, array} URLs to test
+    * @param {string, array} Allowed protocols (e.g. ['https?', 'ftp'])
+    */
+  urlProtocol: function(data, protocols) {
+    data = YaCyUi.Tools.toArray(data);
+    protocols = YaCyUi.Tools.toArray(protocols);
+    var regEx = new RegExp('^(' + protocols.join('|') + '):\/\/', 'i');
+    var valid = true;
+
+    for (var i=0;i<data.length;i++) {
+      if (!regEx.test(data[i].trim())) {
+        valid = false;
+        break;
+      }
+    }
+    return valid;
+  }
+};
+YaCyUi.Form.ValidatorElement = function(element, setup, validator) {
+  var self = this;
+  this.element = element;
+  this.validators = [];
+  this.isValidated = false;
+  this.isValid = false;
+  this.isDisabled = false;
+  this.validator = validator;
+
+  function init(setup) {
+    YaCyUi.Event.handle('toggle-section-elements', function(ev, state, elements) {
+      var eId = self.element[0].id;
+      for (var i=0;i<elements.length;i++) {
+        if (elements[i].id == eId) {
+          if (state == 'disable') {
+            self.isDisabled = true;
+          } else {
+            self.isDisabled = false;
+          }
+          self.validator.validate();
+          break;
+        }
+      }
+    });
+
+    // set validators
+    if ('validators' in setup) {
+      self.addValidators(setup.validators);
+    }
+    // custom value getter function
+    if ('get' in setup) {
+      self.setGetter(setup.get);
+    }
+  }
+
+  init(setup);
+};
+YaCyUi.Form.ValidatorElement.prototype = {
+  private: {
+    /** Parse results of simple validators. */
+    parseResult: function(result, validator) {
+      if (!result) {
+        return {
+          type: validator.failType || 'error',
+          data: validator.error || true
+        };
+      }
+      return true;
+    }
+  },
+
+  addValidators: function(validators) {
+    for (var i=0;i<validators.length;i++) {
+      this.addValidator(validators[i]);
+    }
+  },
+
+  addValidator: function(validator) {
+    var self = this;
+    switch(validator.type) {
+      case 'length':
+        this.validators.push(function(data) {
+          var result = YaCyUi.Form.ValidatorFunc.length(data, validator.min, validator.max);
+          if (result !== 0) {
+            var state = {
+              type: validator.failType || 'error'
+            };
+            if (result === 1 && 'tooShort' in validator) {
+              state.data = validator.tooShort;
+            } else if (result === 2 && 'tooLong' in validator) {
+              state.data = validator.tooLong;
+            } else if ('error' in validator) {
+              state.data = validator.error;
+            } else {
+              state.data = true;
+            }
+            return state;
+          }
+          return true;
+        });
+        break;
+      case 'notEmpty':
+        this.validators.push(function(data) {
+          return self.private.parseResult(
+            YaCyUi.Form.ValidatorFunc.notEmpty(data), validator);
+        });
+        break;
+      case 'range':
+        this.validators.push(function(data) {
+          var result = YaCyUi.Form.ValidatorFunc.range(data, validator.min, validator.max,
+            validator.invert);
+          if (result !== 0) {
+            var state = {
+              type: validator.failType || 'error'
+            };
+            if (result === -1 && 'nan' in validator) {
+              state.data = validator.nan;
+            } else if (result === -2 && 'empty' in validator) {
+              state.data = validator.empty;
+            } else if (result === 1 && 'tooLow' in validator) {
+              state.data = validator.tooLow;
+            } else if (result === 2 && 'tooHigh' in validator) {
+              state.data = validator.tooHigh;
+            } else if ('error' in validator) {
+              state.data = validator.error;
+            } else {
+              state.data = true;
+            }
+            return state;
+          }
+          return true;
+        });
+        break;
+      case 'regEx':
+        this.validators.push(function(data) {
+          return self.private.parseResult(
+            YaCyUi.Form.ValidatorFunc.regEx(data, validator.exp,
+              validator.invert), validator);
+        });
+        break;
+      case 'url':
+        this.validators.push(function(data) {
+          return self.private.parseResult(
+            YaCyUi.Form.ValidatorFunc.url(data), validator);
+        });
+        break;
+      case 'urlProtocol':
+        this.validators.push(function(data) {
+          return self.private.parseResult(
+            YaCyUi.Form.ValidatorFunc.urlProtocol(data, validator.protocols),
+              validator);
+        });
+        break;
+      default:
+        YaCyUi.error('YaCyUi.Form.ValidatorElement:addValidator',
+          'Unknown validator: "' + validator.type + '"');
+        break;
+    }
+  },
+
+  getElement: function() {
+    return this.element;
+  },
+
+  setGetter: function(getterFunc) {
+    console.debug('ValidatorElement:setGetter', getterFunc,' set for ', this.element);
+    this.getterFunc = getterFunc;
+  },
+
+  validate: function() {
+    console.debug('validate called for ', this.element, 'with',this.validators.length,'validators');
+    if (typeof this.getterFunc !== 'undefined') {
+      console.debug('ValidatorElement:validate ', this.element, ' with custom getter func!');
+      this.getterFunc(this.element);
+    }
+    var data = this.element.val();
+    if (this.element[0].tagName.toLowerCase() == 'textarea') {
+      data = YaCyUi.Tools.cleanStringArray(data.split('\n'));
+    }
+    var result;
+    var state = null;
+    for (var i=0;i<this.validators.length;i++) {
+      result = this.validators[i](data);
+      if (result !== true) {
+        var isError = result.type == 'error' ? true : false;
+        state = {
+          hints: {
+            show: true,
+            clear: true,
+            help: isError
+          },
+          validation: {
+            valid: !isError
+          }
+        };
+        if (typeof result === 'object' && 'type' in result) {
+          if ('data' in result) {
+            state.hints[result.type] = result.data;
+          } else {
+            state.hints[result.type] = true;
+          }
+          if (isError) {
+            break;
+          }
+        } else {
+          state.hints.error = true;
+          break;
+        }
+      }
+    }
+    this.isValidated = true;
+    if (state !== null) {
+      this.isValid = state.validation.valid;
+      this.validator.validate();
+      return state;
+    }
+    this.isValid = true;
+    this.validator.validate();
+    return {
+      hints: {
+        ok: true,
+        clear: true,
+        help: false,
+        show: true
+      },
+      validation: {
+        valid: true
+      }
+    }
+  }
+};
+
+YaCyUi.Form.Validator = function(config) {
+  var self = this;
+  this.elements = {};
+  this.config = config;
+  this.invalidElements = [];
+
+  if (typeof config.toggle !== 'undefined') {
+      config.toggle.prop('disabled', false);
+  }
+  if (typeof this.config.display !== 'undefined') {
+    this.config.display.append('<p><span id="ycu-errors-message"></span>' +
+      ' <a href="#" id="ycu-errors-show">Show errors.</a></p>');
+    $('#ycu-errors-show').on('click', function(evObj) {
+      evObj.preventDefault();
+      self.showErrors();
+    });
+  }
+
+  return this;
+};
+YaCyUi.Form.Validator.prototype = {
+  /** Add elements to the validator.
+    * @param {jQuery} Elements
+    * @param {object} Validator configuration
+    * @return {object} Self reference
+    */
+  addElement: function(element, setup) {
+    if (typeof element === 'undefined' || element.size() === 0) {
+      YaCyUi.error('YaCyUi.Form.Validator:addElement: element is undefined/empty!');
+      return null;
+    }
+    var self = this;
+    element.each(function() {
+      element.uniqueId(); // we need an id attribute set
+
+      if (typeof self.elements[this.id] === 'undefined') {
+        self.elements[this.id] = new YaCyUi.Form.ValidatorElement($(this), setup, self);
+
+        YaCyUi.Form.Validate.addValidator($(this), {
+          func: self.elements[this.id].validate,
+          scope: self.elements[this.id],
+          onload: setup.onload || self.config.onload || false
+        });
+      } else if ('validators' in setup) {
+          self.elements[this.id].addValidators(setup.validators);
+      }
+    });
+    return this;
+  },
+
+  /** Validate all known elements. also updates the display area. */
+  validate: function() {
+    var result;
+    result = this.getState();
+    if (typeof this.config.toggle !== 'undefined') {
+      this.config.toggle.prop('disabled', result[1] > 0 ? true : false);
+    }
+    if (typeof this.config.display !== 'undefined') {
+      if (result[1] > 0) {
+        $('#ycu-errors-message').html(
+          '<s class="sym sym-warning"><i></i><i></i></s>' +
+          'There ' + (result[1] > 1 ? 'are ' : 'is ') +
+          result[1] + ' error' + (result[1] > 1 ? 's' : '') +
+          ' that need' + (result[1] === 1 ? 's' : '') +
+          ' to be fixed until you may proceed.');
+        this.config.display.show();
+      } else {
+        this.config.display.hide();
+      }
+    }
+  },
+
+  /** Check if the given element is valid.
+    * @param {jQuery} Element to test
+    * @return {boolean} True, if valid, false otherwise
+    */
+  isValid: function(element) {
+    this.getState();
+    return $.inArray(element, this.invalidElements) > -1 ? false : true;
+  },
+
+  /** Get the validation status of all known elements.
+    * @return {array} number of all elements, number of invalid elements, number
+    * of valid elements
+    */
+  getState: function() {
+    var validCount = 0;
+    var invalidCount = 0;
+    this.invalidElements = [];
+    var element;
+    for (var e in this.elements) {
+      element = this.elements[e];
+      if (!element.isDisabled) {
+        if (!element.isValidated) {
+          element.validate();
+        }
+        if (element.isValid) {
+          validCount++;
+        } else {
+          invalidCount++;
+          this.invalidElements.push(element.getElement());
+        }
+      }
+    }
+
+    return [(validCount + invalidCount), invalidCount, validCount];
+  },
+
+  showErrors: function() {
+    var position = null;
+    var topMostId, offset;
+    this.getState();
+    for (var i=0; i<this.invalidElements.length; i++) {
+      var id = this.invalidElements[i][0].id;
+      YaCyUi.Form.digOut(id);
+      // jump to topmost element
+      offset = this.invalidElements[i].offset();
+      console.debug("offset", this.invalidElements[i], offset);
+      if (position === null || offset.top < position) {
+        position = offset.top;
+        topMostId = id;
+        console.debug("topmost", id);
+      }
+    }
+    location.hash = '#' + topMostId;
   }
 };

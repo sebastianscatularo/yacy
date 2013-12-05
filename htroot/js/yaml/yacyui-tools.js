@@ -15,6 +15,13 @@ YaCyUi.Tools = {
     return cleanArr;
   },
 
+  toArray: function(data) {
+    if (typeof data === 'string') {
+      return [data];
+    }
+    return data;
+  },
+
   checkCrawlUrl: function(urlString, callback, scope) {
     $.ajax({
       url: '/api/getpageinfo.json?actions=title,robots&url=' + urlString
@@ -56,45 +63,5 @@ YaCyUi.Tools = {
       return true;
     }
     return false;
-  }
-};
-
-YaCyUi.Tools.Validation = {
-  /** Test if given URL(s) are valid for the crawler. The test is very basic, as
-    * it only checks the protocol and some disallowed characters.
-    * @param {String or Array} URL(s) to test
-    * @return {boolean} False if any URL does not match */
-  isCrawlerUrl: function(obj) {
-    var urlArr;
-    var pattern = /^(ftp:|file:|https?:|smb:)\/\/[^ "]+$/i;
-
-    if(typeof obj === 'string' ) {
-      if (obj.trim().length === 0) {
-        console.debug("zero -> false");
-        return false;
-      }
-      urlArr = [obj];
-    } else {
-      urlArr = obj;
-    }
-
-    for (var i = 0; i < urlArr.length; i++) {
-      if (pattern.test(urlArr[i]) === false) {
-        return false;
-      }
-    }
-    return true;
-  },
-
-  simpleUrlValidator: function(attachTo, eventHandler) {
-    YaCyUi.Event.handle('validation-state', function(evObj, type, elements) {
-      eventHandler(evObj, type, elements);
-    });
-
-    YaCyUi.Form.Validate.addValidator(attachTo, {
-      func: new YaCyUi.Form.Validate.Validators.url().validate,
-      delay: YaCyPage.validationDelay,
-      onload: true
-    });
   }
 };
