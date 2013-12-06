@@ -19,6 +19,7 @@ YaCyPage.Func.CrawlStart = function() {
     startSingleUrl: 'Single URL',
     startUrlBatch: 'URLs batch'
   };
+  this.bookmarkTitle = '';
   this.startType = 'single'; // may be single or list, based on start urls
 
   function init() {};
@@ -41,8 +42,9 @@ YaCyPage.Func.CrawlStart.prototype = {
 
         // title
         if (this.urls.checked == 1) {
+          this.bookmarkTitle = this.text.startUrlBatch + ' ' + this.getDateString();
           $('#startPointDetails').find('dd[data-id="bookmarkTitle"]')
-            .text(this.text.startUrlBatch + ' ' + this.getDateString());
+            .text(this.bookmarkTitle);
         }
 
         // robots
@@ -90,17 +92,17 @@ YaCyPage.Func.CrawlStart.prototype = {
         response = response.item;
 
         // title
-        var bookmarkTitle = response.title.trim();
+        this.bookmarkTitle = response.title.trim();
         var bookmarkIcon = '';
-        if (bookmarkTitle.length === 0) {
-          bookmarkTitle = this.text.startSingleUrl + ' ' + this.getDateString();
+        if (this.bookmarkTitle.length === 0) {
+          this.bookmarkTitle = this.text.startSingleUrl + ' ' + this.getDateString();
         }
         if (response.favicon.length > 0) {
           bookmarkIcon = '<img src="' + response.favicon +
             '" style="width:16px;height:16px;margin-right:0.3em;"/>'
         }
         $('#startPointDetails').find('dd[data-id="bookmarkTitle"]')
-          .html(bookmarkIcon + bookmarkTitle);
+          .html(bookmarkIcon + this.bookmarkTitle);
 
         // robots
         var robotsInfo = $('#startPointDetails').find(
@@ -123,25 +125,37 @@ YaCyPage.Func.CrawlStart.prototype = {
 
         if (hasStartPointSelect) {
           var option, data;
+          var hasOptions = false; // true if there are more than one option
 
           // site-list
           option = $('#startPointSelectBox').find('option[data-id="siteList"]');
           data = response.sitemap.trim();
-          data.length > 0 ? option.prop('disabled', false) : option.prop(
-            'disabled', true);
+          if (data.length > 0) {
+            option.prop('disabled', false)
+            hasOptions = true;
+          } else {
+            option.prop('disabled', true);
+          }
           this.private.listUrls(data,
             $('#startPointDetails dd[data-id="siteList"]'));
 
           // link-list
           option = $('#startPointSelectBox').find('option[data-id="linkList"]');
           data = response.links.trim();
-          data.length > 0 ? option.prop('disabled', false) :
+          if (data.length > 0) {
+            option.prop('disabled', false)
+            hasOptions = true;
+          } else {
             option.prop('disabled', true);
+          }
           this.private.listUrls(data,
             $('#startPointDetails dd[data-id="linkList"]'));
 
-          if (crawlAllowed && hasStartPointSelect) {
+          if (crawlAllowed && hasOptions) {
+            $('#startPointSelectBox').prop('disabled', false);
             $('#startPointSelect').show('slow');
+          } else {
+            $('#startPointSelectBox').prop('disabled', true);
           }
         }
 
