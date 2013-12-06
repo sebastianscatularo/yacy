@@ -46,7 +46,7 @@ YaCyUi.DataStore = YaCyUi.DataStore || {
   get: function(jObj, space, key) {
     var data = jObj.data(YaCyUi.DataStore.prefix);
 
-    if (typeof data === 'undefined' || !(space in data)) {
+    if (typeof data === 'undefined' || data === null || !(space in data)) {
       return null;
     }
 
@@ -69,8 +69,7 @@ YaCyUi.DataStore = YaCyUi.DataStore || {
     * @param {boolean} If true a change event is triggered. (default: true) */
   set: function(jObj, conf, triggerEvent) {
     var data = jObj.data(YaCyUi.DataStore.prefix);
-    triggerEvent = typeof triggerEvent !== 'boolean' ?
-    true : triggerEvent;
+    triggerEvent = typeof triggerEvent !== 'boolean' ? true : triggerEvent;
 
     // do nothing, if no namespace was given
     if (!('space' in conf)) {
@@ -78,7 +77,7 @@ YaCyUi.DataStore = YaCyUi.DataStore || {
     }
 
     // does element have data set?
-    if (typeof data === 'undefined') {
+    if (typeof data === 'undefined' || data === null) {
       // create data space if none
       data = {};
     }
@@ -215,7 +214,6 @@ YaCyUi.init = function() {
     var sortTables = $('table.sortable');
     if (sortTables.size() > 0) {
       sortTables.each(function(){
-        console.debug('sortable', $(this));
         var headers = {}
         // exclude checkAll columns and those explicitly not to be sorted
         $(this).find('th.noSort, th input[data-action~="checkAllToggle"]').each(
@@ -271,7 +269,6 @@ YaCyUi.init = function() {
   $('iframe.autoSize').each(function() {
     $(this).load(function() {
       var height = $(this).contents().find('body').height();
-      console.debug("iFrame height ", height);
       $(this).css({height: height});
     });
   });
