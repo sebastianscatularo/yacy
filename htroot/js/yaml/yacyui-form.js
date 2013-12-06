@@ -39,7 +39,7 @@ YaCyUi.Func.Form = {
 
     // collapsible fieldsets
     var collapseableFieldsets = $('fieldset.collapsible');
-    if (collapseableFieldsets.size() > 0) {
+    if (collapseableFieldsets.length > 0) {
       modules.CollapseableFieldset =
         new YaCyUi.Func.Form.CollapseableFieldset(collapseableFieldsets, true);
     }
@@ -49,27 +49,27 @@ YaCyUi.Func.Form = {
 
     // form help
     var helpElements = $('fieldset.formSection > .formHelp');
-    if (helpElements.size() > 0) {
+    if (helpElements.length > 0) {
       YaCyUi.Form.SectionHelp =
         new YaCyUi.Func.Form.SectionHelp(helpElements);
     }
 
     // form hints
     var hints = $('.formHint');
-    if (hints.size() > 0) {
+    if (hints.length > 0) {
       modules.Hints = new YaCyUi.Func.Form.Hints(hints);
     }
 
     // toggleable form sections - run after hints, to getdynamic help items
     var toggleableFormSections = $('fieldset.toggleable');
-    if (toggleableFormSections.size() > 0) {
+    if (toggleableFormSections.length > 0) {
       modules.ToggleableFormSection =
         new YaCyUi.Func.Form.ToggleableFormSection(toggleableFormSections);
     }
 
     // auto resizing of textareas
     var textareas = $('textarea');
-    if (textareas.size() > 0) {
+    if (textareas.length > 0) {
       YaCyUi.Form.ResizeableTextarea =
         new YaCyUi.Func.Form.ResizeableTextarea();
       YaCyUi.Form.ResizeableTextarea.autoResize(textareas);
@@ -78,7 +78,7 @@ YaCyUi.Func.Form = {
     // form elements (checkbox/radio) that enable/disable other elements
     var toggleableElements = $('button, fieldset, input, select, textarea')
       .filter('[data-toggle-id]');
-    if (toggleableElements.size() > 0) {
+    if (toggleableElements.length > 0) {
       modules.ToggleableFormElement =
         new YaCyUi.Func.Form.ToggleableFormElement(toggleableElements);
     }
@@ -241,7 +241,7 @@ YaCyUi.Func.Form.ToggleableFormSection = function(formSections) {
     }
 
     function init() {
-      sectionsToHideCount = formSections.size();
+      sectionsToHideCount = formSections.length;
       formSections.each(function() {
         wrapContent($(this));
       });
@@ -386,7 +386,7 @@ YaCyUi.Func.Form.Hints = function(hintElements) {
       var hintElement = $(this);
       hintElement.append('<div class="clear"></div>')
         .prepend('<div class="tip"><i class="fa fa-caret-up"></i></div>');
-      if (prev.size() > 0) {
+      if (prev.length > 0) {
         YaCyUi.DataStore.set(prev, {
           space: 'hints',
           data: {
@@ -464,7 +464,7 @@ YaCyUi.Func.Form.Hints.prototype = {
 
       // show/hide a specific hint
       var setHint = function(name) {
-        if (e[name].size() > 0 && name in data) {
+        if (e[name].length > 0 && name in data) {
           if (data[name] === true) { // only one message to show
             show.push([e[name].get(0), state[name]]);
             state[name] = true;
@@ -499,7 +499,7 @@ YaCyUi.Func.Form.Hints.prototype = {
       // warning
       setHint('warning');
       // help
-      if (e.help.size() > 0 && 'help' in data) {
+      if (e.help.length > 0 && 'help' in data) {
         switch (data.help) {
           case true:
             show.push([e.help, state.help]);
@@ -956,7 +956,7 @@ YaCyUi.Func.Form.Validate.prototype = {
         var id = element.attr('id');
         var label = $('label[for="' + id + '"]');
         this.elements.push(element);
-        if (label.size() > 0) {
+        if (label.length > 0) {
           labels.push(label.text());
         } else {
           moreErrors++;
@@ -1027,7 +1027,7 @@ YaCyUi.Func.Form.ToggleableFormElement = function(toggleableElements) {
       var toggleElement = $('#' + toggleElementId);
       var toggleElementGroup = toggleElement.attr('name').trim();
 
-      if (toggleElement.size() <= 0 || (toggleElement.attr('type') != 'radio' &&
+      if (toggleElement.length <= 0 || (toggleElement.attr('type') != 'radio' &&
         toggleElement.attr('type') != 'checkbox')) {
         return; // process next
       }
@@ -1167,7 +1167,7 @@ YaCyUi.Func.Form.Data = function() {
       url += key + "=" + data[key] + "&";
     }
     url = submitUrl + '?' + url.substring(0, url.length - 1);
-    console.debug("sbmit URL", url);
+    console.debug("submit URL", url);
   };
 };
 
@@ -1569,7 +1569,7 @@ YaCyUi.Form.Validator.prototype = {
    * @return {object} Self reference
    */
   addElement: function(element, setup) {
-    if (typeof element === 'undefined' || element.size() === 0) {
+    if (typeof element === 'undefined' || element.length === 0) {
       YaCyUi.error('YaCyUi.Form.Validator:addElement: element is undefined/empty!');
       return null;
     }

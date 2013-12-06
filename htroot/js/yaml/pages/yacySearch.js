@@ -17,8 +17,8 @@ YaCyPage.chacheResultElements = function() {
 
 YaCyPage.latestInfo = function(eventId) {
   $.ajax({
-    url:'yacysearchlatestinfo.json',
-    type:'GET',
+    url: 'yacysearchlatestinfo.json',
+    type: 'GET',
     data: {
       eventID: eventId
     }
@@ -30,8 +30,8 @@ YaCyPage.latestInfo = function(eventId) {
 };
 
 YaCyPage.statistics = function(offset, itemscount, itemsperpage, totalcount,
-    localResourceSize, remoteResourceSize, remoteIndexCount, remotePeerCount,
-    navurlbase) {
+  localResourceSize, remoteResourceSize, remoteIndexCount, remotePeerCount,
+  navurlbase) {
 
   if (totalcount === 0) {
     return;
@@ -44,7 +44,7 @@ YaCyPage.statistics = function(offset, itemscount, itemsperpage, totalcount,
   }
   YaCyPage.e.totalCount.text(totalcount);
 
-  if (YaCyPage.e.globalResults.size() > 0) {
+  if (YaCyPage.e.globalResults.length > 0) {
     YaCyPage.e.localResourceSize.text(localResourceSize);
     YaCyPage.e.remoteResourceSize.text(remoteResourceSize);
     YaCyPage.e.remoteIndexCount.text(remoteIndexCount);
@@ -58,11 +58,10 @@ YaCyPage.statistics = function(offset, itemscount, itemsperpage, totalcount,
   if (thispage === 0) {
     //resnav += '<span class="left"></span>';
   } else {
-    resnav += '<a href="' + navurlbase + "&amp;startRecord="
-      + ((thispage - 1) * itemsperpage) + '"><span class="left"></span></a>';
+    resnav += '<a href="' + navurlbase + "&amp;startRecord=" + ((thispage - 1) * itemsperpage) + '"><span class="left"></span></a>';
   }
 
-  var numberofpages = Math.floor(Math.min(10, 1 + ((totalcount.replace(/\./g,'') - 1) / itemsperpage)));
+  var numberofpages = Math.floor(Math.min(10, 1 + ((totalcount.replace(/\./g, '') - 1) / itemsperpage)));
   var tabText = 'Use the TAB key to navigate to next page.';
 
   if (numberofpages) {
@@ -73,9 +72,9 @@ YaCyPage.statistics = function(offset, itemscount, itemsperpage, totalcount,
         resnav += '<a href="' + navurlbase + "&amp;startRecord=" +
           (i * itemsperpage) + '" class="page" title="' + tabText + '">' +
           (i + 1) + '</a>';
-        }
+      }
     }
-    if (thispage >= numberofpages -1) {
+    if (thispage >= numberofpages - 1) {
       //resnav += '<span class="right" title="' + tabText + '"></span>';
     } else {
       resnav += '<a class="iconic" href="' + navurlbase + "&amp;startRecord=" +
@@ -123,9 +122,9 @@ YaCyPage.init = function() {
   $('#search').autocomplete({
     source: function(request, response) {
       $.ajax({
-        url:'/suggest.json',
+        url: '/suggest.json',
         type: 'POST',
-        data:{
+        data: {
           query: request.term
         },
         success: function(data) {
@@ -144,26 +143,33 @@ YaCyPage.init = function() {
 
   // create the topics tag-cloud
   $.fn.tagcloud.defaults = {
-    size: {start: 0.8, end: 1.3, unit: 'em'},
-    color: {start: '#c08080', end: '#2200CC'}
+    size: {
+      start: 0.8,
+      end: 1.3,
+      unit: 'em'
+    },
+    color: {
+      start: '#c08080',
+      end: '#2200CC'
+    }
   };
   //$("#tagCloud a").tagcloud();
   $('#tagCloud a').tsort().tagcloud({
-    type:"sphere",
-    power:.25,
-    seed:0,
-    sizemin:10,
-    sizemax:20,
-    height:80,
-    colormin:"682",
-    colormax:"20C"
+    type: "sphere",
+    power: .25,
+    seed: 0,
+    sizemin: 10,
+    sizemax: 20,
+    height: 80,
+    colormin: "682",
+    colormax: "20C"
   });
 
   // show sidebar after it's completely loaded
   $('#searchTrailer').css('visibility', 'visible');
 
   // search is done now - update stats
-  if (YaCyPage.e.resNavBottom.size() === 0) {
+  if (YaCyPage.e.resNavBottom.length === 0) {
     YaCyPage.e.resNavBottom = $('#resNavBottom');
     YaCyPage.e.resNavBottom.html(YaCyPage.e.resNav.clone());
   }

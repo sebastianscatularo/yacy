@@ -12,6 +12,7 @@ YaCyUi.Func.MainMenu = function() {
   this.toggleDown = $('<i class="fa fa-caret-down"></i>');
 
   /** Attach click handler to toplevel entries and menu toggle. */
+
   function addInteractionHandler() {
     var pattern = /#$/;
     self.subMenuToggles = $('#nav').find('li > span');
@@ -31,9 +32,10 @@ YaCyUi.Func.MainMenu = function() {
   }
 
   /** Create the breadcrumb path and mark active menu entries. */
+
   function createBreadCrumbAndMarkActive() {
     var current = null;
-    var urlExp = '.*' + location.pathname +  '.*';
+    var urlExp = '.*' + location.pathname + '.*';
     var candidates = [];
 
     $('#nav .main a[href!="#"]').each(function() {
@@ -56,10 +58,10 @@ YaCyUi.Func.MainMenu = function() {
         var currentMatches = 0;
         var matchesCount = 0;
         var urlQuery = location.search.substr(1).split('&');
-        for (var i=0; i<candidates.length; i++) {
+        for (var i = 0; i < candidates.length; i++) {
           var candidate = candidates[i];
           currentMatches = 0;
-          for (var j=0; j<urlQuery.length; j++) {
+          for (var j = 0; j < urlQuery.length; j++) {
             var queryItem = urlQuery[j];
             if (candidate.attr('href').match('.*' + queryItem + '.*')) {
               currentMatches++;
@@ -81,12 +83,12 @@ YaCyUi.Func.MainMenu = function() {
     var currentTagName;
 
     // reverse tree traversal
-    while (parentEl.size() > 0) {
+    while (parentEl.length > 0) {
       currentTagName = parentEl[0].tagName.toLowerCase();
       if (currentTagName === 'nav') {
         // hit the upper bound
         break;
-      } else if (currentTagName === 'li'){
+      } else if (currentTagName === 'li') {
         chain.push(parentEl);
         parentEl.addClass('active');
       }
@@ -96,7 +98,7 @@ YaCyUi.Func.MainMenu = function() {
 
     var breadCrumb = $('<div>');
     var level = 0;
-    for (var i=0; i<chain.length; i++) {
+    for (var i = 0; i < chain.length; i++) {
       var e = chain[i];
       var text = e.children('span, a').text().trim();
       if (text.length > 0) {
@@ -201,7 +203,7 @@ YaCyUi.Func.MainMenu.prototype = {
     var levelsToHide = this.levelsShown - level + 1;
     keepActive = typeof keepActive !== 'boolean' ? false : keepActive;
 
-    if (content.size() === 0) {
+    if (content.length === 0) {
       return;
     }
 
@@ -211,7 +213,7 @@ YaCyUi.Func.MainMenu.prototype = {
       this.levelsShown--;
     } else if (this.levelsShown > level) {
       // remove multiple levels
-      for (var i=0; i<levelsToHide; i++) {
+      for (var i = 0; i < levelsToHide; i++) {
         this.e.subContent.children('.menuLevel-' + (this.levelsShown - i)).remove();
       }
       this.levelsShown -= levelsToHide;
@@ -219,7 +221,7 @@ YaCyUi.Func.MainMenu.prototype = {
 
     if (!keepActive && level - 1 > 0) {
       // unset previous active element
-      this.e.subContent.children('.menuLevel-' + (level -1)).find('.active')
+      this.e.subContent.children('.menuLevel-' + (level - 1)).find('.active')
         .removeClass('active');
       content.find('.active').removeClass('active');
     }
@@ -239,8 +241,8 @@ YaCyUi.Func.MainMenu.prototype = {
     // ..and append it
     this.e.subContent.append(content);
     // set color class
-    $('#navSub').removeClass (function (index, css) {
-      return (css.match (/\blevel-\S+/g) || []).join(' ');
+    $('#navSub').removeClass(function(index, css) {
+      return (css.match(/\blevel-\S+/g) || []).join(' ');
     }).addClass('level-' + level);
   }
 };

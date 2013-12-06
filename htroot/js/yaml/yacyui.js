@@ -10,11 +10,11 @@ var YaCyUi = YaCyUi || {}; // UI namespace
 var YaCyPage = YaCyPage || {}; // Single page namespace
 YaCyPage.validationDelay = 700; // time (in ms) to wait before validation
 
-YaCyUi.error = YaCyUi.error || function (source, message) {
+YaCyUi.error = YaCyUi.error || function(source, message) {
   var err = new Error();
   err.name = 'YaCyUi: ' + source + ' - Error';
   err.message = message;
-  throw(err);
+  throw (err);
 };
 
 /** Function space for setting up the UI API. */
@@ -23,8 +23,8 @@ YaCyUi.Func = YaCyUi.Func || {};
 /** Wrapper for jQueries event framework. */
 YaCyUi.Event = YaCyUi.Event || {
   /** Trigger an document wide event.
-    * @param {string} Event name, will be prefixed with 'ycu-'
-    * @param {array} Event data */
+   * @param {string} Event name, will be prefixed with 'ycu-'
+   * @param {array} Event data */
   trigger: function(eventName, eventData) {
     $(document).trigger('ycu-' + eventName, eventData);
   },
@@ -39,10 +39,10 @@ YaCyUi.DataStore = YaCyUi.DataStore || {
   prefix: 'ycu',
 
   /** Get the data attached to an element.
-    * @param {jQuery} Element
-    * @param {String} Namespace
-    * @param {String} The key for wich the value should be retrieved. If
-    *   omitted, the whole namespace content will be returned. */
+   * @param {jQuery} Element
+   * @param {String} Namespace
+   * @param {String} The key for wich the value should be retrieved. If
+   *   omitted, the whole namespace content will be returned. */
   get: function(jObj, space, key) {
     var data = jObj.data(YaCyUi.DataStore.prefix);
 
@@ -62,11 +62,11 @@ YaCyUi.DataStore = YaCyUi.DataStore || {
   },
 
   /** Attach data to an element.
-    * @param {jQuery} Element
-    * @param {Object} Data to set
-    *   space {String}: Namespace
-    *   data {Object}: Key/values to set
-    * @param {boolean} If true a change event is triggered. (default: true) */
+   * @param {jQuery} Element
+   * @param {Object} Data to set
+   *   space {String}: Namespace
+   *   data {Object}: Key/values to set
+   * @param {boolean} If true a change event is triggered. (default: true) */
   set: function(jObj, conf, triggerEvent) {
     var data = jObj.data(YaCyUi.DataStore.prefix);
     triggerEvent = typeof triggerEvent !== 'boolean' ? true : triggerEvent;
@@ -98,10 +98,10 @@ YaCyUi.DataStore = YaCyUi.DataStore || {
   },
 
   /** Deletes data attached to an element.
-    * @param {jQuery} Element
-    * @param {Key} Namespace
-    * @param {Key} The key of the entry to delete, or a space seperated
-    *   list of keys. If omitted, the whole namespace will be deleted. */
+   * @param {jQuery} Element
+   * @param {Key} Namespace
+   * @param {Key} The key of the entry to delete, or a space seperated
+   *   list of keys. If omitted, the whole namespace will be deleted. */
   del: function(jObj, space, key) {
     var data = jObj.data(YaCyUi.DataStore.prefix);
     var changed = false;
@@ -132,7 +132,7 @@ YaCyUi.Messages = YaCyUi.Messages || {
   init: function() {
     var messages = $('.ycu-message');
     var closeBtn = $('<span class="closeBtn"></span>');
-    if (messages.size() > 0) {
+    if (messages.length > 0) {
       messages.each(function() {
         var msgItem = $(this);
         msgItem.prepend(closeBtn.clone().on('click', function() {
@@ -158,7 +158,7 @@ YaCyUi.Messages = YaCyUi.Messages || {
 YaCyUi.modules = YaCyUi.modules || {};
 YaCyUi.init = function() {
   // temporary developer info controls
-  if ($('#devInfo').size() > 0) {
+  if ($('#devInfo').length > 0) {
     var devInfoBtn = $('<button>hide</button>');
     devInfoBtn.on('click', function() {
       $(this).parent().remove();
@@ -172,14 +172,14 @@ YaCyUi.init = function() {
   }
 
   // init form element functions, if forms are available
-  if ($('form').size() > 0 && typeof YaCyUi.modules.form === 'undefined') {
+  if ($('form').length > 0 && typeof YaCyUi.modules.form === 'undefined') {
     YaCyUi.modules.form = YaCyUi.Func.Form;
     YaCyUi.modules.form.init();
   }
 
   // API bubbles: more info dialog
   var apiInfo = $('#api').children('div');
-  if (apiInfo.size() > 0) {
+  if (apiInfo.length > 0) {
     var apiBubble = $('#api').children('img');
     apiBubble.addClass('hasInfo');
     var apiInfoDialog = apiInfo.dialog({
@@ -200,7 +200,7 @@ YaCyUi.init = function() {
   }
 
   // make tables sortable, if any and script is loaded
-  if(jQuery().tablesorter) {
+  if (jQuery().tablesorter) {
     // custom table data extraction for date sorting - TODO: is this needed?
     var parseData = function(node) {
       var datePattern = /(\d{2}).(\d{2}).(\d{4})\s(\d{2}:\d{2}:\d{2})/;
@@ -212,18 +212,20 @@ YaCyUi.init = function() {
       return nodeData;
     };
     var sortTables = $('table.sortable');
-    if (sortTables.size() > 0) {
-      sortTables.each(function(){
+    if (sortTables.length > 0) {
+      sortTables.each(function() {
         var headers = {}
         // exclude checkAll columns and those explicitly not to be sorted
         $(this).find('th.noSort, th input[data-action~="checkAllToggle"]').each(
-            function() {
-          // set noSort for checkAll columns
-          if (this.tagName.toLowerCase() == 'input') {
-            $(this).parent('th').addClass('noSort');
-          }
-          headers[$(this).index()] = {sorter: false};
-        });
+          function() {
+            // set noSort for checkAll columns
+            if (this.tagName.toLowerCase() == 'input') {
+              $(this).parent('th').addClass('noSort');
+            }
+            headers[$(this).index()] = {
+              sorter: false
+            };
+          });
         // setup sorter
         $(this).tablesorter({
           headers: headers,
@@ -252,7 +254,7 @@ YaCyUi.init = function() {
   YaCyUi.Messages.init();
 
   // show footer, if it has content
-  if ($('footer').children().size() > 0) {
+  if ($('footer').children().length > 0) {
     $('footer').show();
     $('main').css('margin-bottom', $('footer').height() + 'px');
   }
@@ -269,7 +271,9 @@ YaCyUi.init = function() {
   $('iframe.autoSize').each(function() {
     $(this).load(function() {
       var height = $(this).contents().find('body').height();
-      $(this).css({height: height});
+      $(this).css({
+        height: height
+      });
     });
   });
 
