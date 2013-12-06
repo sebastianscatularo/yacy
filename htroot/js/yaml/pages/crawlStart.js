@@ -3,88 +3,89 @@ YaCyPage.Func = YaCyPage.Func || {};
 YaCyPage.Func.CrawlStart = function() {
   var self = this;
   this.dataLoaded = false;
-  // status count for callback URL checks
-  var root = $('#startPoint');
   // state holding for url list checking
   this.urls = {
     checked: 0,
     count: 0,
-    failed: 0
-  };
-  // elements cache
-  this.e = {
-    crawlingURL: $('#crawlingURL'),
-    startPointDetails: $('#startPointDetails'),
-    btnBar: root.find('*[data-id="getSiteData"]')
-  };
-  this.e.data = {
-    bookmarkTitle: this.e.startPointDetails.find('dd[data-id="bookmarkTitle"]'),
-    robotsAllowed: this.e.startPointDetails.find('dd[data-id="robotsAllowed"]')
+    failed: 0, // robots disallowed
+    unknown: 0 // robots unknown
   };
   // text strings
   this.text = {
     robotsAllowed: 'yes',
+    robotsUnknown: 'unknown',
     robotsDisallowed: 'no - you can not start a crawl for this URL',
+    robotsDisallowedShort: 'no',
     startSingleUrl: 'Single URL',
     startUrlBatch: 'URLs batch'
   };
-  this.bookmarkTitle = ''; // bookmark title for URL(s)
   this.startType = 'single'; // may be single or list, based on start urls
 
-  function init() {
-    // check for optional elements
-    var startPointSelect = $('#startPointSelect');
-    var siteList = self.e.startPointDetails.find('dd[data-id="siteList"]');
-    var linkList = self.e.startPointDetails.find('dd[data-id="linkList"]');
-    if (startPointSelect.size() > 0) {
-      self.e.startPointSelect = startPointSelect;
-      self.e.startPointSelectBox = $('#startPointSelectBox');
-    }
-    if (siteList.size() > 0) {
-      self.e.data.siteList = siteList;
-    }
-    if (linkList.size() > 0) {
-      self.e.data.linkList = linkList;
-    }
-  };
+  function init() {};
 
   init();
 };
 YaCyPage.Func.CrawlStart.prototype = {
-  private : {
+  private: {
     handleResponse: {
       /** Handle the JSON response from getpageinfo.json for a list of URLs
-        * @param {object} JSON response object */
+       * @param {object} JSON response object */
       list: function(response, url) {
+        console.debug("RSP", response);
         this.urls.checked++;
+
+        if (!('item' in response)) {
+          this.urls.failed++;
+          return;
+        }
+        response = response.item;
 
         // title
         if (this.urls.checked == 1) {
-          this.bookmarkTitle = this.text.startUrlBatch + ' ' +
-            this.getDateString();
-          e = this.e.data.bookmarkTitle;
-          e.removeClass("ycu-data-false")
-            .text(this.bookmarkTitle);
+          $('#startPointDetails').find('dd[data-id="bookmarkTitle"]')
+            .text(this.text.startUrlBatch + ' ' + this.getDateString());
         }
 
         // robots
-        e = this.e.data.robotsAllowed.children('ul');
-        var htmlClass = '';
-        if (response.robots == 0) {
-          htmlClass = 'ycu-data-false';
-          this.url.failed++;
-        } else {
-          htmlClass = 'ycu-data-true';
+        var robotsInfoList = $('#startPointDetails').find(
+          'dd[data-id="robotsAllowed"]').children('ul');
+        var robotsInfo = $('<li></li>');
+        var favicon = '<div style="width:16px;height:16px;display:inline-block;margin-right:0.3em;"></div>';
+
+        switch (response.robots) {
+          case "0":
+            robotsInfo.addClass('ycu-data-false');
+            this.urls.failed++;
+            break;
+          case "1":
+            robotsInfo.addClass("ycu-data-true");
+            break;
+          case "2":
+            robotsInfo.addClass("ycu-data-unknown");
+            this.urls.unknown++;
+            break;
+          default:
+            console.debug("ROBOTS unkwn:", response.robots);
         }
-        e.append('<li class="' + htmlClass + '"><a href="' + url + '">' + url
-          + '</a></li>');
-        this.e.startPointDetails.show('slow');
-        this.e.startPointDetails.show('slow');
+
+        if (response.favicon.length > 0) {
+          favicon = '<img src="' + response.favicon +
+            '" style="width:16px;height:16px;margin-right:0.3em;"/>'
+        }
+        robotsInfo.append('<a href="' + url + '">' + favicon + url + '</a>');
+        if (response.robotsInfo.trim().length > 0) {
+          robotsInfo.append('<p class="extInfo">' + response.robotsInfo + '</p>');
+        }
+        robotsInfoList.append(robotsInfo);
+
+        $('#startPointDetails').show('slow');
       },
 
       /** Handle the JSON response from getpageinfo.json for a single URL
-        * @param {object} JSON response object */
-      single: function(response) {
+       * @param {object} JSON response object */
+      single: function(response, url) {
+        console.debug("RSP", response);
+        var crawlAllowed = true;
         this.urls.checked++;
 
         if (!('item' in response)) {
@@ -92,89 +93,88 @@ YaCyPage.Func.CrawlStart.prototype = {
         }
         response = response.item;
 
-        var e, data;
-        var crawlAllowed = true;
-
         // title
-        e = this.e.data.bookmarkTitle;
-        data = response.title.trim();
-        if (data.length > 0) {
-          e.removeClass("ycu-data-false").text(data);
-        } else {
-          data = this.text.startSingleUrl + ' ' + this.getDateString();
-          e.addClass("ycu-data-false").text(data);
+        var bookmarkTitle = response.title.trim();
+        var bookmarkIcon = '';
+        if (bookmarkTitle.length === 0) {
+          bookmarkTitle = this.text.startSingleUrl + ' ' + this.getDateString();
         }
-        this.bookmarkTitle = data;
+        if (response.favicon.length > 0) {
+          bookmarkIcon = '<img src="' + response.favicon +
+            '" style="width:16px;height:16px;margin-right:0.3em;"/>'
+        }
+        $('#startPointDetails').find('dd[data-id="bookmarkTitle"]')
+          .html(bookmarkIcon + bookmarkTitle);
 
         // robots
-        e = this.e.data.robotsAllowed;
-        if (response.robots != 0) {
-          e.removeClass("ycu-data-false")
-            .addClass("ycu-data-true")
-            .text(this.text.robotsAllowed);
-        } else {
-          e.addClass("ycu-data-false")
-            .removeClass("ycu-data-true")
-            .text(this.text.robotsDisallowed);
+        var robotsInfo = $('#startPointDetails').find(
+          'dd[data-id="robotsAllowed"]');
+        if (response.robots == "0") {
+          robotsInfo.addClass("ycu-data-false");
           crawlAllowed = false;
+        } else if (response.robots == "2") {
+          robotsInfo.addClass("ycu-data-unknown");
+        } else {
+          robotsInfo.addClass("ycu-data-true");
+        }
+        robotsInfo.append('<a href="' + url + '">' + url + '</a>');
+        if (response.robotsInfo.trim().length > 0) {
+          robotsInfo.append('<p class="extInfo">' + response.robotsInfo + '</p>');
         }
 
         // only if optional elements are defined
-        if ('startPointSelect' in this.e || 'siteList' in this.e.data ||
-            'linkList' in this.e.data) {
-          var option;
-          var hasStartPointSelect = 'startPointSelect' in this.e;
+        var hasStartPointSelect = $('#startPointSelect').length > 0;
+
+        if (hasStartPointSelect) {
+          var option, data;
 
           // site-list
+          option = $('#startPointSelectBox').find('option[data-id="siteList"]');
           data = response.sitemap.trim();
-          // only if startPointSelect exists
-          if (hasStartPointSelect) {
-            option = this.e.startPointSelectBox.find('option[data-id="siteList"]');
-            data.length > 0 ? option.prop('disabled', false) :
-            option.prop('disabled', true);
-          }
-          if ('siteList' in this.e.data) {
-            e = this.e.data.siteList;
-            this.private.listUrls(data, e);
-          }
+          data.length > 0 ? option.prop('disabled', false) : option.prop(
+            'disabled', true);
+          this.private.listUrls(data,
+            $('#startPointDetails dd[data-id="siteList"]'));
 
           // link-list
+          option = $('#startPointSelectBox').find('option[data-id="linkList"]');
           data = response.links.trim();
-          if (hasStartPointSelect) {
-            option = this.e.startPointSelectBox.find('option[data-id="linkList"]');
-            data.length > 0 ? option.prop('disabled', false) :
+          data.length > 0 ? option.prop('disabled', false) :
             option.prop('disabled', true);
-          }
-          if ('linkList' in this.e.data) {
-            e = this.e.data.linkList;
-            this.private.listUrls(data, e);
-          }
+          this.private.listUrls(data,
+            $('#startPointDetails dd[data-id="linkList"]'));
 
           if (crawlAllowed && hasStartPointSelect) {
-            this.e.startPointSelect.show('slow');
+            $('#startPointSelect').show('slow');
           }
         }
 
-        this.e.startPointDetails.show('slow');
+        $('#startPointDetails').show('slow');
       }
     },
 
-    /** List URLs checked in handleResponse.list. */
-    listUrls: function(data, e) {
+    /** List URLs checked in handleResponse.list.
+     * @param {json} Data
+     * @param {Query} Target element */
+    listUrls: function(data, targetElement) {
+      if (targetElement.length === 0) {
+        // target element does not exist
+        return;
+      }
+
       if (data.length > 0) {
         var list = data.split(' ');
-        var listElement = e
+        var listElement = targetElement
           .empty()
-          .removeClass("ycu-data-false")
           .addClass("ycu-data-list")
           .append('<ul></ul>')
           .children('ul');
-        for (var i=0; i<list.length; i++) {
-          listElement.append('<li><a href="' + list[i] + '">' + list[i] + '</a></li>');
+        for (var i = 0; i < list.length; i++) {
+          listElement.append('<li><a href="' + list[i] + '">' +
+            list[i] + '</a></li>');
         }
       } else {
-        e.addClass("ycu-data-false")
-          .removeClass("ycu-data")
+        targetElement.addClass("ycu-data-false")
           .text('none');
       }
     }
@@ -182,40 +182,39 @@ YaCyPage.Func.CrawlStart.prototype = {
 
   /** Empty out the response data elements. */
   emptyData: function() {
-    for (var key in this.e.data) {
-      this.e.data[key].empty()
-        .removeClass('ycu-data ycu-data-false ycu-data-true');
-    }
-    // only if startPointSelect exists
-    if ('startPointSelect' in this.e) {
-      // reset startpoint selection
-      this.e.startPointSelectBox.children('option').each(function() {
-        if (typeof $(this).attr('selected') === 'undefined') {
-          $(this).prop('selected', false);
-        } else {
-          $(this).prop('selected', true);
-        }
+    $('#startPointDetails').find(
+      'dd[data-id="robotsAllowed"], dd[data-id="linkList"], dd[data-id="siteList"]')
+      .empty().removeClass(function(index, css) {
+        return (css.match(/(^|\s)ycu-data(-\S+)?/g) || []).join(' ');
       });
-    }
-    this.bookmarkTitle = '';
+
+    $('#startPointSelectBox').children('option').each(function() {
+      if (typeof $(this).attr('selected') === 'undefined') {
+        $(this).prop('selected', false);
+      } else {
+        $(this).prop('selected', true);
+      }
+    });
+
     this.dataLoaded = false;
   },
 
   /** Create a String from the current date. */
   getDateString: function() {
     var d = new Date();
-    return '(' + d.getFullYear().toString() + '-' + d.getMonth().toString()
-      + '-' + d.getDate().toString() + ' ' + d.getHours().toString()
-      + ':' + d.getMinutes().toString() + ')';
+    return ('(' + d.getFullYear().toString() + '-' + d.getMonth().toString() +
+      '-' + d.getDate().toString() + ' ' + d.getHours().toString() +
+      ':' + d.getMinutes().toString() + ')');
   },
 
   /** Load informations for a given list of pages.
-    * @param {function} Callback to call after all pages infos are loaded.
-    * @param {object} Optional scope for callback */
+   * @param {function} Callback to call after all pages infos are loaded.
+   * @param {object} Optional scope for callback
+   */
   getPagesInfo: function(callback, scope) {
     var self = this;
     var urls; // url entered by user
-    var content = this.e.crawlingURL.val().trim();
+    var content = $('#crawlingURL').val().trim();
 
     if (content.length === 0) {
       // no urls
@@ -230,19 +229,18 @@ YaCyPage.Func.CrawlStart.prototype = {
     this.emptyData();
 
     if (this.urls.count == 1) {
-      this.e.startPointDetails.find('*[data-id]').show();
+      $('#startPointDetails').find('*[data-id]').show();
       YaCyUi.Tools.checkCrawlUrl(urls[0], this.private.handleResponse.single, this);
     } else {
-      this.e.startPointDetails.find('*[data-id]').hide();
-      this.e.startPointDetails.find('*[data-id="bookmarkTitle"]').show();
-      this.e.startPointDetails.find('*[data-id="robotsAllowed"]').show();
+      $('#startPointDetails').find('*[data-id]').hide();
+      $('#startPointDetails').find('*[data-id="bookmarkTitle"]').show();
+      $('#startPointDetails').find('*[data-id="robotsAllowed"]').show();
 
-      this.e.data.robotsAllowed
+      $('#startPointDetails').find('dd[data-id="robotsAllowed"]')
         .addClass('ycu-data-list')
-        .empty()
         .append('<ul></ul>');
 
-      for (var i=0; i<this.urls.count; i++) {
+      for (var i = 0; i < this.urls.count; i++) {
         YaCyUi.Tools.checkCrawlUrl(urls[i], this.private.handleResponse.list, this);
       }
     }
@@ -254,12 +252,12 @@ YaCyPage.Func.CrawlStart.prototype = {
       var t = setInterval(function() {
         if (self.urls.checked == self.urls.count) {
           clearInterval(t);
-          self.e.btnBar.hide();
+          $('#startPoint').find('*[data-id="getSiteData"]').hide();
           //self.responseDone(self.responseCallback);
           if (typeof scope === 'undefined') {
-            self.responseCallback();
+            self.responseCallback(self.urls);
           } else {
-            self.responseCallback.call(scope);
+            self.responseCallback.call(scope, self.urls);
           }
 
         }
