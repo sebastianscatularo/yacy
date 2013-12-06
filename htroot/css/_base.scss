@@ -97,6 +97,9 @@ a[href^="https://"] {
     content:'#{$fa-var-share-square-o}\00a0';
   }
 }
+.noExtLinkIcon a:before {
+  display:none !important;
+}
 
 /** Base */
 body {
@@ -257,7 +260,6 @@ table {
   }
 
   td.breakAll {
-    //word-break:break-all;
     word-wrap:break-word;
   }
 }

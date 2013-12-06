@@ -192,11 +192,11 @@ main .ym-wbox:first-of-type {
 
 /** Pages specific CSS */
 @import 'page-crawl-start';
+@import 'page-host-browser';
 @import 'page-network';
 @import 'page-status';
 @import 'page-terminal';
 @import 'page-view-log';
-
 
 body#rssTerminal {
   background:transparent;

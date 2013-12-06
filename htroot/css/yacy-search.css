@@ -2646,6 +2646,9 @@ a[href^="https://"]:not(.noExt):before {
   font-size: 0.7em;
   content: "\f045\00a0"; }
 
+.noExtLinkIcon a:before {
+  display: none !important; }
+
 /** Base */
 body {
   background-color: #e9f3f9;

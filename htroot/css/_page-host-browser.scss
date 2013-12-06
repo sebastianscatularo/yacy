@@ -1,0 +1,80 @@
+body#hostBrowser {
+  .hostList {
+    $item-width: 15em;
+    @extend %font-sans;
+    font-size:0.9em;
+
+    li:hover a,
+    a:hover {
+      text-overflow:inherit;
+      white-space:inherit;
+      word-wrap:break-word;
+    }
+
+    a {
+      display:block;
+      width:($item-width - 3em);
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+    }
+
+    li {
+      width:$item-width;
+      float:left;
+      margin-left:0;
+      margin-right:1em;
+      padding-left:0.3em;
+
+      &:hover {
+        background-color:lighten($ycu-var-color-fieldset-bg, 5);
+        border-radius:5px;
+      }
+    }
+    p {
+      font-size:0.9em;
+      margin-bottom:1em;
+    }
+  }
+  .fa-li {
+    font-size:0.8em;
+    margin-top:0.3em;
+    left:-1em;
+    width:auto;
+    opacity:0.7;
+  }
+  .state {
+    display:inline-block;
+
+    &:before {
+      @extend %icon-block;
+    }
+  }
+
+  li .state:not(:last-of-type) {
+    margin-right:0.5em;
+  }
+  .urlStateOk:before {
+    content:'#{$fa-var-check-square}';
+  }
+  .urlStateError:before {
+    content:'#{$fa-var-minus-square}';
+  }
+  .stateCommit:before {
+    opacity:0.7;
+    content:'#{$fa-var-folder}\00a0';
+  }
+  .statePending:before {
+    color:darken($ycu-var-color-ok-bg,8);
+    content:'#{$fa-var-cogs}\00a0';
+  }
+  .stateError:before {
+    color:darken($ycu-var-color-error-bg, 8);
+    content:'#{$fa-var-exclamation-triangle}\00a0';
+  }
+
+  .iconLegend p {
+    float:left;
+    margin-right:1.5em;
+  }
+}
