@@ -31,8 +31,24 @@ body#crawlStartSite {
       float: left;
       display:block;
 
+      &:before {
+        @extend %icon-block-light;
+        width:1em;
+        margin-right:0.3em;
+      }
+
       &.ycu-data-false {
         font-style:italic;
+      }
+
+      a:before {
+        // remove off-site indicators
+        display:none;
+      }
+
+      p.extInfo {
+        margin-left:1.5em;
+        font-size:0.8em;
       }
     }
 
@@ -60,22 +76,23 @@ body#crawlStartSite {
       a {
         display:inline-block;
         white-space:nowrap;
+      }
 
-        &:before {
-          // remove off-site indicators
-          display:none;
-        }
+      span {
+        font-style:italic;
       }
     }
 
     .ycu-data-true:before {
-      @extend %icon-block-light;
       content:'#{$fa-var-check}\00a0';
     }
 
     .ycu-data-false:before {
-      @extend %icon-block-light;
       content:'#{$fa-var-times}\00a0';
+    }
+
+    .ycu-data-unknown:before {
+      content:'#{$fa-var-question}\00a0';
     }
   }
 }

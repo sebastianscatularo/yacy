@@ -2472,16 +2472,14 @@ select,
 
 a[href^="http://"]:not(.noExt):before,
 a[href^="https://"]:not(.noExt):before, table.sortable th:not(.noSort):after, .formHint > *:not(.clear):not(.tip):before, .resourceQueryBox .queryBox:after, #nav a.lock:before,
-#navSub a.lock:before, #breadCrumb span:not(:last-of-type):after, #breadCrumb:before, .icon-item-new:before, .icon-item-queued:before, .icon-item-done:before, #ycu-messages .closeBtn:before, body#crawlStartExpert #startPointDetails .ycu-data-true:before,
-body#crawlStartSite #startPointDetails .ycu-data-true:before, body#crawlStartExpert #startPointDetails .ycu-data-false:before,
-body#crawlStartSite #startPointDetails .ycu-data-false:before, body#crawlStartExpert #formReview dt:not(.notConfigured):before, body#crawlStartExpert .ycu-data-true:before, body#crawlStartExpert .ycu-data-false:before, button[class*='icon-']:before, fieldset.collapsible > legend:hover:before, fieldset.collapsible.collapsed > legend:before {
+#navSub a.lock:before, #breadCrumb span:not(:last-of-type):after, #breadCrumb:before, .icon-item-new:before, .icon-item-queued:before, .icon-item-done:before, #ycu-messages .closeBtn:before, body#crawlStartExpert #startPointDetails dd:before,
+body#crawlStartSite #startPointDetails dd:before, body#crawlStartExpert #formReview dt:not(.notConfigured):before, body#crawlStartExpert .ycu-data-true:before, body#crawlStartExpert .ycu-data-false:before, button[class*='icon-']:before, fieldset.collapsible > legend:hover:before, fieldset.collapsible.collapsed > legend:before {
   opacity: 0.7; }
 
 a[href^="http://"]:not(.noExt):before,
 a[href^="https://"]:not(.noExt):before, table.sortable th:not(.noSort):after, .formHint > *:not(.clear):not(.tip):before, .resourceQueryBox .queryBox:after, #nav a.lock:before,
-#navSub a.lock:before, #breadCrumb span:not(:last-of-type):after, #breadCrumb:before, .icon-item-new:before, .icon-item-queued:before, .icon-item-done:before, #ycu-messages .closeBtn:before, body#crawlStartExpert #startPointDetails .ycu-data-true:before,
-body#crawlStartSite #startPointDetails .ycu-data-true:before, body#crawlStartExpert #startPointDetails .ycu-data-false:before,
-body#crawlStartSite #startPointDetails .ycu-data-false:before, body#crawlStartExpert #formReview dt:not(.notConfigured):before, body#crawlStartExpert .ycu-data-true:before, body#crawlStartExpert .ycu-data-false:before, fieldset.collapsible > legend:before, fieldset.formSection .hasHelp:before, #navSub li a:after,
+#navSub a.lock:before, #breadCrumb span:not(:last-of-type):after, #breadCrumb:before, .icon-item-new:before, .icon-item-queued:before, .icon-item-done:before, #ycu-messages .closeBtn:before, body#crawlStartExpert #startPointDetails dd:before,
+body#crawlStartSite #startPointDetails dd:before, body#crawlStartExpert #formReview dt:not(.notConfigured):before, body#crawlStartExpert .ycu-data-true:before, body#crawlStartExpert .ycu-data-false:before, fieldset.collapsible > legend:before, fieldset.formSection .hasHelp:before, #navSub li a:after,
 #navSub li span:after, #ycu-messages > *:before, fieldset.formGroup > legend:before, fieldset.formGroup > legend:after {
   font-family: FontAwesome;
   font-style: normal;
@@ -2489,9 +2487,8 @@ body#crawlStartSite #startPointDetails .ycu-data-false:before, body#crawlStartEx
 
 a[href^="http://"]:not(.noExt):before,
 a[href^="https://"]:not(.noExt):before, table.sortable th:not(.noSort):after, .formHint > *:not(.clear):not(.tip):before, .resourceQueryBox .queryBox:after, #nav a.lock:before,
-#navSub a.lock:before, #breadCrumb span:not(:last-of-type):after, #breadCrumb:before, .icon-item-new:before, .icon-item-queued:before, .icon-item-done:before, #ycu-messages .closeBtn:before, body#crawlStartExpert #startPointDetails .ycu-data-true:before,
-body#crawlStartSite #startPointDetails .ycu-data-true:before, body#crawlStartExpert #startPointDetails .ycu-data-false:before,
-body#crawlStartSite #startPointDetails .ycu-data-false:before, body#crawlStartExpert #formReview dt:not(.notConfigured):before, body#crawlStartExpert .ycu-data-true:before, body#crawlStartExpert .ycu-data-false:before, fieldset.collapsible > legend:before, fieldset.formSection .hasHelp:before, #navSub li a:after,
+#navSub a.lock:before, #breadCrumb span:not(:last-of-type):after, #breadCrumb:before, .icon-item-new:before, .icon-item-queued:before, .icon-item-done:before, #ycu-messages .closeBtn:before, body#crawlStartExpert #startPointDetails dd:before,
+body#crawlStartSite #startPointDetails dd:before, body#crawlStartExpert #formReview dt:not(.notConfigured):before, body#crawlStartExpert .ycu-data-true:before, body#crawlStartExpert .ycu-data-false:before, fieldset.collapsible > legend:before, fieldset.formSection .hasHelp:before, #navSub li a:after,
 #navSub li span:after, #ycu-messages > *:before {
   display: inline-block; }
 
@@ -3421,9 +3418,22 @@ body#crawlStartSite #startPointDetails dd {
   overflow: auto;
   float: left;
   display: block; }
+  body#crawlStartExpert #startPointDetails dd:before,
+  body#crawlStartSite #startPointDetails dd:before {
+    width: 1em;
+    margin-right: 0.3em; }
   body#crawlStartExpert #startPointDetails dd.ycu-data-false,
   body#crawlStartSite #startPointDetails dd.ycu-data-false {
     font-style: italic; }
+  body#crawlStartExpert #startPointDetails dd a:before,
+  body#crawlStartSite #startPointDetails dd a:before {
+    display: none; }
+  body#crawlStartExpert #startPointDetails dd p.extInfo, body#crawlStartExpert #startPointDetails dd div .extInfo.p, div body#crawlStartExpert #startPointDetails dd .extInfo.p,
+  body#crawlStartSite #startPointDetails dd p.extInfo,
+  body#crawlStartSite #startPointDetails dd div .extInfo.p,
+  div body#crawlStartSite #startPointDetails dd .extInfo.p {
+    margin-left: 1.5em;
+    font-size: 0.8em; }
 body#crawlStartExpert #startPointDetails dd.listContent.ycu-data-list,
 body#crawlStartSite #startPointDetails dd.listContent.ycu-data-list {
   max-height: 10em;
@@ -3446,15 +3456,18 @@ body#crawlStartSite #startPointDetails li {
   body#crawlStartSite #startPointDetails li a {
     display: inline-block;
     white-space: nowrap; }
-    body#crawlStartExpert #startPointDetails li a:before,
-    body#crawlStartSite #startPointDetails li a:before {
-      display: none; }
+  body#crawlStartExpert #startPointDetails li span,
+  body#crawlStartSite #startPointDetails li span {
+    font-style: italic; }
 body#crawlStartExpert #startPointDetails .ycu-data-true:before,
 body#crawlStartSite #startPointDetails .ycu-data-true:before {
   content: "\f00c\00a0"; }
 body#crawlStartExpert #startPointDetails .ycu-data-false:before,
 body#crawlStartSite #startPointDetails .ycu-data-false:before {
   content: "\f00d\00a0"; }
+body#crawlStartExpert #startPointDetails .ycu-data-unknown:before,
+body#crawlStartSite #startPointDetails .ycu-data-unknown:before {
+  content: "\f128\00a0"; }
 
 body#crawlStartExpert #formReview h1 {
   font-size: 1.1em; }
