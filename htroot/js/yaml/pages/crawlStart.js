@@ -3,6 +3,8 @@ YaCyPage.Func = YaCyPage.Func || {};
 YaCyPage.Func.CrawlStart = function() {
   var self = this;
   this.dataLoaded = false;
+  this.dataLoading = false;
+  this.responseCallback = []; // functions to call after all URLs are validated
   // state holding for url list checking
   this.urls = {
     checked: 0,
@@ -160,6 +162,8 @@ YaCyPage.Func.CrawlStart.prototype = {
         }
 
         $('#startPointDetails').show('slow');
+        this.dataLoaded = true;
+        this.dataLoading = false;
       }
     },
 
@@ -198,14 +202,16 @@ YaCyPage.Func.CrawlStart.prototype = {
         return (css.match(/(^|\s)ycu-data(-\S+)?/g) || []).join(' ');
       });
 
-    $('#startPointSelectBox').children('option').each(function() {
-      if (typeof $(this).attr('selected') === 'undefined') {
-        $(this).prop('selected', false);
-      } else {
-        $(this).prop('selected', true);
-      }
-    });
+    $('#startPointSelectBox').prop('disabled', false)
+      .children('option').each(function() {
+        if (typeof $(this).attr('selected') === 'undefined') {
+          $(this).prop('selected', false);
+        } else {
+          $(this).prop('selected', true);
+        }
+      });
 
+    this.responseCallback = []; // clear callbacks
     this.dataLoaded = false;
   },
 
@@ -215,6 +221,15 @@ YaCyPage.Func.CrawlStart.prototype = {
     return ('(' + d.getFullYear().toString() + '-' + d.getMonth().toString() +
       '-' + d.getDate().toString() + ' ' + d.getHours().toString() +
       ':' + d.getMinutes().toString() + ')');
+  },
+
+  /** Add a callback function that gets called, if all URLs are validated. This
+   * callback persist only one session, then it get's remove automatically.
+   * @param {function} Function to call
+   * @param {object} Function scope
+   */
+  addRuntimeCallback: function(func, scope) {
+    this.responseCallback.push([func, scope]);
   },
 
   /** Load informations for a given list of pages.
@@ -250,28 +265,34 @@ YaCyPage.Func.CrawlStart.prototype = {
         .addClass('ycu-data-list')
         .append('<ul></ul>');
 
+      $('#startPointSelectBox').prop('disabled', true);
+
+      this.dataLoading = true;
       for (var i = 0; i < this.urls.count; i++) {
         YaCyUi.Tools.checkCrawlUrl(urls[i], this.private.handleResponse.list, this);
       }
     }
 
-    // handle callback, if any
-    if (typeof callback === 'function') {
-      this.responseCallback = callback;
-      // delay stats reset until all data is loaded
-      var t = setInterval(function() {
-        if (self.urls.checked == self.urls.count) {
-          clearInterval(t);
-          $('#startPoint').find('*[data-id="getSiteData"]').hide();
-          //self.responseDone(self.responseCallback);
-          if (typeof scope === 'undefined') {
-            self.responseCallback(self.urls);
-          } else {
-            self.responseCallback.call(scope, self.urls);
+    // delay stats reset until all data is loaded
+    this.responseCallback.push([callback, scope]);
+    var t = setInterval(function() {
+      if (self.urls.checked == self.urls.count) {
+        clearInterval(t);
+        self.dataLoaded = true;
+        this.dataLoading = false;
+        $('#startPoint').find('*[data-id="getSiteData"]').hide();
+        // handle callbacks, if any
+        if (self.responseCallback.length > 0) {
+          for (var i = 0; i < self.responseCallback.length; i++) {
+            if (typeof self.responseCallback[i][1] === 'undefined') {
+              self.responseCallback[i][0](self.urls);
+            } else {
+              self.responseCallback[i][0].call(self.responseCallback[i][1],
+                self.urls);
+            }
           }
-
         }
-      }, 500);
-    }
+      }
+    }, 500);
   }
 };

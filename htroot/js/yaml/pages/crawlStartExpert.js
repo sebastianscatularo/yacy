@@ -338,13 +338,24 @@ YaCyPage.Parts.FormControl = function() {
         self.e.btnSubmit.prop('disabled', true);
         YaCyUi.Form.Button.switchIcon(btnCheck, 'icon-loader');
         btnCheck.prop('disabled', true);
-        YaCyPage.CrawlStart.getPagesInfo(function(urls) {
-          YaCyPage.parts.startPoint.pagesInfoLoaded(urls);
-          YaCyUi.Form.Button.switchIcon(btnCheck);
-          btnCheck.prop('disabled', false);
-          self.e.btnSubmit.prop('disabled', false);
-          YaCyPage.Report.generate();
-        }, self);
+        if (YaCyPage.CrawlStart.dataLoading) {
+          console.debug("urls still validating..");
+          YaCyPage.CrawlStart.addRuntimeCallback(function() {
+            YaCyUi.Form.Button.switchIcon(btnCheck);
+            btnCheck.prop('disabled', false);
+            self.e.btnSubmit.prop('disabled', false);
+            YaCyPage.Report.generate();
+            console.debug("urls validated.");
+          }, self);
+        } else {
+          YaCyPage.CrawlStart.getPagesInfo(function(urls) {
+            YaCyPage.parts.startPoint.pagesInfoLoaded(urls);
+            YaCyUi.Form.Button.switchIcon(btnCheck);
+            btnCheck.prop('disabled', false);
+            self.e.btnSubmit.prop('disabled', false);
+            YaCyPage.Report.generate();
+          }, self);
+        }
       } else {
         YaCyPage.Report.generate();
       }
