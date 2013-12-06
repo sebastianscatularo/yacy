@@ -3,19 +3,16 @@ YaCyPage.Parts = {};
 YaCyPage.Parts.StartPoint = function() {
 	var self = this;
 	var root = $('#startPoint');
-	this.valid = false;
+	this.urlResult = null;
 
 	// cache some elements
 	this.e = {
-		crawlingURL: $('#crawlingURL'),
 		btnBar: root.find('*[data-id="getSiteData"]'),
 		btnRobotsAndStructure: root.find('button[data-id="robotsAndStructure"]'),
-		btnRobots: root.find('button[data-id="robots"]'),
-		startPointDetails: $('#startPointDetails'),
-		startPointSelect: $('#startPointSelect')
+		btnRobots: root.find('button[data-id="robots"]')
 	};
 
-	this.pagesInfoLoaded = function() {
+	this.pagesInfoLoaded = function(urls) {
     // hide buttons..
     this.e.btnBar.hide();
     // ..and reset
@@ -25,6 +22,9 @@ YaCyPage.Parts.StartPoint = function() {
     this.e.btnRobots.prop('disabled', false);
     YaCyUi.Form.Button.switchIcon(this.e.btnRobots);
     YaCyUi.Form.Button.switchText(this.e.btnRobots);
+
+    console.debug("urlresult",urls);
+    this.urlResult = urls;
   }
 
   this.addInteractionHandler = function() {
@@ -41,6 +41,14 @@ YaCyPage.Parts.StartPoint = function() {
 	  	YaCyPage.CrawlStart.getPagesInfo(self.pagesInfoLoaded, self);
 	  });
 	};
+
+	this.resetUrlResults = function() {
+		this.urlResult = null;
+	}
+
+	this.getUrlResults = function() {
+		return this.urlResult;
+	}
 
   // init
   self.addInteractionHandler();
@@ -83,7 +91,7 @@ YaCyPage.Report = {
 			data.entries.append('<dt class="noData">' + text + '</dt><dd>&nbsp;</dd>');
 			break;
 			case 'startPointSelectBox':
-			if (YaCyPage.parts.startPoint.valid &&
+			if (YaCyUi.DataStore.get($('#crawlingURL'), 'validation', 'valid') &&
 				YaCyPage.CrawlStart.startType == 'single') {
 				var label = section.find('label[for="' + id + '"]');
 			data.entries.append('<dt>' + label.text() + '</dt><dd>'
@@ -145,9 +153,16 @@ section: function(section) {
 
 		// handle special sections
 		if (section.data('id') == 'startPoint') {
-			if (YaCyPage.parts.startPoint.valid) {
+			if (YaCyUi.DataStore.get($('#crawlingURL'), 'validation', 'valid')) {
 				data.entries.append('<dt>' + YaCyPage.Report.text.confBookmarkTile +
 					'</dt><dd>' + YaCyPage.CrawlStart.bookmarkTitle + '</dd>');
+				var urlResult = YaCyPage.parts.startPoint.getUrlResults();
+				if (urlResult.failed > 0 || urlResult.unknown > 0) {
+					data.entries.append('<dt><s class="sym sym-warning"></s>Robots</dt>' +
+						'<dd>You are only allowed to crawl ' +
+						(urlResult.checked - urlResult.failed) + ' out of ' + urlResult.count +
+						'<abbr>URLs (' + urlResult.unknown + ' are unknown)</abbr>.</dd>');
+				}
 			} else {
 				data.isValid = false;
 			}
@@ -213,7 +228,6 @@ section: function(section) {
 	},
 
 	generate: function() {
-		var allValid = true;
 		var report = $('<table><colgroup><col class="button"/><col class="content"/></colgroup><tbody></tbody></table>');
 		var content = report.children('tbody');
 
@@ -221,9 +235,7 @@ section: function(section) {
 		if (YaCyPage.Report.e === null) {
 			YaCyPage.Report.e = {
 				review: $('#formReview'),
-				formGroups: $('fieldset.formGroup'),
-				mainForm: $('#crawler fieldset[data-id="main"]'),
-				formControl: $('#crawler fieldset[data-id="formControl"]')
+				formGroups: $('fieldset.formGroup')
 			};
 		}
 
@@ -234,18 +246,9 @@ section: function(section) {
 
 		YaCyPage.Report.e.review.children('.reviewContent').empty();
 
-		// check if all parts are valid
-		for (var part in YaCyPage.parts) {
-			if (YaCyPage.parts[part].valid === false) {
-				allValid = false;
-				break;
-			}
-		}
-
 		YaCyPage.Report.e.formGroups.each(function(){
 			content = YaCyPage.Report.group(content, $(this));
 		});
-
 
 		YaCyPage.Report.e.review.children('.reviewContent').append(report);
 		// show report
@@ -253,10 +256,10 @@ section: function(section) {
 	},
 
 	show: function(callback) {
-		YaCyPage.Report.e.mainForm.children().not(YaCyPage.Report.e.formControl)
+		$('#crawler').children().not($('#formControl'))
 		.fadeOut('slow').promise().done(function() {
-			YaCyPage.Report.e.formControl.find('button[data-id="check"]').hide();
-			YaCyPage.Report.e.formControl.find('button[data-id="edit"]').show();
+			$('#formControl').find('button[data-id="check"]').hide();
+			$('#formControl').find('button[data-id="edit"]').show();
 			YaCyPage.Report.e.review.fadeIn('slow').promise().done(function() {
 				location.hash = "#" + YaCyPage.Report.e.review.attr('id');
 				YaCyPage.Report.visible = true;
@@ -269,11 +272,11 @@ section: function(section) {
 
 	hide: function(jumpTo, callback) {
 		YaCyPage.Report.e.review.fadeOut('slow', function() {
-			YaCyPage.Report.e.mainForm.children()
+			$('#crawler').children()
 			.not(YaCyPage.Report.e.review).fadeIn('slow')
 			.promise().done(function() {
-				YaCyPage.Report.e.formControl.find('button[data-id="check"]').show();
-				YaCyPage.Report.e.formControl.find('button[data-id="edit"]').hide();
+				$('#formControl').find('button[data-id="check"]').show();
+				$('#formControl').find('button[data-id="edit"]').hide();
 				if (typeof jumpTo !== 'undefined' || jumpTo !== null) {
 					YaCyUi.Form.digOut(jumpTo);
 					location.hash = "#" + jumpTo;
@@ -322,12 +325,11 @@ section: function(section) {
 YaCyPage.Parts.FormControl = function() {
 	var self = this;
 	this.e = {
-		btnSubmit: $('fieldset.formControl').find('button[type="submit"]')
+		btnSubmit: $('#formControl').find('button[type="submit"]')
 	};
 
 	this.addInteractionHandler = function() {
-		var formControl = $('fieldset.formControl');
-		var btnCheck = formControl.find('button[data-id="check"]');
+		var btnCheck = $('#formControl').find('button[data-id="check"]');
 
 		$('#formReview').find('button[data-id$="Defaults"]')
 		.on('click', function(evObj) {
@@ -338,12 +340,13 @@ YaCyPage.Parts.FormControl = function() {
 		btnCheck.prop('disabled', false).on('click', function(evObj) {
 			evObj.preventDefault();
 			// check if we need to load startPoint details first
-			if (!YaCyPage.CrawlStart.dataLoaded && YaCyPage.parts.startPoint.valid) {
+			if (!YaCyPage.CrawlStart.dataLoaded &&
+					YaCyUi.DataStore.get($('#crawlingURL'), 'validation', 'valid')) {
 				self.e.btnSubmit.prop('disabled', true);
 				YaCyUi.Form.Button.switchIcon(btnCheck, 'icon-loader');
 				btnCheck.prop('disabled', true);
-				YaCyPage.CrawlStart.getPagesInfo(function() {
-					YaCyPage.parts.startPoint.pagesInfoLoaded();
+				YaCyPage.CrawlStart.getPagesInfo(function(urls) {
+					YaCyPage.parts.startPoint.pagesInfoLoaded(urls);
 					YaCyUi.Form.Button.switchIcon(btnCheck);
 					btnCheck.prop('disabled', false);
 					self.e.btnSubmit.prop('disabled', false);
@@ -354,7 +357,7 @@ YaCyPage.Parts.FormControl = function() {
 			}
 		});
 
-		formControl.find('button[data-id="edit"]').on('click', function(evObj) {
+		$('#formControl').find('button[data-id="edit"]').on('click', function(evObj) {
 			evObj.preventDefault();
 			YaCyPage.Report.hide('crawler');
 		});
@@ -433,6 +436,7 @@ YaCyPage.init = function() {
 		if (elements[0].id == 'crawlingURL') {
 			$('#startPointDetails').hide('slow');
 			$('#startPointSelect').hide('slow');
+			YaCyPage.parts.startPoint.resetUrlResults();
 			if (type == 'valid') {
 				var btnRobots = $('#startPoint').find('button[data-id="robots"]');
 				var btnRobotsAndStructure = $('#startPoint').
