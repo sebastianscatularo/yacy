@@ -4,19 +4,19 @@
 
 YaCyUi.Form = {
   /** Shows the content of a toggleable or collapseble fieldset.
-    * @param {jQuery} The fieldset element */
+   * @param {jQuery} The fieldset element */
   showFieldsetContent: function(fieldset) {
     if (fieldset.hasClass('toggleable') &&
-        fieldset.hasClass('ycu-toggle-hidden')) {
+      fieldset.hasClass('ycu-toggle-hidden')) {
       YaCyUi.Form.ToggleableFormSection.show(fieldset);
     } else if (fieldset.hasClass('collapsible') &&
-        fieldset.hasClass('collapsed')) {
+      fieldset.hasClass('collapsed')) {
       YaCyUi.Form.CollapseableFieldset.show(fieldset);
     }
   },
 
   /** Show an element contained in toggleable or collapseble fieldsets.
-    * @param {string} Element id */
+   * @param {string} Element id */
   digOut: function(id) {
     var e = $('#' + id);
     var fieldset = e.parents('fieldset').andSelf();
@@ -62,7 +62,7 @@ YaCyUi.Func.Form = {
 
     // toggleable form sections - run after hints, to getdynamic help items
     var toggleableFormSections = $('fieldset.toggleable');
-    if (toggleableFormSections.size() >0){
+    if (toggleableFormSections.size() > 0) {
       modules.ToggleableFormSection =
         new YaCyUi.Func.Form.ToggleableFormSection(toggleableFormSections);
     }
@@ -120,16 +120,17 @@ YaCyUi.Func.Form = {
 };
 
 /** Make form fieldsets collapseable.
-  * @param {jQuery} Fieldset elements
-  * @param {boolean} If true fieldsets are initially collapsed */
+ * @param {jQuery} Fieldset elements
+ * @param {boolean} If true fieldsets are initially collapsed */
 YaCyUi.Func.Form.CollapseableFieldset = function(fieldsets, initialHidden) {
   var self = this;
   this.loaded = false;
 
   /** Add collapse click handler to fieldset legend.
-    * @param {jQuery} Elements (fieldsets) to collapse
-    * @param {boolean} If false, elements are not initial hidden.
-    * (default: true) */
+   * @param {jQuery} Elements (fieldsets) to collapse
+   * @param {boolean} If false, elements are not initial hidden.
+   * (default: true) */
+
   function addHandler(fieldsets, hide) {
     hide = typeof hide !== 'boolean' ? true : hide;
 
@@ -159,7 +160,7 @@ YaCyUi.Func.Form.CollapseableFieldset = function(fieldsets, initialHidden) {
 };
 YaCyUi.Func.Form.CollapseableFieldset.prototype = {
   /** Shows a fieldset.
-    * @param {jQuery} fieldset element */
+   * @param {jQuery} fieldset element */
   show: function(fieldset) {
     fieldset
       .removeClass('collapsed')
@@ -174,7 +175,7 @@ YaCyUi.Func.Form.CollapseableFieldset.prototype = {
   },
 
   /** Hides a fieldset.
-    * @param {jQuery} fieldset element */
+   * @param {jQuery} fieldset element */
   hide: function(fieldset) {
     fieldset
       .addClass('collapsed')
@@ -189,14 +190,14 @@ YaCyUi.Func.Form.CollapseableFieldset.prototype = {
   },
 
   /** Toggles a fieldset.
-    * @param {jQuery} fieldset element */
+   * @param {jQuery} fieldset element */
   toggle: function(fieldset) {
-    fieldset.hasClass('collapsed') ?  this.show(fieldset) : this.hide(fieldset);
+    fieldset.hasClass('collapsed') ? this.show(fieldset) : this.hide(fieldset);
   }
 };
 
 /** Toggle form sections by enabling/disableing.
-  * @param {jQuery} form section elements (<dl/>) */
+ * @param {jQuery} form section elements (<dl/>) */
 YaCyUi.Func.Form.ToggleableFormSection = function(formSections) {
   var self = this;
   this.loaded = false;
@@ -208,67 +209,67 @@ YaCyUi.Func.Form.ToggleableFormSection = function(formSections) {
     turnOff: 'deactivate'
   }
 
-  function wrapContent(formSection) {
-    var toggleType = formSection.data('toggle-type');
-    var content = formSection.children('.content');
+    function wrapContent(formSection) {
+      var toggleType = formSection.data('toggle-type');
+      var content = formSection.children('.content');
 
-    content.children().wrapAll('<div class="ycu-toggle content hidden"></div>');
+      content.children().wrapAll('<div class="ycu-toggle content hidden"></div>');
 
-    var buttons;
-    if (toggleType !== undefined && toggleType == 'activate') {
-      buttons = '<button class="on icon-config">' + text.activateAndConfigure +
-        '</button><button class="off hidden icon-stop">' +
-        text.turnOff + '</button>';
-    } else {
-      buttons = '<button class="on icon-config">' + text.configure +
-        '</button><button class="off hidden icon-revert">' +
-        text.revert + '</button>';
+      var buttons;
+      if (toggleType !== undefined && toggleType == 'activate') {
+        buttons = '<button class="on icon-config">' + text.activateAndConfigure +
+          '</button><button class="off hidden icon-stop">' +
+          text.turnOff + '</button>';
+      } else {
+        buttons = '<button class="on icon-config">' + text.configure +
+          '</button><button class="off hidden icon-revert">' +
+          text.revert + '</button>';
+      }
+
+      var toggles = content.prepend(
+        '<div class="ycu-toggle-controls">' + buttons +
+        '</div>').children('.ycu-toggle-controls').find('button');
+
+      toggles.each(function() {
+        var action = $(this).hasClass('on') ? 'show' : 'hide';
+        $(this).on('click', function(evObj) {
+          evObj.preventDefault();
+          self[action](formSection);
+        });
+      });
+      self.hide(formSection, 0);
     }
 
-    var toggles = content.prepend(
-      '<div class="ycu-toggle-controls">' + buttons +
-      '</div>').children('.ycu-toggle-controls').find('button');
-
-    toggles.each(function() {
-      var action = $(this).hasClass('on') ? 'show' : 'hide';
-      $(this).on('click', function(evObj) {
-        evObj.preventDefault();
-        self[action](formSection);
+    function init() {
+      sectionsToHideCount = formSections.size();
+      formSections.each(function() {
+        wrapContent($(this));
       });
-    });
-    self.hide(formSection, 0);
-  }
 
-  function init() {
-    sectionsToHideCount = formSections.size();
-    formSections.each(function() {
-      wrapContent($(this));
-    });
-
-    // loader check
-    var t = window.setInterval(function() {
-      if (self.sectionsToHideCount > 0) {
-        return;
-      }
-      window.clearInterval(t);
-      self.loaded = true;
-    }, 125);
-  }
+      // loader check
+      var t = window.setInterval(function() {
+        if (self.sectionsToHideCount > 0) {
+          return;
+        }
+        window.clearInterval(t);
+        self.loaded = true;
+      }, 125);
+    }
 
   init();
 };
 YaCyUi.Func.Form.ToggleableFormSection.prototype = {
   /** Shows a form section.
-    * @param {jQuery} Formsection element (<dl/>) */
+   * @param {jQuery} Formsection element (<dl/>) */
   show: function(formSection) {
     var content = formSection.find('.ycu-toggle');
     var toggles = formSection.find('.ycu-toggle-controls').children('button');
     formSection
-        .addClass('ycu-toggle-visible')
-        .removeClass('ycu-toggle-hidden');
-        toggles.each(function(){
-        $(this).hasClass('on') ? $(this).hide() : $(this).show();
-      });
+      .addClass('ycu-toggle-visible')
+      .removeClass('ycu-toggle-hidden');
+    toggles.each(function() {
+      $(this).hasClass('on') ? $(this).hide() : $(this).show();
+    });
     content.slideDown('slow', function() {
       $(this).removeClass('hidden');
       YaCyUi.DataStore.set(content.parent(), {
@@ -279,7 +280,7 @@ YaCyUi.Func.Form.ToggleableFormSection.prototype = {
       });
       var header = formSection.children('legend');
       // show tooltip, if any
-      if(typeof header.data('uiTooltip') !== 'undefined'){
+      if (typeof header.data('uiTooltip') !== 'undefined') {
         header.tooltip("option", "disabled", false);
       }
       // enable contained form elements
@@ -290,9 +291,9 @@ YaCyUi.Func.Form.ToggleableFormSection.prototype = {
   },
 
   /** Hides a form section.
-    * @param {jQuery} Formsection element (<dl/>)
-    * @param {mixed} Duration parameter for jQueries hide() function. (default:
-    * slow) */
+   * @param {jQuery} Formsection element (<dl/>)
+   * @param {mixed} Duration parameter for jQueries hide() function. (default:
+   * slow) */
   hide: function(formSection, speed) {
     var self = this;
     speed = typeof speed === 'undefined' ? 'slow' : speed;
@@ -300,7 +301,7 @@ YaCyUi.Func.Form.ToggleableFormSection.prototype = {
     var toggles = formSection.find('.ycu-toggle-controls').children('button');
 
     content.slideUp(speed, function() {
-      toggles.each(function(){
+      toggles.each(function() {
         $(this).hasClass('on') ? $(this).show() : $(this).hide();
       });
       formSection
@@ -320,7 +321,7 @@ YaCyUi.Func.Form.ToggleableFormSection.prototype = {
       });
       var header = formSection.children('legend');
       // hide tooltip, if any
-      if(typeof header.data('uiTooltip') !== 'undefined'){
+      if (typeof header.data('uiTooltip') !== 'undefined') {
         header.tooltip("option", "disabled", true);
       }
 
@@ -332,7 +333,7 @@ YaCyUi.Func.Form.ToggleableFormSection.prototype = {
 };
 
 /** Help for form sections.
-  * @param {jQuery} help elements */
+ * @param {jQuery} help elements */
 YaCyUi.Func.Form.SectionHelp = function(formHelpElements) {
   var helpMsg = 'Click to get help for this item.';
 
@@ -346,7 +347,7 @@ YaCyUi.Func.Form.SectionHelp = function(formHelpElements) {
       .attr('title', helpMsg)
       .on('click', function() {
         if (YaCyUi.DataStore.get(
-            header.children('.content'), 'toggle', 'state') != 'hidden') {
+          header.children('.content'), 'toggle', 'state') != 'hidden') {
           // don't show help dialog, if content is hidden
           helpElement.dialog('open');
         }
@@ -420,12 +421,14 @@ YaCyUi.Func.Form.Hints.prototype = {
   // private function
   private: {
     handleDataEvent: function(scope, formElement, data) {
-      switch(data.show) {
+      switch (data.show) {
         case true:
           YaCyUi.Form.Hints.show(formElement);
           break;
         case false:
-          YaCyUi.Form.Hints.hide(formElement, {triggerEvent: false});
+          YaCyUi.Form.Hints.hide(formElement, {
+            triggerEvent: false
+          });
           break;
         default:
           scope.update(formElement);
@@ -434,8 +437,8 @@ YaCyUi.Func.Form.Hints.prototype = {
     },
 
     /** Toggle hint elements based on validation data.
-    * @param {jQuery} Form element
-    * @return {int} Number of hints that will be shown */
+     * @param {jQuery} Form element
+     * @return {int} Number of hints that will be shown */
     set: function(formElement) {
       var data = YaCyUi.DataStore.get(formElement, 'hints');
       var hideDelay = 10;
@@ -559,8 +562,8 @@ YaCyUi.Func.Form.Hints.prototype = {
   },
 
   /** Update the hints with new values. These updates will only be visible,
-    * if the hint area is already shown.
-    * @param {jQuery} Form elements */
+   * if the hint area is already shown.
+   * @param {jQuery} Form elements */
   update: function(formElements) {
     formElements.each(function() {
       if ($(this).next('.formHint').is(':visible')) {
@@ -570,7 +573,7 @@ YaCyUi.Func.Form.Hints.prototype = {
   },
 
   /** Shows the hint area, if there's anything to show.
-    * @param {jQuery} Form elements */
+   * @param {jQuery} Form elements */
   show: function(formElements) {
     var self = this;
     formElements.each(function() {
@@ -590,14 +593,14 @@ YaCyUi.Func.Form.Hints.prototype = {
   },
 
   /** Hides the hint area. If there are any warnings or erros they will stay
-    * visible. Any other messages will be hidden. This can be overridden by
-    * setting the force parameter.
-    * @param {jQuery} Form elements
-    * @param {object}:
-    *   force {Boolean}: If true, the hint area will be forced to be hidden.
-    *   (default: false)
-    *   triggerEvent {Boolean}: If true data change events are triggered
-    *   (default: true) */
+   * visible. Any other messages will be hidden. This can be overridden by
+   * setting the force parameter.
+   * @param {jQuery} Form elements
+   * @param {object}:
+   *   force {Boolean}: If true, the hint area will be forced to be hidden.
+   *   (default: false)
+   *   triggerEvent {Boolean}: If true data change events are triggered
+   *   (default: true) */
   hide: function(formElements, param) {
     var self = this;
     param = param || {};
@@ -625,9 +628,9 @@ YaCyUi.Func.Form.Hints.prototype = {
 YaCyUi.Func.Form.ResizeableTextarea = function() {};
 YaCyUi.Func.Form.ResizeableTextarea.prototype = {
   /** Resize a textarea to it's content.
-    * based on: http://stackoverflow.com/questions/2948230/auto-expand-a-textarea-using-jquery
-    * @param {jQuery} Textarea elements to resize.
-    * @param {int} Maximum height of the textarea (optional) */
+   * based on: http://stackoverflow.com/questions/2948230/auto-expand-a-textarea-using-jquery
+   * @param {jQuery} Textarea elements to resize.
+   * @param {int} Maximum height of the textarea (optional) */
   resize: function(textareas, maxHeight) {
     textareas.each(function() {
       var oHeight = $(this).outerHeight();
@@ -635,7 +638,7 @@ YaCyUi.Func.Form.ResizeableTextarea.prototype = {
         parseFloat($(this).css("borderTopWidth")) +
         parseFloat($(this).css("borderBottomWidth"));
 
-      while(oHeight < cHeight) {
+      while (oHeight < cHeight) {
         if (maxHeight == $(this).height()) {
           break;
         }
@@ -649,11 +652,11 @@ YaCyUi.Func.Form.ResizeableTextarea.prototype = {
   },
 
   /** Make textfields auto-reize upon adding content.
-    * @param {jQuery}: Elements to attach the auto-resize hander to
-    * @param {Object}:
-    *   maxHeight {int}: Maximum height of the textarea (optional)
-    *   initial {boolean}: Do initial resizing (optional, default: true)
-    *   maxHeight {int}: Maximum height of the textareas (default: 150) */
+   * @param {jQuery}: Elements to attach the auto-resize hander to
+   * @param {Object}:
+   *   maxHeight {int}: Maximum height of the textarea (optional)
+   *   initial {boolean}: Do initial resizing (optional, default: true)
+   *   maxHeight {int}: Maximum height of the textareas (default: 150) */
   autoResize: function(textareas, param) {
     param = param || {};
     param.initial = param.initial || true;
@@ -706,17 +709,11 @@ YaCyUi.Func.Form.Validate.prototype = {
     validableElements: 'textarea, input[type="text"]',
 
     /** Set elements as being valid.
-      * @param {jQuery} Elements
-      * @param {boolean} If true, set the elements data also. (default:
-      * true) */
+     * @param {jQuery} Elements
+     * @param {boolean} If true, set the elements data also. (default:
+     * true) */
     setValid: function(formElements, setData) {
       setData = typeof setData !== 'boolean' ? true : setData;
-      var elementData = {
-        space: 'validation',
-        data: {
-          valid: true
-        }
-      };
       formElements.each(function() {
         // special case for spinner widget
         var parent = $(this).parent();
@@ -726,24 +723,23 @@ YaCyUi.Func.Form.Validate.prototype = {
           $(this).removeClass('invalid').addClass('valid');
         }
         if (setData) {
-          YaCyUi.DataStore.set($(this), elementData);
+          YaCyUi.DataStore.set($(this), {
+            space: 'validation',
+            data: {
+              valid: true
+            }
+          });
         }
       });
       YaCyUi.Event.trigger('validation-state', ['valid', formElements]);
     },
 
     /** Set elements as being invalid.
-      * @param {jQuery} Elements
-      * @param {boolean} If true, set the elements data also. (default:
-      * true) */
+     * @param {jQuery} Elements
+     * @param {boolean} If true, set the elements data also. (default:
+     * true) */
     setInvalid: function(formElements, setData) {
       setData = typeof setData !== 'boolean' ? true : setData;
-      var elementData = {
-        space: 'validation',
-        data: {
-          valid: false
-        }
-      };
       formElements.each(function() {
         // special case for spinner widget
         var parent = $(this).parent();
@@ -753,36 +749,40 @@ YaCyUi.Func.Form.Validate.prototype = {
           $(this).removeClass('valid').addClass('invalid');
         }
         if (setData) {
-          YaCyUi.DataStore.set($(this), elementData);
+          YaCyUi.DataStore.set($(this), {
+            space: 'validation',
+            data: {
+              valid: false
+            }
+          });
         }
       });
       YaCyUi.Event.trigger('validation-state', ['invalid', formElements]);
     },
 
     /** Set elements as being not validated.
-      * @param {jQuery} Elements
-      * @param {boolean} If true, set the elements data also. (default:
-      * true) */
+     * @param {jQuery} Elements
+     * @param {boolean} If true, set the elements data also. (default:
+     * true) */
     setNone: function(formElements, setData) {
       setData = typeof setData !== 'boolean' ? true : setData;
-      var elementData = {
-        space: 'validation',
-        data: {
-          valid: null
-        }
-      };
       formElements.each(function() {
         $(this).removeClass('valid invalid');
         if (setData) {
-          YaCyUi.DataStore.set($(this), elementData);
+          YaCyUi.DataStore.set($(this), {
+            space: 'validation',
+            data: {
+              valid: null
+            }
+          });
         }
       });
       YaCyUi.Event.trigger('validation-state', ['none', formElements]);
     },
 
     /** Sets the state for a single form element.
-    * @param {jQuery} Target form element
-    * @param {object} States object */
+     * @param {jQuery} Target form element
+     * @param {object} States object */
     setState: function(formElement, states) {
       var useHints = (typeof YaCyUi.Form.Hints !== 'undefined');
       var clear;
@@ -800,7 +800,7 @@ YaCyUi.Func.Form.Validate.prototype = {
 
       // validation
       if ('validation' in states && 'valid' in states.validation) {
-        switch(states.validation.valid) {
+        switch (states.validation.valid) {
           case true:
             this.private.setValid(formElement);
             break;
@@ -819,7 +819,7 @@ YaCyUi.Func.Form.Validate.prototype = {
       if (type == 'show') {
         var position = null;
         var offset;
-        for (var i=0; i<this.elements.length; i++) {
+        for (var i = 0; i < this.elements.length; i++) {
           this.elements[i].uniqueId();
           var id = this.elements[i].attr('id');
           YaCyUi.Form.digOut(id);
@@ -835,18 +835,18 @@ YaCyUi.Func.Form.Validate.prototype = {
   },
 
   /** Add a validator to the given form element.
-    * @param {jQuery} Form elements
-    * @param {object}
-    *   func {function} A validator function returning an object applicable
-    *   for setting the elements hint and validation state. The function will
-    *   be called with a jQuery object containing the validated element and
-    *   the triggering event-object, or null if it was triggered on-load.
-    *   delay {int} milliseconds to delay the validation (default: 700)
-    *   events {String} space delimited events to trigger the validation.
-    *   (default: focus, keyup)
-    *   onload {boolean} Immediatly validate (default: false)
-    *   scope {object} Scope for callback function
-    */
+   * @param {jQuery} Form elements
+   * @param {object}
+   *   func {function} A validator function returning an object applicable
+   *   for setting the elements hint and validation state. The function will
+   *   be called with a jQuery object containing the validated element and
+   *   the triggering event-object, or null if it was triggered on-load.
+   *   delay {int} milliseconds to delay the validation (default: 700)
+   *   events {String} space delimited events to trigger the validation.
+   *   (default: focus, keyup)
+   *   onload {boolean} Immediatly validate (default: false)
+   *   scope {object} Scope for callback function
+   */
   addValidator: function(formElements, param) {
     var validators = [];
     var self = this;
@@ -917,11 +917,11 @@ YaCyUi.Func.Form.Validate.prototype = {
   },
 
   /** Test if an element/all elements is/are valid.
-    * @param {jQuery} Elements to test
-    * @param {boolean} If true, not validated elements will be recognized
-    *   as being invalid. (default: true)
-    * @return {boolean} True if all given elements are valid, false
-    *   otherwise. */
+   * @param {jQuery} Elements to test
+   * @param {boolean} If true, not validated elements will be recognized
+   *   as being invalid. (default: true)
+   * @return {boolean} True if all given elements are valid, false
+   *   otherwise. */
   isValid: function(formElements, strict) {
     strict = typeof strict !== 'boolean' ? true : strict;
     var allValid = true;
@@ -936,21 +936,21 @@ YaCyUi.Func.Form.Validate.prototype = {
   },
 
   /** Check, if an element is validable.
-    * @param {jQuery} The element to test
-    * @return {boolean} True, if validable */
+   * @param {jQuery} The element to test
+   * @return {boolean} True, if validable */
   isValidable: function(formElement) {
     return YaCyUi.DataStore.get(formElement, 'validation', 'func') === true;
   },
 
   /** Show a validation results dialog.
-    * @param {array} Array of elements (jQuery objects) to inlude in results.
-    * Only those elements with errors will be handled. */
+   * @param {array} Array of elements (jQuery objects) to inlude in results.
+   * Only those elements with errors will be handled. */
   showResultsDialog: function(elements) {
     this.dialog.empty();
     this.elements = [];
     var labels = [];
     var moreErrors = 0;
-    for (var i=0; i<elements.length; i++) {
+    for (var i = 0; i < elements.length; i++) {
       var element = elements[i];
       if (!YaCyUi.Form.Validate.isValid(element)) {
         var id = element.attr('id');
@@ -963,10 +963,10 @@ YaCyUi.Func.Form.Validate.prototype = {
         }
       }
     }
-    if (labels.length >  0) {
+    if (labels.length > 0) {
       var labelList = $('<ul/>');
       this.dialog.append('<div>The following elements contain invalid values:</div><br/>');
-      for (var i=0; i<labels.length; i++) {
+      for (var i = 0; i < labels.length; i++) {
         labelList.append('<li>' + labels[i] + '</li>');
       }
       this.dialog.append(labelList);
@@ -988,7 +988,8 @@ YaCyUi.Func.Form.ToggleableFormElement = function(toggleableElements) {
   this.loaded = false;
 
   /** Enable a collection of elements and their associated labels.
-    * @param {jQuery} Elements to enable */
+   * @param {jQuery} Elements to enable */
+
   function toggleOn(elementsArray) {
     $.each(elementsArray, function(i, v) {
       var e = $(this);
@@ -1004,7 +1005,8 @@ YaCyUi.Func.Form.ToggleableFormElement = function(toggleableElements) {
   }
 
   /** Disable a collection of elements and their associated labels.
-    * @param {jQuery} Elements to disable */
+   * @param {jQuery} Elements to disable */
+
   function toggleOff(elementsArray) {
     $.each(elementsArray, function(i, v) {
       var e = $(this);
@@ -1086,7 +1088,7 @@ YaCyUi.Func.Form.Data = function() {
     // find all input elements
     form.find('input:not([type="button"])').each(function() {
       var e = $(this);
-      switch(this.type.toLowerCase()) {
+      switch (this.type.toLowerCase()) {
         case 'checkbox':
         case 'radio':
           if (e.is(':checked')) {
@@ -1133,14 +1135,14 @@ YaCyUi.Func.Form.Data = function() {
   };
 
   /** Get the data for a form.
-    * @param {jQuery} The form element */
+   * @param {jQuery} The form element */
   this.getData = function(form) {
     return getFormData(form);
   };
 
   /** Get the data for a form, cutted down to only those entries needed for
-    * submission. Also all texts are URI encoded.
-    * @param {jQuery} The form element */
+   * submission. Also all texts are URI encoded.
+   * @param {jQuery} The form element */
   this.getSubmitData = function(form) {
     var data = getFormData(form);
     for (var key in data) {
@@ -1172,13 +1174,13 @@ YaCyUi.Func.Form.Data = function() {
 YaCyUi.Func.Form.Button = function() {};
 YaCyUi.Func.Form.Button.prototype = {
   /** Switch between button icons.
-    * @param {jQuery} The button element
-    * @param {string} New icon class to set. If omitted the old icon will be set
-    * again. */
+   * @param {jQuery} The button element
+   * @param {string} New icon class to set. If omitted the old icon will be set
+   * again. */
   switchIcon: function(element, toName) {
     var classes = element.attr('class').split(' ');
     var iconName = '';
-    for (var i=0; i<classes.length; i++) {
+    for (var i = 0; i < classes.length; i++) {
       if ((/^icon-/).test(classes[i])) {
         iconName = classes[i];
         break;
@@ -1201,9 +1203,9 @@ YaCyUi.Func.Form.Button.prototype = {
   },
 
   /** Switch between button texts.
-    * @param {jQuery} The button element
-    * @param {string} New text to set. If omitted the old text will be set
-    * again. */
+   * @param {jQuery} The button element
+   * @param {string} New text to set. If omitted the old text will be set
+   * again. */
   switchText: function(element, newText) {
     if (typeof newText !== 'string') {
       var oldText = YaCyUi.DataStore.get(element, 'buttonSwitch', 'text');
@@ -1224,11 +1226,11 @@ YaCyUi.Func.Form.Button.prototype = {
 
 YaCyUi.Form.ValidatorFunc = {
   /** Test if given string length is in range.
-    * @param {string} String to test
-    * @param {number} Minimum length
-    * @param {number} Maximum length (optional)
-    * @return {number} 0, if in range, 1 if too short, 2 if too large
-    */
+   * @param {string} String to test
+   * @param {number} Minimum length
+   * @param {number} Maximum length (optional)
+   * @return {number} 0, if in range, 1 if too short, 2 if too large
+   */
   length: function(data, min, max) {
     if (data.length < min) {
       return 1;
@@ -1247,13 +1249,13 @@ YaCyUi.Form.ValidatorFunc = {
   },
 
   /** Test if given number is in range.
-    * @param {string} String to test
-    * @param {number} Minimum value
-    * @param {number} Maximum number (optional)
-    * @param {boolean} If true, invert this range () default false
-    * @return {number} 0, if in range, -1 if NaN, -2 if empty, 1 if too low,
-    * 2 if too high, 3 if invert is used and value is in range
-    */
+   * @param {string} String to test
+   * @param {number} Minimum value
+   * @param {number} Maximum number (optional)
+   * @param {boolean} If true, invert this range () default false
+   * @return {number} 0, if in range, -1 if NaN, -2 if empty, 1 if too low,
+   * 2 if too high, 3 if invert is used and value is in range
+   */
   range: function(data, min, max, invert) {
     invert = invert || false;
     if (isNaN(data)) {
@@ -1278,26 +1280,29 @@ YaCyUi.Form.ValidatorFunc = {
   },
 
   /** Test against a custom regular expression
-    * @param {string} String to test
-    * @param {regex} Regular expression
-    * @param {boolean} If true, invert the matching (not matching is true)
-    * @return {boolean} True if matched, false otherwise
-    */
+   * @param {string} String to test
+   * @param {regex} Regular expression
+   * @param {boolean} If true, invert the matching (not matching is true)
+   * @return {boolean} True if matched, false otherwise
+   */
   regEx: function(data, regEx, invert) {
     invert = invert || false;
     return invert ? !regEx.test(data.trim()) : regEx.test(data.trim());
   },
 
   /** Check if the given string(s) look like URLs. This simply checks for spaces
-    * in URLs, because URL validation is error prone.
-    * @param {string, array} Strings to test
-    */
+   * in URLs, because URL validation is error prone.
+   * @param {string, array} Strings to test
+   */
   url: function(data) {
     data = YaCyUi.Tools.toArray(data);
     var regEx = /\s/;
     var valid = true;
-    for (var i=0;i<data.length;i++) {
-      if (regEx.test(data[i].trim())) {
+    for (var i = 0; i < data.length; i++) {
+      var dataItem = data[i].trim();
+      var parts = dataItem.split('://');
+      console.debug("parts", parts);
+      if (regEx.test(dataItem) || parts.length < 2 || parts[1].length === 0) {
         valid = false;
         break;
       }
@@ -1306,16 +1311,16 @@ YaCyUi.Form.ValidatorFunc = {
   },
 
   /** Check the given URLs for valid protocols.
-    * @param {string, array} URLs to test
-    * @param {string, array} Allowed protocols (e.g. ['https?', 'ftp'])
-    */
+   * @param {string, array} URLs to test
+   * @param {string, array} Allowed protocols (e.g. ['https?', 'ftp'])
+   */
   urlProtocol: function(data, protocols) {
     data = YaCyUi.Tools.toArray(data);
     protocols = YaCyUi.Tools.toArray(protocols);
     var regEx = new RegExp('^(' + protocols.join('|') + '):\/\/', 'i');
     var valid = true;
 
-    for (var i=0;i<data.length;i++) {
+    for (var i = 0; i < data.length; i++) {
       if (!regEx.test(data[i].trim())) {
         valid = false;
         break;
@@ -1336,7 +1341,7 @@ YaCyUi.Form.ValidatorElement = function(element, setup, validator) {
   function init(setup) {
     YaCyUi.Event.handle('toggle-section-elements', function(ev, state, elements) {
       var eId = self.element[0].id;
-      for (var i=0;i<elements.length;i++) {
+      for (var i = 0; i < elements.length; i++) {
         if (elements[i].id == eId) {
           if (state == 'disable') {
             self.isDisabled = true;
@@ -1376,17 +1381,18 @@ YaCyUi.Form.ValidatorElement.prototype = {
   },
 
   addValidators: function(validators) {
-    for (var i=0;i<validators.length;i++) {
+    for (var i = 0; i < validators.length; i++) {
       this.addValidator(validators[i]);
     }
   },
 
   addValidator: function(validator) {
     var self = this;
-    switch(validator.type) {
+    switch (validator.type) {
       case 'length':
         this.validators.push(function(data) {
-          var result = YaCyUi.Form.ValidatorFunc.length(data, validator.min, validator.max);
+          var result = YaCyUi.Form.ValidatorFunc.length(
+            data, validator.min, validator.max);
           if (result !== 0) {
             var state = {
               type: validator.failType || 'error'
@@ -1454,7 +1460,7 @@ YaCyUi.Form.ValidatorElement.prototype = {
         this.validators.push(function(data) {
           return self.private.parseResult(
             YaCyUi.Form.ValidatorFunc.urlProtocol(data, validator.protocols),
-              validator);
+            validator);
         });
         break;
       default:
@@ -1469,12 +1475,12 @@ YaCyUi.Form.ValidatorElement.prototype = {
   },
 
   setGetter: function(getterFunc) {
-    console.debug('ValidatorElement:setGetter', getterFunc,' set for ', this.element);
+    console.debug('ValidatorElement:setGetter', getterFunc, ' set for ', this.element);
     this.getterFunc = getterFunc;
   },
 
   validate: function() {
-    console.debug('validate called for ', this.element, 'with',this.validators.length,'validators');
+    //console.debug('validate called for ', this.element, 'with',this.validators.length,'validators');
     if (typeof this.getterFunc !== 'undefined') {
       console.debug('ValidatorElement:validate ', this.element, ' with custom getter func!');
       this.getterFunc(this.element);
@@ -1485,7 +1491,7 @@ YaCyUi.Form.ValidatorElement.prototype = {
     }
     var result;
     var state = null;
-    for (var i=0;i<this.validators.length;i++) {
+    for (var i = 0; i < this.validators.length; i++) {
       result = this.validators[i](data);
       if (result !== true) {
         var isError = result.type == 'error' ? true : false;
@@ -1543,7 +1549,7 @@ YaCyUi.Form.Validator = function(config) {
   this.invalidElements = [];
 
   if (typeof config.toggle !== 'undefined') {
-      config.toggle.prop('disabled', false);
+    config.toggle.prop('disabled', false);
   }
   if (typeof this.config.display !== 'undefined') {
     this.config.display.append('<p><span id="ycu-errors-message"></span>' +
@@ -1558,10 +1564,10 @@ YaCyUi.Form.Validator = function(config) {
 };
 YaCyUi.Form.Validator.prototype = {
   /** Add elements to the validator.
-    * @param {jQuery} Elements
-    * @param {object} Validator configuration
-    * @return {object} Self reference
-    */
+   * @param {jQuery} Elements
+   * @param {object} Validator configuration
+   * @return {object} Self reference
+   */
   addElement: function(element, setup) {
     if (typeof element === 'undefined' || element.size() === 0) {
       YaCyUi.error('YaCyUi.Form.Validator:addElement: element is undefined/empty!');
@@ -1572,7 +1578,8 @@ YaCyUi.Form.Validator.prototype = {
       element.uniqueId(); // we need an id attribute set
 
       if (typeof self.elements[this.id] === 'undefined') {
-        self.elements[this.id] = new YaCyUi.Form.ValidatorElement($(this), setup, self);
+        self.elements[this.id] = new YaCyUi.Form.ValidatorElement(
+          $(this), setup, self);
 
         YaCyUi.Form.Validate.addValidator($(this), {
           func: self.elements[this.id].validate,
@@ -1580,7 +1587,7 @@ YaCyUi.Form.Validator.prototype = {
           onload: setup.onload || self.config.onload || false
         });
       } else if ('validators' in setup) {
-          self.elements[this.id].addValidators(setup.validators);
+        self.elements[this.id].addValidators(setup.validators);
       }
     });
     return this;
@@ -1609,18 +1616,18 @@ YaCyUi.Form.Validator.prototype = {
   },
 
   /** Check if the given element is valid.
-    * @param {jQuery} Element to test
-    * @return {boolean} True, if valid, false otherwise
-    */
+   * @param {jQuery} Element to test
+   * @return {boolean} True, if valid, false otherwise
+   */
   isValid: function(element) {
     this.getState();
     return $.inArray(element, this.invalidElements) > -1 ? false : true;
   },
 
   /** Get the validation status of all known elements.
-    * @return {array} number of all elements, number of invalid elements, number
-    * of valid elements
-    */
+   * @return {array} number of all elements, number of invalid elements, number
+   * of valid elements
+   */
   getState: function() {
     var validCount = 0;
     var invalidCount = 0;
@@ -1648,16 +1655,14 @@ YaCyUi.Form.Validator.prototype = {
     var position = null;
     var topMostId, offset;
     this.getState();
-    for (var i=0; i<this.invalidElements.length; i++) {
+    for (var i = 0; i < this.invalidElements.length; i++) {
       var id = this.invalidElements[i][0].id;
       YaCyUi.Form.digOut(id);
       // jump to topmost element
       offset = this.invalidElements[i].offset();
-      console.debug("offset", this.invalidElements[i], offset);
       if (position === null || offset.top < position) {
         position = offset.top;
         topMostId = id;
-        console.debug("topmost", id);
       }
     }
     location.hash = '#' + topMostId;
