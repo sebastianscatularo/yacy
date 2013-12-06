@@ -3,7 +3,7 @@
     "title":"#[title]#",
     "desc":"#[desc]#",
     "lang":"#[lang]#",
-    "robots":"#(robots-allowed)#0::1::#(/robots-allowed)#",
+    "robots":"#(robots-allowed)#0::1::2#(/robots-allowed)#",
     "robotsInfo":"#[robotsInfo]#",
     "sitemap":"#[sitemap]#",
     "favicon":"#[favicon]#",
