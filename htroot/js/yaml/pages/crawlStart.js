@@ -31,7 +31,6 @@ YaCyPage.Func.CrawlStart.prototype = {
       /** Handle the JSON response from getpageinfo.json for a list of URLs
        * @param {object} JSON response object */
       list: function(response, url) {
-        console.debug("RSP", response);
         this.urls.checked++;
 
         if (!('item' in response)) {
@@ -64,8 +63,6 @@ YaCyPage.Func.CrawlStart.prototype = {
             robotsInfo.addClass("ycu-data-unknown");
             this.urls.unknown++;
             break;
-          default:
-            console.debug("ROBOTS unkwn:", response.robots);
         }
 
         if (response.favicon.length > 0) {
@@ -84,7 +81,6 @@ YaCyPage.Func.CrawlStart.prototype = {
       /** Handle the JSON response from getpageinfo.json for a single URL
        * @param {object} JSON response object */
       single: function(response, url) {
-        console.debug("RSP", response);
         var crawlAllowed = true;
         this.urls.checked++;
 
