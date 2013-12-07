@@ -3,100 +3,138 @@
 <head>
   <title>YaCy '#[clientname]#': OAI-PMH Import</title>
   #%env/templates/header-backend.template%#
+  <script type="text/javascript" src="/js/yaml/pages/importOAIPMH.js"></script>
   #(import)#::
   <!--<meta http-equiv="REFRESH" content="10" />-->
   #(/import)#
 </head>
 
 <body id="indexImportOAIPMH">
-#%env/templates/page-start.template%#
+  #%env/templates/page-start.template%#
 
-<div id="devInfo">
-Todo:
- - code should return input data on error, to prefill form
-</div>
+  <div id="devInfo">
+    Todo:
+    - code should return input data on error, to prefill form
+    status: valid html5
+  </div>
 
-        <div id="formResults">
-          #(import-one)#::
-          <p class="success">
-            <ul>
-              <li><strong>Source:</strong> #[source]#</li>
-              <li><strong>Processed:<strong> #[count]# records</li>
-              <li><strong>ResumptionToken:</strong> #[rt]#</li>
-            </ul>
-          </p>
-          ::
-          <p class="error">
-            <strong>Import failed:</strong> #[error]#
-          </p>
-          #(/import-one)#
-          #(status)#::
-          <p class="success">Import started!</p>
-          ::
-          <p class="error">
-            <strong>Bad input data:</strong> #[message]#
-          </p>
-          #(/status)#
-        </div>
+  <div id="formResults">
+    #(import-one)#::
+    <p class="success">
+      <ul>
+        <li><strong>Source:</strong> #[source]#</li>
+        <li><strong>Processed:<strong> #[count]# records</li>
+        <li><strong>ResumptionToken:</strong> #[rt]#</li>
+      </ul>
+    </p>
+    ::
+    <p class="error">
+      <strong>Import failed:</strong> #[error]#
+    </p>
+    #(/import-one)#
+    #(status)#::
+    <p class="success">Import started!</p>
+    ::
+    <p class="error">
+      <strong>Bad input data:</strong> #[message]#
+    </p>
+    #(/status)#
+  </div>
 
-        <h1>OAI-PMH Import</h1>
+  <h1>OAI-PMH Import</h1>
+  <p>
+    Results from the import can be monitored in the <a href="/CrawlResults.html?process=7">indexing results for surrogates</a>.
+  </p>
+
+  <form action="IndexImportOAIPMH_p.html#formResults" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
+    <fieldset>
+      <legend>Single request import</legend>
+      <div class="description">
         <p>
-          Results from the import can be monitored in the <a href="/CrawlResults.html?process=7">indexing results for surrogates</a>.
+          This will submit only a single request as given here to a OAI-PMH server and imports records into the index.
         </p>
-
-        <form action="IndexImportOAIPMH_p.html#formResults" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
-          <fieldset>
-            <legend>Single request import</legend>
-            <div class="description">
-              <p>
-                This will submit only a single request as given here to a OAI-PMH server and imports records into the index.
-              </p>
-            </div>
-            <fieldset class="formSection">
-              <legend>OAI-PMH source</legend>
-              <div class="content">
-                <input name="urlstartone" type="text" value="#[defaulturl]#"/>
-              </div>
-            </fieldset>
-            <fieldset class="formControl">
-              <div class="content">
-                <button type="submit" name="submit" class="icon-run primary">Import OAI-PMH source</button>
-              </div>
-            </fieldset>
-          </fieldset>
-        </form>
-
-        <form action="IndexImportOAIPMH_p.html#formResults" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
-        <fieldset>
-          <legend>Import all Records</legend>
-          <div class="description">
-            <p>
-              Import all records from a server that follow according to resumption elements into index.
+      </div>
+      <fieldset class="formSection">
+        <legend>OAI-PMH source</legend>
+        <div class="content">
+          <input name="urlstartone" id="singleURL" type="text" value="#[defaulturl]#"/>
+          <div class="formHint hidden">
+            <p class="ok">
+              The entered location looks correct.
+            </p>
+            <p class="error" data-id="invalid">
+              The entered URL is not valid.
+            </p>
+            <p class="error" data-id="protocol">
+              The entered URL is not valid. Only <code>HTTP</code> protocol URLs are allowed.
+            </p>
+            <p class="error" data-id="empty">
+              You need to enter a URLs to start your crawl.
+            </p>
+            <p class="help">
+              Please define a start-url for your crawl.
             </p>
           </div>
-          <fieldset class="formSection">
-            <legend>OAI-PMH source</legend>
-            <div class="content">
-              <input name="urlstart" type="text" value=""/>
-            </div>
-          </fieldset>
-          <fieldset class="formControl">
-            <div class="content">
-              #(optiongetlist)#::
-              <button name="getlist" type="submit" class="icon-run">Import from a list</button>
-              #(/optiongetlist)#
-              <button type="submit" name="importroot" class="icon-run primary">Import OAI-PMH source</button>
-            </div>
-          </fieldset>
-        </fieldset>
-      </form>
-
-      <fieldset class="main">
-        <legend>OAI-PMH Servers</legend>
-        <div class="content noIndent">
-          <iframe src="/IndexImportOAIPMHList_p.html#(iframetype)#::?import=::?source=#(/iframetype)#" class="autoSize" scrolling="no"></iframe>
         </div>
       </fieldset>
-#%env/templates/page-end.template%#
+      <fieldset class="formControl">
+        <div id="ycuErrorCountSingle" class="description hiddden"></div>
+        <div class="content">
+          <button type="submit" name="submit" id="submitSingleSource" class="icon-run primary">Import OAI-PMH source</button>
+        </div>
+      </fieldset>
+    </fieldset>
+  </form>
+
+  <form action="IndexImportOAIPMH_p.html#formResults" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
+    <fieldset>
+      <legend>Import all Records</legend>
+      <div class="description">
+        <p>
+          Import all records from a server that follow according to resumption elements into index.
+        </p>
+      </div>
+      <fieldset class="formSection">
+        <legend>OAI-PMH source</legend>
+        <div class="content">
+          <input name="urlstart" id="allURL" type="text" value=""/>
+          <div class="formHint hidden">
+            <p class="ok">
+              The entered location looks correct.
+            </p>
+            <p class="error" data-id="invalid">
+              The entered URL is not valid.
+            </p>
+            <p class="error" data-id="protocol">
+              The entered URL is not valid. Only <code>HTTP</code> protocol URLs are allowed.
+            </p>
+            <p class="error" data-id="empty">
+              You need to enter a URLs to start your crawl.
+            </p>
+            <p class="help">
+              Please define a start-url for your crawl.
+            </p>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="formControl">
+        <div id="ycuErrorCountAll" class="description"></div>
+        <div class="content">
+          #(optiongetlist)#::
+          <button name="getlist" id="submitAllListSource" type="submit" class="icon-run">Import from a list</button>
+          #(/optiongetlist)#
+          <button type="submit" id="submitAllSource" name="importroot" class="icon-run primary">Import OAI-PMH source</button>
+        </div>
+      </fieldset>
+    </fieldset>
+  </form>
+
+  <fieldset class="main">
+    <legend>OAI-PMH Servers</legend>
+    <div class="content noIndent">
+      <iframe src="/IndexImportOAIPMHList_p.html#(iframetype)#::?import=::?source=#(/iframetype)#" class="autoSize"></iframe>
+    </div>
+  </fieldset>
+  #%env/templates/page-end.template%#
 </body>
 </html>
