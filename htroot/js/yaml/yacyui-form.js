@@ -1559,11 +1559,12 @@ YaCyUi.Form.Validator = function(config) {
   if (typeof this.config.display !== 'undefined') {
     var msg = '<p><span id="ycu-errors-message"></span>';
     var linked = false;
-    if (typeof this.config.showLink === 'boolean' && this.config.showLink) {
-      msg += ' <a href="#" id="ycu-errors-show">Show errors.</a>';
+    if (typeof this.config.showLink === 'undefined' ||
+      (typeof this.config.showLink === 'boolean' && this.config.showLink)) {
+      msg = msg + ' <a href="#" id="ycu-errors-show">Show errors.</a>';
       linked = true;
     }
-    msg += '</p>';
+    msg = msg + '</p>';
     this.config.display.append(msg);
     if (linked) {
       $('#ycu-errors-show').on('click', function(evObj) {
@@ -1615,7 +1616,7 @@ YaCyUi.Form.Validator.prototype = {
     }
     if (typeof this.config.display !== 'undefined') {
       if (result[1] > 0) {
-        this.config.display.html(
+        $('#ycu-errors-message').html(
           '<s class="sym sym-warning"><i></i><i></i></s>' +
           'There ' + (result[1] > 1 ? 'are ' : 'is ') +
           result[1] + ' error' + (result[1] > 1 ? 's' : '') +
