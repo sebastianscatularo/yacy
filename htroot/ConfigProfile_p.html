@@ -8,100 +8,104 @@
 <body id="configProfile">
   #%env/templates/page-start.template%#
 
-        <h1>Your Personal Profile</h1>
-        <p>
-          You can create a personal profile here, which can be seen by other YaCy-members or <a href="ViewProfile.html?hash=localhash">in the public</a> using a <a href="ViewProfile.rdf?hash=localhash">FOAF RDF file</a>.
-        </p>
+  <div id="devInfo">
+    Status: valid html5
+  </div>
 
-        <form action="ConfigProfile_p.html" method="post" enctype="multipart/form-data">
-          <fieldset class="main">
-            <legend>Profile</legend>
-            <fieldset class="formGroup">
-              <legend>Personal Details</legend>
-              <fieldset class="formSection">
-                <legend>Name</legend>
-                <div class="content">
-                  <input type="text" name="name" id="name" size="40" maxlength="1000" value="#[name]#" />
-                </div>
-              </fieldset>
-              <fieldset class="formSection">
-                <legend>Nick Name</legend>
-                <div class="content">
-                  <input type="text" name="nickname" id="nickname" size="40" maxlength="1000" value="#[nickname]#" />
-                </div>
-              </fieldset>
-              <fieldset class="formSection">
-                <legend>Homepage</legend>
-                <div class="content">
-                  <input type="text" name="homepage" id="homepage" size="40" maxlength="1000" value="#[homepage]#" />
-                  <p>
-                    This appears on every <a href="/Supporter.html">Supporter Page</a> as long as your peer is online.
-                  </p>
-                </div>
-              </fieldset>
-            </fieldset>
+  <h1>Your Personal Profile</h1>
+  <p>
+    You can create a personal profile here, which can be seen by other YaCy-members or <a href="ViewProfile.html?hash=localhash">in the public</a> using a <a href="ViewProfile.rdf?hash=localhash">FOAF RDF file</a>.
+  </p>
 
-            <fieldset class="formGroup collapsible">
-              <legend>Contact</legend>
-              <fieldset class="formSection">
-                <legend>eMail</legend>
-                <div class="content">
-                  <input type="text" name="email" id="email" size="40" maxlength="1000" value="#[email]#" />
-                </div>
-              </fieldset>
-              <fieldset class="formSection">
-                <legend>ICQ</legend>
-                <div class="content">
-                  <input type="text" name="icq" id="icq" size="20" maxlength="9" value="#[icq]#" />
-                </div>
-              </fieldset>
-              <fieldset class="formSection">
-                <legend>Jabber</legend>
-                <div class="content">
-                  <input type="text" name="jabber" id="jabber" size="40" maxlength="1000" value="#[jabber]#" />
-                </div>
-              </fieldset>
-              <fieldset class="formSection">
-                <legend>Yahoo!</legend>
-                <div class="content">
-                  <input type="text" name="yahoo" id="yahoo" size="40" maxlength="1000" value="#[yahoo]#" />
-                </div>
-              </fieldset>
-              <fieldset class="formSection">
-                <legend>MSN</legend>
-                <div class="content">
-                  <input type="text" name="msn" id="msn" size="40" maxlength="1000" value="#[msn]#" />
-                </div>
-              </fieldset>
-              <fieldset class="formSection">
-                <legend>Skype</legend>
-                <div class="content">
-                  <input type="text" name="skype" id="skype" size="40" maxlength="1000" value="#[skype]#" />
-                </div>
-              </fieldset>
-            </fieldset>
+  <form action="ConfigProfile_p.html" method="post" enctype="multipart/form-data">
+    <fieldset class="main">
+      <legend>Profile</legend>
+      <fieldset class="formGroup">
+        <legend>Personal Details</legend>
+        <fieldset class="formSection">
+          <legend>Name</legend>
+          <div class="content">
+            <input type="text" name="name" id="name" size="40" maxlength="1000" value="#[name]#" />
+          </div>
+        </fieldset>
+        <fieldset class="formSection">
+          <legend>Nick Name</legend>
+          <div class="content">
+            <input type="text" name="nickname" id="nickname" size="40" maxlength="1000" value="#[nickname]#" />
+          </div>
+        </fieldset>
+        <fieldset class="formSection">
+          <legend>Homepage</legend>
+          <div class="content">
+            <input type="text" name="homepage" id="homepage" size="40" maxlength="1000" value="#[homepage]#" />
+            <p>
+              This appears on every <a href="/Supporter.html">Supporter Page</a> as long as your peer is online.
+            </p>
+          </div>
+        </fieldset>
+      </fieldset>
 
-            <fieldset class="formGroup collapsible">
-              <legend>Comment</legend>
-              <fieldset class="formSection">
-                <legend>Comment Text</legend>
-                <div class="content">
-                  <textarea name="comment" id="comment">#[comment]#</textarea>
-                  <p class="help">
-                    You can use <a href="WikiHelp.html" onclick="window.open('WikiHelp.html','WikiHelp','toolbar=0,scrollbars=1,location=0,statusbar=0,menubar=0,resizable=1,width=640,height=480');return false;">Wiki Code</a> here.
-                  </p>
-                </div>
-              </fieldset>
-            </fieldset>
+      <fieldset class="formGroup collapsible">
+        <legend>Contact</legend>
+        <fieldset class="formSection">
+          <legend>eMail</legend>
+          <div class="content">
+            <input type="text" name="email" id="email" size="40" maxlength="1000" value="#[email]#" />
+          </div>
+        </fieldset>
+        <fieldset class="formSection">
+          <legend>ICQ</legend>
+          <div class="content">
+            <input type="text" name="icq" id="icq" size="20" maxlength="9" value="#[icq]#" />
+          </div>
+        </fieldset>
+        <fieldset class="formSection">
+          <legend>Jabber</legend>
+          <div class="content">
+            <input type="text" name="jabber" id="jabber" size="40" maxlength="1000" value="#[jabber]#" />
+          </div>
+        </fieldset>
+        <fieldset class="formSection">
+          <legend>Yahoo!</legend>
+          <div class="content">
+            <input type="text" name="yahoo" id="yahoo" size="40" maxlength="1000" value="#[yahoo]#" />
+          </div>
+        </fieldset>
+        <fieldset class="formSection">
+          <legend>MSN</legend>
+          <div class="content">
+            <input type="text" name="msn" id="msn" size="40" maxlength="1000" value="#[msn]#" />
+          </div>
+        </fieldset>
+        <fieldset class="formSection">
+          <legend>Skype</legend>
+          <div class="content">
+            <input type="text" name="skype" id="skype" size="40" maxlength="1000" value="#[skype]#" />
+          </div>
+        </fieldset>
+      </fieldset>
 
-            <fieldset class="formControl">
-              <div class="content">
-                <button type="submit" name="set" class="primary icon-run">Save Changes</button>
-              </div>
-            </fieldset>
-          </fieldset>
-        </form>
+      <fieldset class="formGroup collapsible">
+        <legend>Comment</legend>
+        <fieldset class="formSection">
+          <legend>Comment Text</legend>
+          <div class="content">
+            <textarea name="comment" id="comment">#[comment]#</textarea>
+            <p class="help">
+              You can use <a href="WikiHelp.html" onclick="window.open('WikiHelp.html','WikiHelp','toolbar=0,scrollbars=1,location=0,statusbar=0,menubar=0,resizable=1,width=640,height=480');return false;">Wiki Code</a> here.
+            </p>
+          </div>
+        </fieldset>
+      </fieldset>
 
-    #%env/templates/page-end.template%#
-  </body>
-  </html>
+      <fieldset class="formControl">
+        <div class="content">
+          <button type="submit" name="set" class="primary icon-run">Save Changes</button>
+        </div>
+      </fieldset>
+    </fieldset>
+  </form>
+
+  #%env/templates/page-end.template%#
+</body>
+</html>
