@@ -7,18 +7,17 @@ YaCyPage.addValidators = function(toggles) {
     onload: true,
     showLink: false
   });
-  validator
-    .addElement($('#crawlingURL'), {
-      validators: [{
-        type: 'notEmpty',
-        error: 'empty'
-      }, {
-        type: 'url',
-        error: 'invalid'
-      }, {
-        type: 'urlProtocol',
-        protocols: ['https?'],
-        error: 'protocol'
-      }]
-    });
+  validator.addElement($('#crawlingURL'), {
+    validators: [{
+      type: 'notEmpty',
+      error: 'empty'
+    }, {
+      type: 'url',
+      error: 'invalid'
+    }, {
+      type: 'urlProtocol',
+      protocols: ['https?'],
+      error: 'protocol'
+    }]
+  });
 };
