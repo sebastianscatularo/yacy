@@ -1,5 +1,3 @@
-YaCyPage.Parts = {};
-
 /** Initialize the page validators. */
 YaCyPage.addValidators = function(toggles) {
   // init parts
