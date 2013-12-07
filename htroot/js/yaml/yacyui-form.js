@@ -1253,6 +1253,10 @@ YaCyUi.Form.ValidatorFunc = {
     return data.length === 0 ? false : true;
   },
 
+  number: function(data) {
+    return data.length > 0 ? !isNaN(data) : false;
+  },
+
   /** Test if given number is in range.
    * @param {string} String to test
    * @param {number} Minimum value
@@ -1422,6 +1426,12 @@ YaCyUi.Form.ValidatorElement.prototype = {
             YaCyUi.Form.ValidatorFunc.notEmpty(data), validator);
         });
         break;
+      case 'number':
+        this.validators.push(function(data) {
+          return self.private.parseResult(
+            YaCyUi.Form.ValidatorFunc.number(data), validator);
+        });
+        break;
       case 'range':
         this.validators.push(function(data) {
           var result = YaCyUi.Form.ValidatorFunc.range(data, validator.min, validator.max,
@@ -1547,27 +1557,31 @@ YaCyUi.Form.ValidatorElement.prototype = {
   }
 };
 
+YaCyUi.Form.ValidatorCount = 0;
 YaCyUi.Form.Validator = function(config) {
   var self = this;
   this.elements = {};
   this.config = config || {};
   this.invalidElements = [];
+  this.count = ++YaCyUi.Form.ValidatorCount;
 
   if (typeof config.toggle !== 'undefined') {
     config.toggle.prop('disabled', false);
   }
   if (typeof this.config.display !== 'undefined') {
-    var msg = '<p><span id="ycu-errors-message"></span>';
+    var msg = '<p><span id="ycu-errors-message-' + this.count +
+      '"></span>';
     var linked = false;
     if (typeof this.config.showLink === 'undefined' ||
       (typeof this.config.showLink === 'boolean' && this.config.showLink)) {
-      msg = msg + ' <a href="#" id="ycu-errors-show">Show errors.</a>';
+      msg = msg + ' <a href="#" id="ycu-errors-show-' +
+        this.count + '">Show errors.</a>';
       linked = true;
     }
     msg = msg + '</p>';
     this.config.display.append(msg);
     if (linked) {
-      $('#ycu-errors-show').on('click', function(evObj) {
+      $('#ycu-errors-show-' + this.count).on('click', function(evObj) {
         evObj.preventDefault();
         self.showErrors();
       });
@@ -1616,7 +1630,7 @@ YaCyUi.Form.Validator.prototype = {
     }
     if (typeof this.config.display !== 'undefined') {
       if (result[1] > 0) {
-        $('#ycu-errors-message').html(
+        $('#ycu-errors-message-' + this.count).html(
           '<s class="sym sym-warning"><i></i><i></i></s>' +
           'There ' + (result[1] > 1 ? 'are ' : 'is ') +
           result[1] + ' error' + (result[1] > 1 ? 's' : '') +
