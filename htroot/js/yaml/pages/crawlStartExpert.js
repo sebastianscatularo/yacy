@@ -416,15 +416,15 @@ YaCyPage.init = function() {
     }).addElement($('#crawlingDepth'), {
       validators: [{
         type: 'range',
-        min: 0,
-        max: 99,
+        min: $('#crawlingDepth').data('min'),
+        max: $('#crawlingDepth').data('max'),
         error: 'range'
       }]
     }).addElement($('#crawlingDomMaxPages'), {
       validators: [{
         type: 'range',
-        min: -1,
-        max: 999999
+        min: $('#crawlingDomMaxPages').data('min'),
+        max: $('#crawlingDomMaxPages').data('max')
       }]
     }).addElement($('#mustnotmatch, #ipMustnotmatch, #indexmustnotmatch, #indexcontentmustnotmatch'), {
       validators: [{
