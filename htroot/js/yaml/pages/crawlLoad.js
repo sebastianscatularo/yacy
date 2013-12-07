@@ -15,12 +15,12 @@ YaCyPage.addValidators = function(toggles) {
         type: 'notEmpty',
         error: 'empty'
       }, {
+        type: 'url',
+        error: 'invalid'
+      }, {
         type: 'urlProtocol',
         protocols: ['https?'],
         error: 'protocol'
-      }, {
-        type: 'url',
-        error: 'invalid'
       }]
     });
 };
