@@ -9,13 +9,11 @@ YaCyPage.init = function() {
   });
   validator.addElement($('#acceptCrawlLimit'), {
     validators: [{
-      type: 'notEmpty',
-      error: 'empty'
+      type: 'notEmpty'
     }, {
       type: 'range',
       min: $('#acceptCrawlLimit').data('min'),
-      max: $('#acceptCrawlLimit').data('max'),
-      error: 'range'
+      max: $('#acceptCrawlLimit').data('max')
     }]
   });
 };
