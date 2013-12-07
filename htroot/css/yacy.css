@@ -2683,6 +2683,9 @@ div .center {
   div .center iframe {
     display: block; }
 
+iframe {
+  overflow: hidden; }
+
 .nobr {
   white-space: nowrap; }
 

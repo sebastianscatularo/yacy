@@ -15,7 +15,7 @@
     }
   }
   function reloadGraph() {
-    document.images["graph"].src="PerformanceGraph.png?nomem=&time="+(new Date()).getTime();
+    document.images["graph"].src="PerformanceGraph.png?nomem=&amp;time="+(new Date()).getTime();
     window.status="";
   }
   function init() {
@@ -30,11 +30,13 @@
   #%env/templates/page-start.template%#
 
   <div id="devInfo">
-    Banner image generator does not respect set border color
+    - Banner image generator does not respect set border color
+    Status
+    - valid HTML5
   </div>
 
   <a href="https://gitorious.org/yacy/rc1" target="_blank" class="noExt">
-    <img src="env/grafics/forkme.png" style="position:absolute;top:0px;right:0px;z-index: 100;"/>
+    <img src="env/grafics/forkme.png" style="position:absolute;top:0px;right:0px;z-index: 100;" alt="Fork this project on Gitorious"/>
   </a>
 
   <!-- urgent -->
@@ -173,15 +175,15 @@
     </h1>
     <fieldset class="framed">
       <legend class="light">Terminal</legend>
-      <iframe src="rssTerminal.html?set=PEERNEWS,REMOTESEARCH,LOCALSEARCH,REMOTEINDEXING,LOCALINDEXING,DHTRECEIVE,DHTSEND,PROXY&amp;width=600px&amp;height=180px&amp;maxlines=20&amp;maxwidth=120" class="autoSize" scrolling="no" style="width:600px;"></iframe>
+      <iframe src="rssTerminal.html?set=PEERNEWS,REMOTESEARCH,LOCALSEARCH,REMOTEINDEXING,LOCALINDEXING,DHTRECEIVE,DHTSEND,PROXY&amp;width=600px&amp;height=180px&amp;maxlines=20&amp;maxwidth=120" class="autoSize" style="width:600px;"></iframe>
     </fieldset>
     <fieldset class="framed">
       <legend class="light">Performance Graph</legend>
-      <img src="PerformanceGraph.png?width=600&nomem=" id="graph" alt="PerformanceGraph" width="600" height="240"/>
+      <img src="PerformanceGraph.png?width=600&amp;nomem=" id="graph" alt="PerformanceGraph" width="600" height="240"/>
     </fieldset>
     <br />
-    <fieldset class="framed" id="banner">
-      <div class="center" id="banner">
+    <fieldset class="framed">
+      <div class="center">
         <img src="Banner.png?textcolor=000000&amp;bgcolor=DEE6F3&amp;bordercolor=DEE6F3" alt="YaCy banner" width="468" height="60"/>
       </div>
     </fieldset>

@@ -145,6 +145,10 @@ div {
   }
 }
 
+iframe {
+  overflow:hidden; // same as scrolling=no
+}
+
 // non breakable content
 .nobr {
   white-space:nowrap;

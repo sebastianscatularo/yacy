@@ -115,11 +115,11 @@
           <br/>
           Crawler: #[trafficCrawler]#
         </p>
-        <p>
+        <div class="p">
           <form class="noSpace" action="Status.html?ResetTraffic=true">
             <button class="icon-delete" type="submit">Reset traffic counters</button>
           </form>
-        </p>
+        </div>
       </div>
     </fieldset>
     <fieldset class="formSection">
@@ -130,11 +130,11 @@
           <br/>
           Max: #[connectionsMax]#
         </p>
-        <p>
+        <div class="p">
           <form class="noSpace" action="Connections_p.html">
             <button class="icon-showMore" type="submit">View details</button>
           </form>
-        </p>
+        </div>
       </div>
     </fieldset>
     <fieldset class="formSection">
@@ -174,11 +174,11 @@
       <legend>Loader queue</legend>
       <div class="content">
         #[loaderQueueSize]#&nbsp;<progress max="#[loaderQueueMax]#" value="#[loaderQueueSize]#"></progress>&nbsp;#[loaderQueueMax]#
-        <p>
+        <div class="p">
           <form class="noSpace" action="IndexCreateLoaderQueue_p.html">
             <button type="submit" class="icon-showMore">View loader queue</button>
           </form>
-        </p>
+        </div>
       </div>
     </fieldset>
     <fieldset class="formSection">
@@ -186,28 +186,28 @@
       <div class="content">
         Size: #[localCrawlQueueSize]#
         #(localCrawlPaused)#::<em>(paused)</em>#(/localCrawlPaused)#
-        <p>
+        <div class="p">
           <form class="noSpace inline" action="Status.html?#(localCrawlPaused)#pauseCrawlJob::continueCrawlJob#(/localCrawlPaused)#=&amp;jobType=localCrawl">
             <button type="submit" class="icon-run">#(localCrawlPaused)#pause local crawl::continue local crawl#(/localCrawlPaused)#</button>
           </form>
           <form class="noSpace inline" action="IndexCreateQueues_p.html?stack=LOCAL">
             <button type="submit" class="icon-run">View local queue</button>
           </form>
-        </p>
+        </div>
       </div>
       <fieldset class="formSection">
         <legend>Remote crawl</legend>
         <div class="content">
           Size: #[remoteTriggeredCrawlQueueSize]#
           #(localCrawlPaused)#::<em>(paused)</em>#(/localCrawlPaused)#
-          <p>
+          <div class="p">
             <form class="noSpace inline" action="Status.html?#(remoteTriggeredCrawlPaused)#pauseCrawlJob::continueCrawlJob#(/remoteTriggeredCrawlPaused)#=&amp;jobType=remoteTriggeredCrawl">
               <button type="submit" class="icon-run">#(remoteTriggeredCrawlPaused)#pause remote crawl::continue remote crawl#(/remoteTriggeredCrawlPaused)#</button>
             </form>
             <form class="noSpace inline" action="IndexCreateQueues_p.html?stack=REMOTE">
               <button type="submit" class="icon-run">View remote queue</button>
             </form>
-          </p>
+          </div>
         </div>
       </fieldset>
       <fieldset class="formSection">
@@ -256,4 +256,4 @@
       #(/tray)#
     </div>
   </fieldset>
-</div>
+</fieldset>
