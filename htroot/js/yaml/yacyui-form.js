@@ -88,7 +88,12 @@ YaCyUi.Func.Form = {
     YaCyUi.Form.Button = new YaCyUi.Func.Form.Button();
 
     // init jQuery UI spinner elements
-    $('.spinner').spinner();
+    $('.spinner').each(function() {
+      $(this).spinner({
+        min: typeof $(this).data('min') === 'undefined' ? null : $(this).data('min'),
+        max: typeof $(this).data('max') === 'undefined' ? null : $(this).data('max'),
+      });
+    });
 
     // set checkAll button action for tables with checkboxes
     $('table th input[type="checkbox"][data-action~="checkAllToggle"]').on('change', function() {
