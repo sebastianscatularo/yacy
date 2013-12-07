@@ -3,164 +3,217 @@
 <head>
   <title>YaCy '#[clientname]#': Content Integration: Retrieval from phpBB3 Databases</title>
   #%env/templates/header-backend.template%#
+  <script type="text/javascript" src="/js/yaml/pages/contentIntegrationPHPBB3.js"></script>
 </head>
 
 <body id="contentIntegrationPHPBB3">
   #%env/templates/page-start.template%#
 
-<div id="devInfo">
-Todo:
- - database type cannot be pre-selected (needs code change)
-</div>
+  <div id="devInfo">
+    Todo:
+    - database type cannot be pre-selected (needs code change)
+    status: valid html5
+  </div>
 
-        <div id="formResults" class="message hidden">
-          #(check)#::
-          <h2>Check results</h2>
-          <p>Posts in database: #[posts]#</p>
-          <h3>First entry:</h3>
-          #[first]#
-          <h3>Last entry:</h3>
-          #[last]#
-          ::
-          <p class="error">Check failed: #[error]#</p>
-          #(/check)#
+  <div id="formResults" class="message hidden">
+    #(check)#::
+    <h2>Check results</h2>
+    <p>Posts in database: #[posts]#</p>
+    <h3>First entry:</h3>
+    #[first]#
+    <h3>Last entry:</h3>
+    #[last]#
+    ::
+    <p class="error">Check failed: #[error]#</p>
+    #(/check)#
 
-          #(export)#::
-          <p>
-            Export successful! Wrote #[files]# files in <code>DATA/SURROGATES/in</code>.
-          </p>
-          ::
-          <p class="error">Export failed: #[error]#</p>
-          #(/export)#
+    #(export)#::
+    <p>
+      Export successful! Wrote #[files]# files in <code>DATA/SURROGATES/in</code>.
+    </p>
+    ::
+    <p class="error">Export failed: #[error]#</p>
+    #(/export)#
 
-          #(import)#::
-          <p>Import successful!</p>
-          ::
-          <p class="error">Import failed: #[error]#</p>
-          #(/import)#
-        </div>
+    #(import)#::
+    <p>Import successful!</p>
+    ::
+    <p class="error">Import failed: #[error]#</p>
+    #(/import)#
+  </div>
 
-        <h1>Content Integration: Retrieval from phpBB3 Databases</h1>
-        <p>
-          It is possible to extract texts directly from <em>mySQL</em> and <em>postgreSQL</em> databases.
-          Each extraction is specific to the data that is hosted in the database.
-          This interface gives you access to the <em>phpBB3</em> forums software content.
-        </p>
-        <p>
-          If you read from an imported database, here are some hints to get around problems when importing dumps in <em>phpMyAdmin</em>:
-        </p>
-        <ul>
-          <li>
-            before importing large database dumps, set the following Line in <code>phpmyadmin/config.inc.php</code> and place your dump file in <code>/tmp</code> (Otherwise it is not possible to upload files larger than 2MB):
-            <code>$cfg['UploadDir'] = '/tmp';</code>
-          </li>
-          <li>deselect the partial import flag</li>
-        </ul>
-        <p>
-          When an export is started, surrogate files are generated into <code>DATA/SURROGATE/in</code> which are automatically fetched by an indexer thread.
-          All indexed surrogate files are then moved to <code>DATA/SURROGATE/out</code> and can be re-cycled when an index is deleted.
-        </p>
+  <h1>Content Integration: Retrieval from phpBB3 Databases</h1>
+  <p>
+    It is possible to extract texts directly from <em>mySQL</em> and <em>postgreSQL</em> databases.
+    Each extraction is specific to the data that is hosted in the database.
+    This interface gives you access to the <em>phpBB3</em> forums software content.
+  </p>
+  <p>
+    If you read from an imported database, here are some hints to get around problems when importing dumps in <em>phpMyAdmin</em>:
+  </p>
+  <ul>
+    <li>
+      before importing large database dumps, set the following Line in <code>phpmyadmin/config.inc.php</code> and place your dump file in <code>/tmp</code> (Otherwise it is not possible to upload files larger than 2MB):
+      <code>$cfg['UploadDir'] = '/tmp';</code>
+    </li>
+    <li>deselect the partial import flag</li>
+  </ul>
+  <p>
+    When an export is started, surrogate files are generated into <code>DATA/SURROGATE/in</code> which are automatically fetched by an indexer thread.
+    All indexed surrogate files are then moved to <code>DATA/SURROGATE/out</code> and can be re-cycled when an index is deleted.
+  </p>
 
-        <form action="ContentIntegrationPHPBB3_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
-          <fieldset>
-            <legend>phpBB3 Export</legend>
-            <fieldset class="formSection">
-              <legend>URL Stub</legend>
-              <div class="content">
-                <p>
-                  <input type="text" name="content.phpbb3.urlstub" value="#[content.phpbb3.urlstub]#"/>
-                </p>
-                <p>
-                  The URL stub<, like <code>http://forum.yacy-websuche.de</code>this must be the path right in front of <code>/viewtopic.php?</code>.
-                </p>
-              </div>
-            </fieldset>
-            <fieldset class="formSection">
-              <legend>Posts per file</legend>
-              <div class="content">
-                <input type="text" name="content.phpbb3.ppf" value="#[content.phpbb3.ppf]#" class="spinner"/>
-              </div>
-            </fieldset>
-            <fieldset class="formGroup">
-              <legend>Database</legend>
-              <fieldset class="formSection">
-                <legend>Type</legend>
-                <div class="content">
-                  <select name="content.phpbb3.dbtype">
-                    <option value="mysql">mySQL</option>
-                    <option value="pgsql">postgresSQL</option>
-                  </select>
-                </div>
-              </fieldset>
-              <fieldset class="formSection">
-                <legend>Host</legend>
-                <div class="content">
-                  <p>
-                    <label for="content.phpbb3.dbhost">URL</label>
-                    <input type="text" id="content.phpbb3.dbhost" name="content.phpbb3.dbhost" value="#[content.phpbb3.dbhost]#"/>
-                  </p>
-                  <p>
-                    <label for="content.phpbb3.dbport">Port</label>
-                    <input type="text" name="content.phpbb3.dbport" id="content.phpbb3.dbport" value="#[content.phpbb3.dbport]#"/>
-                  </p>
-                </div>
-              </fieldset>
-              <fieldset class="formSection">
-                <legend>Name</legend>
-                <div class="content">
-                  <input type="text" name="content.phpbb3.dbname" id="content.phpbb3.dbname" value="#[content.phpbb3.dbname]#"/>
-                </div>
-              </fieldset>
-              <fieldset class="formSection">
-                <legend>Table Prefix</legend>
-                <div class="content">
-                  <input type="text" name="content.phpbb3.tableprefix" value="#[content.phpbb3.tableprefix]#"/>
-                </div>
-              </fieldset>
-              <fieldset class="formSection">
-                <legend>User</legend>
-                <div class="content">
-                  <p>
-                    <label for="content.phpbb3.dbuser">User name</label>:
-                    <input type="text" name="content.phpbb3.dbuser" id="content.phpbb3.dbuser" value="#[content.phpbb3.dbuser]#"/>
-                  </p>
-                  <p>
-                    <label for="content.phpbb3.dbpw">Password</label>:
-                    <input type="text" name="content.phpbb3.dbpw" id="content.phpbb3.dbpw" value="#[content.phpbb3.dbpw]#"/>
-                  </p>
-                </div>
-              </fieldset>
-            </fieldset>
-
-            <fieldset class="formControl">
-              <div class="content">
-                <button type="submit" name="check" class="icon-run">Check database connection</button>
-                <button type="submit" name="export" class="primary icon-run">Export Content to Surrogates</button>
-              </div>
-            </fieldset>
-          </fieldset>
-        </form>
-
-        <form action="ContentIntegrationPHPBB3_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
-          <fieldset>
-            <legend>phpBB3 Import</legend>
-            <div class="description">
-              <p>Import a database dump.</p>
+  <form action="ContentIntegrationPHPBB3_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
+    <fieldset>
+      <legend>phpBB3 Export</legend>
+      <fieldset class="formSection">
+        <legend>URL Stub</legend>
+        <div class="content">
+          <div class="p">
+            <input type="text" name="content.phpbb3.urlstub" id="urlStub" value="#[content.phpbb3.urlstub]#"/>
+            <div class="formHint hidden">
+              <p class="error" data-id="empty">
+                Please enter a URL-stub to proceed.
+              </p>
+              <p class="error" data-id="invalid">
+                Please specify a valid URL.
+              </p>
+              <p class="error" data-id="protocol">
+                Only URLs with <code>HTTP</code> protocol are allowed.
+              </p>
+              <p class="ok">
+                The entered location looks right.
+              </p>
             </div>
-            <fieldset class="formSection">
-              <legend>URL Stub</legend>
-              <div class="content">
-                <input type="text" name="content.phpbb3.dumpfile" value="#[content.phpbb3.dumpfile]#" size="60" />
+          </div>
+          <p>
+            The URL stub, like <code>http://forum.yacy-websuche.de</code> this must be the path right in front of <code>/viewtopic.php?</code>.
+          </p>
+        </div>
+      </fieldset>
+      <fieldset class="formSection">
+        <legend>Posts per file</legend>
+        <div class="content">
+          <input type="text" name="content.phpbb3.ppf" id="postsPerFile" value="#[content.phpbb3.ppf]#" class="spinner" data-min="1"/>
+          <div class="formHint hidden">
+            <p class="error" data-id="empty">
+              Please enter a value greater than <code>0</code>.
+            </p>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="formGroup">
+        <legend>Database</legend>
+        <fieldset class="formSection">
+          <legend>Type</legend>
+          <div class="content">
+            <select name="content.phpbb3.dbtype">
+              <option value="mysql">mySQL</option>
+              <option value="pgsql">postgresSQL</option>
+            </select>
+          </div>
+        </fieldset>
+        <fieldset class="formSection">
+          <legend>Host</legend>
+          <div class="content">
+            <div class="p">
+              <label for="dbHost">URL</label>
+              <input type="text" id="dbHost" name="content.phpbb3.dbhost" value="#[content.phpbb3.dbhost]#"/>
+              <div class="formHint hidden">
+                <p class="error" data-id="empty">
+                  Please enter a host-name or URL.
+                </p>
               </div>
-            </fieldset>
+            </div>
+            <div class="p">
+              <label for="dbPort">Port</label>
+              <input type="text" name="content.phpbb3.dbport" id="dbPort" value="#[content.phpbb3.dbport]#"/>
+              <div class="formHint hidden">
+                <p class="error">
+                  Please enter a port number.
+                </p>
+              </div>
+            </div>
+          </div>
+        </fieldset>
+        <fieldset class="formSection">
+          <legend>Name</legend>
+          <div class="content">
+            <input type="text" name="content.phpbb3.dbname" id="dbName" value="#[content.phpbb3.dbname]#"/>
+            <div class="formHint hidden">
+              <p class="error">
+                Please enter a database name.
+              </p>
+            </div>
+          </div>
+        </fieldset>
+        <fieldset class="formSection">
+          <legend>Table Prefix</legend>
+          <div class="content">
+            <input type="text" name="content.phpbb3.tableprefix" value="#[content.phpbb3.tableprefix]#"/>
+          </div>
+        </fieldset>
+        <fieldset class="formSection">
+          <legend>User</legend>
+          <div class="content">
+            <div class="p">
+              <label for="dbUser">User name</label>:
+              <input type="text" name="content.phpbb3.dbuser" id="dbUser" value="#[content.phpbb3.dbuser]#"/>
+              <div class="formHint hidden">
+                <p class="error">
+                  Please enter a database user name.
+                </p>
+              </div>
+            </div>
+            <div class="p">
+              <label for="dbPw">Password</label>:
+              <input type="text" name="content.phpbb3.dbpw" id="dbPw" value="#[content.phpbb3.dbpw]#"/>
+              <div class="formHint hidden">
+                <p class="error">
+                  Please enter a password for the database user.
+                </p>
+              </div>
+            </div>
+          </div>
+        </fieldset>
+      </fieldset>
 
-            <fieldset class="formControl">
-              <div class="content">
-                <button type="submit" name="import" class="primary icon-run">Import Dump</button>
-              </div>
-            </fieldset>
-          </fieldset>
-        </form>
-    #%env/templates/page-end.template%#
-  </body>
+      <fieldset class="formControl">
+        <div id="ycuErrorCountExport" class="description hiddden"></div>
+        <div class="content">
+          <button type="submit" name="check" id="submitCheck" class="icon-run">Check database connection</button>
+          <button type="submit" name="export" id="submitExport" class="primary icon-run">Export Content to Surrogates</button>
+        </div>
+      </fieldset>
+    </fieldset>
+  </form>
+
+  <form action="ContentIntegrationPHPBB3_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
+    <fieldset>
+      <legend>phpBB3 Import</legend>
+      <div class="description">
+        <p>Import a database dump.</p>
+      </div>
+      <fieldset class="formSection">
+        <legend>Dump file</legend>
+        <div class="content">
+          <input type="text" name="content.phpbb3.dumpfile" id="dumpFile" value="#[content.phpbb3.dumpfile]#" size="60" />
+          <div class="formHint hidden">
+            <p class="error">
+              Please enter a file to import.
+            </p>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="formControl">
+        <div id="ycuErrorCountImport" class="description hiddden"></div>
+        <div class="content">
+          <button type="submit" name="import" id="submitImport" class="primary icon-run">Import Dump</button>
+        </div>
+      </fieldset>
+    </fieldset>
+  </form>
+  #%env/templates/page-end.template%#
+</body>
 </html>
