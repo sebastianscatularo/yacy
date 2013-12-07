@@ -1615,7 +1615,7 @@ YaCyUi.Form.Validator.prototype = {
     }
     if (typeof this.config.display !== 'undefined') {
       if (result[1] > 0) {
-        $('#ycu-errors-message').html(
+        this.config.display.html(
           '<s class="sym sym-warning"><i></i><i></i></s>' +
           'There ' + (result[1] > 1 ? 'are ' : 'is ') +
           result[1] + ' error' + (result[1] > 1 ? 's' : '') +
