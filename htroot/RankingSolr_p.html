@@ -6,129 +6,133 @@
 </head>
 
 <body id="rankingSolr">
-#%env/templates/page-start.template%#
+  #%env/templates/page-start.template%#
 
-        <h1>Solr Ranking Configuration</h1>
+  <div id="devInfo">
+    Status: valid html5
+  </div>
+
+  <h1>Solr Ranking Configuration</h1>
+  <p>
+    These are ranking attributes for Solr. This ranking applies for internal and remote (P2P or shard) Solr access.
+  </p>
+
+  <form action="RankingSolr_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
+    <fieldset>
+      <legend>Profile Selection</legend>
+      <fieldset class="formSection">
+        <legend>Profile</legend>
+        <div class="content">
+          <select id="profile" name="profileNr" onchange='submit()'>
+            #{profiles}#
+            <option value="#[nr]#" #(selected)#::selected="selected"#(/selected)#>#[name]#</option>
+            #{/profiles}#
+          </select>
+        </div>
+      </fieldset>
+    </fieldset>
+  </form>
+
+  <form action="RankingSolr_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
+    <fieldset>
+      <legend>Boost Function</legend>
+      <div class="description">
         <p>
-          These are ranking attributes for Solr. This ranking applies for internal and remote (P2P or shard) Solr access.
+          A Boost Function can combine numeric values from the result document to produce a number which is multiplied with the score value from the query result.
+          To see all available fields, see the <a href="IndexSchema_p.html">YaCy Solr Schema</a> and look for numeric values (these are names with suffix <code>_i</code>).
+          <br/>
+          <em>Example:</em> to order by date, use <code>recip(rord(last_modified),1,1000,1000)</code>, to order by clickdepth, use <code>div(100,add(clickdepth_i,1))</code>.
+          <br/>
+          <s class="sym sym-hint"></s>To find out which kind of operations are possible, see the <a href="http://wiki.apache.org/solr/FunctionQuery">Solr Function Query</a> documentation.
         </p>
+      </div>
+      <fieldset class="formSection">
+        <legend>Boost Function</legend>
+        <div class="content">
+          <p>
+            <input name="bf" id="bf" type="text" value="#[bf]#" />
+          </p>
+        </div>
+      </fieldset>
 
-        <form action="RankingSolr_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
-          <fieldset>
-            <legend>Profile Selection</legend>
-            <fieldset class="formSection">
-              <legend>Profile</legend>
-              <div class="content">
-                <select id="profile" name="profileNr" onchange='submit()'>
-                  #{profiles}#
-                  <option value="#[nr]#" #(selected)#::selected="selected"#(/selected)#>#[name]#</option>
-                  #{/profiles}#
-                </select>
-              </div>
-            </fieldset>
-          </fieldset>
-        </form>
+      <input type="hidden" name="profileNr" value="#[profileNr]#" />
 
-        <form action="RankingSolr_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
-          <fieldset>
-            <legend>Boost Function</legend>
-            <div class="description">
-              <p>
-                A Boost Function can combine numeric values from the result document to produce a number which is multiplied with the score value from the query result.
-                To see all available fields, see the <a href="IndexSchema_p.html">YaCy Solr Schema</a> and look for numeric values (these are names with suffix <code>_i</code>).
-                <br/>
-                <em>Example:</em> to order by date, use <code>recip(rord(last_modified),1,1000,1000)</code>, to order by clickdepth, use <code>div(100,add(clickdepth_i,1))</code>.
-                <br/>
-                <s class="sym sym-hint"></s>To find out which kind of operations are possible, see the <a href="http://wiki.apache.org/solr/FunctionQuery">Solr Function Query</a> documentation.
-              </p>
-            </div>
-            <fieldset class="formSection">
-              <legend>Boost Function</legend>
-              <div class="content">
-                <p>
-                  <input name="bf" id="bf" type="text" align="left" size="100" value="#[bf]#" />
-                </p>
-              </div>
-            </fieldset>
+      <fieldset class="formControl">
+        <div class="content">
+          <button type="submit" name="ResetBF" class="icon-revert">Re-Set to default</button>
+          <button type="submit" name="EnterBF" class="icon-run primary">Set Boost Function</button>
+        </div>
+      </fieldset>
+    </fieldset>
+  </form>
 
-            <input type="hidden" name="profileNr" value="#[profileNr]#" />
+  <form action="RankingSolr_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
+    <fieldset>
+      <legend>Boost Query</legend>
+      <div class="description">
+        <p>
+          The Boost Query is attached to every query. Use this to statically boost specific content in the index.
+          <br/>
+          <em>Example:</em> <code>fuzzy_signature_unique_b:true^100000.0f</code> means that documents, identified as <em>double</em> are ranked very bad and appended to the end of all results (because the unique are ranked high).
+          <br/>
+          To find appropriate fields for this query, see the <a href="IndexSchema_p.html">YaCy Solr Schema</a> and look for boolean values (with suffix <code>_b</code>) or tags inside string fields (with suffix <code>_s</code> or <code>_sxt</code>).
+        </p>
+      </div>
+      <fieldset class="formSection">
+        <legend>Boost Query</legend>
+        <div class="content">
+          <p>
+            <input name="bq" id="bq" type="text" value="#[bq]#" />
+          </p>
+        </div>
+      </fieldset>
 
-            <fieldset class="formControl">
-              <div class="content">
-                <button type="submit" name="ResetBF" class="icon-revert">Re-Set to default</button>
-                <button type="submit" name="EnterBF" class="icon-run primary">Set Boost Function</button>
-              </div>
-            </fieldset>
-          </fieldset>
-        </form>
+      <input type="hidden" name="profileNr" value="#[profileNr]#" />
 
-        <form action="RankingSolr_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
-          <fieldset>
-            <legend>Boost Query</legend>
-            <div class="description">
-              <p>
-                The Boost Query is attached to every query. Use this to statically boost specific content in the index.
-                <br/>
-                <em>Example:</em> <code>fuzzy_signature_unique_b:true^100000.0f</code> means that documents, identified as <em>double</em> are ranked very bad and appended to the end of all results (because the unique are ranked high).
-                <br/>
-                To find appropriate fields for this query, see the <a href="IndexSchema_p.html">YaCy Solr Schema</a> and look for boolean values (with suffix <code>_b</code>) or tags inside string fields (with suffix <code>_s</code> or <code>_sxt</code>).
-              </p>
-            </div>
-            <fieldset class="formSection">
-              <legend>Boost Query</legend>
-              <div class="content">
-                <p>
-                  <input name="bq" id="bq" type="text" align="left" size="100" value="#[bq]#" />
-                </p>
-              </div>
-            </fieldset>
+      <fieldset class="formControl">
+        <div class="content">
+          <button type="submit" name="ResetBQ" class="icon-revert">Re-Set to default</button>
+          <button type="submit" name="EnterBQ" class="icon-run primary">Set Boost Query</button>
+        </div>
+      </fieldset>
+    </fieldset>
+  </form>
 
-            <input type="hidden" name="profileNr" value="#[profileNr]#" />
+  <form action="RankingSolr_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
+    <fieldset>
+      <legend>Solr Boosts</legend>
+      <div class="description">
+        <p>
+          This is the set of searchable fields. Entries without a boost value are not searched. Boost values make hits inside the corresponding field more important.
+        </p>
+      </div>
 
-            <fieldset class="formControl">
-              <div class="content">
-                <button type="submit" name="ResetBQ" class="icon-revert">Re-Set to default</button>
-                <button type="submit" name="EnterBQ" class="icon-run primary">Set Boost Query</button>
-              </div>
-            </fieldset>
-          </fieldset>
-        </form>
+      #{boosts}#
+      <fieldset class="formSection">
+        <legend>#[field]#</legend>
+        <div class="content">
+          <p>
+            <input type="checkbox" id="#[field]#" name="#[field]#"#(checked)#:: checked="checked"#(/checked)#/>
+            <label for="#[field]#">#[comment]#</label>
+          </p>
+          <p>
+            <input #(notinindexwarning)#::class="TableCellActive"#(/notinindexwarning)# name="boost_#[field]#" id="boost_#[field]#" type="text" value="#[boost]#" data-toggle-id="#[field]#" placeholder="1.0"/>
+            #(notinindexwarning)#::field not in local index (boost has no effect)#(/notinindexwarning)#
+          </p>
+        </div>
+      </fieldset>
+      #{/boosts}#
 
-        <form action="RankingSolr_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
-          <fieldset>
-            <legend>Solr Boosts</legend>
-            <div class="description">
-              <p>
-                This is the set of searchable fields. Entries without a boost value are not searched. Boost values make hits inside the corresponding field more important.
-              </p>
-            </div>
+      <input type="hidden" name="profileNr" value="#[profileNr]#" />
 
-            #{boosts}#
-            <fieldset class="formSection">
-              <legend>#[field]#</legend>
-              <div class="content">
-                <p>
-                  <input type="checkbox" id="#[field]#" name="#[field]#"#(checked)#:: checked="checked"#(/checked)#/>
-                  <label for="#[field]#">#[comment]#</label>
-                </p>
-                <p>
-                  <input #(notinindexwarning)#::class="TableCellActive"#(/notinindexwarning)# name="boost_#[field]#" id="boost_#[field]#" type="text" value="#[boost]#" data-toggle-id="#[field]#" placeholder="1.0"/>
-                  #(notinindexwarning)#::field not in local index (boost has no effect)#(/notinindexwarning)#
-                </p>
-              </div>
-            </fieldset>
-            #{/boosts}#
-
-            <input type="hidden" name="profileNr" value="#[profileNr]#" />
-
-            <fieldset class="formControl">
-              <div class="content">
-                <button type="submit" name="ResetBoosts" class="icon-revert">Re-Set to default</button>
-                <button type="submit" name="EnterBoosts" class="icon-run primary">Set Field Boosts</button>
-              </div>
-            </fieldset>
-          </fieldset>
-        </form>
-      #%env/templates/page-end.template%#
-  </body>
+      <fieldset class="formControl">
+        <div class="content">
+          <button type="submit" name="ResetBoosts" class="icon-revert">Re-Set to default</button>
+          <button type="submit" name="EnterBoosts" class="icon-run primary">Set Field Boosts</button>
+        </div>
+      </fieldset>
+    </fieldset>
+  </form>
+  #%env/templates/page-end.template%#
+</body>
 </html>
