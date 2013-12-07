@@ -83,7 +83,6 @@
 #(item)#::
 <div class="thumbcontainer">
   <a href="#[hrefCache]#" target="#[target]#" class="thumblink" onclick="return hs.expand(this)">
-    <!-- <img src="/ViewImage.png?maxwidth=128&amp;maxheight=128&amp;code=#[code]#" alt="#[name]#" /> -->
     <img src="#[href]#" width="128" height="128" alt="#[name]#" />
   </a>
   <div class="highslide-caption">
@@ -91,17 +90,14 @@
     <br />
     <a href="#[source]#" target="#[target]#">#[sourcedom]#</a>
   </div>
-    <!--
-    <div class="TableCellDark"><a href="#[href]#">#[name]#</a><br />#[attr]#</div>
-  -->
 </div>
 #(/item)#
 ::
-#(item)#::<tr class="#(col)#TableCellLight::TableCellDark#(/col)#"><td>#[name]#</td><td><a href="#[href]#" target="#[target]#">#[hrefshort]#</a></tr>#(/item)#
+#(item)#::<tr><td>#[name]#</td><td><a href="#[href]#" target="#[target]#">#[hrefshort]#</a></tr>#(/item)#
 ::
-#(item)#::<tr class="#(col)#TableCellLight::TableCellDark#(/col)#"><td>#[name]#</td><td><a href="#[href]#" target="#[target]#">#[hrefshort]#</a></tr>#(/item)#
+#(item)#::<tr><td>#[name]#</td><td><a href="#[href]#" target="#[target]#">#[hrefshort]#</a></tr>#(/item)#
 ::
-#(item)#::<tr class="#(col)#TableCellLight::TableCellDark#(/col)#"><td>#[name]#</td><td><a href="#[href]#" target="#[target]#">#[hrefshort]#</a></tr>#(/item)#
+#(item)#::<tr><td>#[name]#</td><td><a href="#[href]#" target="#[target]#">#[hrefshort]#</a></tr>#(/item)#
 #(/content)#
 
 <script type="text/javascript">
