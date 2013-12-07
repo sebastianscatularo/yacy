@@ -8,13 +8,18 @@
 <body id="configSkins">
   #%env/templates/page-start.template%#
 
-        <h1>Integration of a Search Box</h1>
-        <p>
-          The following provides information on how to integrate a search box on any web page that calls the normal YaCy search window.
-        </p>
+  <div id="devInfo">
+    Status
+    - valid HTML5
+  </div>
 
-        <h2>Simply use the following code:</h2>
-        <code><pre>
+  <h1>Integration of a Search Box</h1>
+  <p>
+    The following provides information on how to integrate a search box on any web page that calls the normal YaCy search window.
+  </p>
+
+  <h2>Simply use the following code:</h2>
+  <pre><code>
 &lt;form method="get" accept-charset="UTF-8" action="http://#[myaddress]#/yacysearch.html"&gt;
   &lt;div style="display:inline-block;text-align:center;padding:5px;background-color:#eee;border:1px solid #ccc;border-radius:5px;margin-right:5px;"&gt;
     &lt;div style="display:inline-block;font-family:Arial,Helvetica,sans-serif;padding-top:3px;padding-right:5px;"&gt;
@@ -35,36 +40,36 @@
     &lt;/div&gt;
   &lt;/div&gt;
 &lt;/form&gt;
-        </pre></code>
+  </code></pre>
 
-        This would look like:
-        <form method="get" accept-charset="UTF-8" action="http://#[myaddress]#/yacysearch.html">
-          <div style="display:inline-block;text-align:center;padding:5px;background-color:#eee;border:1px solid #ccc;border-radius:5px;margin-right:5px;">
-            <div style="display:inline-block;font-family:Arial,Helvetica,sans-serif;padding-top:3px;padding-right:5px;">
-              MySearch
-            </div>
-            <input type="text" name="query" value="" maxlength="80"
-            style="display:inline-block;width:300px;"/>
-            <input type="hidden" name="verify" value="cacheonly"/>
-            <input type="hidden" name="maximumRecords" value="10"/>
-            <input type="hidden" name="meanCount" value="5"/>
-            <input type="hidden" name="resource" value="local"/>
-            <input type="hidden" name="urlmaskfilter" value=".*"/>
-            <input type="hidden" name="prefermaskfilter" value=""/>
-            <input type="hidden" name="display" value="2"/>
-            <input type="hidden" name="nav" value="all"/>
-            <div style="display:inline-block;padding-top:1px;">
-              <input type="submit" name="Enter" value="Search"/>
-            </div>
-          </div>
-        </form>
-        This does not use a style sheet file to make the integration into another web page with a different style sheet easier.
-        You would need to change the following items:
-        <ul>
-          <li>Replace the given colors <code>#eee</code> (box background) and <code>#ccc</code> (box border)</li>
-          <li>Replace the word <em>MySearch</em> with your own message</li>
-        </ul>
+  This would look like:
+  <form method="get" accept-charset="UTF-8" action="http://#[myaddress]#/yacysearch.html">
+    <div style="display:inline-block;text-align:center;padding:5px;background-color:#eee;border:1px solid #ccc;border-radius:5px;margin-right:5px;">
+      <div style="display:inline-block;font-family:Arial,Helvetica,sans-serif;padding-top:3px;padding-right:5px;">
+        MySearch
+      </div>
+      <input type="text" name="query" value="" maxlength="80"
+      style="display:inline-block;width:300px;"/>
+      <input type="hidden" name="verify" value="cacheonly"/>
+      <input type="hidden" name="maximumRecords" value="10"/>
+      <input type="hidden" name="meanCount" value="5"/>
+      <input type="hidden" name="resource" value="local"/>
+      <input type="hidden" name="urlmaskfilter" value=".*"/>
+      <input type="hidden" name="prefermaskfilter" value=""/>
+      <input type="hidden" name="display" value="2"/>
+      <input type="hidden" name="nav" value="all"/>
+      <div style="display:inline-block;padding-top:1px;">
+        <input type="submit" name="Enter" value="Search"/>
+      </div>
+    </div>
+  </form>
+  This does not use a style sheet file to make the integration into another web page with a different style sheet easier.
+  You would need to change the following items:
+  <ul>
+    <li>Replace the given colors <code>#eee</code> (box background) and <code>#ccc</code> (box border)</li>
+    <li>Replace the word <em>MySearch</em> with your own message</li>
+  </ul>
 
-    #%env/templates/page-end.template%#
-  </body>
+  #%env/templates/page-end.template%#
+</body>
 </html>
