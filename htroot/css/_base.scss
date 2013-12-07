@@ -77,6 +77,18 @@ $ycu-icon-fontsize:0.85em;
   @extend %icon-block;
 }
 
+#devInfo {
+  font-family:monospace;
+  white-space:pre;
+  margin:1em;
+  padding:0.5em;
+  border:2px solid red;
+  border-radius:5px;
+  background-color:#EA9A89;
+  color:#000;
+  overflow:auto;
+}
+
 @import 'forms';
 
 a {

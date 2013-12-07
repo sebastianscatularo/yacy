@@ -2492,6 +2492,17 @@ body#crawlStartSite #startPointDetails dd:before, body#crawlStartExpert #formRev
 #navSub li span:after, #ycu-messages > *:before, body#hostBrowser .state:before {
   display: inline-block; }
 
+#devInfo {
+  font-family: monospace;
+  white-space: pre;
+  margin: 1em;
+  padding: 0.5em;
+  border: 2px solid red;
+  border-radius: 5px;
+  background-color: #EA9A89;
+  color: #000;
+  overflow: auto; }
+
 /**
  * General form elements.
  */
@@ -3246,17 +3257,6 @@ nav span,
 
 .invisible {
   visibility: hidden; }
-
-#devInfo {
-  font-family: monospace;
-  white-space: pre;
-  margin: 1em;
-  padding: 0.5em;
-  border: 2px solid red;
-  border-radius: 5px;
-  background-color: #EA9A89;
-  color: #000;
-  overflow: auto; }
 
 .ym-wbox.inline {
   padding-left: 0;

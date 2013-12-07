@@ -2486,6 +2486,17 @@ a[href^="http://"]:not(.noExt):before,
 a[href^="https://"]:not(.noExt):before, table.sortable th:not(.noSort):after, body#yacySearch #messages > p:before, body#yacySearch div #messages > .p:before, div body#yacySearch #messages > .p:before {
   display: inline-block; }
 
+#devInfo {
+  font-family: monospace;
+  white-space: pre;
+  margin: 1em;
+  padding: 0.5em;
+  border: 2px solid red;
+  border-radius: 5px;
+  background-color: #EA9A89;
+  color: #000;
+  overflow: auto; }
+
 /**
  * General form elements.
  */
