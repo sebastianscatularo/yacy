@@ -47,7 +47,7 @@
       html += "<td>URL from index (total results = " + totalResults + ")<\/td>";
       for (var i = 0; i < firstChannel.items.length; i++) {
         item = firstChannel.items[i];
-        html += "<tr class=\"TableCellLight\"><td align=\"left\"><a href=\"HostBrowser.html?pathsearch=&amp;path=" + item.link + "\">" + item.link + "<\/a><\/td>";
+        html += "<tr><td><a href=\"HostBrowser.html?pathsearch=&amp;path=" + item.link + "\">" + item.link + "<\/a><\/td>";
       }
       html += "<\/table>";
     }
@@ -67,6 +67,8 @@
   <div id="devInfo">
     - use a template for InfoCacheEntry
     - scripts need updates
+    State:
+    * valid HTML5
   </div>
 
   <h1>Host Browser</h1>
@@ -167,30 +169,30 @@
           <table class="sortable">
             <thead>
               <tr>
-                <th align="center"></th>
-                <th align="left">Path</th>
-                <th align="right">stored</th>
-                <th align="right">linked</th>
-                <th align="right">pending</th>
-                <th align="right">excluded</th>
-                <th align="right">failed</th>
+                <th></th>
+                <th>Path</th>
+                <th>stored</th>
+                <th>linked</th>
+                <th>pending</th>
+                <th>excluded</th>
+                <th>failed</th>
               </tr>
             </thead>
             <tbody>
               #(root)#
               <tr>
-                <td align="center"></td>
+                <td></td>
                 <td class="breakAll"><a href="/HostBrowser.html?path=#[path]#" class="listing">..</a></td>
-                <td align="right" colspan="5"></td>
+                <td colspan="5"></td>
               </tr>
               ::
               #(/root)#
               #{list}#
               #(type)#
               <!--file-->
-              <tr class="TableCell#(dark)#Light::Dark::Summary#(/dark)#">
-                <td align="center">
-                  <a href="/ViewFile.html?url=#[url]#" title="Show Metadata"class="iconic">
+              <tr>
+                <td>
+                  <a href="/ViewFile.html?url=#[url]#" title="Show Metadata" class="iconic">
                     <i class="fa fa-file"></i>
                   </a>
                 </td>
@@ -199,7 +201,7 @@
                 </td>
                 #(stored)#
                 #(load)#
-                <td colspan="5" nowrap class="listingem">link, detected from context</td>
+                <td colspan="5" class="listingem">link, detected from context</td>
                 ::
                 <td colspan="5" class="listingnok">
                   <a href="/HostBrowser.html?load=#[url]#&path=#[path]#"><span class="state stateError">load &amp; index</span></a>
@@ -216,13 +218,13 @@
               </tr>
               ::<!--folder-->
               <tr>
-                <td align="center"><i class="fa fa-folder"></i></td>
+                <td><i class="fa fa-folder"></i></td>
                 <td><a href="/HostBrowser.html?path=#[url]#" class="listing">#[url]#</a></td>
-                <td align="right" class="commit">#[stored]#</td>
-                <td align="right">#[linked]#</td>
-                <td align="right" #(pendingVisible)#class="listingem"::class="pending"#(/pendingVisible)#>#[pending]#</td>
-                <td align="right" #(excludedVisible)#class="listingem"::class="error"#(/excludedVisible)#>#[excluded]#</td>
-                <td align="right" #(failedVisible)#class="listingem"::class="error"#(/failedVisible)#>#[failed]#</td>
+                <td class="commit">#[stored]#</td>
+                <td>#[linked]#</td>
+                <td #(pendingVisible)#class="listingem"::class="pending"#(/pendingVisible)#>#[pending]#</td>
+                <td #(excludedVisible)#class="listingem"::class="error"#(/excludedVisible)#>#[excluded]#</td>
+                <td #(failedVisible)#class="listingem"::class="error"#(/failedVisible)#>#[failed]#</td>
               </tr>
               #(/type)#
               #{/list}#
