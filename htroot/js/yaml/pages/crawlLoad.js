@@ -1,10 +1,10 @@
 YaCyPage.Parts = {};
 
-/** Initialize the page. */
-YaCyPage.init = function() {
+/** Initialize the page validators. */
+YaCyPage.addValidators = function(toggles) {
   // init parts
   var validator = new YaCyUi.Form.Validator({
-    toggle: $('#submitCrawlStart'),
+    toggle: toggles || $('#submitCrawlStart'),
     display: $('#ycu-error-count'),
     onload: true,
     showLink: false

@@ -4,7 +4,12 @@
   <title>YaCy '#[clientname]#': Configuration of a RSS Search</title>
   #%env/templates/header-backend.template%#
   <script type="text/javascript" src="/js/yaml/tablesorter/jquery.tablesorter.min.js"></script>
-  <script type="text/javascript" src="/js/yaml/pages/loadRss.js"></script>
+  <script type="text/javascript">
+    YaCyPage.init = function() {
+      YaCyPage.addValidators($('#submitIndex, #submitShow'));
+    }
+  </script>
+  <script type="text/javascript" src="/js/yaml/pages/crawlLoad.js"></script>
 </head>
 
 <body id="loadRss">
@@ -37,13 +42,16 @@
         <fieldset class="formSection">
           <legend>RSS feed URL</legend>
           <div class="content">
-            <input type="text" name="url" value="#[url]#" maxlength="256"/>
+            <input type="text" name="url" id="crawlingURL" value="#[url]#" maxlength="256"/>
             <div class="formHint hidden">
               <p class="ok">
                 The entered location looks correct.
               </p>
               <p class="error" data-id="invalid">
                 The entered URL is not valid.
+              </p>
+              <p class="error" data-id="protocol">
+                The entered URL is not valid. Only <code>HTTP</code> protocol URLs are allowed.
               </p>
               <p class="error" data-id="empty">
                 You need to enter a URLs to start your crawl.
@@ -117,9 +125,10 @@
       <!-- #_(collectionEnabled)#:: -->
 
       <fieldset class="formControl">
+        <div id="ycu-error-count" class="description hiddden"></div>
         <div class="content">
-          <button type="submit" class="icon-showMore">Show RSS items</button>
-          <button type="submit" name="indexAllItemContent" class="primary icon-run">Add All Items to Index (full content of url)</button>
+          <button type="submit" id="submitShow" class="icon-showMore">Show RSS items</button>
+          <button type="submit" id="submitIndex" name="indexAllItemContent" class="primary icon-run">Add All Items to Index (full content of url)</button>
         </div>
       </fieldset>
     </fieldset>

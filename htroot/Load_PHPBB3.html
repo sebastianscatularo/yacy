@@ -3,6 +3,11 @@
 <head>
   <title>YaCy '#[clientname]#': Configuration of a phpBB3 Search</title>
   #%env/templates/header-backend.template%#
+  <script type="text/javascript">
+    YaCyPage.init = function() {
+      YaCyPage.addValidators();
+    }
+  </script>
   <script type="text/javascript" src="/js/yaml/pages/crawlLoad.js"></script>
 </head>
 
