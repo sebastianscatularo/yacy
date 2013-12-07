@@ -23,6 +23,7 @@
     - provide more feedback, if URL validation process is running
     Non working:
     - form submission will be intercepted (URL given in dev-console)
+    Status: valid html5
   </div>
 
   <h1>Expert Crawl Start</h1>
@@ -121,7 +122,7 @@
               <div class="control-group">
                 <div class="p">
                   <label for="crawlingDepth">Crawl to a maximum depth of</label>
-                  <input name="crawlingDepth" id="crawlingDepth" type="text" maxlength="2" min="0" max="99" value="#[crawlingDepth]#" class="spinner" />
+                  <input name="crawlingDepth" id="crawlingDepth" type="text" maxlength="2" data-min="0" data-max="99" value="#[crawlingDepth]#" class="spinner" />
                   <div class="formHint hidden">
                     <p class="error" data-id="range">
                       Please enter a number between <code>0&mdash;99</code>
@@ -179,7 +180,7 @@
           <div class="content">
             <div class="control-group">
               <label for="crawlingDomMaxPages">Set the maximum number of loaded pages to</label>
-              <input name="crawlingDomMaxPages" id="crawlingDomMaxPages" type="text" size="6" maxlength="6" min="-1" max="999999" value="#[crawlingDomMaxPages]#" class="spinner"/>.
+              <input name="crawlingDomMaxPages" id="crawlingDomMaxPages" type="text" size="6" maxlength="6" data-min="-1" data-max="999999" value="#[crawlingDomMaxPages]#" class="spinner"/>.
               <div class="formHint hidden">
                 <p class="error">
                   Please enter a value in the range <code>-1&mdash;999999</code>.
@@ -593,128 +594,129 @@
               <b>if exist</b>: use the cache if the cache exist. Do no check freshness. Otherwise use online source,
             </li>
             <li>
-              <b>cache&nbsp;only</b>: never go online, use all content from cache. If no cache exist, treat content as unavailable.
+              <b>cache only</b>: never go online, use all content from cache. If no cache exist, treat content as unavailable.
             </li>
-          </div>
-        </fieldset>
-      </fieldset>
-
-      #(agentSelect)#<input type="hidden" name="agentName" id="agentName" value="#[defaultAgentName]#" />::
-      <fieldset class="formGroup collapsible">
-        <legend>Robot Behaviour</legend>
-        <fieldset class="formSection control-group">
-          <legend>User agent & robot identifier</legend>
-          <div class="content">
-            <label for="agentName">Identify as</label>
-            <select name="agentName" id="agentName">
-              #{list}#
-              <option value="#[name]#">#[name]#</option>
-              #{/list}#
-            </select>
-          </div>
-          <div class="formHelp hidden">
-            <p>
-              You are running <abbr>YaCy</abbr> in non-<abbr>P2P</abbr> mode and because <abbr>YaCy</abbr> can be used as replacement for commercial search appliances (like the <abbr>GSA</abbr>) the user must be able to crawl all web pages that are granted to such commercial plattforms.
-            </p>
-            <p>
-              Not having this option would be a strong handicap for professional usage of this software. Therefore you are able to select alternative user agents here which have different crawl timings and also identify itself with another user agent and obey the corresponding robots rule.
-            </p>
-          </div>
-        </fieldset>
-      </fieldset>
-      #(/agentSelect)#
-
-      <fieldset class="formGroup collapsible">
-        <legend>Index Administration</legend>
-        <fieldset class="formSection toggleable">
-          <legend>Local indexing</legend>
-          <div class="content">
-            <p>
-              <input type="checkbox" name="indexText" id="indexText" #(indexingTextChecked)#::checked="checked"#(/indexingTextChecked)# />
-              <label for="indexText">index text</label>
-            </p>
-            <p>
-              <input type="checkbox" name="indexMedia" id="indexMedia" #(indexingMediaChecked)#::checked="checked"#(/indexingMediaChecked)# />
-              <label for="indexMedia">index media</label>
-            </p>
-          </div>
-          <div class="formHelp hidden">
-            <p>
-              This enables indexing of the webpages the crawler will download. This should be switched on by default, unless you want to crawl only to fill the Document Cache without indexing.
-            </p>
-          </div>
-        </fieldset>
-        <fieldset class="formSection toggleable" data-toggle-type="activate" data-toggle-fieldid="remoteIndex">
-          <legend>Remote Indexing</legend>
-          <div class="content">
-            <fieldset class="group control-group">
-              <legend>Intention</legend>
-              Describe your intention to start this global crawl <em>(optional)</em>. This message will appear in the <em>Other Peer Crawl Start</em> table of other peers.
-              <br/>
-              <label for="intention">Crawl intention</label>:
-              <input name="intention" id="intention" type="text" size="40" maxlength="100" value="#[intention]#" /><br />
-            </fieldset>
-          </div>
-          <div class="formHelp hidden">
-            <p>
-              If checked, the crawler will contact other peers and use them as remote indexers for your crawl.
-            </p>
-            <p>
-              If you need your crawling results locally, you should switch this off.
-            </p>
-            <p>
-              Only senior and principal peers can initiate or receive remote crawls.
-              <strong>A <em>YaCyNews</em> message will be created to inform all peers about a global crawl</strong>, so they can omit starting a crawl with the same start point.
-            </p>
-          </div>
-        </fieldset>
-        <fieldset class="formSection toggleable">
-          <legend>Result collection(s)</legend>
-          <div class="content">
-            <div class="control-group">
-              <label for="collection">Target collection(s)</label>
-              <input name="collection" id="collection" type="text" size="60" maxlength="100" value="#[collection]#" #(collectionEnabled)#disabled="disabled"::#(/collectionEnabled)# placeholder="#[defaultCollection]#"/>
-              <div class="formHint hidden">
-                <p class="help">
-                  Please enter a comma seperated list of collections, where the results should be added.
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="formHelp hidden">
-            <p>
-              A crawl result can be tagged with names which are candidates for a collection request.
-            </p>
-            <p>
-              These tags can be selected with the <a href="/gsa/search?q=www&site=#[collection]#"><abbr>GSA</abbr> interface</a> using the <code>site</code> operator.
-              To use this option, the <code>collection_sxt</code>-field must be switched on in the <a href="/IndexFederated_p.html">Solr Schema</a>
-            </p>
-          </div>
-        </fieldset>
-      </fieldset>
-
-      <div id="formReview" class="hidden">
-        <div class="reviewHeader">
-          <div class="controls">
-            <button data-id="hideDefaults" class="icon-showLess">Hide default settings</button>
-            <button data-id="showDefaults" class="hidden icon-showMore">Show default settings</button>
-          </div>
-        </div>
-        <div class="reviewContent">
-        </div>
-      </div>
-
-      <fieldset class="formControl" id="formControl">
-        <div id="ycu-error-count" class="description hiddden"></div>
-        <div class="content">
-          <input type="hidden" name="crawlingstart" value="1"/>
-          <button data-id="check" class="icon-check">Review job details</button>
-          <button data-id="edit" class="icon-config hidden">Edit job details</button>
-          <button type="submit" id="submitCrawlStart" class="primary icon-run">Start crawl job</button>
+          </ul>
         </div>
       </fieldset>
     </fieldset>
-  </form>
-  #%env/templates/page-end.template%#
+
+    #(agentSelect)#<input type="hidden" name="agentName" id="agentName" value="#[defaultAgentName]#" />::
+    <fieldset class="formGroup collapsible">
+      <legend>Robot Behaviour</legend>
+      <fieldset class="formSection control-group">
+        <legend>User agent & robot identifier</legend>
+        <div class="content">
+          <label for="agentName">Identify as</label>
+          <select name="agentName" id="agentName">
+            #{list}#
+            <option value="#[name]#">#[name]#</option>
+            #{/list}#
+          </select>
+        </div>
+        <div class="formHelp hidden">
+          <p>
+            You are running <abbr>YaCy</abbr> in non-<abbr>P2P</abbr> mode and because <abbr>YaCy</abbr> can be used as replacement for commercial search appliances (like the <abbr>GSA</abbr>) the user must be able to crawl all web pages that are granted to such commercial plattforms.
+          </p>
+          <p>
+            Not having this option would be a strong handicap for professional usage of this software. Therefore you are able to select alternative user agents here which have different crawl timings and also identify itself with another user agent and obey the corresponding robots rule.
+          </p>
+        </div>
+      </fieldset>
+    </fieldset>
+    #(/agentSelect)#
+
+    <fieldset class="formGroup collapsible">
+      <legend>Index Administration</legend>
+      <fieldset class="formSection toggleable">
+        <legend>Local indexing</legend>
+        <div class="content">
+          <p>
+            <input type="checkbox" name="indexText" id="indexText" #(indexingTextChecked)#::checked="checked"#(/indexingTextChecked)# />
+            <label for="indexText">index text</label>
+          </p>
+          <p>
+            <input type="checkbox" name="indexMedia" id="indexMedia" #(indexingMediaChecked)#::checked="checked"#(/indexingMediaChecked)# />
+            <label for="indexMedia">index media</label>
+          </p>
+        </div>
+        <div class="formHelp hidden">
+          <p>
+            This enables indexing of the webpages the crawler will download. This should be switched on by default, unless you want to crawl only to fill the Document Cache without indexing.
+          </p>
+        </div>
+      </fieldset>
+      <fieldset class="formSection toggleable" data-toggle-type="activate" data-toggle-fieldid="remoteIndex">
+        <legend>Remote Indexing</legend>
+        <div class="content">
+          <fieldset class="group control-group">
+            <legend>Intention</legend>
+            Describe your intention to start this global crawl <em>(optional)</em>. This message will appear in the <em>Other Peer Crawl Start</em> table of other peers.
+            <br/>
+            <label for="intention">Crawl intention</label>:
+            <input name="intention" id="intention" type="text" size="40" maxlength="100" value="#[intention]#" /><br />
+          </fieldset>
+        </div>
+        <div class="formHelp hidden">
+          <p>
+            If checked, the crawler will contact other peers and use them as remote indexers for your crawl.
+          </p>
+          <p>
+            If you need your crawling results locally, you should switch this off.
+          </p>
+          <p>
+            Only senior and principal peers can initiate or receive remote crawls.
+            <strong>A <em>YaCyNews</em> message will be created to inform all peers about a global crawl</strong>, so they can omit starting a crawl with the same start point.
+          </p>
+        </div>
+      </fieldset>
+      <fieldset class="formSection toggleable">
+        <legend>Result collection(s)</legend>
+        <div class="content">
+          <div class="control-group">
+            <label for="collection">Target collection(s)</label>
+            <input name="collection" id="collection" type="text" size="60" maxlength="100" value="#[collection]#" #(collectionEnabled)#disabled="disabled"::#(/collectionEnabled)# placeholder="#[defaultCollection]#"/>
+            <div class="formHint hidden">
+              <p class="help">
+                Please enter a comma seperated list of collections, where the results should be added.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="formHelp hidden">
+          <p>
+            A crawl result can be tagged with names which are candidates for a collection request.
+          </p>
+          <p>
+            These tags can be selected with the <a href="/gsa/search?q=www&amp;site=#[collection]#"><abbr>GSA</abbr> interface</a> using the <code>site</code> operator.
+            To use this option, the <code>collection_sxt</code>-field must be switched on in the <a href="/IndexFederated_p.html">Solr Schema</a>
+          </p>
+        </div>
+      </fieldset>
+    </fieldset>
+
+    <div id="formReview" class="hidden">
+      <div class="reviewHeader">
+        <div class="controls">
+          <button data-id="hideDefaults" class="icon-showLess">Hide default settings</button>
+          <button data-id="showDefaults" class="hidden icon-showMore">Show default settings</button>
+        </div>
+      </div>
+      <div class="reviewContent">
+      </div>
+    </div>
+
+    <fieldset class="formControl" id="formControl">
+      <div id="ycu-error-count" class="description hiddden"></div>
+      <div class="content">
+        <input type="hidden" name="crawlingstart" value="1"/>
+        <button data-id="check" class="icon-check">Review job details</button>
+        <button data-id="edit" class="icon-config hidden">Edit job details</button>
+        <button type="submit" id="submitCrawlStart" class="primary icon-run">Start crawl job</button>
+      </div>
+    </fieldset>
+  </fieldset>
+</form>
+#%env/templates/page-end.template%#
 </body>
 </html>
