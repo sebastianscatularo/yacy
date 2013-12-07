@@ -1550,19 +1550,27 @@ YaCyUi.Form.ValidatorElement.prototype = {
 YaCyUi.Form.Validator = function(config) {
   var self = this;
   this.elements = {};
-  this.config = config;
+  this.config = config || {};
   this.invalidElements = [];
 
   if (typeof config.toggle !== 'undefined') {
     config.toggle.prop('disabled', false);
   }
   if (typeof this.config.display !== 'undefined') {
-    this.config.display.append('<p><span id="ycu-errors-message"></span>' +
-      ' <a href="#" id="ycu-errors-show">Show errors.</a></p>');
-    $('#ycu-errors-show').on('click', function(evObj) {
-      evObj.preventDefault();
-      self.showErrors();
-    });
+    var msg = '<p><span id="ycu-errors-message"></span>';
+    var linked = false;
+    if (typeof this.config.showLink === 'boolean' && this.config.showLink) {
+      msg += ' <a href="#" id="ycu-errors-show">Show errors.</a>';
+      linked = true;
+    }
+    msg += '</p>';
+    this.config.display.append(msg);
+    if (linked) {
+      $('#ycu-errors-show').on('click', function(evObj) {
+        evObj.preventDefault();
+        self.showErrors();
+      });
+    }
   }
 
   return this;
