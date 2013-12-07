@@ -13,7 +13,7 @@
 Todo:
  - jQuery UI tooltips not working
  - handle robots not allowed
- - form checks
+ status: valid html5
 </div>
 
         <h1>Integration in MediaWiki</h1>
@@ -47,6 +47,9 @@ Todo:
                   <p class="ok">
                     The entered location looks correct.
                   </p>
+                  <p class="error" data-id="protocol">
+                    The entered URL is not valid. Only <code>HTTP</code> protocol URLs are allowed.
+                  </p>
                   <p class="error" data-id="invalid">
                     The entered URL is not valid.
                   </p>
@@ -61,7 +64,7 @@ Todo:
             </fieldset>
           </fieldset>
 
-          <input type="hidden" name="crawlingMode" id="url" value="url" checked="checked" />
+          <input type="hidden" name="crawlingMode" value="url"/>
           <input type="hidden" name="createBookmark" value="off" />
           <input type="hidden" name="crawlingDepth" value="8" />
           <input type="hidden" name="mustmatch" value=".*" />
@@ -85,8 +88,9 @@ Todo:
           <input type="hidden" name="xpstopw" value="off" />
 
           <fieldset class="formControl">
+            <div id="ycu-error-count" class="description hiddden"></div>
             <div class="content">
-              <button type="submit" class="primary icon-run">Start crawl job <span class="errors"></span></button>
+              <button type="submit" id="submitCrawlStart" class="primary icon-run">Start crawl job <span class="errors"></span></button>
             </div>
           </fieldset>
         </fieldset>
