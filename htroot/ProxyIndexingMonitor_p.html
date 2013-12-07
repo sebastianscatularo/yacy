@@ -3,186 +3,202 @@
 <head>
   <title>YaCy '#[clientname]#': Indexing with Proxy</title>
   #%env/templates/header-backend.template%#
+  <script type="text/javascript" src="/js/yaml/pages/proxyIndexingMonitor.js"></script>
 </head>
 
 <body id="proxyIndexingMonitor">
-#%env/templates/page-start.template%#
+  #%env/templates/page-start.template%#
 
-        #(info)#::
-        <div id="formResults">
-          <p class="error">
-            The file DATA/PLASMADB/crawlProfiles0.db is missing or corrupted.
-            Please delete that file and restart.
-          </p>
-          ::
-          <ul>
-            <li>Pre-fetch is now set to depth-#[message]#.</li>
-            <li>Caching is now #(caching)#off::on#(/caching)#.</li>
-            <li>Local Text Indexing is now #(indexingLocalText)#off::on#(/indexingLocalText)#.</li>
-            <li>Local Media Indexing is now #(indexingLocalMedia)#off::on#(/indexingLocalMedia)#.</li>
-            <li>Remote Indexing is now #(indexingRemote)#off::on#(/indexingRemote)#.</li>
-            #(size)#::<li>Cachesize is now set to #[return]#MB.</li>#(/size)#
-          </ul>
-          #(path)#::
-          <p class="warning">
-            CachePath is now set to '#[return]#'. Please move the old data in the new directory.
-          </p>
-          #(/path)#
-          #(restart)#::
-          <p class="warning">
-            Changes will take effect after restart.
-          </p>
-          #(/restart)#
-          ::
-          <p class="error">
-            An error has occurred: #[error]#.
+  <div id="devInfo">
+    status: valid html5
+  </div>
+
+  #(info)#::
+  <p class="ycu-message ycu-message-error">
+    The file DATA/PLASMADB/crawlProfiles0.db is missing or corrupted.
+    Please delete that file and restart.
+  </p>
+  ::
+  <div class="ycu-message ycu-message-info">
+    <ul>
+      <li>Pre-fetch is now set to depth-#[message]#.</li>
+      <li>Caching is now #(caching)#off::on#(/caching)#.</li>
+      <li>Local Text Indexing is now #(indexingLocalText)#off::on#(/indexingLocalText)#.</li>
+      <li>Local Media Indexing is now #(indexingLocalMedia)#off::on#(/indexingLocalMedia)#.</li>
+      <li>Remote Indexing is now #(indexingRemote)#off::on#(/indexingRemote)#.</li>
+      #(size)#::<li>Cachesize is now set to #[return]#MB.</li>#(/size)#
+    </ul>
+  </div>
+  #(path)#::
+  <p class="ycu-message ycu-message-warning">
+    CachePath is now set to '#[return]#'. Please move the old data in the new directory.
+  </p>
+  #(/path)#
+  #(restart)#::
+  <p class="ycu-message ycu-message-warning">
+    Changes will take effect after restart.
+  </p>
+  #(/restart)#
+  ::
+  <p class="ycu-message ycu-message-error">
+    An error has occurred: #[error]#.
+  </p>
+  #(/info)#
+
+  <h1>Indexing with Proxy</h1>
+  <p>
+    YaCy can be used to <em>scrape</em> content from pages that pass the integrated caching <abbr>HTTP</abbr> proxy.
+    When scraping proxy pages then <strong>no personal or protected page is indexed</strong>; those pages are detected by properties in the <abbr>HTTP</abbr> header (like Cookie-Use, or <abbr>HTTP</abbr> Authorization) or by <code>POST</code>-Parameters (either in <abbr>URL</abbr> or as <abbr>HTTP</abbr> protocol) and automatically excluded from indexing.
+  </p>
+  <p>
+    You have to <a href="/Settings_p.html?page=ProxyAccess">setup the proxy</a> before use.
+  </p>
+  <p>
+    You can see a snapshot of recently indexed pages on the <a href="/CrawlResults.html?process=4">Proxy Index Monitor</a> Page.
+  </p>
+
+  <form action="ProxyIndexingMonitor_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
+    <fieldset>
+      <legend>Proxy Configration</legend>
+      <fieldset class="formGroup">
+        <legend>Proxy Auto Config</legend>
+        <div class="description">
+          <p>
+            This controls the proxy auto configuration script for browsers at <a href="http://localhost:8090/autoconfig.pac">http://localhost:8090/autoconfig.pac</a>.
           </p>
         </div>
-        #(/info)#
 
-        <h1>Indexing with Proxy</h1>
-        <p>
-          YaCy can be used to 'scrape' content from pages that pass the integrated caching HTTP proxy.
-          When scraping proxy pages then <strong>no personal or protected page is indexed</strong>; those pages are detected by properties in the HTTP header (like Cookie-Use, or HTTP Authorization) or by POST-Parameters (either in URL or as HTTP protocol) and automatically excluded from indexing.
-        </p>
-        <p>
-          You have to <a href="/Settings_p.html?page=ProxyAccess">setup the proxy</a> before use.
-       </p>
-       <p>
-        You can see a snapshot of recently indexed pages on the <a href="/CrawlResults.html?process=4">Proxy Index Monitor</a> Page.
-      </p>
-
-       <form action="ProxyIndexingMonitor_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
-        <fieldset>
-          <legend>Proxy Configration</legend>
-          <fieldset class="formGroup">
-            <legend>Proxy Auto Config</legend>
-            <div class="description">
-              <p>
-                This controls the proxy auto configuration script for browsers at <a href="http://localhost:8090/autoconfig.pac">http://localhost:8090/autoconfig.pac</a>.
-              </p>
-            </div>
-
-            <fieldset class="formSection">
-              <legend><em>.yacy</em>-domains Only</legend>
-              <div class="content">
-                <input type="checkbox" id="proxyYacyOnly" name="proxyYacyOnly"#(proxyYacyOnly)#:: checked="checked"#(/proxyYacyOnly)#/>
-                <label for="proxyYacyOnly">Use the proxy for <em>.yacy</em>-Domains only.</label>
-              </div>
-            </fieldset>
-          </fieldset>
-
-          <fieldset class="formGroup">
-            <legend>Pre-Fetching</legend>
-            <div class="description">
-              <p>
-                This is an automated html page loading procedure that takes actual proxy-requested
-                URLs as crawling start points for crawling.
-              </p>
-            </div>
-            <fieldset class="formSection">
-              <legend>Prefetch Depth</legend>
-              <div class="content">
-                <p>
-                  <label for="proxyPrefetchDepth">Use a prefetch depth of</label>:
-                  <input name="proxyPrefetchDepth" id="proxyPrefetchDepth" type="text" size="2" maxlength="2" value="#[proxyPrefetchDepth]#" class="spinner"/>
-                </p>
-                <p>
-                 A prefetch of 0 means no prefetch; a prefetch of 1 means to prefetch all embedded URLs, but since embedded image links are loaded by the browser this means that only embedded href-anchors are prefetched additionally.
-               </p>
-              </div>
-            </fieldset>
-            <fieldset class="formSection">
-              <legend>Store to Cache</legend>
-              <div class="content">
-                <p>
-                  <input type="checkbox" id="prxy_storeHTCache" name="proxyStoreHTCache"#(proxyStoreHTCacheChecked)#:: checked="checked"#(/proxyStoreHTCacheChecked)# />
-                  <label for="prxy_storeHTCache">Store to HTCache.</label>
-                </p>
-                <p>
-                 It is almost always recommended to set this on. The only exception is that you have another caching proxy running as secondary proxy and YaCy is configured to used that proxy in proxy-proxy - mode.
-               </p>
-              </div>
-            </fieldset>
-            <fieldset class="formSection">
-              <legend>Local Indexing</legend>
-              <div class="content">
-                <p>
-                  <input type="checkbox" id="prxy_index_text" name="proxyIndexingLocalText"#(proxyIndexingLocalText)#:: checked="checked"#(/proxyIndexingLocalText)# />
-                  <label for="prxy_index_text">Do local indexing.</label>
-                </p>
-                <p>
-                 If this is turned on, all pages (except private content) that passes the proxy is indexed.
-               </p>
-              </div>
-            </fieldset>
-            <fieldset class="formSection">
-              <legend>Local Media-Indexing</legend>
-              <div class="content">
-                <p>
-                  <input type="checkbox" id="prxy_index_media" name="proxyIndexingLocalMedia"#(proxyIndexingLocalMedia)#:: checked="checked"#(/proxyIndexingLocalMedia)# />
-                  <label for="prxy_index_text">Do local media indexing.</label>
-                </p>
-                <p>
-                 This is the same as for Local Text-Indexing, but switches only the indexing of media content on.
-               </p>
-              </div>
-            </fieldset>
-            <fieldset class="formSection">
-              <legend>Remote Indexing</legend>
-              <div class="content">
-                <p>
-                  <input type="checkbox" id="prxy_crawl_order" name="proxyIndexingRemote"#(proxyIndexingRemote)#:: checked="checked"#(/proxyIndexingRemote)# />
-                  <label for="prxy_index_text">Do remote indexing.</label>
-                </p>
-                <p>
-                 If checked, the crawler will contact other peers and use them as remote indexers for your crawl.
-               </p>
-               <p>
-                <s class="sym sym-hint"></s> <strong>Please note:</strong>
-                <ul>
-                  <li>If you need your crawling results locally, you should switch this off.</li>
-                  <li>Only senior and principal peers can initiate or receive remote crawls.</li>
-                  <li>Please note that this setting only take effect for a prefetch depth greater than 0.</li>
-                </ul>
-              </p>
-              </div>
-            </fieldset>
-          </fieldset>
-
-          <fieldset class="formGroup">
-            <legend>General Settings</legend>
-            <fieldset class="formSection">
-              <legend>Path</legend>
-              <div class="content">
-                <p>
-                  <input name="proxyCache" type="text" id="prxy_path" size="20" maxlength="300" value="#[proxyCache]#" />
-                </p>
-                <p>
-                  The path where the pages are stored (max. length 300).
-                </p>
-              </div>
-            </fieldset>
-            <fieldset class="formSection">
-              <legend>Size</legend>
-              <div class="content">
-                <p>
-                  <input name="proxyCacheSize" type="text" id="HTCache_size" size="8" maxlength="24" value="#[proxyCacheSize]#" class="spinner"/>
-                </p>
-                <p>
-                  The maximum size of the cache in MB.
-                </p>
-              </div>
-            </fieldset>
-          </fieldset>
-
-          <fieldset class="formControl">
-            <div class="content">
-              <button type="submit" name="proxyprofileset" class="primary icon-run">Save proxy profile</button>
-            </div>
-          </fieldset>
+        <fieldset class="formSection">
+          <legend><em>.yacy</em>-domains Only</legend>
+          <div class="content">
+            <input type="checkbox" id="proxyYacyOnly" name="proxyYacyOnly"#(proxyYacyOnly)#:: checked="checked"#(/proxyYacyOnly)#/>
+            <label for="proxyYacyOnly">Use the proxy for <em>.yacy</em>-Domains only.</label>
+          </div>
         </fieldset>
-      </form>
-#%env/templates/page-end.template%#
+      </fieldset>
+
+      <fieldset class="formGroup">
+        <legend>Pre-Fetching</legend>
+        <div class="description">
+          <p>
+            This is an automated html page loading procedure that takes actual proxy-requested
+            URLs as crawling start points for crawling.
+          </p>
+        </div>
+        <fieldset class="formSection">
+          <legend>Prefetch Depth</legend>
+          <div class="content">
+            <div class="p">
+              <label for="proxyPrefetchDepth">Use a prefetch depth of</label>:
+              <input name="proxyPrefetchDepth" id="proxyPrefetchDepth" type="text" size="2" maxlength="2" value="#[proxyPrefetchDepth]#" data-min="0" data-max="20" class="spinner"/>
+              <div class="formHint hidden">
+                <p class="error">
+                  Please enter a value between <code>0&mdash;20</code>.
+                </p>
+              </div>
+            </div>
+            <p>
+              A prefetch of 0 means no prefetch; a prefetch of 1 means to prefetch all embedded URLs, but since embedded image links are loaded by the browser this means that only embedded href-anchors are prefetched additionally.
+            </p>
+          </div>
+        </fieldset>
+        <fieldset class="formSection">
+          <legend>Store to Cache</legend>
+          <div class="content">
+            <p>
+              <input type="checkbox" id="prxy_storeHTCache" name="proxyStoreHTCache"#(proxyStoreHTCacheChecked)#:: checked="checked"#(/proxyStoreHTCacheChecked)# />
+              <label for="prxy_storeHTCache">Store to HTCache.</label>
+            </p>
+            <p>
+              It is almost always recommended to set this on. The only exception is that you have another caching proxy running as secondary proxy and YaCy is configured to used that proxy in proxy-proxy - mode.
+            </p>
+          </div>
+        </fieldset>
+        <fieldset class="formSection">
+          <legend>Local Indexing</legend>
+          <div class="content">
+            <p>
+              <input type="checkbox" id="prxy_index_text" name="proxyIndexingLocalText"#(proxyIndexingLocalText)#:: checked="checked"#(/proxyIndexingLocalText)# />
+              <label for="prxy_index_text">Do local indexing.</label>
+            </p>
+            <p>
+              If this is turned on, all pages (except private content) that passes the proxy is indexed.
+            </p>
+          </div>
+        </fieldset>
+        <fieldset class="formSection">
+          <legend>Local Media-Indexing</legend>
+          <div class="content">
+            <p>
+              <input type="checkbox" id="prxy_index_media" name="proxyIndexingLocalMedia"#(proxyIndexingLocalMedia)#:: checked="checked"#(/proxyIndexingLocalMedia)# />
+              <label for="prxy_index_text">Do local media indexing.</label>
+            </p>
+            <p>
+              This is the same as for Local Text-Indexing, but switches only the indexing of media content on.
+            </p>
+          </div>
+        </fieldset>
+        <fieldset class="formSection">
+          <legend>Remote Indexing</legend>
+          <div class="content">
+            <p>
+              <input type="checkbox" id="prxy_crawl_order" name="proxyIndexingRemote"#(proxyIndexingRemote)#:: checked="checked"#(/proxyIndexingRemote)# />
+              <label for="prxy_index_text">Do remote indexing.</label>
+            </p>
+            <p>
+              If checked, the crawler will contact other peers and use them as remote indexers for your crawl.
+            </p>
+            <div class="p">
+              <s class="sym sym-hint"></s> <strong>Please note:</strong>
+              <ul>
+                <li>If you need your crawling results locally, you should switch this off.</li>
+                <li>Only senior and principal peers can initiate or receive remote crawls.</li>
+                <li>Please note that this setting only take effect for a prefetch depth greater than 0.</li>
+              </ul>
+            </div>
+          </div>
+        </fieldset>
+      </fieldset>
+
+      <fieldset class="formGroup">
+        <legend>General Settings</legend>
+        <fieldset class="formSection">
+          <legend>Path</legend>
+          <div class="content">
+            <p>
+              <input name="proxyCache" type="text" id="prxy_path" size="20" maxlength="300" value="#[proxyCache]#" />
+            </p>
+            <p>
+              The path where the pages are stored (max. length 300).
+            </p>
+          </div>
+        </fieldset>
+        <fieldset class="formSection">
+          <legend>Size</legend>
+          <div class="content">
+            <div class="p">
+              <input name="proxyCacheSize" type="text" id="HTCache_size" size="8" maxlength="24" value="#[proxyCacheSize]#" class="spinner" data-min="4" data-max="99999999"/>
+              <div class="formHint hidden">
+                <p class="error">
+                  Please enter a value between <code>4&mdash;99999999</code>.
+                </p>
+              </div>
+            </div>
+            <p>
+              The maximum size of the cache in MB.
+            </p>
+          </div>
+        </fieldset>
+      </fieldset>
+
+      <fieldset class="formControl">
+        <div id="ycuErrorCount" class="description hiddden"></div>
+        <div class="content">
+          <button type="submit" name="proxyprofileset" id="submitSave" class="primary icon-run">Save proxy profile</button>
+        </div>
+      </fieldset>
+    </fieldset>
+  </form>
+  #%env/templates/page-end.template%#
 </body>
 </html>
