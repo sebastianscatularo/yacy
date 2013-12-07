@@ -19,6 +19,7 @@ Todo:
  - handle form errors (missing fields)
 Non working:
  - no form submission
+ Status: valid html5
 </div>
 
         <h1>Site Crawling</h1>
@@ -59,7 +60,7 @@ Non working:
                 <legend>Crawl start point</legend>
                 <div class="content">
                   <label for="crawlingURL" class="hidden">Crawl start point</label>
-                  <input type="text" name="crawlingURL" id="crawlingURL">#[starturl]#</input>
+                  <input type="text" name="crawlingURL" id="crawlingURL" value="#[starturl]#"/>
                   <div class="formHint hidden">
                     <p class="ok">
                       The entered location looks correct.
@@ -168,7 +169,7 @@ Non working:
                     A crawl result can be tagged with names which are candidates for a collection request.
                   </p>
                   <p>
-                    These tags can be selected with the <a href="/gsa/search?q=www&site=#[collection]#">GSA interface</a> using the 'site' operator.
+                    These tags can be selected with the <a href="/gsa/search?q=www&amp;site=#[collection]#">GSA interface</a> using the 'site' operator.
                     To use this option, the 'collection_sxt'-field must be switched on in the <a href="/IndexFederated_p.html">Solr Schema</a>
                   </p>
                 </div>
@@ -184,7 +185,6 @@ Non working:
             <input type="hidden" name="recrawl" id="recrawl" value="reload" />
             <input type="hidden" name="reloadIfOlderNumber" id="reloadIfOlderNumber" value="3" />
             <input type="hidden" name="reloadIfOlderUnit" id="reloadIfOlderUnit" value="day" />
-            <input type="hidden" name="deleteold" id="deleteold" value="on" />
             <input type="hidden" name="storeHTCache" id="storeHTCache" value="on" />
             <input type="hidden" name="cachePolicy" id="cachePolicy" value="iffresh" />
             <input type="hidden" name="crawlingQ" id="crawlingQ" value="on" />
