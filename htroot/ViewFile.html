@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <title>YaCy '#[clientname]#': View URL Content</title>
+  #%env/templates/header-backend.template%#
+  <script type="text/javascript" src="/js/yaml/tablesorter/jquery.tablesorter.min.js"></script>
+  <script type="text/javascript" src="/js/highslide/highslide.js"></script>
   <script type="text/javascript">
   //<![CDATA[
   function xmlhttpPost() {
@@ -54,10 +58,6 @@
   }
 //]]>
 </script>
-<title>YaCy '#[clientname]#': View URL Content</title>
-#%env/templates/header-backend.template%#
-<script type="text/javascript" src="/js/yaml/tablesorter/jquery.tablesorter.min.js"></script>
-<script type="text/javascript" src="/js/highslide/highslide.js"></script>
 </head>
 
 <body id="viewFile">
@@ -68,7 +68,7 @@
   #(/topmenu)#
 
   <div id="api">
-    <a href="http://localhost:8090/api/getpageinfo_p.xml?actions=title,robots&url=#[url]#" id="apilink" title="See the page info about the url.">
+    <a href="http://localhost:8090/api/getpageinfo_p.xml?actions=title,robots&amp;url=#[url]#" id="apilink" title="See the page info about the url.">
       <img src="/env/grafics/api.png" width="60" height="40" alt="API"/>
     </a>
   </div>
