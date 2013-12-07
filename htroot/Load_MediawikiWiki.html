@@ -3,6 +3,11 @@
 <head>
   <title>YaCy '#[clientname]#': Configuration of a Wiki Search</title>
   #%env/templates/header-backend.template%#
+  <script type="text/javascript">
+    YaCyPage.init = function() {
+      YaCyPage.addValidators();
+    }
+  </script>
   <script type="text/javascript" src="/js/yaml/pages/crawlLoad.js"></script>
 </head>
 
@@ -88,7 +93,7 @@ Todo:
           <input type="hidden" name="xpstopw" value="off" />
 
           <fieldset class="formControl">
-            <div id="ycu-error-count" class="description hiddden"></div>
+            <div id="ycuErrorCount" class="description hiddden"></div>
             <div class="content">
               <button type="submit" id="submitCrawlStart" class="primary icon-run">Start crawl job <span class="errors"></span></button>
             </div>

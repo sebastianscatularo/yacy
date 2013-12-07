@@ -3,7 +3,7 @@ YaCyPage.addValidators = function(toggles) {
   // init parts
   var validator = new YaCyUi.Form.Validator({
     toggle: toggles || $('#submitCrawlStart'),
-    display: $('#ycu-error-count'),
+    display: $('#ycuErrorCount'),
     onload: true,
     showLink: false
   });
