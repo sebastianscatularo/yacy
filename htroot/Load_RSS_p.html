@@ -23,6 +23,7 @@
     Code:
     - make #'[collectionEnabled]'#, #'[collection]'# available on toplevel (currently only as showload_*)
     - set #'[defaultCollection]'# on toplevel to default collection name (should be user)
+    status: valid html5
   </div>
 
   <h1>Loading of RSS Feeds</h1>
@@ -103,7 +104,7 @@
           <div class="content">
             <div class="control-group">
               <label for="collection">Target collection(s)</label>
-              <input name="collection" id="collection" type="text" size="60" maxlength="100" value="#[collection]#" placeholder="#[defaultCollection]#"/>
+              <input name="collection" id="collection" type="text" maxlength="100" value="#[collection]#" placeholder="#[defaultCollection]#"/>
               <div class="formHint hidden">
                 <p class="help">
                   Please enter a comma seperated list of collections, where the results should be added.
@@ -116,7 +117,7 @@
               A crawl result can be tagged with names which are candidates for a collection request.
             </p>
             <p>
-              These tags can be selected with the <a href="/gsa/search?q=www&site=#[collection]#">GSA interface</a> using the 'site' operator.
+              These tags can be selected with the <a href="/gsa/search?q=www&amp;site=#[collection]#">GSA interface</a> using the 'site' operator.
               To use this option, the 'collection_sxt'-field must be switched on in the <a href="/IndexFederated_p.html">Solr Schema</a>
             </p>
           </div>
@@ -140,7 +141,7 @@
       <legend>List of Scheduled RSS Feed Load Targets</legend>
       <table class="sortable">
         <thead>
-          <tr valign="bottom">
+          <tr>
             <th>
               <input type="checkbox" data-action="checkAllToggle"/>
             </th>
@@ -157,7 +158,7 @@
         <tbody>
           #{list}#
           <tr>
-            <td align="left"><input type="checkbox" name="item_#[count]#" value="mark_#[pk]#" /></td>
+            <td><input type="checkbox" name="item_#[count]#" value="mark_#[pk]#" /></td>
             <td><a href="/Load_RSS_p.html?showrss=&amp;url=#[rss]#">#[title]#</a></td>
             <td class="breakAll"><a href="/Load_RSS_p.html?showrss=&amp;url=#[rss]#">#[rss]#</a><br/><a href="#[referrer]#">#[referrer]#</a></td>
             <td>#[recording]#</td>
@@ -185,9 +186,9 @@
       <legend>Available RSS Feed List</legend>
       <table class="sortable">
         <thead>
-          <tr valign="bottom">
+          <tr>
             <th>
-              <input type="checkbox"data-action="checkAllToggle"/>
+              <input type="checkbox" data-action="checkAllToggle"/>
             </th>
             <th>Title</th>
             <th>URL/Referrer</th>
@@ -197,7 +198,7 @@
         <tbody>
           #{list}#
           <tr>
-            <td align="left"><input type="checkbox" name="item_#[count]#" value="mark_#[pk]#" /></td>
+            <td><input type="checkbox" name="item_#[count]#" value="mark_#[pk]#" /></td>
             <td><a href="/Load_RSS_p.html?showrss=&amp;url=#[rss]#">#[title]#</a></td>
             <td class="breakAll"><a href="/Load_RSS_p.html?showrss=&amp;url=#[rss]#">#[rss]#</a><br/><a href="#[referrer]#">#[referrer]#</a></td>
             <td>#[recording]#</td>
