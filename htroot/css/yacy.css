@@ -2680,10 +2680,10 @@ div.clear {
   clear: both; }
 div .center {
   text-align: center; }
-  div .center iframe {
-    display: block; }
 
 iframe {
+  display: block;
+  width: 100%;
   overflow: hidden; }
 
 .nobr {

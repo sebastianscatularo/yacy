@@ -2678,6 +2678,8 @@ div .center {
     display: block; }
 
 iframe {
+  display: block;
+  width: 100%;
   overflow: hidden; }
 
 .nobr {

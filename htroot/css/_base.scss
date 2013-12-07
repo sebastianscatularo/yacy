@@ -138,14 +138,12 @@ div {
 
   .center {
     text-align:center;
-
-    iframe {
-      display:block;
-    }
   }
 }
 
 iframe {
+  display:block;
+  width:100%;
   overflow:hidden; // same as scrolling=no
 }
 
