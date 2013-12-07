@@ -58,11 +58,11 @@
   <header>
     <div class="logo">
       <a href="#[promoteSearchPageGreeting.homepage]#" class="iconic noExt">
-        <img src="#[promoteSearchPageGreeting.smallImage]#"/>
+        <img src="#[promoteSearchPageGreeting.smallImage]#" alt="YaCy logo"/>
       </a>
     </div>
 
-    <form action="" method="get" accept-charset="UTF-8">
+    <form action="yacysearch.html" method="get" accept-charset="UTF-8">
       <div class="headRow">
         <div class="menu#(topmenu)# empty::#(/topmenu)#">
           #(topmenu)#::
@@ -73,7 +73,7 @@
         </div>
         <div class="search">
           <input id="search" name="query" type="text" value="#[former]#" onFocus="this.select()"/>
-          <button id="startSearch" type="submit" name="Enter" class="icon-search">Search</button>
+          <button id="startSearch" type="submit" class="icon-search">Search</button>
         </div>
       </div>
 
@@ -116,6 +116,12 @@
 
   <main>
     <div class="ym-wrapper">
+
+      <div id="devInfo">
+        - scripts need update
+        - HTML5 errors needs to be fixed (jquery plugin involved)
+      </div>
+
       <h1 class="greeting">#[promoteSearchPageGreeting]#</h1>
       <div class="clear"></div>
       <div class="ym-wbox">
@@ -139,8 +145,8 @@
         <div id="searchMode">
           <div class="row">
             <div class="col">
-              <img src="env/grafics/searchmode_p2p_activated_32.png" width="91" height="32"/>
-              <a href="yacysearch.html?resource=local" class="iconic"><img src="env/grafics/searchmode_stealth_deactivated_32.png" width="91" height="32"/></a>
+              <img src="env/grafics/searchmode_p2p_activated_32.png" width="91" height="32" alt="P2P search is active"/>
+              <a href="yacysearch.html?resource=local" class="iconic"><img src="env/grafics/searchmode_stealth_deactivated_32.png" width="91" height="32" alt="Stealth mode is deactivated"/></a>
             </div>
             <div class="col">
               Your search is done using peers in the YaCy <abbr title="Peer-to-Peer">P2P</abbr> network.
@@ -154,9 +160,9 @@
           <div class="row">
             <div class="row">
               <a href="yacysearch.html?resource=global" class="iconic">
-                <img src="env/grafics/searchmode_p2p_deactivated_32.png" width="91" height="32"/>
+                <img src="env/grafics/searchmode_p2p_deactivated_32.png" width="91" height="32" alt="P2P search is deactivated"/>
               </a>
-              <img src="env/grafics/searchmode_stealth_activated_32.png" width="91" height="32"/>
+              <img src="env/grafics/searchmode_stealth_activated_32.png" width="91" height="32" alt="Stealth mode is activated"/>
               <div class="col">
                 Your search is done using only your own peer, locally. You can switch to <em><abbr title="Peer-to-Peer">P2P</abbr> Mode</em> which will cause that your search is done using the other peers in the YaCy network.
               </div>
