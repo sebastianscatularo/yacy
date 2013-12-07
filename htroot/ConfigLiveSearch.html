@@ -82,35 +82,36 @@
     </li>
   </ul>
   <pre><code>
-    &lt;script src="http://#[ip]#:#[port]#/jquery/js/jquery-1.7.min.js" type="text/javascript" type="text/javascript"&gt;&lt;/script&gt;
-    &lt;script&gt;
-    $(document).ready(function() {
+&lt;script src="http://#[ip]#:#[port]#/jquery/js/jquery-1.7.min.js" type="text/javascript" type="text/javascript"&gt;&lt;/script&gt;
+&lt;script&gt;
+  $(document).ready(function() {
     yconf = {
-    url: <code>http://#[ip]#:#[port]#</code>,
-    title: <code>YaCy Search Widget</code>,
-    logo: <code>/yacy/ui/img/yacy-logo.png</code>,
-    link: <code>http://www.yacy.net</code>,
-    global: false,
-    width: 500,
-    height: 600,
-    position: [<code>top</code>,30],
-    theme: <code>start</code>
-  };
-  $.getScript(yconf.url+<code>/portalsearch/yacy-portalsearch.js</code>, function(){});
-});
+      url: <code>http://#[ip]#:#[port]#</code>,
+      title: <code>YaCy Search Widget</code>,
+      logo: <code>/yacy/ui/img/yacy-logo.png</code>,
+      link: <code>http://www.yacy.net</code>,
+      global: false,
+      width: 500,
+      height: 600,
+      position: [<code>top</code>,30],
+      theme: <code>start</code>
+    };
+    $.getScript(yconf.url+<code>/portalsearch/yacy-portalsearch.js</code>, function(){});
+  });
 &lt;/script&gt;
 &lt;div id="yacylivesearch"&gt;
-&lt;form id="ysearch" method="get" accept-charset="UTF-8" action="http://#[ip]#:#[port]#/yacysearch.html"&gt;
-Live Search &lt;input name="query" id="yquery" class="fancy" type="text" size="15" maxlength="80" value=""/&gt;
-&lt;input type="hidden" name="verify" value="cacheonly"/&gt;
-&lt;input type="hidden" name="maximumRecords" value="20"/&gt;
-&lt;input type="hidden" name="resource" value="local"/&gt;
-&lt;input type="hidden" name="urlmaskfilter" value=".*"/&gt;
-&lt;input type="hidden" name="prefermaskfilter" value=""/&gt;
-&lt;input type="hidden" name="display" value="2"/&gt;
-&lt;input type="hidden" name="nav" value="all"/&gt;
-&lt;input type="submit" name="Enter" value="Search"/&gt;
-&lt;/form&gt;
+  &lt;form id="ysearch" method="get" accept-charset="UTF-8" action="http://#[ip]#:#[port]#/yacysearch.html"&gt;
+    Live Search
+    &lt;input name="query" id="yquery" class="fancy" type="text" size="15" maxlength="80" value=""/&gt;
+    &lt;input type="hidden" name="verify" value="cacheonly"/&gt;
+    &lt;input type="hidden" name="maximumRecords" value="20"/&gt;
+    &lt;input type="hidden" name="resource" value="local"/&gt;
+    &lt;input type="hidden" name="urlmaskfilter" value=".*"/&gt;
+    &lt;input type="hidden" name="prefermaskfilter" value=""/&gt;
+    &lt;input type="hidden" name="display" value="2"/&gt;
+    &lt;input type="hidden" name="nav" value="all"/&gt;
+    &lt;input type="submit" name="Enter" value="Search"/&gt;
+  &lt;/form&gt;
 &lt;/div&gt;
 </code></pre>
 <h2>Configuration options and defaults for <code>yconf</code>:</h2>
