@@ -141,36 +141,39 @@ YaCyPage.init = function() {
     minLength: 2
   });
 
-  // create the topics tag-cloud
-  $.fn.tagcloud.defaults = {
-    size: {
-      start: 0.8,
-      end: 1.3,
-      unit: 'em'
-    },
-    color: {
-      start: '#c08080',
-      end: '#2200CC'
-    }
-  };
-  //$("#tagCloud a").tagcloud();
-  $('#tagCloud a').tsort().tagcloud({
-    type: "sphere",
-    power: .25,
-    seed: 0,
-    sizemin: 10,
-    sizemax: 20,
-    height: 80,
-    colormin: "682",
-    colormax: "20C"
-  });
+  // create the topics tag-cloud, if any
+  if ('tagcloud' in $.fn) {
+    $.fn.tagcloud.defaults = {
+      size: {
+        start: 0.8,
+        end: 1.3,
+        unit: 'em'
+      },
+      color: {
+        start: '#c08080',
+        end: '#2200CC'
+      }
+    };
+    $('#tagCloud a').tsort().tagcloud({
+      type: "sphere",
+      power: .25,
+      seed: 0,
+      sizemin: 10,
+      sizemax: 20,
+      height: 80,
+      colormin: "682",
+      colormax: "20C"
+    });
+  }
 
   // show sidebar after it's completely loaded
   $('#searchTrailer').css('visibility', 'visible');
 
-  // search is done now - update stats
-  if (YaCyPage.e.resNavBottom.length === 0) {
-    YaCyPage.e.resNavBottom = $('#resNavBottom');
-    YaCyPage.e.resNavBottom.html(YaCyPage.e.resNav.clone());
+  // search is done now - update stats, if search was done
+  if (typeof YaCyPage !== 'undefined' && 'e' in YaCyPage) {
+    if (YaCyPage.e.resNavBottom.length === 0) {
+      YaCyPage.e.resNavBottom = $('#resNavBottom');
+      YaCyPage.e.resNavBottom.html(YaCyPage.e.resNav.clone());
+    }
   }
 };
