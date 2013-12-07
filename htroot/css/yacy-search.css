@@ -2674,8 +2674,6 @@ div.clear {
   clear: both; }
 div .center {
   text-align: center; }
-  div .center iframe {
-    display: block; }
 
 iframe {
   display: block;
