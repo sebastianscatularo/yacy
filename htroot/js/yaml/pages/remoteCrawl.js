@@ -1,8 +1,8 @@
 /** Initialize the page validators. */
-YaCyPage.init = function(toggles) {
+YaCyPage.init = function() {
   // init parts
   var validator = new YaCyUi.Form.Validator({
-    toggle: toggles || $('#submitSave'),
+    toggle: $('#submitSave'),
     display: $('#ycuErrorCount'),
     onload: true,
     showLink: false
