@@ -6,8 +6,7 @@ YaCyPage.init = function() {
     display: $('#ycuErrorCount'),
     onload: true,
     showLink: false
-  });
-  validator.addElement($('#acceptCrawlLimit'), {
+  }).addElement($('#acceptCrawlLimit'), {
     validators: [{
       type: 'notEmpty'
     }, {

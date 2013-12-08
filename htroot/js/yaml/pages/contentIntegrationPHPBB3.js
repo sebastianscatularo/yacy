@@ -5,8 +5,7 @@ YaCyPage.init = function() {
     toggle: $('#submitCheck, #submitExport'),
     display: $('#ycuErrorCountExport'),
     onload: true
-  });
-  validatorExport.addElement($('#urlStub'), {
+  }).addElement($('#urlStub'), {
     validators: [{
       type: 'notEmpty',
       error: 'empty'

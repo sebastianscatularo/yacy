@@ -383,14 +383,12 @@ YaCyPage.init = function() {
     toggle: $('#submitCrawlStart'),
     display: $('#ycu-error-count'),
     onload: true
-  });
-  validator
-    .addElement($('#crawlingURL, #mustmatch, #ipMustmatch, #countryMustMatchList'), {
-      validators: [{
-        type: 'notEmpty',
-        error: 'empty'
-      }]
-    })
+  }).addElement($('#crawlingURL, #mustmatch, #ipMustmatch, #countryMustMatchList'), {
+    validators: [{
+      type: 'notEmpty',
+      error: 'empty'
+    }]
+  })
     .addElement($('#indexmustmatch, #indexcontentmustmatch'), {
       validators: [{
         type: 'notEmpty',

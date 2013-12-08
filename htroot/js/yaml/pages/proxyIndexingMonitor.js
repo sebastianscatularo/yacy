@@ -5,8 +5,7 @@ YaCyPage.init = function() {
     toggle: $('#submitSave'),
     display: $('#ycuErrorCount'),
     onload: true
-  });
-  validator.addElement($('#proxyPrefetchDepth'), {
+  }).addElement($('#proxyPrefetchDepth'), {
     validators: [{
       type: 'notEmpty'
     }, {

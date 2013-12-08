@@ -6,8 +6,7 @@ YaCyPage.init = function(toggles) {
     display: $('#ycuErrorCountSingle'),
     onload: true,
     showLink: false
-  });
-  validatorSingle.addElement($('#singleURL'), {
+  }).addElement($('#singleURL'), {
     validators: [{
       type: 'notEmpty',
       error: 'empty'
@@ -26,8 +25,7 @@ YaCyPage.init = function(toggles) {
     display: $('#ycuErrorCountAll'),
     onload: true,
     showLink: false
-  });
-  validatorAll.addElement($('#allURL'), {
+  }).addElement($('#allURL'), {
     validators: [{
       type: 'notEmpty',
       error: 'empty'

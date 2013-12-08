@@ -6,8 +6,7 @@ YaCyPage.addValidators = function(toggles) {
     display: $('#ycuErrorCount'),
     onload: true,
     showLink: false
-  });
-  validator.addElement($('#crawlingURL'), {
+  }).addElement($('#crawlingURL'), {
     validators: [{
       type: 'notEmpty',
       error: 'empty'
