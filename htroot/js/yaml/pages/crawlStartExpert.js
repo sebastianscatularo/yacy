@@ -388,50 +388,47 @@ YaCyPage.init = function() {
       type: 'notEmpty',
       error: 'empty'
     }]
-  })
-    .addElement($('#indexmustmatch, #indexcontentmustmatch'), {
-      validators: [{
-        type: 'notEmpty',
-        failType: 'warning'
-      }]
-    })
-    .addElement($('#crawlingURL'), {
-      validators: [{
-        type: 'url',
-        error: 'invalid'
-      }, {
-        type: 'urlProtocol',
-        protocols: ['https?', 'file', 'ftp', 'smb'],
-        error: 'protocol'
-      }]
-    })
-    .addElement($('#countryMustMatchList'), {
-      validators: [{
-        type: 'regEx',
-        exp: /^([a-z]{2},)+[a-z]{2}$/i,
-        error: 'invalid'
-      }]
-    }).addElement($('#crawlingDepth'), {
-      validators: [{
-        type: 'range',
-        min: $('#crawlingDepth').data('min'),
-        max: $('#crawlingDepth').data('max'),
-        error: 'range'
-      }]
-    }).addElement($('#crawlingDomMaxPages'), {
-      validators: [{
-        type: 'range',
-        min: $('#crawlingDomMaxPages').data('min'),
-        max: $('#crawlingDomMaxPages').data('max')
-      }]
-    }).addElement($('#mustnotmatch, #ipMustnotmatch, #indexmustnotmatch, #indexcontentmustnotmatch'), {
-      validators: [{
-        type: 'regEx',
-        exp: /^\.\*$/,
-        invert: true,
-        failType: 'warning'
-      }]
-    });
+  }).addElement($('#indexmustmatch, #indexcontentmustmatch'), {
+    validators: [{
+      type: 'notEmpty',
+      failType: 'warning'
+    }]
+  }).addElement($('#crawlingURL'), {
+    validators: [{
+      type: 'url',
+      error: 'invalid'
+    }, {
+      type: 'urlProtocol',
+      protocols: ['https?', 'file', 'ftp', 'smb'],
+      error: 'protocol'
+    }]
+  }).addElement($('#countryMustMatchList'), {
+    validators: [{
+      type: 'regEx',
+      exp: /^([a-z]{2},)+[a-z]{2}$/i,
+      error: 'invalid'
+    }]
+  }).addElement($('#crawlingDepth'), {
+    validators: [{
+      type: 'range',
+      min: $('#crawlingDepth').data('min'),
+      max: $('#crawlingDepth').data('max'),
+      error: 'range'
+    }]
+  }).addElement($('#crawlingDomMaxPages'), {
+    validators: [{
+      type: 'range',
+      min: $('#crawlingDomMaxPages').data('min'),
+      max: $('#crawlingDomMaxPages').data('max')
+    }]
+  }).addElement($('#mustnotmatch, #ipMustnotmatch, #indexmustnotmatch, #indexcontentmustnotmatch'), {
+    validators: [{
+      type: 'regEx',
+      exp: /^\.\*$/,
+      invert: true,
+      failType: 'warning'
+    }]
+  });
 
   YaCyUi.Event.handle('validation-state', function(evObj, type, elements) {
     if (elements[0].id == 'crawlingURL') {
@@ -440,8 +437,8 @@ YaCyPage.init = function() {
       YaCyPage.parts.startPoint.resetUrlResults();
       if (type == 'valid') {
         var btnRobots = $('#startPoint').find('button[data-id="robots"]');
-        var btnRobotsAndStructure = $('#startPoint').
-        find('button[data-id="robotsAndStructure"]');
+        var btnRobotsAndStructure = $('#startPoint')
+          .find('button[data-id="robotsAndStructure"]');
         var content = YaCyUi.Tools.cleanStringArray($(elements[0]).val().split('\n'));
         if (content.length > 1) {
           // URL list
