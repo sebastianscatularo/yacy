@@ -1310,7 +1310,6 @@ YaCyUi.Form.ValidatorFunc = {
     for (var i = 0; i < data.length; i++) {
       var dataItem = data[i].trim();
       var parts = dataItem.split('://');
-      console.debug("parts", parts);
       if (regEx.test(dataItem) || parts.length < 2 || parts[1].length === 0) {
         valid = false;
         break;
