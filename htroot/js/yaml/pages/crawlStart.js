@@ -23,10 +23,6 @@ YaCyPage.Func.CrawlStart = function() {
   };
   this.bookmarkTitle = '';
   this.startType = 'single'; // may be single or list, based on start urls
-
-  function init() {};
-
-  init();
 };
 YaCyPage.Func.CrawlStart.prototype = {
   private: {
