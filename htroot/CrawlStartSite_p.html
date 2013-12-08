@@ -142,7 +142,15 @@
           <div class="content">
             <div class="control-group">
               <label for="crawlingDomMaxPages">Set the maximum number of loaded pages to</label>
-              <input name="crawlingDomMaxPages" id="crawlingDomMaxPages" type="text" size="6" maxlength="6" value="#[crawlingDomMaxPages]#" class="spinner"/>.
+              <input name="crawlingDomMaxPages" id="crawlingDomMaxPages" type="text" size="6" maxlength="6" value="#[crawlingDomMaxPages]#" class="spinner" data-min="-1" data-max="999999"/>.
+              <div class="formHint hidden">
+                <p class="error">
+                  Please enter a value in the range <code>-1&mdash;999999</code>.
+                </p>
+                <p class="help">
+                  Please enter a value in the range <code>-1&mdash;999999</code>. The special value <code>-1</code> will remove any limit on loaded pages.
+                </p>
+              </div>
             </div>
           </div>
           <div class="formHelp hidden">

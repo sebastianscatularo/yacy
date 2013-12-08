@@ -16,6 +16,12 @@ YaCyPage.init = function() {
       protocols: ['https?', 'file', 'ftp', 'smb'],
       error: 'protocol'
     }]
+  }).addElement($('#crawlingDomMaxPages'), {
+    validators: [{
+      type: 'range',
+      min: $('#crawlingDomMaxPages').data('min'),
+      max: $('#crawlingDomMaxPages').data('max')
+    }]
   });
 
   $('#startPoint').find('button[data-id="robotsAndStructure"]').on('click',
