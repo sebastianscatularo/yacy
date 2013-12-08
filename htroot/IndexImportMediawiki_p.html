@@ -3,45 +3,47 @@
 <head>
   <title>YaCy '#[clientname]#': MediaWiki Dump Import</title>
   #%env/templates/header-backend.template%#
+  <script type="text/javascript" src="/js/yaml/pages/indexImportMediawiki.js"></script>
   #(import)#::<meta http-equiv="REFRESH" content="10" />#(/import)#
 </head>
 
 <body id="indexImportMediawiki">
   #%env/templates/page-start.template%#
 
-<div id="devInfo">
-Todo:
- - error messages are not displayed?! (bug? not there? check what to do)
-</div>
+  <div id="devInfo">
+    Todo:
+    - error messages are not displayed?! (bug? not there? check what to do)
+    Status: valid html5
+  </div>
 
-        #(import)#
-        #(status)#::
-        <div id="formResults">
-          <p class="error">
-            Bad input data: #[message]#
-          </p>
-        </div>
-        #(status)#
-        ::
-        <h1>Import Process</h1>
-        <ul>
-          <li><strong>Thread::</strong> #[thread]#</li>
-          <li><strong>Dump::</strong> #[dump]#</li>
-          <li><strong>Processed::</strong> #[count]# Wiki Entries</li>
-          <li><strong>Speed::</strong> #[speed]# articles per second</li>
-          <li><strong>Running Time::</strong> #[runningHours]# hours, #[runningMinutes]# minutes</li>
-          <li><strong>Remaining Time::</strong> #[remainingHours]# hours, #[remainingMinutes]# minutes</li>
-        </ul>
-        #(/import)#
+  #(import)#
+  #(status)#::
+  <div id="formResults">
+    <p class="error">
+      Bad input data: #[message]#
+    </p>
+  </div>
+  #(status)#
+  ::
+  <h1>Import Process</h1>
+  <ul>
+    <li><strong>Thread::</strong> #[thread]#</li>
+    <li><strong>Dump::</strong> #[dump]#</li>
+    <li><strong>Processed::</strong> #[count]# Wiki Entries</li>
+    <li><strong>Speed::</strong> #[speed]# articles per second</li>
+    <li><strong>Running Time::</strong> #[runningHours]# hours, #[runningMinutes]# minutes</li>
+    <li><strong>Remaining Time::</strong> #[remainingHours]# hours, #[remainingMinutes]# minutes</li>
+  </ul>
+  #(/import)#
 
-        <h1>MediaWiki Dump Import</h1>
-        #(import)#
-        <h2>Process</h2>
-        When the import is started, the following happens:
-        <ul>
-          <li>
-            The dump is extracted on the fly and wiki entries are translated into <em>Dublin Core</em> data format. The output looks like this:
-<code><pre>
+  <h1>MediaWiki Dump Import</h1>
+  #(import)#
+  <h2>Process</h2>
+  When the import is started, the following happens:
+  <ul>
+    <li>
+      The dump is extracted on the fly and wiki entries are translated into <em>Dublin Core</em> data format. The output looks like this:
+<pre><code>
 &lt;?xml version="1.0" encoding="UTF-8"?&gt;
 &lt;surrogates xmlns:dc="http://purl.org/dc/elements/1.1/"&gt;
   &lt;record&gt;
@@ -54,55 +56,61 @@ Todo:
   &lt;record&gt;
     ...
   &lt;/record&gt;
-&lt;/surrogates&gt;</pre></code>
-          </li>
-          <li>
-            Each 10000 wiki records are combined in one output file which is written to <code>/DATA/SURROGATES/in</code> into a temporary file.
-          </li>
-          <li>
-            When each of the generated output file is finished, it is renamed to a <code>.xml</code> file
-          </li>
-          <li>
-            Each time a <abbr>xml</abbr> surrogate file appears in <code>/DATA/SURROGATES/in</code>, the YaCy indexer fetches the file and indexes the record entries.
-          </li>
-          <li>
-            When a surrogate file is finished with indexing, it is moved to <code>/DATA/SURROGATES/out</code>
-          </li>
-          <li>
-            You can recycle processed surrogate files by moving them from <code>/DATA/SURROGATES/out</code> to <code>/DATA/SURROGATES/in</code>
-          </li>
-        </ul>
+&lt;/surrogates&gt;</code></pre>
+    </li>
+    <li>
+      Each 10000 wiki records are combined in one output file which is written to <code>/DATA/SURROGATES/in</code> into a temporary file.
+    </li>
+    <li>
+      When each of the generated output file is finished, it is renamed to a <code>.xml</code> file
+    </li>
+    <li>
+      Each time a <abbr>xml</abbr> surrogate file appears in <code>/DATA/SURROGATES/in</code>, the YaCy indexer fetches the file and indexes the record entries.
+    </li>
+    <li>
+      When a surrogate file is finished with indexing, it is moved to <code>/DATA/SURROGATES/out</code>
+    </li>
+    <li>
+      You can recycle processed surrogate files by moving them from <code>/DATA/SURROGATES/out</code> to <code>/DATA/SURROGATES/in</code>
+    </li>
+  </ul>
 
-        <h2>Run Import</h2>
-        <form action="IndexImportMediawiki_p.html" method="get" accept-charset="UTF-8">
-          <fieldset>
-            <legend>MediaWiki Dump File Selection</legend>
-            <div class="description">
-              <p>
-                You can import MediaWiki dumps here. An example is the file
-                <a href="http://dumps.wikimedia.org/dewiki/latest/dewiki-latest-pages-articles.xml.bz2">http://dumps.wikimedia.org/dewiki/latest/dewiki-latest-pages-articles.xml.bz2</a>.
-                <br/>
-                Dumps must be in <abbr>XML</abbr> format and may be compressed in <abbr>gz</abbr> or <abbr>bz2</abbr>. Place the file in the YaCy folder or in one of its sub-folders.
-                <br/>
-                MediaWiki Dump File Selection: select a <abbr>XML</abbr> file (which may be <abbr>bz2</abbr>- or <abbr>gz</abbr>-encoded)
-              </p>
-            </div>
+  <h2>Run Import</h2>
+  <form action="IndexImportMediawiki_p.html" method="get" accept-charset="UTF-8">
+    <fieldset>
+      <legend>MediaWiki Dump File Selection</legend>
+      <div class="description">
+        <p>
+          You can import MediaWiki dumps here. An example is the file
+          <a href="http://dumps.wikimedia.org/dewiki/latest/dewiki-latest-pages-articles.xml.bz2">http://dumps.wikimedia.org/dewiki/latest/dewiki-latest-pages-articles.xml.bz2</a>.
+          <br/>
+          Dumps must be in <abbr>XML</abbr> format and may be compressed in <abbr>gz</abbr> or <abbr>bz2</abbr>. Place the file in the YaCy folder or in one of its sub-folders.
+          <br/>
+          MediaWiki Dump File Selection: select a <abbr>XML</abbr> file (which may be <abbr>bz2</abbr>- or <abbr>gz</abbr>-encoded)
+        </p>
+      </div>
 
-            <fieldset class="formSection">
-              <legend>Dump File</legend>
-              <div class="content">
-                <input name="file" type="text" value=""/>
-              </div>
-            </fieldset>
+      <fieldset class="formSection">
+        <legend>Dump File</legend>
+        <div class="content">
+          <input name="file" id="importFile" type="text" value=""/>
+          <div class="formHint hidden">
+            <p class="error">
+              Please enter a local file location.
+            </p>
+          </div>
+        </div>
+      </fieldset>
 
-            <fieldset class="formControl">
-              <div class="content">
-                <button name="submit" type="submit" class="icon-run primary">Import MediaWiki Dump</button>
-              </div>
-            </fieldset>
-          </fieldset>
-        </form>
-        ::#(/import)#
+      <fieldset class="formControl">
+        <div id="ycuErrorCount" class="description"></div>
+        <div class="content">
+          <button name="submit" id="submit" type="submit" class="icon-run primary">Import MediaWiki Dump</button>
+        </div>
+      </fieldset>
+    </fieldset>
+  </form>
+  ::#(/import)#
   #%env/templates/page-end.template%#
-  </body>
+</body>
 </html>
