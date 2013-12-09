@@ -3,14 +3,11 @@
 <head>
   <title>YaCy '#[clientname]#': Crawler</title>
   #%env/templates/header-backend.template%#
-  <script type="text/javascript" src="/js/ajax.js"></script>
-  <script type="text/javascript" src="/js/xml.js"></script>
-  <script type="text/javascript" src="/js/html.js"></script>
-  <script type="text/javascript" src="/js/rss2.js"></script>
-  <script type="text/javascript" src="/js/Crawler.js"></script>
+  <script type="text/javascript" src="/js/yaml/pages/shared/rss2.js"></script>
+  <script type="text/javascript" src="/js/yaml/pages/crawler.js"></script>
 </head>
 
-<body id="crawler" onload="initCrawler();">
+<body id="crawler">
   #%env/templates/page-start.template%#
 
   <div id="api">
@@ -19,9 +16,8 @@
 
   <div id="devInfo">
     Todo:
-    - scripts fail (need updates)
+    - scripts need testing (rewritten)
     - style
-    - linkstructure script needs updates
     - generated urls have unescaped characters!
   </div>
 
@@ -90,43 +86,35 @@
       <tbody>
         <tr>
           <td>Local Crawler</td>
-          <td><span id="localcrawlerqueuesize">#[localCrawlSize]#</span></td>
+          <td><span id="localCrawlerQueueSize">#[localCrawlSize]#</span></td>
           <td>
-            <a href="" id="localcrawlerstateA">
-              <img src="empty.gif" alt="" style="width:12px; height:12px;" id="localcrawlerstateIMG" />
-            </a>
+            <a href="" id="localCrawlerStateLink" class="iconic"></a>
           </td>
         </tr>
         <tr>
           <td>Limit Crawler</td>
-          <td><span id="limitcrawlerqueuesize">#[limitCrawlSize]#</span></td>
+          <td><span id="limitCrawlerQueueSize">#[limitCrawlSize]#</span></td>
           <td>
-            <a href="" title="" id="limitcrawlerstateA">
-              <img src="empty.gif" alt="" style="width:12px; height:12px;" id="limitcrawlerstateIMG" />
-            </a>
+            <a href="" title="" id="limitCrawlerStateLink" class="iconic"></a>
           </td>
         </tr>
         <tr>
           <td>Remote Crawler</td>
-          <td><span id="remotecrawlerqueuesize">#[remoteCrawlSize]#</span></td>
+          <td><span id="remoteCrawlerQueueSize">#[remoteCrawlSize]#</span></td>
           <td>
-            <a href="" title="" id="remotecrawlerstateA">
-              <img src="empty.gif" alt="" style="width:12px; height:12px;" id="remotecrawlerstateIMG" />
-            </a>
+            <a href="" title="" id="remoteCrawlerStateLink" class="iconic"></a>
           </td>
         </tr>
         <tr>
           <td>No-Load Crawler</td>
-          <td><span id="noloadcrawlerqueuesize">#[noloadCrawlSize]#</span></td>
+          <td><span id="noLoadCrawlerQueueSize">#[noloadCrawlSize]#</span></td>
           <td>
-            <a href="" title="" id="noloadcrawlerstateA">
-              <img src="empty.gif" alt="" style="width:12px; height:12px;" id="noloadcrawlerstateIMG" />
-            </a>
+            <a href="" title="" id="noLoadCrawlerStateLink" class="iconic"></a>
           </td>
         </tr>
         <tr>
-          <td>Loader (<span id="loaderqueuemax">#[loaderMax]#</span>)</td>
-          <td><span id="loaderqueuesize">#[loaderSize]#</span></td>
+          <td>Loader (<span id="loaderQueueMax">#[loaderMax]#</span>)</td>
+          <td><span id="loaderQueueSize">#[loaderSize]#</span></td>
           <td>&nbsp;</td>
         </tr>
       </tbody>
@@ -145,8 +133,8 @@
       <tbody>
         <tr>
           <td>Documents<br/><a href="#[urlpublictextSolrURL]#">solr search api</a></td>
-          <td><span id="urlpublictextSize">#[urlpublictextSize]#</span></td>
-          <td><span id="urlpublictextSegmentCount">#[urlpublictextSegmentCount]#</span></td>
+          <td><span id="urlPublicTextSize">#[urlpublictextSize]#</span></td>
+          <td><span id="urlPublicTextSegmentCount">#[urlpublictextSegmentCount]#</span></td>
         </tr>
         <tr>
           <td>Webgraph Edges<br/><a href="#[webgraphSolrURL]#">solr search api</a></td>
@@ -160,8 +148,8 @@
         </tr>
         <tr>
           <td>RWIs<br/>(P2P Chunks)</td>
-          <td><span id="rwipublictextSize">#[rwipublictextSize]#</span></td>
-          <td><span id="rwipublictextSegmentCount">#[rwipublictextSegmentCount]#</span></td>
+          <td><span id="rwiPublicTextSize">#[rwipublictextSize]#</span></td>
+          <td><span id="rwiPublicTextSegmentCount">#[rwipublictextSegmentCount]#</span></td>
         </tr>
       </tbody>
     </table>
@@ -189,7 +177,7 @@
             <td>Crawler <abbr title="Pages Per Minute">PPM</abbr></td>
             <td><span id="ppmNum"></span></td>
             <td colspan="3">
-              <progress id="ppmbar" max="30000" value="0" style="width:94%;"></progress>
+              <progress id="ppmBar" max="30000" value="0" style="width:94%;"></progress>
             </td>
           </tr>
           <tr>
@@ -197,23 +185,21 @@
               Postprocessing Progress <span id="postprocessing_speed"></span>
             </td>
             <td>
-              <span id="postprocessing_status"></span>
+              <span id="postprocessingStatus"></span>
             </td>
             <td colspan="3">
-              <span id="postprocessing_bar">
-                <progress id="postprocessingBar" max="30000" value="0" style="width:94%;"></progress>
-              </span>
+              <progress id="postprocessingBar" max="100" value="0" style="width:94%;"></progress>
             </td>
           </tr>
           <tr>
             <td>
-              <span id="postprocessing_remainingTimeMinutes">0</span>:<span id="postprocessing_remainingTimeSeconds">0</span>
+              <span id="postprocessingRemainingTimeMinutes">0</span>:<span id="postprocessingRemainingTimeSeconds">0</span>
             </td>
             <td>
-              <span id="postprocessing_collection"></span>
+              <span id="postprocessingCollection"></span>
             </td>
             <td>
-              <span id="postprocessing_webgraph"></span>
+              <span id="postprocessingWebgraph"></span>
             </td>
             <td></td>
           </tr>
@@ -265,28 +251,22 @@
     #{/list}#
   </table>
   #(linkstructure)#::
-  <script type="text/javascript">
-  <!--
-  imagestub = "WebStructurePicture_p.png?host=#[hosts]#&amp;depth=4&amp;width=1024&amp;height=512&amp;nodes=600&amp;time=1000&amp;colortext=888888&amp;colorback=FFFFFF&amp;colordot0=1111BB&amp;colordota=11BB11&amp;colorline=222222&amp;colorlineend=333333";
-  idx = 0;
-  setTimeout("doanimation(500)", 500);
-  function doanimation(nexttimeout) {
-    var accessPicture = document.getElementById("WebPicture");
-    if (accessPicture != null) {
-      idx++;
-      accessPicture.src = imagestub + "&amp;idx=" + idx;
-      setTimeout("doanimation(" + (nexttimeout > 3000 ? 3000 : nexttimeout * 1.2) + ")", nexttimeout);
-    }
-  }
-  -->
-  </script>
   <div style="clear:both; text-align:left;">
-    <img id="WebPicture" src="/env/grafics/invisible.png"/>
+    <img id="webPicture" src="/env/grafics/invisible.png"/>
   </div>
   #(/linkstructure)#
 
   <h2>Crawled Pages</h2>
-  <p id="crawllist"></p>
+  <table id="crawlList">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>URL</th>
+      </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
 </fieldset>
 #(/crawlProfilesShow)#
 #%env/templates/page-end.template%#
