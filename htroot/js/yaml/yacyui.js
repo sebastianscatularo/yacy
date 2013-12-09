@@ -248,8 +248,11 @@ YaCyUi.init = function() {
       console.debug("YaCyUi.init: initializing page");
       YaCyPage.init();
     }
+    YaCyUi.initFinish(); // finalize init
   }, 125);
+};
 
+YaCyUi.initFinish = function() {
   // move important messages to top
   YaCyUi.Messages.init();
 
@@ -270,7 +273,8 @@ YaCyUi.init = function() {
   // resize iframes to show the full content
   $('iframe.autoSize').each(function() {
     $(this).load(function() {
-      var height = $(this).contents().find('body').height();
+      var height = $(this.contentWindow.document).height();
+      console.debug("height", $(this.contentWindow.document).find('#feedBox').attr('style'), height);
       $(this).css({
         height: height
       });
@@ -279,4 +283,4 @@ YaCyUi.init = function() {
 
   // finished loading
   YaCyUi.loaded = true;
-};
+}
