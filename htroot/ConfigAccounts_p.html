@@ -3,6 +3,7 @@
 <head>
   <title>YaCy '#[clientname]#': User Accounts</title>
   #%env/templates/header-backend.template%#
+  <script type="text/javascript" src="/js/yaml/pages/configAccounts.js"></script>
 </head>
 
 <body id="configAccounts">
@@ -67,25 +68,44 @@
         <fieldset class="formSection">
           <legend>User name</legend>
           <div class="content">
-            <input type="text" name="adminuser" id="adminuser" value="#[defaultUser]#" maxlength="32" onFocus="document.getElementById('access_account').checked = true;"/>
+            <input type="text" name="adminuser" id="adminUser" value="#[defaultUser]#" maxlength="32" onFocus="document.getElementById('access_account').checked = true;"/>
+            <div class="formHint hidden">
+              <p class="error">
+                You must specify a valid user name.
+              </p>
+            </div>
           </div>
         </fieldset>
         <fieldset class="formSection">
           <legend>Password</legend>
           <div class="content">
-            <input type="password" name="adminpw1" id="adminpw1" value="" maxlength="1024" onFocus="document.getElementById('access_account').checked = true;"/>
+            <input type="password" name="adminpw1" id="adminPw1" value="" maxlength="1024" onFocus="document.getElementById('access_account').checked = true;"/>
+            <div class="formHint hidden">
+              <p class="error" data-id="empty">
+                You must specify a password.
+              </p>
+            </div>
           </div>
         </fieldset>
         <fieldset class="formSection">
           <legend>Password repeat</legend>
           <div class="content">
-            <input type="password" name="adminpw2" id="adminpw2" value="" maxlength="1024" onFocus="document.getElementById('access_account').checked = true;"/>
+            <input type="password" name="adminpw2" id="adminPw2" value="" maxlength="1024" onFocus="document.getElementById('access_account').checked = true;"/>
+            <div class="formHint hidden">
+              <p class="error" data-id="empty">
+                You must retype the previous entered password.
+              </p>
+              <p class="error" data-id="notSame">
+                The repeated password do not match the first one.
+              </p>
+            </div>
           </div>
         </fieldset>
       </fieldset>
       <fieldset class="formControl">
+        <div id="ycu-error-count" class="description hiddden"></div>
         <div class="content">
-          <button type="submit" name="setAdmin" class="primary icon-save">Define administrator</button>
+          <button type="submit" name="setAdmin" id="submitAccount" class="primary icon-save">Define administrator</button>
         </div>
       </fieldset>
     </fieldset>
