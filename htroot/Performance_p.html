@@ -3,16 +3,7 @@
 <head>
   <title>YaCy '#[clientname]#': Performance Settings</title>
   #%env/templates/header-backend.template%#
-  <script type="text/javascript" src="js/html.js"></script>
-  <script type="text/javascript">
-  function reloadGraph() {
-    if($('#autoReload').is(':checked')) {
-      document.images["graph"].src="PerformanceGraph.png?time="+(new Date()).getTime();
-    }
-    window.status="";
-  }
-  window.setInterval("reloadGraph()", 1000);
-  </script>
+  <script type="text/javascript" src="/js/yaml/pages/performance.js"></script>
 </head>
 
 <body id="performance">
@@ -44,12 +35,21 @@
       <fieldset class="formSection">
         <legend>Memory reserved for <abbr>JVM</abbr></legend>
         <div class="content">
-          <input name="Xmx" id="Xmx" type="text" size="5" maxlength="5" value="#[Xmx]#" class="spinner"/> <abbr>MByte</abbr>
+          <input name="Xmx" id="Xmx" type="text" size="5" placeholder="600" maxlength="5" value="#[Xmx]#" class="spinner"/> <abbr>MByte</abbr>
+          <div class="formHint hidden">
+            <p class="warning">
+              Using the default value of <code>600</code>.
+            </p>
+            <p class="error">
+              Please enter only digits (<code>0&mdash;9</code>).
+            </p>
+          </div>
         </div>
       </fieldset>
       <fieldset class="formControl">
+        <div id="ycu-error-count-startup" class="description hiddden"></div>
         <div class="content">
-          <button type="submit" name="setStartup" class="primary icon-save">Save configuration</button>
+          <button type="submit" name="setStartup" id="submitStartup" class="primary icon-save">Save configuration</button>
         </div>
       </fieldset>
     </fieldset>
@@ -76,14 +76,30 @@
           <legend>disable crawls</legend>
           <div class="content">
             <label for="diskFree">If free disk space is below</label>
-            <input name="diskFree" id="diskFree" type="text" size="4" value="#[diskFree]#" class="spinner"/> <abbr>MiB</abbr>
+            <input name="diskFree" id="diskFree" type="text" size="4" placeholder="3000" value="#[diskFree]#" class="spinner"/> <abbr>MiB</abbr>
+            <div class="formHint hidden">
+              <p class="warning">
+                Using the default value of <code>3.000</code>.
+              </p>
+              <p class="error">
+                Please enter only digits (<code>0&mdash;9</code>).
+              </p>
+            </div>
           </div>
         </fieldset>
         <fieldset class="formSection">
           <legend>disable <abbr>DHT</abbr>-in</legend>
           <div class="content">
             <label for="diskFreeHardlimit">If free disk space is below</label>
-            <input name="diskFreeHardlimit" id="diskFreeHardlimit" type="text" size="4" value="#[diskFreeHardlimit]#" class="spinner"/> <abbr>MiB</abbr>
+            <input name="diskFreeHardlimit" id="diskFreeHardlimit" placeholder="1000" type="text" size="4" value="#[diskFreeHardlimit]#" class="spinner"/> <abbr>MiB</abbr>
+            <div class="formHint hidden">
+            <p class="warning">
+              Using the default value of <code>1.000</code>.
+            </p>
+            <p class="error">
+              Please enter only digits (<code>0&mdash;9</code>).
+            </p>
+          </div>
           </div>
         </fieldset>
       </fieldset>
@@ -94,14 +110,23 @@
           <legend>disable <abbr>DHT</abbr>-in</legend>
           <div class="content">
             <label for="memoryAcceptDHT">If free memory space is below</label>
-            <input name="memoryAcceptDHT" id="memoryAcceptDHT" type="text" size="4" value="#[memoryAcceptDHT]#" class="spinner"/> <abbr>MiB</abbr>
+            <input name="memoryAcceptDHT" id="memoryAcceptDHT" placeholder="50" type="text" size="4" value="#[memoryAcceptDHT]#" class="spinner"/> <abbr>MiB</abbr>
+            <div class="formHint hidden">
+            <p class="warning">
+              Using the default value of <code>50</code>.
+            </p>
+            <p class="error">
+              Please enter only digits (<code>0&mdash;9</code>).
+            </p>
+          </div>
           </div>
         </fieldset>
       </fieldset>
 
       <fieldset class="formControl">
+        <div id="ycu-error-count-observer" class="description hiddden"></div>
         <div class="content">
-          <button type="submit" name="setObserver" class="primary icon-save">Save configuration</button>
+          <button type="submit" name="setObserver" id="submitObserver" class="primary icon-save">Save configuration</button>
         </div>
       </fieldset>
     </form>
@@ -194,19 +219,43 @@
       <fieldset class="formSection">
         <legend>Proxy</legend>
         <div class="content">
-          <input id="crawlPauseProxy" name="crawlPauseProxy" type="text" size="20" maxlength="100" value="#[crawlPauseProxy]#" class="spinner"/>
+          <input id="crawlPauseProxy" name="crawlPauseProxy" placeholder="30000" type="text" size="20" maxlength="100" value="#[crawlPauseProxy]#" class="spinner"/>
+          <div class="formHint hidden">
+            <p class="warning">
+              Using the default value of <code>30.000</code>.
+            </p>
+            <p class="error">
+              Please enter only digits (<code>0&mdash;9</code>).
+            </p>
+          </div>
         </div>
       </fieldset>
       <fieldset class="formSection">
         <legend>Local Search</legend>
         <div class="content">
-          <input id="crawlPauseLocalsearch" name="crawlPauseLocalsearch" type="text" size="20" maxlength="100" value="#[crawlPauseLocalsearch]#" class="spinner"/>
+          <input id="crawlPauseLocalsearch" name="crawlPauseLocalsearch" placeholder="30000" type="text" size="20" maxlength="100" value="#[crawlPauseLocalsearch]#" class="spinner"/>
+          <div class="formHint hidden">
+            <p class="warning">
+              Using the default value of <code>30.000</code>.
+            </p>
+            <p class="error">
+              Please enter only digits (<code>0&mdash;9</code>).
+            </p>
+          </div>
         </div>
       </fieldset>
       <fieldset class="formSection">
         <legend>Remote Search</legend>
         <div class="content">
-          <input id="crawlPauseRemotesearch" name="crawlPauseRemotesearch" type="text" size="20" maxlength="100" value="#[crawlPauseRemotesearch]#" class="spinner"/>
+          <input id="crawlPauseRemotesearch" name="crawlPauseRemotesearch" placeholder="30000" type="text" size="20" maxlength="100" value="#[crawlPauseRemotesearch]#" class="spinner"/>
+          <div class="formHint hidden">
+            <p class="warning">
+              Using the default value of <code>30.000</code>.
+            </p>
+            <p class="error">
+              Please enter only digits (<code>0&mdash;9</code>).
+            </p>
+          </div>
         </div>
       </fieldset>
     </fieldset>
@@ -217,8 +266,9 @@
           Changes take effect immediately.
         </p>
       </div>
+      <div id="ycu-error-count-caution" class="description hiddden"></div>
       <div class="content">
-        <button type="submit" name="onlineCautionSubmit" class="primary icon-save">Set new parameters</button>
+        <button type="submit" name="onlineCautionSubmit" id="submitCaution" class="primary icon-save">Set new parameters</button>
       </div>
     </fieldset>
   </fieldset>
