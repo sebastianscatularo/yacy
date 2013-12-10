@@ -2472,6 +2472,10 @@ select,
 .ui-spinner {
   font-family: Arial, Helvetica, sans-serif; }
 
+@keyframes blink {
+  to {
+    visibility: hidden; } }
+
 a[href^="http://"]:not(.noExt):before,
 a[href^="https://"]:not(.noExt):before, table.sortable th:not(.noSort):after, button[class*='icon-']:before {
   opacity: 0.7; }

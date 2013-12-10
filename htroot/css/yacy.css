@@ -2470,6 +2470,13 @@ select,
 .ui-spinner {
   font-family: Arial, Helvetica, sans-serif; }
 
+body#rssTerminal span.cursor:before {
+  animation: blink 1s steps(2, start) infinite; }
+
+@keyframes blink {
+  to {
+    visibility: hidden; } }
+
 a[href^="http://"]:not(.noExt):before,
 a[href^="https://"]:not(.noExt):before, table.sortable th:not(.noSort):after, .formHint > *:not(.clear):not(.tip):before, .resourceQueryBox .queryBox:after, #nav a.lock:before,
 #navSub a.lock:before, #breadCrumb span:not(:last-of-type):after, #breadCrumb:before, .icon-item-new:before, .icon-item-queued:before, .icon-item-done:before, #ycu-messages .closeBtn:before, body#crawlStartExpert #startPointDetails dd:before,
@@ -2480,7 +2487,9 @@ a[href^="http://"]:not(.noExt):before,
 a[href^="https://"]:not(.noExt):before, table.sortable th:not(.noSort):after, .formHint > *:not(.clear):not(.tip):before, .resourceQueryBox .queryBox:after, #nav a.lock:before,
 #navSub a.lock:before, #breadCrumb span:not(:last-of-type):after, #breadCrumb:before, .icon-item-new:before, .icon-item-queued:before, .icon-item-done:before, #ycu-messages .closeBtn:before, body#crawlStartExpert #startPointDetails dd:before,
 body#crawlStartSite #startPointDetails dd:before, body#crawlStartExpert #formReview dt:not(.notConfigured):before, body#crawlStartExpert .ycu-data-true:before, body#crawlStartExpert .ycu-data-false:before, fieldset.collapsible > legend:before, fieldset.formSection .hasHelp:before, #navSub li a:after,
-#navSub li span:after, #ycu-messages > *:before, body#hostBrowser .state:before, fieldset.formGroup > legend:before, fieldset.formGroup > legend:after {
+#navSub li span:after, #ycu-messages > *:before, .icon-control-run:before,
+.icon-control-pause:before,
+.icon-control-stop:before, body#hostBrowser .state:before, fieldset.formGroup > legend:before, fieldset.formGroup > legend:after {
   font-family: FontAwesome;
   font-style: normal;
   font-size: 0.85em; }
@@ -2489,7 +2498,9 @@ a[href^="http://"]:not(.noExt):before,
 a[href^="https://"]:not(.noExt):before, table.sortable th:not(.noSort):after, .formHint > *:not(.clear):not(.tip):before, .resourceQueryBox .queryBox:after, #nav a.lock:before,
 #navSub a.lock:before, #breadCrumb span:not(:last-of-type):after, #breadCrumb:before, .icon-item-new:before, .icon-item-queued:before, .icon-item-done:before, #ycu-messages .closeBtn:before, body#crawlStartExpert #startPointDetails dd:before,
 body#crawlStartSite #startPointDetails dd:before, body#crawlStartExpert #formReview dt:not(.notConfigured):before, body#crawlStartExpert .ycu-data-true:before, body#crawlStartExpert .ycu-data-false:before, fieldset.collapsible > legend:before, fieldset.formSection .hasHelp:before, #navSub li a:after,
-#navSub li span:after, #ycu-messages > *:before, body#hostBrowser .state:before {
+#navSub li span:after, #ycu-messages > *:before, .icon-control-run:before,
+.icon-control-pause:before,
+.icon-control-stop:before, body#hostBrowser .state:before {
   display: inline-block; }
 
 #devInfo {
@@ -3395,6 +3406,15 @@ main .ym-wbox:first-of-type > h3:not(.noNumber):before {
   content: counter(h1-counter) "." counter(h2-counter) "." counter(h3-counter) ".\00a0";
   counter-increment: h3-counter; }
 
+.icon-control-run:before {
+  content: "\f04b"; }
+
+.icon-control-pause:before {
+  content: "\f04c"; }
+
+.icon-control-stop:before {
+  content: "\f04d"; }
+
 /** Pages specific CSS */
 body#crawlStartExpert #startPointDetails dl,
 body#crawlStartSite #startPointDetails dl {
@@ -3593,6 +3613,39 @@ body#network .extNodeInfo {
 body#network .nodeInfo {
   display: block;
   white-space: nowrap; }
+
+body#rssTerminal #feedBox {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.8em; }
+body#rssTerminal span {
+  display: block; }
+  body#rssTerminal span.peernews {
+    color: #606060; }
+  body#rssTerminal span.remotesearch {
+    color: #ffab00; }
+  body#rssTerminal span.localsearch {
+    color: #dd0000; }
+  body#rssTerminal span.remoteindexing {
+    color: #ccbb00; }
+  body#rssTerminal span.localindexing {
+    color: #562b29; }
+  body#rssTerminal span.dhtreceive {
+    color: #006600; }
+  body#rssTerminal span.dhtsend {
+    color: #002a97; }
+  body#rssTerminal span.proxy {
+    color: #8d85f3; }
+body#rssTerminal span:nth-last-of-type(2) {
+  display: inline-block; }
+  body#rssTerminal span:nth-last-of-type(2):after {
+    content: '\00a0'; }
+body#rssTerminal span.cursor {
+  display: inline-block;
+  opacity: 0.7; }
+  body#rssTerminal span.cursor:before {
+    content: '▊'; }
 
 body#status #infoHeader fieldset {
   display: inline-block;

@@ -178,10 +178,26 @@ main .ym-wbox:first-of-type {
   }
 }
 
+.icon-control-run:before,
+.icon-control-pause:before,
+.icon-control-stop:before {
+  @extend %icon-block;
+}
+.icon-control-run:before {
+  content:'#{$fa-var-play}';
+}
+.icon-control-pause:before {
+  content:'#{$fa-var-pause}';
+}
+.icon-control-stop:before {
+  content:'#{$fa-var-stop}';
+}
+
 /** Pages specific CSS */
 @import 'page-crawl-start';
 @import 'page-host-browser';
 @import 'page-network';
+@import 'page-rss-terminal';
 @import 'page-status';
 @import 'page-terminal';
 @import 'page-view-log';

@@ -48,6 +48,15 @@ $ycu-icon-fontsize:0.85em;
   font-family:$ycu-var-font-input;
 }
 
+%blink-text {
+  animation: blink 1s steps(2, start) infinite;
+}
+@keyframes blink {
+  to {
+    visibility: hidden;
+  }
+}
+
 %opaque-light {
   opacity:0.7;
 }
