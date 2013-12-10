@@ -89,9 +89,15 @@ YaCyUi.Func.Form = YaCyUi.Func.Form || {
 
     // init jQuery UI spinner elements
     $('.spinner').each(function() {
+      var data = $(this).data();
+      var max = typeof data.max === 'undefined' ? null : data.max;
+      // check for digits notation
+      if (max === null && $(this).attr('maxlength') !== undefined) {
+        max = new Array(parseInt($(this).attr('maxlength')) + 1).join('9');
+      }
       $(this).spinner({
-        min: typeof $(this).data('min') === 'undefined' ? null : $(this).data('min'),
-        max: typeof $(this).data('max') === 'undefined' ? null : $(this).data('max'),
+        min: typeof data.min === 'undefined' ? null : data.min,
+        max: max
       });
     });
 
