@@ -390,7 +390,7 @@ YaCyUi.Func.Form.Hints = YaCyUi.Func.Form.Hints || function(hintElements) {
     });
 
     hintElements.each(function() {
-      var prev = $(this).prev('input[type="text"], textarea');
+      var prev = $(this).prev('input[type="text"], input[type="password"], textarea');
       var hintElement = $(this);
       hintElement.append('<div class="clear"></div>')
         .prepend('<div class="tip"><i class="fa fa-caret-up"></i></div>');
@@ -1304,6 +1304,15 @@ YaCyUi.Form.ValidatorFunc = YaCyUi.Form.ValidatorFunc || {
     return invert ? !regEx.test(data.trim()) : regEx.test(data.trim());
   },
 
+  /** Check for same value on current element and input element referenced by id.
+   * @param {string} String to test
+   * @param {string} Id of element whose value should be tested against
+   */
+  same: function(data, elementId) {
+    console.debug('SAME', data, elementId);
+    return data.trim() == $(elementId).val().trim();
+  },
+
   /** Check if the given string(s) look like URLs. This simply checks for spaces
    * in URLs, because URL validation is error prone.
    * @param {string, array} Strings to test
@@ -1437,6 +1446,12 @@ YaCyUi.Form.ValidatorElement.prototype = {
             YaCyUi.Form.ValidatorFunc.number(data), validator);
         });
         break;
+      case 'same':
+        this.validators.push(function(data) {
+          return self.private.parseResult(
+            YaCyUi.Form.ValidatorFunc.same(data, validator.element), validator);
+        });
+        break;
       case 'range':
         this.validators.push(function(data) {
           var result = YaCyUi.Form.ValidatorFunc.range(data, validator.min, validator.max,
@@ -1500,7 +1515,6 @@ YaCyUi.Form.ValidatorElement.prototype = {
   },
 
   validate: function() {
-    //console.debug('validate called for ', this.element, 'with',this.validators.length,'validators');
     if (typeof this.getterFunc !== 'undefined') {
       console.debug('ValidatorElement:validate ', this.element, ' with custom getter func!');
       this.getterFunc(this.element);
@@ -1614,10 +1628,18 @@ YaCyUi.Form.Validator.prototype = {
         self.elements[this.id] = new YaCyUi.Form.ValidatorElement(
           $(this), setup, self);
 
+        var onLoad = false;
+        if (typeof setup.onload === 'boolean') {
+          onLoad = setup.onload;
+        }
+        if (typeof self.config.onload === 'boolean') {
+          onLoad = self.config.onload;
+        }
+
         YaCyUi.Form.Validate.addValidator($(this), {
           func: self.elements[this.id].validate,
           scope: self.elements[this.id],
-          onload: setup.onload || self.config.onload || false
+          onload: onLoad
         });
       } else if ('validators' in setup) {
         self.elements[this.id].addValidators(setup.validators);
