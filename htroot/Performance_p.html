@@ -9,6 +9,10 @@
 <body id="performance">
   #%env/templates/page-start.template%#
 
+  <div id="devInfo">
+    status: valid html5
+  </div>
+
   #(setStartupCommit)#::
   <p class="ycu-message ycu-message-info">
     Accepted change. This will take effect after <strong>restart</strong> of YaCy.
@@ -26,7 +30,7 @@
     <img src="PerformanceGraph.png" id="graph" alt="PerformanceGraph" width="660" height="240"/>
     <br/>
     <input type="checkbox" id="autoReload"/>
-    <label for="autoreload">refresh graph</label>
+    <label for="autoReload">refresh graph</label>
   </fieldset>
 
   <form action="Performance_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
