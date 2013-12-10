@@ -7,19 +7,22 @@ YaCyPage.clicked = function(e) {
   $('#value').val(e.value);
 };
 
-YaCyPage.filterList = function() {
-  var key = $('#key').val();
-
-  YaCyPage.options.each(function() {
-    if ($(this).val().toLowerCase().indexOf(key.toLowerCase()) == -1) {
-      $(this).addClass('filtered');
-    } else {
-      $(this).removeClass('filtered');
-    }
-  });
+YaCyPage.filterList = function(value, propName) {
+  if (typeof value === 'undefined') {
+    YaCyPage.options.removeClass('filtered');
+  } else {
+    value = value.toLowerCase();
+    YaCyPage.options.each(function() {
+      if (this[propName].toLowerCase().indexOf(value) == -1) {
+        $(this).addClass('filtered');
+      } else {
+        $(this).removeClass('filtered');
+      }
+    });
+  }
 };
 
-YaCyPage.clearForm = function() {
+YaCyPage.clearForm = function(evObj) {
   $('#key').val('');
   $('#value').val('');
   YaCyPage.filterList();
@@ -28,5 +31,23 @@ YaCyPage.clearForm = function() {
 /** Initialize the page. */
 YaCyPage.init = function() {
   YaCyPage.options = $('#options').find('option');
-  YaCyPage.filterList();
+
+  $('#btnClearForm').on('click', function(evObj) {
+    evObj.preventDefault();
+    YaCyPage.clearForm();
+  });
+
+  $('#key').on('keyup', function() {
+    YaCyPage.filterList($(this).val(), 'id');
+  });
+
+  $('#value').on('keyup', function() {
+    YaCyPage.filterList($(this).val(), 'value');
+  });
+
+  if ($('#key').val() !== '') {
+    YaCyPage.filterList($('#key').val(), 'id');
+  } else if ($('#value').val() !== '') {
+    YaCyPage.filterList($('#value').val(), 'value');
+  }
 };

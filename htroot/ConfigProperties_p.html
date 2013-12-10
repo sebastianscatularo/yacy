@@ -25,12 +25,18 @@
 
   <fieldset class="main">
     <legend>Configuration</legend>
+    <div class="description">
+      <p>
+        <s class="sym sym-hint"></s>
+        You may filter the following list, by entering parts of the key-name or value in the fields below.
+      </p>
+    </div>
     <fieldset class="formSection">
       <legend>Options</legend>
       <div class="content">
-        <select name="options" id="options" size="36" style="width: 600px">
+        <select name="options" id="options" class="fullSize" size="36">
           #{options}#
-          <option id="k#[key]#" value="#[value]#" onclick="YaCyPage.clicked(this)">#[key]#: #[value]#</option>
+          <option id="#[key]#" value="#[value]#" onclick="YaCyPage.clicked(this)">#[key]#: #[value]#</option>
           #{/options}#
         </select>
       </div>
@@ -40,18 +46,18 @@
       <fieldset class="formSection">
         <legend>Key</legend>
         <div class="content">
-          <input type="text" id="key" name="key" size="40" onkeyup="YaCyPage.filterList()" value="#[keyPosted]#"/>
+          <input type="text" id="key" name="key" value="#[keyPosted]#"/>
         </div>
       </fieldset>
       <fieldset class="formSection">
         <legend>Value</legend>
         <div class="content">
-          <input type="text" id="value" name="value" size="40" value="#[valuePosted]#" />
+          <input type="text" id="value" name="value" value="#[valuePosted]#" />
         </div>
       </fieldset>
       <fieldset class="formControl">
         <div class="content">
-          <button onclick="YaCyPage.clearForm()" class="icon-revert">Clear</button>
+          <button id="btnClearForm" class="icon-revert">Clear</button>
           <button type="submit" class="primary icon-save">Save</button>
         </div>
       </fieldset>

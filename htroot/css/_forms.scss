@@ -71,8 +71,9 @@ input[type="checkbox"] {
 input[type='text'],
 input[type='password'],
 input[type="range"],
-textarea {
-  width:70%;
+textarea,
+select.fullSize {
+  width:100%;
 }
 
 button {
