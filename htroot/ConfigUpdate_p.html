@@ -9,6 +9,10 @@
 <body id="configUpdate">
   #%env/templates/page-start.template%#
 
+  <div id="devInfo">
+    status: valid html5
+  </div>
+
   <h1>System Update</h1>
 
   #(deploys)#::
@@ -164,35 +168,34 @@
           Your changes have been saved.
         </p>
         #(/configCommit)#
-      </dl>
-    </fieldset>
-  </form>
+      </fieldset>
+    </form>
 
-  <h2>System Update Statistics</h2>
-  <fieldset class="framed main">
-    <legend>System Update Statistics</legend>
-    <fieldset class="formSection">
-      <legend>Last Lookup</legend>
-      <div class="content">#(lastlookup)#never::#[time]##(/lastlookup)#</div>
+    <h2>System Update Statistics</h2>
+    <fieldset class="framed main">
+      <legend>System Update Statistics</legend>
+      <fieldset class="formSection">
+        <legend>Last Lookup</legend>
+        <div class="content">#(lastlookup)#never::#[time]##(/lastlookup)#</div>
+      </fieldset>
+      <fieldset class="formSection">
+        <legend>Last Download</legend>
+        <div class="content">#(lastdownload)#never::#[time]##(/lastdownload)#</div>
+      </fieldset>
+      <fieldset class="formSection">
+        <legend>Last Deploy</legend>
+        <div class="content">#(lastdeploy)#never::#[time]##(/lastdeploy)#</div>
+      </fieldset>
     </fieldset>
-    <fieldset class="formSection">
-      <legend>Last Download</legend>
-      <div class="content">#(lastdownload)#never::#[time]##(/lastdownload)#</div>
-    </fieldset>
-    <fieldset class="formSection">
-      <legend>Last Deploy</legend>
-      <div class="content">#(lastdeploy)#never::#[time]##(/lastdeploy)#</div>
-    </fieldset>
-  </fieldset>
-  ::
-  <p>You installed YaCy with a package manager. To update YaCy, use the package manager:</p>
-  <p>manual update:<br/>apt-get update &amp;&amp; apt-get install yacy</p>
-  <p>automatic update: add the following line to /etc/crontab<br/>0 6 * * * root apt-get update &amp;&amp; apt-get -y --force-yes install yacy</p>
-  ::
-  <p>YaCy has been installed to the Program Files directory. Automatic update is not possible.<br/>Download and install the latest version from the web page <a href="http://www.yacy.net/">http://www.yacy.net/</a></p>
-  ::
-  #(/candeploy)#
+    ::
+    <p>You installed YaCy with a package manager. To update YaCy, use the package manager:</p>
+    <p>manual update:<br/>apt-get update &amp;&amp; apt-get install yacy</p>
+    <p>automatic update: add the following line to /etc/crontab<br/>0 6 * * * root apt-get update &amp;&amp; apt-get -y --force-yes install yacy</p>
+    ::
+    <p>YaCy has been installed to the Program Files directory. Automatic update is not possible.<br/>Download and install the latest version from the web page <a href="http://www.yacy.net/">http://www.yacy.net/</a></p>
+    ::
+    #(/candeploy)#
 
-  #%env/templates/page-end.template%#
-</body>
-</html>
+    #%env/templates/page-end.template%#
+  </body>
+  </html>
