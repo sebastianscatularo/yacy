@@ -3,44 +3,14 @@
 <head>
   <title>YaCy '#[clientname]#': Advanced Config</title>
   #%env/templates/header-backend.template%#
-  <style type="text/css">
-  .filtered { display:none; }
-  </style>
-  <script type="text/javascript">
-  function element_clicked(element) {
-    document.getElementById("key").value=element.id.substring(1);
-    document.getElementById("value").value=element.value;
-  }
-
-  function filterList() {
-    list=document.getElementsByName("options")[0];
-    node=list.firstChild;
-    key=document.getElementById("key").value;
-    while(node!=null) {
-      if(node.nodeType==1 && node.nodeName.toLowerCase()=="option"){
-        if (key!="" &&
-          node.firstChild.nodeValue.toLowerCase().indexOf(key.toLowerCase()) == -1) {
-          node.setAttribute("class", "filtered");
-      } else {
-        node.setAttribute("class", "");
-      }
-    }
-    node=node.nextSibling;
-  }
-}
-function clear_form() {
-  document.getElementById("key").value="";
-  document.getElementById("value").value="";
-  filterList();
-}
-</script>
+  <script type="text/javascript" src="/js/yaml/pages/configProperties.js"></script>
 </head>
 
-<body id="ConfigAdvanced" onload="filterList()">
+<body id="configProperties">
   #%env/templates/page-start.template%#
 
   <div id="devInfo">
-    update scripts
+    status: valid html5
   </div>
 
   <h1>Advanced Configuration</h1>
@@ -58,9 +28,9 @@ function clear_form() {
     <fieldset class="formSection">
       <legend>Options</legend>
       <div class="content">
-        <select name="options" size="36" style="width: 600px">
+        <select name="options" id="options" size="36" style="width: 600px">
           #{options}#
-          <option id="k#[key]#" value="#[value]#" onclick="element_clicked(this)">#[key]#: #[value]#</option>
+          <option id="k#[key]#" value="#[value]#" onclick="YaCyPage.clicked(this)">#[key]#: #[value]#</option>
           #{/options}#
         </select>
       </div>
@@ -70,7 +40,7 @@ function clear_form() {
       <fieldset class="formSection">
         <legend>Key</legend>
         <div class="content">
-          <input type="text" id="key" name="key" size="40" onkeyup="filterList()" value="#[keyPosted]#"/>
+          <input type="text" id="key" name="key" size="40" onkeyup="YaCyPage.filterList()" value="#[keyPosted]#"/>
         </div>
       </fieldset>
       <fieldset class="formSection">
@@ -81,12 +51,12 @@ function clear_form() {
       </fieldset>
       <fieldset class="formControl">
         <div class="content">
-          <button onclick="clear_form()" class="icon-revert">Clear</button>
+          <button onclick="YaCyPage.clearForm()" class="icon-revert">Clear</button>
           <button type="submit" class="primary icon-save">Save</button>
         </div>
       </fieldset>
-    </fieldset>
-  </form>
+    </form>
+  </fieldset>
 
   #%env/templates/page-end.template%#
 </body>

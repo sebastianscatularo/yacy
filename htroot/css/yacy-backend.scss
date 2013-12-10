@@ -205,3 +205,8 @@ main .ym-wbox:first-of-type {
 body#rssTerminal {
   background:transparent;
 }
+body#configProperties {
+  .filtered {
+    display:none;
+  }
+}
