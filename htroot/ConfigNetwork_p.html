@@ -3,45 +3,14 @@
 <head>
   <title>YaCy '#[clientname]#': Network Configuration</title>
   #%env/templates/header-backend.template%#
-  <script type="text/javascript">
-  <!--
-  function CheckForRobinson() {
-   var dist = document.getElementById("ConfigForm").indexDistribute.checked;
-   var recv = document.getElementById("ConfigForm").indexReceive.checked;
-   if(!(dist || recv)) {
-            //robinson-mode
-            document.getElementById("ConfigForm").network[1].checked = true;
-          } else {
-            //p2p-mode
-            document.getElementById("ConfigForm").network[0].checked = true;
-          }
-          document.getElementById("ConfigForm").indexReceiveSearch[recv ? 0 : 1].checked = true;
-        }
-
-        function EnableRobinson() {
-         if(document.getElementById("ConfigForm").network[1].checked) {
-          document.getElementById("ConfigForm").indexDistribute.checked = false;
-          document.getElementById("ConfigForm").indexReceive.checked = false;
-          document.getElementById("ConfigForm").indexReceiveSearch[1].checked = true;
-        }
-      }
-
-      function EnableP2P() {
-       if(document.getElementById("ConfigForm").network[0].checked) {
-        document.getElementById("ConfigForm").indexDistribute.checked = true;
-        document.getElementById("ConfigForm").indexReceive.checked = true;
-        document.getElementById("ConfigForm").indexReceiveSearch[0].checked = true;
-      }
-    }
-  //-->
-  </script>
+  <script type="text/javascript" src="/js/yaml/pages/configNetwork.js"></script>
 </head>
 
 <body id="configNetwork">
   #%env/templates/page-start.template%#
 
   <div id="devInfo">
-    check scripts
+    status: valid html5
   </div>
 
   <h1>Network Configuration</h1>
@@ -151,7 +120,7 @@
       <fieldset class="formSection">
         <legend>Enable</legend>
         <div class="content">
-          <input type="radio" name="network" id="p2p" onclick="EnableP2P()" value="p2p"#(p2p.checked)#:: checked="checked"#(/p2p.checked)# />
+          <input type="radio" name="network" id="p2p" value="p2p"#(p2p.checked)#:: checked="checked"#(/p2p.checked)# />
           <label for="p2p">Peer-to-Peer Mode</label>
         </div>
       </fieldset>
@@ -160,7 +129,7 @@
         <fieldset class="formSection">
           <legend>Enable</legend>
           <div class="content">
-            <input type="checkbox" id="indexDistribute" name="indexDistribute" onclick="CheckForRobinson()" #(indexDistributeChecked)#::checked="checked" #(/indexDistributeChecked)#/>
+            <input type="checkbox" id="indexDistribute" name="indexDistribute" #(indexDistributeChecked)#::checked="checked" #(/indexDistributeChecked)#/>
           </div>
         </fieldset>
         <fieldset class="formSection">
@@ -198,7 +167,7 @@
         <fieldset class="formSection">
           <legend>Enable</legend>
           <div class="content">
-            <input type="checkbox" id="indexReceive" name="indexReceive" onclick="CheckForRobinson()" #(indexReceiveChecked)#::checked="checked" #(/indexReceiveChecked)#/>
+            <input type="checkbox" id="indexReceive" name="indexReceive" #(indexReceiveChecked)#::checked="checked" #(/indexReceiveChecked)#/>
           </div>
         </fieldset>
         <fieldset class="formSection">
@@ -249,7 +218,7 @@
       <fieldset class="formSection">
         <legend>Enable</legend>
         <div class="content">
-          <input type="radio" name="network" id="robinson" onclick="EnableRobinson()" value="robinson"#(robinson.checked)#:: checked="checked"#(/robinson.checked)# />
+          <input type="radio" name="network" id="robinson" value="robinson"#(robinson.checked)#:: checked="checked"#(/robinson.checked)# />
           <label for="robinson">Robinson Mode</label>
         </div>
       </fieldset>
@@ -291,12 +260,20 @@
               <br />
               Search requests are spread over all peers of the cluster, and answered from all peers of the cluster.
             </p>
-            <p>
+            <div class="p">
               List of .yacy or .yacyh - domains of the cluster: <em>(comma-separated)</em><br />
-              <input type="text" name="cluster.peers.yacydomain" value="#[cluster.peers.yacydomain]#" size="80" maxlength="800" />
-              <br />
-              #[cluster.peers.yacydomain.hashes]#
-            </p>
+              <input type="text" name="cluster.peers.yacydomain" id="clusterPeersYacyDomain" value="#[cluster.peers.yacydomain]#" size="80" maxlength="800" />
+              <div class="formHint hidden">
+                <p class="error" data-id="empty">
+                  You must specify a valid peer name.
+                </p>
+                <p class="error" data-id="invalid">
+                  Please enter a comma separated list of <code>.yacy</code> and/or <code>.yacyh</code> domains.
+                </p>
+              </div>
+              <br/>
+              <em>Peer Hashes:</em> <code>#[cluster.peers.yacydomain.hashes]#</code>
+            </div>
           </div>
         </fieldset>
         <fieldset class="formSection">
@@ -313,8 +290,9 @@
         </fieldset>
       </fieldset>
       <fieldset class="formControl">
+        <div id="ycu-error-count-robinson" class="description hiddden"></div>
         <div class="content">
-          <button type="submit" name="save" class="primary icon-save">Save configuration</button>
+          <button type="submit" name="save" id="submitRobinson" class="primary icon-save">Save configuration</button>
         </div>
       </fieldset>
     </fieldset>
