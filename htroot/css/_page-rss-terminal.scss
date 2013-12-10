@@ -1,0 +1,55 @@
+body#rssTerminal {
+  #feedBox {
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    font-size:0.8em;
+  }
+
+  span {
+    display:block;
+
+    &.peernews {
+      color:#606060;
+    }
+    &.remotesearch {
+      color:#ffab00;
+    }
+    &.localsearch {
+      color:#dd0000;
+    }
+    &.remoteindexing {
+      color:#ccbb00;
+    }
+    &.localindexing {
+      color:#562b29;
+    }
+    &.dhtreceive {
+      color:#006600;
+    }
+    &.dhtsend {
+      color:#002a97;
+    }
+    &.proxy {
+      color:#8d85f3;
+    }
+  }
+
+  span:nth-last-of-type(2){
+    display:inline-block;
+
+    &:after {
+      content:'\00a0';
+    }
+  }
+
+  span.cursor{
+    display:inline-block;
+    opacity:0.7;
+
+    &:before {
+      @extend %blink-text;
+      content:'▊';
+    }
+  }
+}
