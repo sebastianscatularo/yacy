@@ -20,4 +20,8 @@ YaCyPage.init = function() {
       error: 'notSame'
     }]
   });
+
+  $('#adminUser, #adminPw1, #adminPw2').on('focus', function() {
+    $('#access_account').prop('checked', true);
+  });
 };
