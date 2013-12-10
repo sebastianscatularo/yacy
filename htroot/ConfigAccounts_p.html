@@ -74,8 +74,11 @@
           <div class="content">
             <input type="text" name="adminuser" id="adminUser" value="#[defaultUser]#" maxlength="32"/>
             <div class="formHint hidden">
-              <p class="error">
+              <p class="error" data-id="empty">
                 You must specify a valid user name.
+              </p>
+              <p class="error" data-id="length">
+                The user name must be at least <code>4</code> characters long.
               </p>
             </div>
           </div>
@@ -107,7 +110,7 @@
         </fieldset>
       </fieldset>
       <fieldset class="formControl">
-        <div id="ycu-error-count" class="description hiddden"></div>
+        <div id="ycu-error-count-admin" class="description hiddden"></div>
         <div class="content">
           <button type="submit" name="setAdmin" id="submitAccount" class="primary icon-save">Define administrator</button>
         </div>
@@ -138,24 +141,45 @@
 
   <form action="ConfigAccounts_p.html" method="post" accept-charset="UTF-8">
     <fieldset>
-      <legend>Edit user: #[username]#</legend>
+      <legend>Add / Edit user <em>#[username]#</em></legend>
       <input type="hidden" name="current_user" value="#[current_user]#" />
       <fieldset class="formSection">
         <legend>Name</legend>
         <div class="content">
-          <input type="text" id="username" name="username" value="#[username]#" />
+          <input type="text" id="userName" name="username" value="#[username]#" />
+          <div class="formHint hidden">
+            <p class="error" data-id="empty">
+              You must specify a valid user name.
+            </p>
+            <p class="error" data-id="length">
+              The user name must be at least <code>4</code> characters long.
+            </p>
+          </div>
         </div>
       </fieldset>
       <fieldset class="formSection">
         <legend>Password</legend>
         <div class="content">
           <input type="password" id="password" name="password" />
+          <div class="formHint hidden">
+            <p class="error" data-id="empty">
+              You must specify a password.
+            </p>
+          </div>
         </div>
       </fieldset>
       <fieldset class="formSection">
         <legend>Password repeat</legend>
         <div class="content">
           <input type="password" id="password2" name="password2" />
+          <div class="formHint hidden">
+            <p class="error" data-id="empty">
+              You must retype the previous entered password.
+            </p>
+            <p class="error" data-id="notSame">
+              The repeated password do not match the first one.
+            </p>
+          </div>
         </div>
       </fieldset>
       <fieldset class="formSection">
@@ -200,8 +224,9 @@
         </div>
       </fieldset>
       <fieldset class="formControl">
+        <div id="ycu-error-count-user" class="description hiddden"></div>
         <div class="content">
-          <button type="submit" name="change" class="primary icon-save">Save changes</button>
+          <button type="submit" name="change" id="submitUser" class="primary icon-save">Add User / Save changes</button>
         </div>
       </fieldset>
     </fieldset>
