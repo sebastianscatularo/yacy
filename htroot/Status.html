@@ -4,33 +4,13 @@
   #(forwardToConfigBasic)#::<meta http-equiv="REFRESH" content="0; url=/ConfigBasic.html" />#(/forwardToConfigBasic)#
   <title>YaCy '#[clientname]#': Console Status</title>
   #%env/templates/header-backend.template%#
-  <script type="text/javascript">
-  <!--
-  function loadBanner() {
-    for (var i = 0; i < document.images.length; i++) {
-      if (document.images[i].src.indexOf("Banner.png") > 0) {
-        document.images[i].src = "/Banner.png?textcolor=000000&bgcolor=DEE6F3&bordercolor=DEE6F3&time=" + (new Date()).getTime();
-        break;
-      }
-    }
-  }
-  function reloadGraph() {
-    document.images["graph"].src="PerformanceGraph.png?nomem=&amp;time="+(new Date()).getTime();
-    window.status="";
-  }
-  function init() {
-    loaderBanner = window.setInterval("loadBanner()", 20000);
-    window.setInterval("reloadGraph()", 8000);
-  }
-  -->
-  </script>
+  <script type="text/javascript" src="/js/yaml/pages/status.js"></script>
 </head>
 
-<body id="status" onload="init();">
+<body id="status">
   #%env/templates/page-start.template%#
 
   <div id="devInfo">
-    - Banner image generator does not respect set border color
     Status
     - valid HTML5
   </div>
@@ -179,12 +159,12 @@
     </fieldset>
     <fieldset class="framed">
       <legend class="light">Performance Graph</legend>
-      <img src="PerformanceGraph.png?width=600&amp;nomem=" id="graph" alt="PerformanceGraph" width="600" height="240"/>
+      <img src="PerformanceGraph.png?width=600&amp;nomem=" alt="PerformanceGraph" width="600" height="240" id="performanceGraphImg"/>
     </fieldset>
     <br />
-    <fieldset class="framed">
+    <fieldset class="framed" id="banner">
       <div class="center">
-        <img src="Banner.png?textcolor=000000&amp;bgcolor=DEE6F3&amp;bordercolor=DEE6F3" alt="YaCy banner" width="468" height="60"/>
+        <img src="Banner.png?textcolor=000000&amp;bgcolor=DEE6F3&amp;bordercolor=DEE6F3" alt="YaCy banner" width="468" height="60" id="bannerImg"/>
       </div>
     </fieldset>
   </div>
