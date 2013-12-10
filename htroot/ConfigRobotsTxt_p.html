@@ -8,6 +8,10 @@
 <body id="configRobotsTxt">
   #%env/templates/page-start.template%#
 
+  <div id="devInfo">
+    status: valid html5
+  </div>
+
   #(error)#
   ::
   <p class="ycu-message ycu-message-error">
@@ -15,9 +19,9 @@
   </p>
   ::
   <p class="ycu-message ycu-message-error">
-    Deletion of <code>htroot/robots.txt</code> failed:
-    <q>#(/error)#</q>
+    Deletion of <code>htroot/robots.txt</code> failed: <code>#[msg]#</code>
   </p>
+  #(/error)#
 
   <h1>Exclude Web-Spiders</h1>
   <p>
