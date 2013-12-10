@@ -1,3 +1,6 @@
+/*jslint browser:true */
+/*global YaCyPage:true, YaCyUi:true, $:true, jQuery:true, console:true */
+"use strict";
 YaCyPage.e; // frequent used elements cache, set by chacheResultElements
 
 YaCyPage.chacheResultElements = function() {
@@ -65,7 +68,7 @@ YaCyPage.statistics = function(offset, itemscount, itemsperpage, totalcount,
   var tabText = 'Use the TAB key to navigate to next page.';
 
   if (numberofpages) {
-    for (i = 0; i < numberofpages; i++) {
+    for (var i = 0; i < numberofpages; i++) {
       if (i == thispage) {
         resnav += '<span class="current">' + (i + 1) + '</span>';
       } else {
@@ -136,7 +139,7 @@ YaCyPage.init = function() {
             })
           );
         }
-      })
+      });
     },
     minLength: 2
   });
@@ -156,7 +159,7 @@ YaCyPage.init = function() {
     };
     $('#tagCloud a').tsort().tagcloud({
       type: "sphere",
-      power: .25,
+      power: 0.25,
       seed: 0,
       sizemin: 10,
       sizemax: 20,

@@ -1,3 +1,6 @@
+/*jslint browser:true */
+/*global YaCyPage:true, YaCyUi:true, $:true, jQuery:true, console:true */
+"use strict";
 YaCyPage.Func = YaCyPage.Func || {};
 
 YaCyPage.Func.CrawlStart = function() {
@@ -67,7 +70,7 @@ YaCyPage.Func.CrawlStart.prototype = {
 
         if (response.favicon.length > 0) {
           favicon = '<img src="' + response.favicon +
-            '" style="width:16px;height:16px;margin-right:0.3em;"/>'
+            '" style="width:16px;height:16px;margin-right:0.3em;"/>';
         }
         robotsInfo.append('<a href="' + url + '">' + favicon + url + '</a>');
         if (response.robotsInfo.trim().length > 0) {
@@ -97,7 +100,7 @@ YaCyPage.Func.CrawlStart.prototype = {
         }
         if (response.favicon.length > 0) {
           bookmarkIcon = '<img src="' + response.favicon +
-            '" style="width:16px;height:16px;margin-right:0.3em;"/>'
+            '" style="width:16px;height:16px;margin-right:0.3em;"/>';
         }
         $('#startPointDetails').find('dd[data-id="bookmarkTitle"]')
           .html(bookmarkIcon + this.bookmarkTitle);
@@ -129,7 +132,7 @@ YaCyPage.Func.CrawlStart.prototype = {
           option = $('#startPointSelectBox').find('option[data-id="siteList"]');
           data = response.sitemap.trim();
           if (data.length > 0) {
-            option.prop('disabled', false)
+            option.prop('disabled', false);
             hasOptions = true;
           } else {
             option.prop('disabled', true);
@@ -141,7 +144,7 @@ YaCyPage.Func.CrawlStart.prototype = {
           option = $('#startPointSelectBox').find('option[data-id="linkList"]');
           data = response.links.trim();
           if (data.length > 0) {
-            option.prop('disabled', false)
+            option.prop('disabled', false);
             hasOptions = true;
           } else {
             option.prop('disabled', true);

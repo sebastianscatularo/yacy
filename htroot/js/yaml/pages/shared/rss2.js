@@ -1,3 +1,6 @@
+/*jslint browser:true */
+/*global YaCyPage:true, YaCyUi:true, $:true, jQuery:true, console:true */
+"use strict";
 YaCyPage.Func = YaCyPage.Func || {};
 YaCyPage.Func.RSS2 = YaCyPage.Func.RSS2 || {};
 

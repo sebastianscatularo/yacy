@@ -1,3 +1,6 @@
+/*jslint browser:true */
+/*global YaCyUi:true, YaCyPage:true, $:true, jQuery:true, console:true */
+"use strict";
 YaCyPage.Parts = {};
 
 YaCyPage.Parts.StartPoint = function() {
@@ -24,7 +27,7 @@ YaCyPage.Parts.StartPoint = function() {
     YaCyUi.Form.Button.switchText(this.e.btnRobots);
 
     this.urlResult = urls;
-  }
+  };
 
   this.addInteractionHandler = function() {
     // crawl start point buttons
@@ -43,11 +46,11 @@ YaCyPage.Parts.StartPoint = function() {
 
   this.resetUrlResults = function() {
     this.urlResult = null;
-  }
+  };
 
   this.getUrlResults = function() {
     return this.urlResult;
-  }
+  };
 
   // init
   self.addInteractionHandler();
@@ -307,7 +310,7 @@ YaCyPage.Report = {
         var row = $(this).parents('tr');
         var head = row.prevUntil('tr.group').prev('tr').last();
         row.hide();
-        if (head.nextUntil('tr.group').filter(':visible').length == 0) {
+        if (head.nextUntil('tr.group').filter(':visible').length === 0) {
           head.hide();
         }
       });
@@ -461,5 +464,5 @@ YaCyPage.init = function() {
   // init parts and store validable ones
   YaCyPage.parts = {
     startPoint: new YaCyPage.Parts.StartPoint()
-  }
+  };
 };

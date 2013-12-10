@@ -1,5 +1,5 @@
 /*jslint browser:true */
-/*global YaCyUi:true, $:true, console:true */
+/*global YaCyUi:true, $:true, jQuery:true, console:true */
 "use strict";
 
 if (typeof YaCyUi !== 'undefined') {
@@ -214,7 +214,7 @@ YaCyUi.init = function() {
     var sortTables = $('table.sortable');
     if (sortTables.length > 0) {
       sortTables.each(function() {
-        var headers = {}
+        var headers = {};
         // exclude checkAll columns and those explicitly not to be sorted
         $(this).find('th.noSort, th input[data-action~="checkAllToggle"]').each(
           function() {
@@ -283,4 +283,4 @@ YaCyUi.initFinish = function() {
 
   // finished loading
   YaCyUi.loaded = true;
-}
+};

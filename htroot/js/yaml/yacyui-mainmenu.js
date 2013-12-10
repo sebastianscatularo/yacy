@@ -1,7 +1,7 @@
 /*jslint browser:true */
 /*global YaCyUi:true, $:true, console:true */
 
-YaCyUi.Func.MainMenu = function() {
+YaCyUi.Func.MainMenu = YaCyUi.Func.MainMenu || function() {
   var self = this;
   this.e = {
     subContent: $('#navSub').children('.wrap').children('.content')
@@ -98,15 +98,15 @@ YaCyUi.Func.MainMenu = function() {
 
     var breadCrumb = $('<div>');
     var level = 0;
-    for (var i = 0; i < chain.length; i++) {
-      var e = chain[i];
+    for (var k = 0; k < chain.length; k++) {
+      var e = chain[k];
       var text = e.children('span, a').text().trim();
       if (text.length > 0) {
-        if (i === 0) {
+        if (k === 0) {
           e.addClass('active'); // root entry
-          self.showSubMenu(e, (i + 1), true);
+          self.showSubMenu(e, (k + 1), true);
         } else {
-          self.showSubMenu(chain[i], (i + 1), true);
+          self.showSubMenu(chain[k], (k + 1), true);
           e.addClass('active');
         }
         breadCrumb.append('<span>' + text + '</span>');

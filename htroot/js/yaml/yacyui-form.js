@@ -2,7 +2,7 @@
 /*global YaCyUi:true, $:true, console:true */
 "use strict";
 
-YaCyUi.Form = {
+YaCyUi.Form = YaCyUi.Form || {
   /** Shows the content of a toggleable or collapseble fieldset.
    * @param {jQuery} The fieldset element */
   showFieldsetContent: function(fieldset) {
@@ -30,7 +30,7 @@ YaCyUi.Form = {
   }
 };
 
-YaCyUi.Func.Form = {
+YaCyUi.Func.Form = YaCyUi.Func.Form || {
   loaded: false,
 
   /** Initialize all form functions. */
@@ -127,41 +127,42 @@ YaCyUi.Func.Form = {
 /** Make form fieldsets collapseable.
  * @param {jQuery} Fieldset elements
  * @param {boolean} If true fieldsets are initially collapsed */
-YaCyUi.Func.Form.CollapseableFieldset = function(fieldsets, initialHidden) {
-  var self = this;
-  this.loaded = false;
+YaCyUi.Func.Form.CollapseableFieldset = YaCyUi.Func.Form.CollapseableFieldset ||
+  function(fieldsets, initialHidden) {
+    var self = this;
+    this.loaded = false;
 
-  /** Add collapse click handler to fieldset legend.
-   * @param {jQuery} Elements (fieldsets) to collapse
-   * @param {boolean} If false, elements are not initial hidden.
-   * (default: true) */
+    /** Add collapse click handler to fieldset legend.
+     * @param {jQuery} Elements (fieldsets) to collapse
+     * @param {boolean} If false, elements are not initial hidden.
+     * (default: true) */
 
-  function addHandler(fieldsets, hide) {
-    hide = typeof hide !== 'boolean' ? true : hide;
+    function addHandler(fieldsets, hide) {
+      hide = typeof hide !== 'boolean' ? true : hide;
 
-    fieldsets.each(function() {
-      var fieldset = $(this);
-      fieldset
-        .children('legend')
-        .on('click', function() {
-          self.toggle(fieldset);
-        });
-    });
+      fieldsets.each(function() {
+        var fieldset = $(this);
+        fieldset
+          .children('legend')
+          .on('click', function() {
+            self.toggle(fieldset);
+          });
+      });
 
-    if (hide) {
-      fieldsets
-        .addClass('collapsed')
-        .children().not('legend').hide()
-        .promise().done(function() {
-          self.loaded = true; // init done
-        });
-    } else {
-      self.loaded = true; // init done
+      if (hide) {
+        fieldsets
+          .addClass('collapsed')
+          .children().not('legend').hide()
+          .promise().done(function() {
+            self.loaded = true; // init done
+          });
+      } else {
+        self.loaded = true; // init done
+      }
     }
-  }
 
-  // init
-  addHandler(fieldsets, initialHidden);
+    // init
+    addHandler(fieldsets, initialHidden);
 };
 YaCyUi.Func.Form.CollapseableFieldset.prototype = {
   /** Shows a fieldset.
@@ -203,16 +204,17 @@ YaCyUi.Func.Form.CollapseableFieldset.prototype = {
 
 /** Toggle form sections by enabling/disableing.
  * @param {jQuery} form section elements (<dl/>) */
-YaCyUi.Func.Form.ToggleableFormSection = function(formSections) {
-  var self = this;
-  this.loaded = false;
-  var sectionsToHideCount = 0;
-  var text = {
-    configure: 'configure',
-    activateAndConfigure: 'activate &amp; configure',
-    revert: 'use defaults',
-    turnOff: 'deactivate'
-  }
+YaCyUi.Func.Form.ToggleableFormSection = YaCyUi.Func.Form.ToggleableFormSection ||
+  function(formSections) {
+    var self = this;
+    this.loaded = false;
+    var sectionsToHideCount = 0;
+    var text = {
+      configure: 'configure',
+      activateAndConfigure: 'activate &amp; configure',
+      revert: 'use defaults',
+      turnOff: 'deactivate'
+    };
 
     function wrapContent(formSection) {
       var toggleType = formSection.data('toggle-type');
@@ -261,7 +263,7 @@ YaCyUi.Func.Form.ToggleableFormSection = function(formSections) {
       }, 125);
     }
 
-  init();
+    init();
 };
 YaCyUi.Func.Form.ToggleableFormSection.prototype = {
   /** Shows a form section.
@@ -339,43 +341,44 @@ YaCyUi.Func.Form.ToggleableFormSection.prototype = {
 
 /** Help for form sections.
  * @param {jQuery} help elements */
-YaCyUi.Func.Form.SectionHelp = function(formHelpElements) {
-  var helpMsg = 'Click to get help for this item.';
+YaCyUi.Func.Form.SectionHelp = YaCyUi.Func.Form.SectionHelp ||
+  function(formHelpElements) {
+    var helpMsg = 'Click to get help for this item.';
 
-  formHelpElements.each(function() {
-    var helpElement;
-    var header = $(this).parent();
-    var section = header.children('legend');
+    formHelpElements.each(function() {
+      var helpElement;
+      var header = $(this).parent();
+      var section = header.children('legend');
 
-    section
-      .addClass('hasHelp')
-      .attr('title', helpMsg)
-      .on('click', function() {
-        if (YaCyUi.DataStore.get(
-          header.children('.content'), 'toggle', 'state') != 'hidden') {
-          // don't show help dialog, if content is hidden
-          helpElement.dialog('open');
+      section
+        .addClass('hasHelp')
+        .attr('title', helpMsg)
+        .on('click', function() {
+          if (YaCyUi.DataStore.get(
+            header.children('.content'), 'toggle', 'state') != 'hidden') {
+            // don't show help dialog, if content is hidden
+            helpElement.dialog('open');
+          }
+        })
+        .tooltip();
+      helpElement = $(this).dialog({
+        closeOnEscape: true,
+        autoOpen: false,
+        autoResize: true,
+        modal: true,
+        dialogClass: 'ycu-ext-hint-dlg',
+        title: section.text(),
+        buttons: {
+          Ok: function() {
+            $(this).dialog('close');
+          }
         }
-      })
-      .tooltip();
-    helpElement = $(this).dialog({
-      closeOnEscape: true,
-      autoOpen: false,
-      autoResize: true,
-      modal: true,
-      dialogClass: 'ycu-ext-hint-dlg',
-      title: section.text(),
-      buttons: {
-        Ok: function() {
-          $(this).dialog('close');
-        }
-      }
+      });
     });
-  });
 };
 
 /** Hints for form elements. */
-YaCyUi.Func.Form.Hints = function(hintElements) {
+YaCyUi.Func.Form.Hints = YaCyUi.Func.Form.Hints || function(hintElements) {
   var self = this;
   this.loaded = false;
 
@@ -413,7 +416,7 @@ YaCyUi.Func.Form.Hints = function(hintElements) {
               show: false
             }
           });
-        });;
+        });
       }
     }).promise().done(function() {
       self.loaded = true;
@@ -630,7 +633,8 @@ YaCyUi.Func.Form.Hints.prototype = {
   }
 };
 
-YaCyUi.Func.Form.ResizeableTextarea = function() {};
+YaCyUi.Func.Form.ResizeableTextarea = YaCyUi.Func.Form.ResizeableTextarea ||
+  function() {};
 YaCyUi.Func.Form.ResizeableTextarea.prototype = {
   /** Resize a textarea to it's content.
    * based on: http://stackoverflow.com/questions/2948230/auto-expand-a-textarea-using-jquery
@@ -677,7 +681,7 @@ YaCyUi.Func.Form.ResizeableTextarea.prototype = {
   }
 };
 
-YaCyUi.Func.Form.Validate = function() {
+YaCyUi.Func.Form.Validate = YaCyUi.Func.Form.Validate || function() {
   var self = this;
   this.loaded = false;
   this.dialog = null;
@@ -829,7 +833,7 @@ YaCyUi.Func.Form.Validate.prototype = {
           var id = this.elements[i].attr('id');
           YaCyUi.Form.digOut(id);
           // jump to topmost element
-          offset = this.elements[i].offset()
+          offset = this.elements[i].offset();
           if (position === null || offset.top < position) {
             position = offset.top;
             location.hash = '#' + id;
@@ -971,8 +975,8 @@ YaCyUi.Func.Form.Validate.prototype = {
     if (labels.length > 0) {
       var labelList = $('<ul/>');
       this.dialog.append('<div>The following elements contain invalid values:</div><br/>');
-      for (var i = 0; i < labels.length; i++) {
-        labelList.append('<li>' + labels[i] + '</li>');
+      for (var j = 0; j < labels.length; j++) {
+        labelList.append('<li>' + labels[j] + '</li>');
       }
       this.dialog.append(labelList);
       if (moreErrors > 0) {
@@ -988,105 +992,106 @@ YaCyUi.Func.Form.Validate.prototype = {
   }
 };
 
-YaCyUi.Func.Form.ToggleableFormElement = function(toggleableElements) {
-  var self = this;
-  this.loaded = false;
+YaCyUi.Func.Form.ToggleableFormElement = YaCyUi.Func.Form.ToggleableFormElement ||
+  function(toggleableElements) {
+    var self = this;
+    this.loaded = false;
 
-  /** Enable a collection of elements and their associated labels.
-   * @param {jQuery} Elements to enable */
+    /** Enable a collection of elements and their associated labels.
+     * @param {jQuery} Elements to enable */
 
-  function toggleOn(elementsArray) {
-    $.each(elementsArray, function(i, v) {
-      var e = $(this);
-      // toggle element..
-      e.prop('disabled', false);
-      // ..set focus if we should..
-      if (e.data('toggle-focus') === true) {
-        e.focus();
-      }
-      // ..and re-enable the associated label
-      $('label[for="' + this.id + '"]').removeClass('disabled');
-    });
-  }
-
-  /** Disable a collection of elements and their associated labels.
-   * @param {jQuery} Elements to disable */
-
-  function toggleOff(elementsArray) {
-    $.each(elementsArray, function(i, v) {
-      var e = $(this);
-      // toggle element..
-      e.prop('disabled', true);
-      // ..and label
-      $('label[for="' + this.id + '"]').addClass('disabled');
-    });
-  }
-
-  function init() {
-    var toggles = { // plain toggles go here
-      groups: {} // toggles in groups go here
-    };
-
-    toggleableElements.each(function() {
-      var toggleElementId = $(this).data('toggle-id');
-      var toggleElement = $('#' + toggleElementId);
-      var toggleElementGroup = toggleElement.attr('name').trim();
-
-      if (toggleElement.length <= 0 || (toggleElement.attr('type') != 'radio' &&
-        toggleElement.attr('type') != 'checkbox')) {
-        return; // process next
-      }
-
-      if (toggleElementGroup.length > 0) {
-        // toggle is part of a group
-        if (!(toggleElementGroup in toggles.groups)) {
-          // group is not already there
-          toggles.groups[toggleElementGroup] = {};
-          toggles.groups[toggleElementGroup][toggleElementId] =
-            []; // elements to toggle
-        } else if (!(toggleElementId in toggles.groups[toggleElementGroup])) {
-          // group already seen, but not the toggle element
-          toggles.groups[toggleElementGroup][toggleElementId] =
-            []; // elements to toggle
+    function toggleOn(elementsArray) {
+      $.each(elementsArray, function(i, v) {
+        var e = $(this);
+        // toggle element..
+        e.prop('disabled', false);
+        // ..set focus if we should..
+        if (e.data('toggle-focus') === true) {
+          e.focus();
         }
-        toggles.groups[toggleElementGroup][toggleElementId].push($(this));
-      } else {
-        // single element, not part of a group
-        if (!(toggleElementId in toggles)) {
-          toggles[toggleElementId] = []; // elements to toggle
-        }
-        toggles[toggleElementId].push($(this));
-        // attach handler
-        toggleElement.on('change', function() {
-          $(this).is(':checked') ? toggleOn(toggles[this.id]) :
-            toggleOff(toggles[this.id]);
-        });
-      }
-
-      // set current state
-      toggleElement.is(':checked') ? toggleOn($(this)) : toggleOff($(this));
-    });
-
-    // attach a global event handler for all elements within an group
-    $.each(toggles.groups, function(group, toggles) {
-      $('input[name="' + group + '"]').on('change', function() {
-        for (var toggleId in toggles) {
-          if (toggleId == this.id && $(this).is(':checked')) {
-            toggleOn(toggles[toggleId]);
-          } else {
-            toggleOff(toggles[toggleId]);
-          }
-        }
+        // ..and re-enable the associated label
+        $('label[for="' + this.id + '"]').removeClass('disabled');
       });
-    });
+    }
 
-    self.loaded = true;
-  }
+    /** Disable a collection of elements and their associated labels.
+     * @param {jQuery} Elements to disable */
 
-  init();
+    function toggleOff(elementsArray) {
+      $.each(elementsArray, function(i, v) {
+        var e = $(this);
+        // toggle element..
+        e.prop('disabled', true);
+        // ..and label
+        $('label[for="' + this.id + '"]').addClass('disabled');
+      });
+    }
+
+    function init() {
+      var toggles = { // plain toggles go here
+        groups: {} // toggles in groups go here
+      };
+
+      toggleableElements.each(function() {
+        var toggleElementId = $(this).data('toggle-id');
+        var toggleElement = $('#' + toggleElementId);
+        var toggleElementGroup = toggleElement.attr('name').trim();
+
+        if (toggleElement.length <= 0 || (toggleElement.attr('type') != 'radio' &&
+          toggleElement.attr('type') != 'checkbox')) {
+          return; // process next
+        }
+
+        if (toggleElementGroup.length > 0) {
+          // toggle is part of a group
+          if (!(toggleElementGroup in toggles.groups)) {
+            // group is not already there
+            toggles.groups[toggleElementGroup] = {};
+            toggles.groups[toggleElementGroup][toggleElementId] =
+              []; // elements to toggle
+          } else if (!(toggleElementId in toggles.groups[toggleElementGroup])) {
+            // group already seen, but not the toggle element
+            toggles.groups[toggleElementGroup][toggleElementId] =
+              []; // elements to toggle
+          }
+          toggles.groups[toggleElementGroup][toggleElementId].push($(this));
+        } else {
+          // single element, not part of a group
+          if (!(toggleElementId in toggles)) {
+            toggles[toggleElementId] = []; // elements to toggle
+          }
+          toggles[toggleElementId].push($(this));
+          // attach handler
+          toggleElement.on('change', function() {
+            $(this).is(':checked') ? toggleOn(toggles[this.id]) :
+              toggleOff(toggles[this.id]);
+          });
+        }
+
+        // set current state
+        toggleElement.is(':checked') ? toggleOn($(this)) : toggleOff($(this));
+      });
+
+      // attach a global event handler for all elements within an group
+      $.each(toggles.groups, function(group, toggles) {
+        $('input[name="' + group + '"]').on('change', function() {
+          for (var toggleId in toggles) {
+            if (toggleId == this.id && $(this).is(':checked')) {
+              toggleOn(toggles[toggleId]);
+            } else {
+              toggleOff(toggles[toggleId]);
+            }
+          }
+        });
+      });
+
+      self.loaded = true;
+    }
+
+    init();
 };
 
-YaCyUi.Func.Form.Data = function() {
+YaCyUi.Func.Form.Data = YaCyUi.Func.Form.Data || function() {
   function getFormData(form) {
     var data = {};
 
@@ -1137,7 +1142,7 @@ YaCyUi.Func.Form.Data = function() {
       }
     });
     return data;
-  };
+  }
 
   /** Get the data for a form.
    * @param {jQuery} The form element */
@@ -1176,7 +1181,7 @@ YaCyUi.Func.Form.Data = function() {
   };
 };
 
-YaCyUi.Func.Form.Button = function() {};
+YaCyUi.Func.Form.Button = YaCyUi.Func.Form.Button || function() {};
 YaCyUi.Func.Form.Button.prototype = {
   /** Switch between button icons.
    * @param {jQuery} The button element
@@ -1229,7 +1234,7 @@ YaCyUi.Func.Form.Button.prototype = {
   }
 };
 
-YaCyUi.Form.ValidatorFunc = {
+YaCyUi.Form.ValidatorFunc = YaCyUi.Form.ValidatorFunc || {
   /** Test if given string length is in range.
    * @param {string} String to test
    * @param {number} Minimum length
@@ -1337,42 +1342,43 @@ YaCyUi.Form.ValidatorFunc = {
     return valid;
   }
 };
-YaCyUi.Form.ValidatorElement = function(element, setup, validator) {
-  var self = this;
-  this.element = element;
-  this.validators = [];
-  this.isValidated = false;
-  this.isValid = false;
-  this.isDisabled = false;
-  this.validator = validator;
+YaCyUi.Form.ValidatorElement = YaCyUi.Form.ValidatorElement ||
+  function(element, setup, validator) {
+    var self = this;
+    this.element = element;
+    this.validators = [];
+    this.isValidated = false;
+    this.isValid = false;
+    this.isDisabled = false;
+    this.validator = validator;
 
-  function init(setup) {
-    YaCyUi.Event.handle('toggle-section-elements', function(ev, state, elements) {
-      var eId = self.element[0].id;
-      for (var i = 0; i < elements.length; i++) {
-        if (elements[i].id == eId) {
-          if (state == 'disable') {
-            self.isDisabled = true;
-          } else {
-            self.isDisabled = false;
+    function init(setup) {
+      YaCyUi.Event.handle('toggle-section-elements', function(ev, state, elements) {
+        var eId = self.element[0].id;
+        for (var i = 0; i < elements.length; i++) {
+          if (elements[i].id == eId) {
+            if (state == 'disable') {
+              self.isDisabled = true;
+            } else {
+              self.isDisabled = false;
+            }
+            self.validator.validate();
+            break;
           }
-          self.validator.validate();
-          break;
         }
+      });
+
+      // set validators
+      if ('validators' in setup) {
+        self.addValidators(setup.validators);
       }
-    });
-
-    // set validators
-    if ('validators' in setup) {
-      self.addValidators(setup.validators);
+      // custom value getter function
+      if ('get' in setup) {
+        self.setGetter(setup.get);
+      }
     }
-    // custom value getter function
-    if ('get' in setup) {
-      self.setGetter(setup.get);
-    }
-  }
 
-  init(setup);
+    init(setup);
 };
 YaCyUi.Form.ValidatorElement.prototype = {
   private: {
@@ -1552,12 +1558,12 @@ YaCyUi.Form.ValidatorElement.prototype = {
       validation: {
         valid: true
       }
-    }
+    };
   }
 };
 
-YaCyUi.Form.ValidatorCount = 0;
-YaCyUi.Form.Validator = function(config) {
+YaCyUi.Form.ValidatorCount = YaCyUi.Form.ValidatorCount || 0;
+YaCyUi.Form.Validator = YaCyUi.Form.Validator || function(config) {
   var self = this;
   this.elements = {};
   this.config = config || {};

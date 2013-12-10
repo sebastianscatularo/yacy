@@ -1,4 +1,5 @@
-var YaCyUi = YaCyUi || {}; // UI namespace
+/*jslint browser:true */
+/*global YaCyUi:true, $:true, jQuery:true, console:true */
 YaCyUi.Widgets = YaCyUi.Widgets || {}; // UI namespace
 
 YaCyUi.Widgets.ProgressBar = function(element, maxValue) {
@@ -6,15 +7,15 @@ YaCyUi.Widgets.ProgressBar = function(element, maxValue) {
 
   this.step = function(amount) {
     element.progressbar('value', element.progressbar('value') + amount);
-  }
+  };
 
   this.show = function() {
     element.show();
-  }
+  };
 
   this.hide = function() {
     element.hide('slow');
-  }
+  };
 
   element.progressbar({
     max: maxValue,

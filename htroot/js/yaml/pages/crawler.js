@@ -1,3 +1,6 @@
+/*jslint browser:true */
+/*global YaCyPage:true, YaCyUi:true, $:true, jQuery:true, console:true */
+"use strict";
 YaCyPage.conf = {
   countInterval: null,
   refreshInterval: 2,
@@ -140,16 +143,22 @@ YaCyPage.doWebPictureAnimation = function(nextTimeout) {
   var accessPicture = $('#webPicture');
   YaCyPage.conf.webPictureIdx++;
   accessPicture.src = 'WebStructurePicture_p.png?host=#[hosts]#&amp;depth=4&amp;width=1024&amp;height=512&amp;nodes=600&amp;time=1000&amp;colortext=888888&amp;colorback=FFFFFF&amp;colordot0=1111BB&amp;colordota=11BB11&amp;colorline=222222&amp;colorlineend=333333&amp;idx=' + YaCyPage.conf.webPictureIdx;
-  setTimeout('doanimation(' + (nextTimeout > 3000 ? 3000 : nextTimeout * 1.2) + ')', nextTimeout);
+  setTimeout(function() {
+    YaCyPage.doWebPictureAnimation(nextTimeout > 3000 ? 3000 : nextTimeout * 1.2);
+  }, nextTimeout);
 };
 
 /** Initialize the page. */
 YaCyPage.init = function() {
   YaCyPage.refresh();
-  YaCyPage.conf.countInterval = window.setInterval("YaCyPage.countdown()", 1000);
+  YaCyPage.conf.countInterval = window.setInterval(function() {
+    YaCyPage.countdown();
+  }, 1000);
 
   var webPicture = $('#webPicture');
   if (webPicture.length > 0) {
-    setTimeout("doanimation(500)", 500);
+    setTimeout(function() {
+      YaCyPage.doWebPictureAnimation(500);
+    }, 500);
   }
 };
