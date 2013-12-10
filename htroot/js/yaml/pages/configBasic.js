@@ -21,23 +21,22 @@ YaCyPage.init = function() {
       max: 80,
       error: 'length'
     }],
-  })
-    .addElement($('#peerPort'), {
-      onload: true,
-      validators: [{
-        type: 'notEmpty',
-        error: 'empty'
-      }, {
-        type: 'range',
-        min: 0,
-        max: 65535,
-        nan: 'nan'
-      }, {
-        type: 'range',
-        min: 0,
-        max: 1023,
-        invert: true,
-        failType: 'warning'
-      }]
-    });
+  }).addElement($('#peerPort'), {
+    onload: true,
+    validators: [{
+      type: 'notEmpty',
+      error: 'empty'
+    }, {
+      type: 'range',
+      min: 0,
+      max: 65535,
+      nan: 'nan'
+    }, {
+      type: 'range',
+      min: 0,
+      max: 1023,
+      invert: true,
+      failType: 'warning'
+    }]
+  });
 };
