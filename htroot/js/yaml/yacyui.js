@@ -10,7 +10,10 @@ var YaCyUi = YaCyUi || {}; // UI namespace
 var YaCyPage = YaCyPage || {}; // Single page namespace
 YaCyPage.validationDelay = 700; // time (in ms) to wait before validation
 
-YaCyUi.error = YaCyUi.error || function(source, message) {
+YaCyUi.error = YaCyUi.error || function(source, message, obj) {
+  if (console) {
+    console.error('YaCyUi: ' + source + ': ' + message, obj);
+  }
   var err = new Error();
   err.name = 'YaCyUi: ' + source + ' - Error';
   err.message = message;

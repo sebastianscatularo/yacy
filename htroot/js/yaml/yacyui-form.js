@@ -1617,7 +1617,7 @@ YaCyUi.Form.Validator.prototype = {
    */
   addElement: function(element, setup) {
     if (typeof element === 'undefined' || element.length === 0) {
-      YaCyUi.error('YaCyUi.Form.Validator:addElement: element is undefined/empty!');
+      YaCyUi.error('Form.Validator:addElement:', 'element is undefined/empty!', element);
       return null;
     }
     var self = this;
