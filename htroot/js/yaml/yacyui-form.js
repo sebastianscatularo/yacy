@@ -390,7 +390,7 @@ YaCyUi.Func.Form.Hints = YaCyUi.Func.Form.Hints || function(hintElements) {
     });
 
     hintElements.each(function() {
-      var prev = $(this).prev('input[type="text"], input[type="password"], textarea');
+      var prev = $(this).prevAll('input[type="text"], input[type="password"], textarea').first();
       var hintElement = $(this);
       hintElement.append('<div class="clear"></div>')
         .prepend('<div class="tip"><i class="fa fa-caret-up"></i></div>');
