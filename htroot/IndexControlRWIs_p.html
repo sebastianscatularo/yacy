@@ -114,11 +114,11 @@
     </fieldset>
     <fieldset><legend>Word Deletion</legend>
         <dl>
-          <dt><input type="checkbox" id="delurl" name="delurl" value="" align="top" checked /></dt>
+          <dt><input type="checkbox" id="delurl" name="delurl" align="top" checked /></dt>
           <dd>delete also the referenced URL (recommended, may produce unresolved references
               at other word indexes but they do not harm)
           </dd>
-          <dt><input type="checkbox" id="delurlref" name="delurlref" value="" align="top" /></dt>
+          <dt><input type="checkbox" id="delurlref" name="delurlref" align="top" /></dt>
           <dd>for every resolvable and deleted URL reference, delete the same reference at every other word where
               the reference exists (very extensive, but prevents further unresolved references)
           </dd>
@@ -140,7 +140,7 @@
                 <option value="#[hosthash]#">#[hostname]#</option>
                 #{/hosts}#
             </select> <br>
-                or enter a hash or peer name:<input type="text" name="host" value="" size="21" maxlength="21" />
+                or enter a hash or peer name:<input type="text" name="host" size="21" maxlength="21" />
         </dd>
       </dl>
     </fieldset>
@@ -228,15 +228,15 @@
       <input type="hidden" name="ordering" value="#[ordering]#" />
       <input type="hidden" name="keystring" value="#[keyString]#" />
       <input type="hidden" name="keyhash" value="#[keyHash]#" />
-      <input type="hidden" name="urlstring" value="" />
-      <input type="hidden" name="urlhash" value="" /><br />
+      <input type="hidden" name="urlstring"/>
+      <input type="hidden" name="urlhash"/><br />
       <fieldset><legend>Deletion of selected URLs</legend>
         <dl>
-          <dt><input type="checkbox" id="delurl" name="delurl" value="" align="top" checked /></dt>
+          <dt><input type="checkbox" id="delurl" name="delurl" align="top" checked /></dt>
           <dd>delete also the referenced URL (recommended, may produce unresolved references
               at other word indexes but they do not harm)
           </dd>
-          <dt><input type="checkbox" id="delurlref" name="delurlref" value="" align="top" /></dt>
+          <dt><input type="checkbox" id="delurlref" name="delurlref" align="top" /></dt>
           <dd>for every resolvable and deleted URL reference, delete the same reference at every other word where
               the reference exists (very extensive, but prevents further unresolved references)
           </dd>
