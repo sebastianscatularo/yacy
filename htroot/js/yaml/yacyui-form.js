@@ -1396,7 +1396,8 @@ YaCyUi.Form.ValidatorElement.prototype = {
       if (!result) {
         return {
           type: validator.failType || 'error',
-          data: validator.error || true
+          data: validator.error || true,
+          stopExec: validator.stopExec || false
         };
       }
       return true;
@@ -1418,7 +1419,8 @@ YaCyUi.Form.ValidatorElement.prototype = {
             data, validator.min, validator.max);
           if (result !== 0) {
             var state = {
-              type: validator.failType || 'error'
+              type: validator.failType || 'error',
+              stopExec: validator.stopExec || false
             };
             if (result === 1 && 'tooShort' in validator) {
               state.data = validator.tooShort;
@@ -1458,7 +1460,8 @@ YaCyUi.Form.ValidatorElement.prototype = {
             validator.invert);
           if (result !== 0) {
             var state = {
-              type: validator.failType || 'error'
+              type: validator.failType || 'error',
+              stopExec: validator.stopExec || false
             };
             if (result === -1 && 'nan' in validator) {
               state.data = validator.nan;
@@ -1529,6 +1532,7 @@ YaCyUi.Form.ValidatorElement.prototype = {
       result = this.validators[i](data);
       if (result !== true) {
         var isError = result.type == 'error' ? true : false;
+        var stopExec = result.stopExec || false;
         state = {
           hints: {
             show: true,
@@ -1550,6 +1554,9 @@ YaCyUi.Form.ValidatorElement.prototype = {
           }
         } else {
           state.hints.error = true;
+          break;
+        }
+        if (stopExec) {
           break;
         }
       }
