@@ -8,10 +8,12 @@
 <body id="cookieMonitorOutgoing">
   #%env/templates/page-start.template%#
 
+  <div id="devInfo" data-done="html5" data-skip="validation"></div>
+
   <h1>Cookie Monitor: Outgoing Cookies</h1>
-  <p>
+  <div class="p">
     This is a list of cookies that browsers using the YaCy proxy sent to webservers.
-    <form action="" method="post" accept-charset="UTF-8">
+    <form action="#" method="post" accept-charset="UTF-8">
         #(monitorCookies.off)#::
         <button type="submit" name="enableCookieMonitoring" class="icon-run">Enable Cookie Monitoring</button>
         #(/monitorCookies.off)#
@@ -19,7 +21,7 @@
         <button type="submit" name="disableCookieMonitoring" class="icon-run">Disable Cookie Monitoring</button>
         #(/monitorCookies.on)#
     </form>
-  </p>
+  </div>
   <p>
     Showing #[num]# entries from a total of #[total]# Cookies.
   </p>
