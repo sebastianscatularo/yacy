@@ -91,9 +91,16 @@ YaCyUi.Func.Form = YaCyUi.Func.Form || {
     $('.spinner').each(function() {
       var data = $(this).data();
       var max = typeof data.max === 'undefined' ? null : data.max;
+      var maxLength = $(this).attr('maxlength') || null;
       // check for digits notation
-      if (max === null && $(this).attr('maxlength') !== undefined) {
-        max = new Array(parseInt($(this).attr('maxlength')) + 1).join('9');
+      if (maxLength !== null) {
+        if (max === null) {
+          max = new Array(parseInt($(this).attr('maxlength')) + 1).join('9');
+        }
+        // if size is set, then the jQuery spinner will adapt the size
+        if (typeof $(this).attr('size') === 'undefined') {
+          $(this).attr('size', maxLength);
+        }
       }
       $(this).spinner({
         min: typeof data.min === 'undefined' ? null : data.min,
