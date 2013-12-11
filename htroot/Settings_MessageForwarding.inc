@@ -1,5 +1,8 @@
+<div id="devInfo" data-done="html5 validators">
+</div>
+
 <h2>Message Forwarding</h2>
-<form action="SettingsAck_p.html" method="post" enctype="multipart/form-data">
+<form action="SettingsAck_p.html" method="post" enctype="multipart/form-data" id="settingsMessageForwarding">
   <fieldset>
     <legend>Configuration</legend>
     <div class="description">
@@ -17,7 +20,12 @@
     <fieldset class="formSection">
       <legend>Forwarding Command</legend>
       <div class="content">
-        <input name="msgForwardingCmd" id="fwd_cmd" type="text" size="32" value="#[msgForwardingCmd]#" />
+        <input name="msgForwardingCmd" id="fwdCmd" type="text" size="32" value="#[msgForwardingCmd]#" />
+        <div class="formHint hidden">
+          <p class="error" data-id="empty">
+            Please enter command.
+          </p>
+        </div>
         <p>
           The command-line program that should be used to forward the message.
           E.g.: <code>/usr/sbin/sendmail</code>.
@@ -27,7 +35,12 @@
     <fieldset class="formSection">
       <legend>Forwarding To</legend>
       <div class="content">
-        <input name="msgForwardingTo" id="fwd_to" type="text" maxlength="128" value="#[msgForwardingTo]#" />
+        <input name="msgForwardingTo" id="fwdTo" type="text" maxlength="128" value="#[msgForwardingTo]#" />
+        <div class="formHint hidden">
+          <p class="error" data-id="empty">
+            Please enter a forwarding target.
+          </p>
+        </div>
         <p>
          The recipient email-address.
          E.g.: <code>root@localhost</code>.
@@ -41,8 +54,9 @@
         Changes will take effect immediately.
       </p>
     </div>
+    <div id="ycu-error-count" class="description hiddden"></div>
     <div class="content">
-      <button type="submit" name="msgForwarding" class="primary icon-save">Save configuration</button>
+      <button type="submit" id="submitSettings" name="msgForwarding" class="primary icon-save">Save configuration</button>
     </div>
   </fieldset>
 </fieldset>

@@ -11,12 +11,18 @@
     <fieldset class="formSection">
       <legend>File Location</legend>
       <div class="content">
-        <input name="seedFilePath" type="text" id="fs_path" size="40" value="#[seedFilePath]#" />
+        <input name="seedFilePath" type="text" id="fsPath" value="#[seedFilePath]#" />
+        <div class="formHint hidden">
+          <p class="error">
+            Please enter a file location.
+          </p>
+        </div>
       </div>
     </fieldset>
     <fieldset class="formControl">
+      <div id="ycu-error-count-fs" class="description hiddden"></div>
       <div class="content">
-        <button type="submit" name="seedFileSettings" class="primary icon-save">Save</button>
+        <button type="submit" id="submitSettingsFs" name="seedFileSettings" class="primary icon-save">Save</button>
       </div>
     </fieldset>
   </form>

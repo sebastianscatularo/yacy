@@ -1,4 +1,7 @@
-<form action="SettingsAck_p.html" method="post" enctype="multipart/form-data">
+<div id="devInfo" data-done="html5 validators">
+</div>
+
+<form action="SettingsAck_p.html" method="post" enctype="multipart/form-data" id="settingsServerAccess">
   <fieldset>
     <legend id="general">Server Access Settings</legend>
     <fieldset class="formGroup">
@@ -10,14 +13,13 @@
         <p>
           By default, the access is not limited, because this function is needed to spawn the <abbr>P2P</abbr> index-sharing function.
           If you block access to your server (setting anything else than <code>*</code>), then you will also be blocked from using other peers' indexes for search service.
-          However, blocking access may be correct in enterprise environments where you only want to index your
-          company's own web pages.
+          However, blocking access may be correct in enterprise environments where you only want to index your company's own web pages.
         </p>
       </div>
       <fieldset class="formSection">
         <legend>IP-Number filter</legend>
         <div class="content">
-          <input name="serverfilter" type="text" size="50" maxlength="1000" value="#[serverfilter]#" />
+          <input name="serverfilter" type="text" maxlength="1000" value="#[serverfilter]#" />
         </div>
       </fieldset>
     </fieldset>
@@ -43,15 +45,21 @@
       <fieldset class="formSection">
         <legend>staticIP</legend>
         <div class="content">
-          <input name="staticIP" type="text" size="32" maxlength="80" value="#[staticIP]#" />
+          <input name="staticIP" id="staticIP" type="text" maxlength="80" value="#[staticIP]#" />
+          <div class="formHint hidden">
+            <p class="error">
+              Please enter a valid IPv4 adress.
+            </p>
+          </div>
         </div>
       </fieldset>
-    </fieldset>
 
-    <fieldset class="formControl">
-      <div class="content">
-        <button type="submit" name="serveraccount" class="primary icon-save"/>Save</button>
-      </div>
+      <fieldset class="formControl">
+        <div id="ycu-error-count" class="description hiddden"></div>
+        <div class="content">
+          <button type="submit" id="submitSettings" name="serveraccount" class="primary icon-save">Save</button>
+        </div>
+      </fieldset>
     </fieldset>
   </fieldset>
 </form>

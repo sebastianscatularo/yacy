@@ -1,4 +1,7 @@
-<form action="SettingsAck_p.html" method="post" enctype="multipart/form-data">
+<div id="devInfo" data-done="html5 validators">
+</div>
+
+<form action="SettingsAck_p.html" method="post" enctype="multipart/form-data" id="settingsProxy">
   <fieldset>
     <legend>Remote Proxy (optional)</legend>
     <div class="description">
@@ -12,7 +15,12 @@
       <fieldset class="formSection">
         <legend>Host</legend>
         <div class="content">
-          <input name="remoteProxyHost" id="host" type="text" size="32" maxlength="128" value="#[remoteProxyHost]#" />
+          <input name="remoteProxyHost" id="host" type="text" maxlength="128" value="#[remoteProxyHost]#" />
+          <div class="formHint hidden">
+            <p class="error">
+              Please enter a valid IPv4 adress.
+            </p>
+          </div>
           <p>
             The <abbr>IP</abbr> address or domain name of the remote proxy.
           </p>
@@ -21,7 +29,15 @@
       <fieldset class="formSection">
         <legend>Port</legend>
         <div class="content">
-          <input name="remoteProxyPort" id="port" type="text" size="5" maxlength="5" value="#[remoteProxyPort]#" />
+          <input name="remoteProxyPort" id="port" type="text" maxlength="5" value="#[remoteProxyPort]#" />
+          <div class="formHint hidden">
+            <p class="error">
+              Please enter only digits (<code>0&mdash;9</code>).
+            </p>
+            <p class="error" data-id="range">
+              Please enter a value between <code>0&mdash;65535</code>.
+            </p>
+          </div>
           <p>
             The port of the remote proxy.
           </p>
@@ -30,19 +46,24 @@
       <fieldset class="formSection">
         <legend>Username</legend>
         <div class="content">
-          <input name="remoteProxyUser" type="text" id="user" size="32" maxlength="128" value="#[remoteProxyUser]#" />
+          <input name="remoteProxyUser" type="text" id="user" maxlength="128" value="#[remoteProxyUser]#" />
+          <div class="formHint hidden">
+            <p class="error">
+              Please enter a username.
+            </p>
+          </div>
         </div>
       </fieldset>
       <fieldset class="formSection">
         <legend>Password</legend>
         <div class="content">
-          <input name="remoteProxyPwd" id="pwd" type="password" size="32" maxlength="128" value="#[remoteProxyPwd]#" />
+          <input name="remoteProxyPwd" id="pwd" type="password" maxlength="128" value="#[remoteProxyPwd]#" />
         </div>
       </fieldset>
       <fieldset class="formSection">
         <legend>No-proxy adresses</legend>
         <div class="content">
-          <input name="remoteProxyNoProxy" type="text" id="no_prxy" size="32" maxlength="5000" value="#[remoteProxyNoProxy]#" />
+          <input name="remoteProxyNoProxy" type="text" id="no_prxy" maxlength="5000" value="#[remoteProxyNoProxy]#" />
           <p>
             <abbr>IP</abbr> addresses for which the remote proxy should not be used.
           </p>
@@ -93,8 +114,9 @@
           Changes take effect immediately.
         </p>
       </div>
+      <div id="ycu-error-count" class="description hiddden"></div>
       <div class="content">
-        <button type="submit" name="proxysettings" class="primary icon-run"/>Save Configuration</button>
+        <button type="submit" id="submitSettings" name="proxysettings" class="primary icon-run">Save Configuration</button>
       </div>
     </fieldset>
   </fieldset>

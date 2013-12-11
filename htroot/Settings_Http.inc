@@ -1,3 +1,6 @@
+<div id="devInfo" data-done="html5" data-skip="validators">
+</div>
+
 <form action="SettingsAck_p.html" method="post" enctype="multipart/form-data">
   <fieldset>
     <legend>HTTP Networking</legend>
@@ -48,7 +51,7 @@
         </p>
       </div>
       <div class="content">
-        <button type="submit" name="httpNetworking" class="primary icon-run"/>Save Configuration</button>
+        <button type="submit" name="httpNetworking" class="primary icon-run">Save Configuration</button>
       </div>
     </fieldset>
   </fieldset>

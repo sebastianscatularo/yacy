@@ -1,4 +1,7 @@
-<form action="SettingsAck_p.html" method="post" enctype="multipart/form-data">
+<div id="devInfo" data-done="html5 validators">
+</div>
+
+<form action="SettingsAck_p.html" method="post" enctype="multipart/form-data" id="settingsProxyAccess">
   <fieldset>
     <legend>Proxy Access Settings</legend>
     <div class="description">
@@ -30,7 +33,12 @@
       <fieldset class="formSection">
         <legend>Address &amp; Port</legend>
         <div class="content">
-          <input name="port" id="port" type="text" size="30" maxlength="30" value="#[port]#" />
+          <input name="port" id="port" type="text" maxlength="30" value="#[port]#"/>
+          <div class="formHint hidden">
+            <p class="error">
+              Please enter a valid address and/or port combination as explained above.
+            </p>
+          </div>
         </div>
       </fieldset>
     </fieldset>
@@ -58,21 +66,22 @@
       <fieldset class="formSection">
         <legend>IP-Number filter</legend>
         <div class="content">
-          <input name="proxyfilter" id="filter" type="text" size="50" maxlength="1000" value="#[proxyfilter]#" />
+          <input name="proxyfilter" id="filter" type="text" maxlength="1000" value="#[proxyfilter]#" />
         </div>
       </fieldset>
       <fieldset class="formSection">
         <legend>Accounts</legend>
         <div class="content">
-          <input name="use_proxyaccounts" id="accounts" type="checkbox" size="16" maxlength="16" value="on"#(use_proxyAccounts)#:: checked="checked"#(/use_proxyAccounts)# />
+          <input name="use_proxyaccounts" id="accounts" type="checkbox" value="on"#(use_proxyAccounts)#:: checked="checked"#(/use_proxyAccounts)# />
           Use <a href="ConfigAccounts_p.html">Proxy Accounts</a>
         </div>
       </fieldset>
     </fieldset>
 
     <fieldset class="formControl">
+      <div id="ycu-error-count" class="description hiddden"></div>
       <div class="content">
-        <button type="submit" name="proxyaccount" class="primary icon-save">Save configuration</button>
+        <button type="submit" id="submitSettings" name="proxyaccount" class="primary icon-save">Save configuration</button>
       </div>
     </fieldset>
 
