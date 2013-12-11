@@ -1248,6 +1248,11 @@ YaCyUi.Func.Form.Button.prototype = {
 };
 
 YaCyUi.Form.ValidatorFunc = YaCyUi.Form.ValidatorFunc || {
+  ipv4: function(data) {
+    var regEx = /(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)/;
+    return regEx.test(data.trim());
+  },
+
   /** Test if given string length is in range.
    * @param {string} String to test
    * @param {number} Minimum length
@@ -1426,6 +1431,12 @@ YaCyUi.Form.ValidatorElement.prototype = {
   addValidator: function(validator) {
     var self = this;
     switch (validator.type) {
+      case 'ipv4':
+        this.validators.push(function(data) {
+          return self.private.parseResult(
+            YaCyUi.Form.ValidatorFunc.ipv4(data), validator);
+        });
+        break;
       case 'length':
         this.validators.push(function(data) {
           var result = YaCyUi.Form.ValidatorFunc.length(
