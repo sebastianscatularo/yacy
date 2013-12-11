@@ -3,3 +3,5 @@
 - remove all 'align', 'valign' attributes from tables
 - remove all 'TableCell*' classes from tables
 - remove sizes from input fields contained in fieldsets
+- find javascript event handlers on elements (onClick, onChange, ..) and refactor to external scripts
+- check form attributes (some are missing)
