@@ -4,10 +4,15 @@
 <head>
 	<title>YaCy Debugging: Thread Dump</title>
 	#%env/templates/header-backend.template%#
+  <script type="text/javascript" src="/js/yaml/pages/threaddump.js"></script>
 </head>
 
 <body id="threaddump">
 	#%env/templates/page-start.template%#
+
+  <div id="devInfo">
+    status: valid html5
+  </div>
 
   <h1>Threaddump</h1>
   <fieldset class="main">
@@ -26,8 +31,16 @@
       <legend>Mutiple Dumps</legend>
       <div class="content">
         <form action="Threaddump_p.html" method="get" accept-charset="UTF-8">
-          <input type="text" name="count" value="#[count]#" size="4" maxlength="4" class="spinner"/>
-          <button type="submit" name="multipleThreaddump" class="icon-run">Generate Multiple Dump Statistic</button>
+          <input type="text" name="count" id="multipleCount" value="#[count]#" placeholder="100" maxlength="4" class="spinner"/>
+          <button type="submit" name="multipleThreaddump" id="submitMultipleDump" class="icon-run">Generate Multiple Dump Statistic</button>
+          <div class="formHint hidden">
+            <p class="error" data-id="empty">
+              Please enter a value between <code>0&mdash;9999</code>.
+            </p>
+            <p class="warning">
+              Using the default value <code>100</code>.
+            </p>
+          </div>
         </form>
       </div>
     </fieldset>
