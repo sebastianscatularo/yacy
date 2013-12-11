@@ -4,11 +4,15 @@
   <title>YaCy '#[clientname]#': Performance Settings of Queues and Processes</title>
   #%env/templates/header-backend.template%#
   <script type="text/javascript" src="/js/yaml/tablesorter/jquery.tablesorter.min.js"></script>
-  <!--<script type="text/javascript" src="js/html.js"></script>-->
+  <script type="text/javascript" src="/js/yaml/pages/performanceQueues.js"></script>
 </head>
 
 <body id="performanceQueues">
   #%env/templates/page-start.template%#
+
+  <div id="devInfo">
+    status: valid html5
+  </div>
 
   <h1>Performance Settings of Queues and Processes</h1>
 
@@ -18,8 +22,8 @@
       <fieldset class="formSection">
         <div class="content noIndent">
           <table class="sortable">
-            <tr>
-              <thead>
+            <thead>
+              <tr>
                 <th>Thread</th>
                 <th>Queue Size</th>
                 <th colspan="2">Total Block Time</th>
@@ -36,36 +40,36 @@
                 <th>Delay between busy loops</th>
                 <th>Minimum of Required Memory</th>
                 <th class="noSort">Full Description</th>
-              </thead>
-              <tbody>
               </tr>
+            </thead>
+            <tbody>
               #{table}#
-              <tr class="TableCellDark">
+              <tr>
                 <td>#(hasurl)##[shortdescr]#::<a href="#[url]#">#[shortdescr]#</a>#(/hasurl)#</td>
-                <td align="right">#[queuesize]#</td>
-                <td align="right">#[blocktime]#&nbsp;sec</td>
-                <td align="right">#[blockpercent]#%</td>
-                <td align="right">#[sleeptime]#&nbsp;sec</td>
-                <td align="right">#[sleeppercent]#%</td>
-                <td align="right">#[exectime]#&nbsp;sec</td>
-                <td align="right">#[execpercent]#%</td>
-                <td align="right">#[totalcycles]#</td>
-                <td align="right">#[idlecycles]#</td>
-                <td align="right">#[busycycles]#</td>
-                <td align="right">#[memscycles]#</td>
-                <td align="right">#[sleeppercycle]#</td>
-                <td align="right">#[execpercycle]#</td>
-                <td align="right">#[memusepercycle]#</td>
-                <td align="right">
+                <td>#[queuesize]#</td>
+                <td>#[blocktime]#&nbsp;sec</td>
+                <td>#[blockpercent]#%</td>
+                <td>#[sleeptime]#&nbsp;sec</td>
+                <td>#[sleeppercent]#%</td>
+                <td>#[exectime]#&nbsp;sec</td>
+                <td>#[execpercent]#%</td>
+                <td>#[totalcycles]#</td>
+                <td>#[idlecycles]#</td>
+                <td>#[busycycles]#</td>
+                <td>#[memscycles]#</td>
+                <td>#[sleeppercycle]#</td>
+                <td>#[execpercycle]#</td>
+                <td>#[memusepercycle]#</td>
+                <td>
                   <input name="#[threadname]#_idlesleep" size="7" maxlength="7" value="#[idlesleep]#" #(disabled)#:: disabled="disabled"#(/disabled)# /> milliseconds
                 </td>
-                <td align="right">
+                <td>
                   <input name="#[threadname]#_busysleep" size="7" maxlength="7" value="#[busysleep]#" #(disabled)#:: disabled="disabled"#(/disabled)# /> milliseconds
                 </td>
-                <td align="right">
+                <td>
                   <input name="#[threadname]#_memprereq" size="7" maxlength="10" value="#[memprereq]#" #(disabled)#:: disabled="disabled"#(/disabled)# /> kbytes
                 </td>
-                <td align="left">
+                <td>
                   #[longdescr]##(recommendation)#::<br/>recommended: #[value]# kbytes#(/recommendation)#
                 </td>
               </tr>
@@ -82,7 +86,7 @@
           </p>
         </div>
         <div class="content">
-          <button type="submit" name="submitdelay" class="primary icon-run"/>Submit New Delay Values</button>
+          <button type="submit" name="submitdelay" class="primary icon-run">Submit New Delay Values</button>
         </div>
       </fieldset>
     </fieldset>
@@ -95,15 +99,15 @@
         <div class="content noIndent">
           <table class="sortable">
             <thead>
-              <tr valign="top" class="TableHeader">
+              <tr>
                 <th>Type</th>
                 <th><abbr>RAM</abbr> Cache</th>
                 <th class="noSort">Description</th>
               </tr>
             </thead>
             <tbody>
-              <tr valign="top">
-                <td>Words in <abbr>RAM</abbr> cache:<br />(Size in <abbr>KBytes</abbr>)</td>
+              <tr>
+                <td>Words in <abbr>RAM</abbr> cache<br/><em>(Size in <abbr>KBytes</abbr>)</em></td>
                 <td>#[wordCacheSize]#<br />(#[wordCacheSizeKBytes]# <abbr>KB</abbr>)</td>
                 <td>
                   This is the current size of the word caches.
@@ -111,32 +115,40 @@
                   The maximum of this caches can be set below.
                 </td>
               </tr>
-              <tr valign="top">
-                <td>Maximum <abbr>URLs</abbr> currently assigned to one cached word:</td>
+              <tr>
+                <td>Maximum <abbr>URLs</abbr> currently assigned to one cached word</td>
                 <td>#[maxURLinCache]#</td>
                 <td>
                   This is the maximum size of <abbr>URLs</abbr> assigned to a single word cache entry.
                   If this is a big number, it shows that the caching works efficiently.
                 </td>
               </tr>
-              <tr valign="top">
-                <td>Maximum age of a word:</td>
+              <tr>
+                <td>Maximum age of a word</td>
                 <td>#[maxAgeOfCache]#</td>
                 <td>
                   This is the maximum age of a word in an index in minutes.
                 </td>
               </tr>
-              <tr valign="top">
-                <td>Minimum age of a word:</td>
+              <tr>
+                <td>Minimum age of a word</td>
                 <td>#[minAgeOfCache]#</td>
                 <td>
                   This is the minimum age of a word in an index in minutes.
                 </td>
               </tr>
-              <tr valign="top">
-                <td>Maximum number of words in cache:</td>
+              <tr>
+                <td>Maximum number of words in cache</td>
                 <td>
-                  <input name="wordCacheMaxCount" type="text" size="10" maxlength="100" value="#[wordCacheMaxCount]#" />
+                  <input name="wordCacheMaxCount" id="wordCacheMaxCount" placeholder="20000" type="text" maxlength="100" size="10" value="#[wordCacheMaxCount]#" class="spinner"/>
+                  <div class="formHint hidden">
+                    <p class="warning">
+                      Using the default value <code>20.000</code>.
+                    </p>
+                    <p class="error">
+                      Please enter only digits (<code>0&mdash;9</code>).
+                    </p>
+                  </div>
                 </td>
                 <td>
                   This is is the number of word indexes that shall be held in the
@@ -155,8 +167,9 @@
             Changes take effect immediately.
           </p>
         </div>
+        <div id="ycu-error-count-cache-size" class="description hiddden"></div>
         <div class="content">
-          <button type="submit" name="cacheSizeSubmit" class="primary icon-run"/>Submit New Cache Size</button>
+          <button type="submit" name="cacheSizeSubmit" id="submitCacheSize" class="primary icon-run">Submit New Cache Size</button>
         </div>
       </fieldset>
     </fieldset>
@@ -169,7 +182,7 @@
         <div class="content noIndent">
           <table>
             <thead>
-              <tr valign="bottom">
+              <tr>
                 <th>Thread Pool</th>
                 <th>maximum Active</th>
                 <th>current Active</th>
@@ -179,10 +192,18 @@
               #{pool}#
               <tr>
                 <td>#[name]#</td>
-                <td align="right">
-                  <input name="#[name]#_maxActive" type="text" size="8" maxlength="8" value="#[maxActive]#" />
+                <td>
+                  <input name="#[name]#_maxActive" type="text" maxlength="8" value="#[maxActive]#" class="spinner"/>
+                  <div class="formHint hidden">
+                    <p class="warning">
+                      Using the default value for this field.
+                    </p>
+                    <p class="error">
+                      Please enter only digits (<code>0&mdash;9</code>).
+                    </p>
+                  </div>
                 </td>
-                <td align="right">#[numActive]#</td>
+                <td>#[numActive]#</td>
               </tr>
               #{/pool}#
             </tbody>
@@ -196,8 +217,9 @@
             Changes take effect immediately.
           </p>
         </div>
+        <div id="ycu-error-count-pool-config" class="description hiddden"></div>
         <div class="content">
-          <button type="submit" name="poolConfig" class="primary icon-run"/>Enter new Threadpool Configuration</button>
+          <button type="submit" name="poolConfig" id="submitPoolConfig" class="primary icon-run">Enter new Threadpool Configuration</button>
         </div>
       </fieldset>
     </fieldset>
