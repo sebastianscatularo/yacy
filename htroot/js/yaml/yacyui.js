@@ -167,14 +167,17 @@ YaCyUi.init = function() {
       $(this).parent().remove();
     });
     var data = $('#devInfo').data();
+    if ('skip' in data || 'done' in data || 'todo' in data && $('#devInfo').text().length > 0) {
+      $('#devInfo').prepend('<br/>')
+    }
     if ('done' in data) {
-      $('#devInfo').prepend('<br/>  <strong>DONE:</strong> ' + data.done.replace(' ', ', '));
+      $('#devInfo').prepend('<br/>  <strong>DONE:</strong> ' + data.done.replace(/\s/g, ', '));
     }
     if ('skip' in data) {
-      $('#devInfo').prepend('<br/>  <strong>SKIP:</strong> ' + data.skip.replace(' ', ', '));
+      $('#devInfo').prepend('<br/>  <strong>SKIP:</strong> ' + data.skip.replace(/\s/g, ', '));
     }
     if ('todo' in data) {
-      $('#devInfo').prepend('<br/>  <strong>TODO:</strong> ' + data.todo.replace(' ', ', '));
+      $('#devInfo').prepend('<br/>  <strong>TODO:</strong> ' + data.todo.replace(/\s/g, ', '));
     }
     if ('skip' in data || 'done' in data || 'todo' in data) {
       $('#devInfo').prepend('<br/><strong>STATUS</strong>')
