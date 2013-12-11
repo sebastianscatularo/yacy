@@ -170,10 +170,13 @@ YaCyUi.init = function() {
     if ('done' in data) {
       $('#devInfo').prepend('<br/>  <strong>DONE:</strong> ' + data.done.replace(' ', ', '));
     }
+    if ('skip' in data) {
+      $('#devInfo').prepend('<br/>  <strong>SKIP:</strong> ' + data.skip.replace(' ', ', '));
+    }
     if ('todo' in data) {
       $('#devInfo').prepend('<br/>  <strong>TODO:</strong> ' + data.todo.replace(' ', ', '));
     }
-    if ('done' in data || 'todo' in data) {
+    if ('skip' in data || 'done' in data || 'todo' in data) {
       $('#devInfo').prepend('<br/><strong>STATUS</strong>')
     }
     $('#devInfo').prepend('<u><strong>Developer notice:</strong></u><br/>').prepend(devInfoBtn);
