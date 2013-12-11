@@ -3,15 +3,14 @@
 <head>
   <title>YaCy '#[clientname]#': Heuristics Configuration</title>
   #%env/templates/header-backend.template%#
+  <script type="text/javascript" src="/js/yaml/pages/configHeuristics.js"></script>
 </head>
 
 <body id="configHeuristics">
   #%env/templates/page-start.template%#
 
-  <div id="devInfo">
-    Todo:
+  <div id="devInfo" data-done="html5">
     - fix text where are heuristics actually displayed?
-    Status: valid html5
   </div>
 
   <h1>Heuristics Configuration</h1>
@@ -42,7 +41,8 @@
         <fieldset class="formSection">
           <legend><em>site</em>-operator</legend>
           <div class="content">
-            <input type="checkbox" name="site_check" id="site" onclick="window.location.href='ConfigHeuristics_p.html?#(site.checked)#site_on=::site_off=#(/site.checked)#'" value="site"#(site.checked)#:: checked="checked"#(/site.checked)# />
+            <input type="checkbox" id="instantShallowCrawl" #(site.checked)#:: checked="checked"#(/site.checked)# />
+            <input type="hidden" id="instantShallowCrawlValue"/>
             <label for="site">instant shallow crawl</label>
             <p>
               When a search is made using a <code>site</code>-operator (like: <code>download site:yacy.net</code>) then the host of the site-operator is instantly crawled with a host-restricted <em>depth-1</em> crawl.
@@ -56,11 +56,13 @@
           <legend>search-result</legend>
           <div class="content">
             <p>
-              <input type="checkbox" name="searchresult_check" id="searchresult" onclick="window.location.href='ConfigHeuristics_p.html?#(searchresult.checked)#searchresult_on=::searchresult_off=#(/searchresult.checked)#'" value="searchresult"#(searchresult.checked)#:: checked="checked"#(/searchresult.checked)# />
+              <input type="checkbox" id="shallowCrawlSearchResults" #(searchresult.checked)#:: checked="checked"#(/searchresult.checked)# />
+              <input type="hidden" id="shallowCrawlSearchResultsValue"/>
               <label for="searchresult">shallow crawl on all displayed search results</label>
             </p>
             <p>
-              <input type="checkbox" name="searchresultglobal_check" id="searchresultglobal" onclick="window.location.href='ConfigHeuristics_p.html?#(searchresultglobal.checked)#searchresultglobal_on=::searchresultglobal_off=#(/searchresultglobal.checked)#'" value="siteresultglobal"#(searchresultglobal.checked)#:: checked="checked"#(/searchresultglobal.checked)# />
+              <input type="checkbox" id="searchResultGlobal" #(searchresultglobal.checked)#:: checked="checked"#(/searchresultglobal.checked)# />
+              <input type="hidden" id="searchResultGlobalValue"/>
               <label for="searchresultglobal">add as global crawl job</label>
             </p>
             <p>
@@ -81,7 +83,8 @@
         <fieldset class="formSection">
           <legend>Twitter</legend>
           <div class="content">
-            <input type="checkbox" name="twitter_check" id="twitter" onclick="window.location.href='ConfigHeuristics_p.html?#(twitter.checked)#twitter_on=::twitter_off=#(/twitter.checked)#'" value="twitter"#(twitter.checked)#:: checked="checked"#(/twitter.checked)# />
+            <input type="checkbox" id="twitterCheck" #(twitter.checked)#:: checked="checked"#(/twitter.checked)# />
+            <input type="hidden" id="twitterCheckValue"/>
             <label for="twitter">Load external search result list from <a href="http://search.twitter.com">twitter</a></label>
             <p>
               When using this heuristic, then every search request line is used for a call to twitter.
@@ -93,7 +96,8 @@
         <fieldset class="formSection">
           <legend>Blekko</legend>
           <div class="content">
-            <input type="checkbox" name="blekko_check" id="blekko" onclick="window.location.href='ConfigHeuristics_p.html?#(blekko.checked)#blekko_on=::blekko_off=#(/blekko.checked)#'" value="blekko"#(blekko.checked)#:: checked="checked"#(/blekko.checked)# />
+            <input type="checkbox" id="blekkoCheck" #(blekko.checked)#:: checked="checked"#(/blekko.checked)# />
+            <input type="hidden" id="blekkoCheckValue"/>
             <label for="blekko">Load external search result list from <a href="http://blekko.com">blekko</a></label>
             <p>
               When using this heuristic, then every search request line is used for a call to blekko.
@@ -108,7 +112,8 @@
         <fieldset class="formSection">
           <legend>Activate</legend>
           <div class="content">
-            <input type="checkbox" name="opensearch_check" id="opensearch" onclick="window.location.href='ConfigHeuristics_p.html?#(opensearch.checked)#opensearch_on=::opensearch_off=#(/opensearch.checked)#'" value="opensearch"#(opensearch.checked)#:: checked="checked"#(/opensearch.checked)# />
+            <input type="checkbox" id="openSearchCheck" #(opensearch.checked)#:: checked="checked"#(/opensearch.checked)# />
+            <input type="hidden" id="openSearchCheckValue"/>
             <label for="opensearch">opensearch load external search result list from active systems below</label>
             <p>
               When using this heuristic, then every search request line is used for a call to listed OpenSearch systems until enough results to fill the current search page are available.
@@ -124,32 +129,62 @@
             <p>
               List of available/active OpenSearch system:
             </p>
-            <table class="sortable">
+            <table class="sortable" id="providerList">
               <thead>
                 <tr>
                   <th>Active</th>
                   <th>Title</th>
                   <th>Comment</th>
                   <th>Url <small>(format opensearch <a href="http://www.opensearch.org/Specifications/OpenSearch/1.1#OpenSearch_URL_template_syntax" target="_blank">Url template syntax</a>)</small></th>
-                  <th>delete</th>
+                  <th>add / delete</th>
                 </tr>
               </thead>
               <tbody>
                 #{osdcfg}#
                 <tr>
-                  <td align="center"><input type="checkbox" name="ossys_#[title]#" value="checked" #(checked)#::checked="checked"#(/checked)#/></td>
-                  <td align="left"><b><a href="#[urlhostlink]#" target="_blank">#[title]#</a></b></td>
-                  <td align="left">#[comment]#</td>
-                  <td align="left"><input type="text" name="ossys_url_#[title]#" value="#[url]#" size="70"/></td>
-                  <td align="center"><input type="checkbox" name="ossys_del_#[title]#" value="checked" #(delchecked)#::checked="checked"#(/delchecked)#/></td>
+                  <td>
+                    <input type="checkbox" name="ossys_#[title]#" value="checked" #(checked)#::checked="checked"#(/checked)#/>
+                  </td>
+                  <td>
+                    <a href="#[urlhostlink]#" target="_blank">#[title]#</a>
+                  </td>
+                  <td>#[comment]#</td>
+                  <td>
+                    <input type="text" name="ossys_url_#[title]#" value="#[url]#"/>
+                  </td>
+                  <td>
+                    <input type="checkbox" name="ossys_del_#[title]#" #(delchecked)#::checked="checked"#(/delchecked)#/>
+                  </td>
                 </tr>
                 #{/osdcfg}#
                 <tr>
                   <td><small>new</small></td>
-                  <td><input type="text" name="ossys_newtitle"/></td>
+                  <td>
+                    <input type="text" name="ossys_newtitle" id="ossysNewTitle"/>
+                    <div class="formHint hidden">
+                      <p class="error" data-id="empty">
+                        Please specify a title.
+                      </p>
+                    </div>
+                  </td>
                   <td><input type="text" name="ossys_newcomment"/></td>
-                  <td><input type="text" name="ossys_newurl" size="70"/></td>
-                  <td><input type="submit" name="addnewosd" value="add"/></td>
+                  <td>
+                    <input type="text" name="ossys_newurl" id="ossysNewUrl"/>
+                    <div class="formHint hidden">
+                      <p class="error" data-id="empty">
+                        Please specify a URL.
+                      </p>
+                      <p class="error" data-id="invalid">
+                        Please specify a valid URL.
+                      </p>
+                      <p class="error" data-id="protocol">
+                        Only URLs with protocol <code>HTTP(S)</code> are allowed.
+                      </p>
+                    </div>
+                  </td>
+                  <td>
+                    <button type="submit" name="addnewosd" id="addNewOsd" class="icon-add">add</button>
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -183,7 +218,7 @@
       <fieldset class="formSection">
         <legend>Discover</legend>
         <div class="content">
-          <button type="submit" name="discoverosd" id="discoverosd" class="icon-run" onclick="return confirm('start background task, depending on index size this may run a long time')">Discover OpenSearch provider from index</button>
+          <button type="submit" name="discoverosd" id="discoverOsd" class="icon-run">Discover OpenSearch provider from index</button>
         </div>
       </fieldset>
 
@@ -191,7 +226,7 @@
       <fieldset class="formSection">
         <legend>Solr Configuration</legend>
         <div class="content">
-          <button type="submit" name="switchsolrfieldson" onclick="return confirm('modify Solr Schema')" class="icon-config">Switch Solr fields on</button>
+          <button type="submit" name="switchSolrFieldsOn" id="switchSolrFieldsOn" class="icon-config">Switch Solr fields on</button>
         </div>
       </fieldset>
       #{/osdsolrfieldswitch}#
