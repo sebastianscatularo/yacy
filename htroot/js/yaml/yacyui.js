@@ -162,11 +162,22 @@ YaCyUi.modules = YaCyUi.modules || {};
 YaCyUi.init = function() {
   // temporary developer info controls
   if ($('#devInfo').length > 0) {
-    var devInfoBtn = $('<button>hide</button>');
+    var devInfoBtn = $('<button style="float:right;">hide</button>');
     devInfoBtn.on('click', function() {
       $(this).parent().remove();
     });
-    $('#devInfo').prepend(devInfoBtn).prepend('<u><strong>Developer notice:</strong></u>&nbsp;');
+    var data = $('#devInfo').data();
+    if ('done' in data) {
+      $('#devInfo').prepend('<br/>  <strong>DONE:</strong> ' + data.done.replace(' ', ', '));
+    }
+    if ('todo' in data) {
+      $('#devInfo').prepend('<br/>  <strong>TODO:</strong> ' + data.todo.replace(' ', ', '));
+    }
+    if ('done' in data || 'todo' in data) {
+      $('#devInfo').prepend('<br/><strong>STATUS</strong>')
+    }
+    $('#devInfo').prepend('<u><strong>Developer notice:</strong></u><br/>').prepend(devInfoBtn);
+    $('#devInfo').append('<div class="clear"></div>');
   }
 
   // create main menu, if loaded
