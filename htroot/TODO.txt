@@ -1,0 +1,5 @@
+- set all API links through external JS
+- set API image size through CSS
+- remove all 'align', 'valign' attributes from tables
+- remove all 'TableCell*' classes from tables
+- remove sizes from input fields contained in fieldsets
