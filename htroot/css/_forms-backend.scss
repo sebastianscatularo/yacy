@@ -222,6 +222,9 @@ fieldset.formSection {
 // form submission, etc.
 fieldset.formControl {
   margin-top:1.5em;
+  button {
+    margin-bottom:0.5em;
+  }
 }
 
 // very first fieldset

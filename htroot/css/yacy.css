@@ -2755,13 +2755,17 @@ footer {
 
 /**********
 * Special elements. */
-.noHover:before,
-#api > a:before {
+.noHover a.api:before,
+#api a.api:before {
   display: none; }
-.noHover:active, .noHover:hover,
-#api > a:active,
-#api > a:hover {
+.noHover a.api:active, .noHover a.api:hover,
+#api a.api:active,
+#api a.api:hover {
   background-color: transparent; }
+.noHover img.api,
+#api img.api {
+  width: 60px;
+  height: 40px; }
 
 /* API bubble. */
 #api {
@@ -2934,6 +2938,8 @@ fieldset.formSection .content {
 
 fieldset.formControl {
   margin-top: 1.5em; }
+  fieldset.formControl button {
+    margin-bottom: 0.5em; }
 
 fieldset.main,
 form > fieldset:not(.formGroup):not(.formSection):first-child {

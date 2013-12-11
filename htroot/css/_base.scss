@@ -233,14 +233,21 @@ footer {
 * Special elements. */
 // no link styling for special elements
 .noHover,
-#api > a {
-  &:before {
-    display:none;
+#api {
+  a.api {
+    &:before {
+      display:none;
+    }
+
+    &:active,
+    &:hover {
+      background-color:transparent;
+    }
   }
 
-  &:active,
-  &:hover {
-    background-color:transparent;
+  img.api {
+    width:60px;
+    height:40px;
   }
 }
 
