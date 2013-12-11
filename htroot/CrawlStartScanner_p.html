@@ -6,174 +6,174 @@
 </head>
 
 <body id="crawlStartScanner">
-#%env/templates/page-start.template%#
+  #%env/templates/page-start.template%#
 
-<div id="devInfo">
-Completely untested
-Todo:
- - lost the default value for 'subnet'
- - scripts needs updates
- - 'intranet scan' hint?
- status: valid html5
-</div>
+  <div id="devInfo">
+    Completely untested
+    Todo:
+    - lost the default value for 'subnet'
+    - scripts needs updates
+    - 'intranet scan' hint?
+    status: valid html5
+  </div>
 
-        <h1>Network Scanner</h1>
+  <h1>Network Scanner</h1>
 
-        <p>
-          YaCy can scan a network segment for available http, ftp and smb server.
-          You must first select a IP range and then, after this range is scanned, it is possible to select servers that had been found for a full-site crawl.
-        </p>
+  <p>
+    YaCy can scan a network segment for available http, ftp and smb server.
+    You must first select a IP range and then, after this range is scanned, it is possible to select servers that had been found for a full-site crawl.
+  </p>
 
-        #(noserverdetected)#::
-        <p>
-          No servers had been detected in the given IP range #[iprange]#. Please enter a different IP range for another scan.
-        </p>
-        #(/noserverdetected)#
+  #(noserverdetected)#::
+  <p>
+    No servers had been detected in the given IP range #[iprange]#. Please enter a different IP range for another scan.
+  </p>
+  #(/noserverdetected)#
 
-        <form onsubmit="document.getElementById('scanhostinfo').innerHTML='Please wait...'; disableSubmit();" action="CrawlStartScanner_p.html" method="get" accept-charset="UTF-8">
-          <fieldset>
-            <legend>Network Scanner</legend>
+  <form onsubmit="document.getElementById('scanhostinfo').innerHTML='Please wait...'; disableSubmit();" action="CrawlStartScanner_p.html" method="get" accept-charset="UTF-8">
+    <fieldset>
+      <legend>Network Scanner</legend>
 
-            <fieldset class="formGroup">
-              <legend>Scan Range</legend>
+      <fieldset class="formGroup">
+        <legend>Scan Range</legend>
 
-              <fieldset class="formSection">
-                <legend>With given Host</legend>
-                <div class="content">
-                  <input type="radio" name="source" id="sourcehost" value="hosts"#(intranet.checked)# checked="checked"::#(/intranet.checked)# />
-                  <label for="sourcehost">Scan sub-range with given host</label>
-                  <textarea name="scanhosts" id="scanhosts">#[scanhosts]#</textarea>
-                </div>
-              </fieldset>
-              <fieldset class="formSection">
-                <legend>Full Intranet Scan</legend>
-                <div class="content">
-                  <input type="radio" name="source" id="sourcenet" value="intranet"#(intranet.checked)#:: checked="checked"#(/intranet.checked)# />
-                  <label for="sourcenet">Full Intranet Scan: #[intranethosts]#</label>
-                  #(intranetHint)#::
-                  <div class="info">Do not use intranet scan results, you are not in an intranet environment!</div>
-                  #(/intranetHint)#
-                </div>
-              </fieldset>
-              <fieldset class="formSection">
-                <legend>Known Hosts</legend>
-                <div class="content">
-                  <input type="radio" name="source" id="sourceall" value="all" />
-                  <label for="sourceall">All known hosts in the search index (/31 subnet recommended!)</label>
-                </div>
-              </fieldset>
-            </fieldset>
-
-            <fieldset class="formGroup">
-              <legend>Subnet</legend>
-              <fieldset class="formSection">
-                <legend>Only the given Host(s)</legend>
-                <input type="radio" name="subnet" value="31" id="subnetHosts31"/>
-                <label for="subnetHosts31">&hellip;/31</label>
-              </fieldset>
-              <fieldset class="formSection">
-                <legend>254 addresses</legend>
-                <input type="radio" name="subnet" value="24" id="subnetHosts24"/>
-                <label for="subnetHosts24">&hellip;/24</label>
-              </fieldset>
-              <fieldset class="formSection">
-                <legend>65024 adresses</legend>
-                <input type="radio" name="subnet" value="16" id="subnetHosts16"/>
-                <label for="subnetHosts16">&hellip;/16</label>
-              </fieldset>
-            </fieldset>
-
-            <fieldset class="formGroup">
-              <legend>Time-Out</legend>
-              <fieldset class="formSection">
-                <legend>Milliseconds</legend>
-                <div class="content">
-                  <label for="timeoutMs">Time-Out after</label>
-                  <input type="text" name="timeout" id="timeoutMs" value ="500" maxlength="4" class="spinner"/> ms
-                </div>
-              </fieldset>
-            </fieldset>
-
-            <fieldset class="formGroup">
-              <legend>Scan Cache</legend>
-              <fieldset class="formSection">
-                <legend>Accumulate</legend>
-                <div class="content">
-                  <input type="checkbox" name="accumulatescancache" id="accumulatescancache" checked="checked" />
-                  <label for="accumulatescancache">accumulate scan results with access type "granted" into scan cache (do not delete old scan result)</label>
-                </div>
-              </fieldset>
-            </fieldset>
-
-            <fieldset class="formGroup">
-              <legend>Service Types</legend>
-              <fieldset class="formSection">
-                <legend>Services</legend>
-                <div class="content">
-                  <p>
-                    <input type="checkbox" id="scanFtp" name="scanftp" checked="checked" />
-                    <label for="scanFtp"><abbr title="File transfer protocol">ftp</abbr></label>
-                  </p>
-                  <p>
-                    <input type="checkbox" name="scansmb" id="scanSmb" checked="checked" />
-                    <label for="scanSmb"><abbr title="Server Message Block">smb</abbr></label>
-                  </p>
-                  <p>
-                    <input type="checkbox" name="scanhttp" id="scanHttp"/>
-                    <label for="scanHttp"><abbr title="Hypertext Transfer Protocol">http</abbr></label>
-                  </p>
-                  <p>
-                    <input type="checkbox" name="scanhttps" id="scanHttps"/>
-                    <label for="scanHttps"><abbr title="Hypertext Transfer Protocol Secure">https</abbr></label>
-                  </p>
-                </div>
-              </fieldset>
-            </fieldset>
-
-            <fieldset class="formGroup">
-              <legend>Scheduler</legend>
-              <fieldset class="formSection">
-                <legend>Only once</legend>
-                <div class="content">
-                  <input type="radio" name="rescan" id="scheduleOnce" value="off" #(rescanCheck)#checked="checked"::#(/rescanCheck)#/>
-                  <label for="scheduleOnce">run only a scan</label>
-                </div>
-              </fieldset>
-              <fieldset class="formSection">
-                <legend>Timed rescan</legend>
-                <div class="content">
-                  <input type="radio" name="rescan" value="scheduler" id="scheduleUse" onclick="document.getElementById('accumulatescancache').checked = false" #(rescanCheck)#::checked="checked"#(/rescanCheck)# />
-                  <label for="scheduleUse">scan and add all sites with granted access automatically. This disables the scan cache accumulation.</label>
-                  Look every
-                  <select name="repeat_time" data-toggle-id="scheduleUse">
-                   <option value="1">1</option><option value="2">2</option><option value="3">3</option>
-                   <option value="4">4</option><option value="5">5</option><option value="6">6</option>
-                   <option value="7" selected="selected">7</option><option value="8">8</option>
-                   <option value="9">9</option><option value="10">10</option>
-                   <option value="12">12</option><option value="14">14</option><option value="15">15</option>
-                   <option value="21">21</option><option value="28">28</option><option value="30">30</option>
-                 </select>
-                 <select name="repeat_unit" data-toggle-id="scheduleUse">
-                   <option value="selminutes">minutes</option>
-                   <option value="selhours">hours</option>
-                   <option value="seldays" selected="selected">days</option>
-                 </select> again and add new sites automatically to indexer.
-                 Sites that do not appear during a scheduled scan period will be excluded from search results.
-               </div>
-             </fieldset>
-           </fieldset>
-
-           <fieldset class="formControl">
-            <div class="content">
-              <button type="submit" id="scan" name="scan" class="submitready icon-run primary">Start Scan</button>
-              <div class="info" id="scanhostinfo" style="text-decoration: blink;">&nbsp;</div>
-            </div>
-          </fieldset>
+        <fieldset class="formSection">
+          <legend>With given Host</legend>
+          <div class="content">
+            <input type="radio" name="source" id="sourcehost" value="hosts"#(intranet.checked)# checked="checked"::#(/intranet.checked)# />
+            <label for="sourcehost">Scan sub-range with given host</label>
+            <textarea name="scanhosts" id="scanhosts">#[scanhosts]#</textarea>
+          </div>
         </fieldset>
-      </form>
+        <fieldset class="formSection">
+          <legend>Full Intranet Scan</legend>
+          <div class="content">
+            <input type="radio" name="source" id="sourcenet" value="intranet"#(intranet.checked)#:: checked="checked"#(/intranet.checked)# />
+            <label for="sourcenet">Full Intranet Scan: #[intranethosts]#</label>
+            #(intranetHint)#::
+            <div class="info">Do not use intranet scan results, you are not in an intranet environment!</div>
+            #(/intranetHint)#
+          </div>
+        </fieldset>
+        <fieldset class="formSection">
+          <legend>Known Hosts</legend>
+          <div class="content">
+            <input type="radio" name="source" id="sourceall" value="all" />
+            <label for="sourceall">All known hosts in the search index (/31 subnet recommended!)</label>
+          </div>
+        </fieldset>
+      </fieldset>
 
-      <iframe src="/ServerScannerList.html?embedded=&amp;edit=" class="autoSize" sandbox="allow-same-origin"></iframe>
+      <fieldset class="formGroup">
+        <legend>Subnet</legend>
+        <fieldset class="formSection">
+          <legend>Only the given Host(s)</legend>
+          <input type="radio" name="subnet" value="31" id="subnetHosts31"/>
+          <label for="subnetHosts31">&hellip;/31</label>
+        </fieldset>
+        <fieldset class="formSection">
+          <legend>254 addresses</legend>
+          <input type="radio" name="subnet" value="24" id="subnetHosts24"/>
+          <label for="subnetHosts24">&hellip;/24</label>
+        </fieldset>
+        <fieldset class="formSection">
+          <legend>65024 adresses</legend>
+          <input type="radio" name="subnet" value="16" id="subnetHosts16"/>
+          <label for="subnetHosts16">&hellip;/16</label>
+        </fieldset>
+      </fieldset>
 
-    #%env/templates/page-end.template%#
-  </body>
+      <fieldset class="formGroup">
+        <legend>Time-Out</legend>
+        <fieldset class="formSection">
+          <legend>Milliseconds</legend>
+          <div class="content">
+            <label for="timeoutMs">Time-Out after</label>
+            <input type="text" name="timeout" id="timeoutMs" value ="500" maxlength="4" class="spinner"/> ms
+          </div>
+        </fieldset>
+      </fieldset>
+
+      <fieldset class="formGroup">
+        <legend>Scan Cache</legend>
+        <fieldset class="formSection">
+          <legend>Accumulate</legend>
+          <div class="content">
+            <input type="checkbox" name="accumulatescancache" id="accumulatescancache" checked="checked" />
+            <label for="accumulatescancache">accumulate scan results with access type "granted" into scan cache (do not delete old scan result)</label>
+          </div>
+        </fieldset>
+      </fieldset>
+
+      <fieldset class="formGroup">
+        <legend>Service Types</legend>
+        <fieldset class="formSection">
+          <legend>Services</legend>
+          <div class="content">
+            <p>
+              <input type="checkbox" id="scanFtp" name="scanftp" checked="checked" />
+              <label for="scanFtp"><abbr title="File transfer protocol">ftp</abbr></label>
+            </p>
+            <p>
+              <input type="checkbox" name="scansmb" id="scanSmb" checked="checked" />
+              <label for="scanSmb"><abbr title="Server Message Block">smb</abbr></label>
+            </p>
+            <p>
+              <input type="checkbox" name="scanhttp" id="scanHttp"/>
+              <label for="scanHttp"><abbr title="Hypertext Transfer Protocol">http</abbr></label>
+            </p>
+            <p>
+              <input type="checkbox" name="scanhttps" id="scanHttps"/>
+              <label for="scanHttps"><abbr title="Hypertext Transfer Protocol Secure">https</abbr></label>
+            </p>
+          </div>
+        </fieldset>
+      </fieldset>
+
+      <fieldset class="formGroup">
+        <legend>Scheduler</legend>
+        <fieldset class="formSection">
+          <legend>Only once</legend>
+          <div class="content">
+            <input type="radio" name="rescan" id="scheduleOnce" value="off" #(rescanCheck)#checked="checked"::#(/rescanCheck)#/>
+            <label for="scheduleOnce">run only a scan</label>
+          </div>
+        </fieldset>
+        <fieldset class="formSection">
+          <legend>Timed rescan</legend>
+          <div class="content">
+            <input type="radio" name="rescan" value="scheduler" id="scheduleUse" onclick="document.getElementById('accumulatescancache').checked = false" #(rescanCheck)#::checked="checked"#(/rescanCheck)# />
+            <label for="scheduleUse">scan and add all sites with granted access automatically. This disables the scan cache accumulation.</label>
+            Look every
+            <select name="repeat_time" data-toggle-id="scheduleUse">
+             <option value="1">1</option><option value="2">2</option><option value="3">3</option>
+             <option value="4">4</option><option value="5">5</option><option value="6">6</option>
+             <option value="7" selected="selected">7</option><option value="8">8</option>
+             <option value="9">9</option><option value="10">10</option>
+             <option value="12">12</option><option value="14">14</option><option value="15">15</option>
+             <option value="21">21</option><option value="28">28</option><option value="30">30</option>
+           </select>
+           <select name="repeat_unit" data-toggle-id="scheduleUse">
+             <option value="selminutes">minutes</option>
+             <option value="selhours">hours</option>
+             <option value="seldays" selected="selected">days</option>
+           </select> again and add new sites automatically to indexer.
+           Sites that do not appear during a scheduled scan period will be excluded from search results.
+         </div>
+       </fieldset>
+     </fieldset>
+
+     <fieldset class="formControl">
+      <div class="content">
+        <button type="submit" id="scan" name="scan" class="submitready icon-run primary">Start Scan</button>
+        <div class="info" id="scanhostinfo" style="text-decoration: blink;">&nbsp;</div>
+      </div>
+    </fieldset>
+  </fieldset>
+</form>
+
+<iframe src="/ServerScannerList.html?embedded=&amp;edit=" class="autoSize" sandbox="allow-same-origin"></iframe>
+
+#%env/templates/page-end.template%#
+</body>
 </html>
