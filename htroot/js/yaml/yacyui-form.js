@@ -1248,20 +1248,28 @@ YaCyUi.Func.Form.Button.prototype = {
 };
 
 YaCyUi.Form.ValidatorFunc = YaCyUi.Form.ValidatorFunc || {
-  ipv4: function(data) {
-    var regEx = /(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)/;
+  ipv4: function(data, withPort) {
+    var regEx;
+    if (withPort === true) {
+      regEx = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\:([0-9]{1,4}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])$/;
+    }
+    var regEx = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
     return regEx.test(data.trim());
   },
 
   /** Test if given string length is in range.
    * @param {string} String to test
    * @param {number} Minimum length
-   * @param {number} Maximum length (optional)
+   * @param {number} Maximum length (optional), or jQuery object from which it
+   * should be derived, using maxlength attribute
    * @return {number} 0, if in range, 1 if too short, 2 if too large
    */
   length: function(data, min, max) {
     if (data.length < min) {
       return 1;
+    }
+    if (max instanceof jQuery) {
+      max = max.attr('maxlength');
     }
     if (typeof max !== 'undefined' && data.length > max) {
       return 2;
@@ -1295,6 +1303,9 @@ YaCyUi.Form.ValidatorFunc = YaCyUi.Form.ValidatorFunc || {
     }
     if (data.trim().length === 0) {
       return -2;
+    }
+    if (max instanceof jQuery && typeof max.attr('maxlength') !== 'undefined') {
+      max = new Array(parseInt(max.attr('maxlength')) + 1).join('9');
     }
     if (invert) {
       if (data > min && data < max) {
@@ -1431,10 +1442,16 @@ YaCyUi.Form.ValidatorElement.prototype = {
   addValidator: function(validator) {
     var self = this;
     switch (validator.type) {
+      case 'func':
+        this.validators.push(function(data) {
+          return self.private.parseResult(
+            validator.func(data), validator);
+        });
+        break;
       case 'ipv4':
         this.validators.push(function(data) {
           return self.private.parseResult(
-            YaCyUi.Form.ValidatorFunc.ipv4(data), validator);
+            YaCyUi.Form.ValidatorFunc.ipv4(data, validator.withPort), validator);
         });
         break;
       case 'length':
