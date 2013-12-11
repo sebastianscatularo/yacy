@@ -8,374 +8,367 @@
 <body id="configPortal">
   #%env/templates/page-start.template%#
 
-<div id="devInfo">
-Todo:
- - form need some minor styling
- - validation
- - throwing in some help strings would be nice
- Status
- - valid HTML5
-</div>
+  <div id="devInfo" data-done="html5"></div>
 
-        <h1>Integration of a Search Portal</h1>
-        <p>
-          If you like to integrate YaCy as portal for your web pages, you may want to change icons and messages on the search page.
-          The search page may be customized. You can change the 'corporate identity'-images, the greeting line and a link to a home page that is reached when the 'corporate identity'-images are clicked.
-          To change also colours and styles use the <a href="ConfigAppearance_p.html">Appearance Servlet</a> for different skins and languages.
-        </p>
+  <h1>Integration of a Search Portal</h1>
+  <p>
+    If you like to integrate YaCy as portal for your web pages, you may want to change icons and messages on the search page.
+    The search page may be customized. You can change the 'corporate identity'-images, the greeting line and a link to a home page that is reached when the 'corporate identity'-images are clicked.
+    To change also colours and styles use the <a href="ConfigAppearance_p.html">Appearance Servlet</a> for different skins and languages.
+  </p>
 
-        <form action="ConfigPortal.html" method="post" enctype="multipart/form-data" id="ConfigPortal" accept-charset="UTF-8">
-          <fieldset>
-            <legend>Search Portal Configuration</legend>
+  <form action="ConfigPortal.html" method="post" enctype="multipart/form-data" id="ConfigPortal" accept-charset="UTF-8">
+    <fieldset>
+      <legend>Search Portal Configuration</legend>
 
-            <fieldset class="formGroup collapsible">
-              <legend>Layout</legend>
-              <fieldset class="formSection">
-                <legend>Greeting Line</legend>
-                <div class="content">
-                  <input type="text" name="promoteSearchPageGreeting" id="promoteSearchPageGreeting" value="#[promoteSearchPageGreeting]#"/>
-                </div>
-              </fieldset>
-              <fieldset class="formSection">
-                <legend>Home Page</legend>
-                <div class="content">
-                  <label for="promoteSearchPageGreetingHomepage">URL</label>:
-                  <input type="text" name="promoteSearchPageGreeting.homepage" value="#[promoteSearchPageGreeting.homepage]#" id="promoteSearchPageGreetingHomepage"/>
-                </div>
-              </fieldset>
-              <fieldset class="formSection">
-                <legend>Small Corporate Image</legend>
-                <div class="content">
-                  <label for="promoteSearchPageGreetingSmallImage">File path</label>:
-                  <input type="text" name="promoteSearchPageGreeting.smallImage" value="#[promoteSearchPageGreeting.smallImage]#" id="promoteSearchPageGreetingSmallImage"/>
-                </div>
-              </fieldset>
-              <fieldset class="formSection">
-                <legend>Large Corporate Image</legend>
-                <div class="content">
-                  <label for="promoteSearchPageGreetingLargeImage">File path</label>:
-                  <input type="text" name="promoteSearchPageGreeting.largeImage" value="#[promoteSearchPageGreeting.largeImage]#" id="promoteSearchPageGreetingLargeImage"/>
-                </div>
-              </fieldset>
-            </fieldset>
+      <fieldset class="formGroup collapsible">
+        <legend>Layout</legend>
+        <fieldset class="formSection">
+          <legend>Greeting Line</legend>
+          <div class="content">
+            <input type="text" name="promoteSearchPageGreeting" id="promoteSearchPageGreeting" value="#[promoteSearchPageGreeting]#"/>
+          </div>
+        </fieldset>
+        <fieldset class="formSection">
+          <legend>Home Page</legend>
+          <div class="content">
+            <label for="promoteSearchPageGreetingHomepage">URL</label>:
+            <input type="text" name="promoteSearchPageGreeting.homepage" value="#[promoteSearchPageGreeting.homepage]#" id="promoteSearchPageGreetingHomepage"/>
+          </div>
+        </fieldset>
+        <fieldset class="formSection">
+          <legend>Small Corporate Image</legend>
+          <div class="content">
+            <label for="promoteSearchPageGreetingSmallImage">File path</label>:
+            <input type="text" name="promoteSearchPageGreeting.smallImage" value="#[promoteSearchPageGreeting.smallImage]#" id="promoteSearchPageGreetingSmallImage"/>
+          </div>
+        </fieldset>
+        <fieldset class="formSection">
+          <legend>Large Corporate Image</legend>
+          <div class="content">
+            <label for="promoteSearchPageGreetingLargeImage">File path</label>:
+            <input type="text" name="promoteSearchPageGreeting.largeImage" value="#[promoteSearchPageGreeting.largeImage]#" id="promoteSearchPageGreetingLargeImage"/>
+          </div>
+        </fieldset>
+      </fieldset>
 
-            <fieldset class="formGroup collapsible">
-              <legend>Access</legend>
-              <fieldset class="formSection">
-                <legend>Search page access</legend>
-                <div class="content">
-                  <p>
-                    <label class="indent">
-                      <input type="radio" name="publicSearchpage" value="true" #(publicSearchpage)#::checked="checked"#(/publicSearchpage)# id="publicSearchpageOn"/>
-                      Search is available for everyone.
-                    </label>
-                  </p>
-                  <p>
-                    <label class="indent">
-                      <input type="radio" name="publicSearchpage" value="false" #(publicSearchpage)#checked="checked"::#(/publicSearchpage)#/>
-                      Only the administator is allowed to search.
-                    </label>
-                  </p>
-                </div>
-              </fieldset>
-            </fieldset>
+      <fieldset class="formGroup collapsible">
+        <legend>Access</legend>
+        <fieldset class="formSection">
+          <legend>Search page access</legend>
+          <div class="content">
+            <p>
+              <label class="indent">
+                <input type="radio" name="publicSearchpage" value="true" #(publicSearchpage)#::checked="checked"#(/publicSearchpage)# id="publicSearchpageOn"/>
+                Search is available for everyone.
+              </label>
+            </p>
+            <p>
+              <label class="indent">
+                <input type="radio" name="publicSearchpage" value="false" #(publicSearchpage)#checked="checked"::#(/publicSearchpage)#/>
+                Only the administator is allowed to search.
+              </label>
+            </p>
+          </div>
+        </fieldset>
+      </fieldset>
 
-            <fieldset class="formGroup collapsible">
-              <legend>Controls</legend>
-              <fieldset class="formSection">
-                <legend>Navigation Bar</legend>
-                <div class="content">
-                  <p>
-                    <label class="indent">
-                      <input type="radio" name="publicTopmenu" value="true" #(publicTopmenu)#::checked="checked"#(/publicTopmenu)#/>
-                      Show Navigation Top-Menu on search-pages.
-                    </label>
-                  </p>
-                  <p>
-                    <label class="indent">
-                      <input type="radio" name="publicTopmenu" value="false" #(publicTopmenu)#checked="checked"::#(/publicTopmenu)#/>
-                      Do not display a link to YaCy Menu (admin must navigate to /Status.html manually).
-                    </label>
-                  </p>
-                </div>
-              </fieldset>
-              <fieldset class="formSection">
-                <legend>Advanced Search Options</legend>
-                <div class="content">
-                  <p>
-                    <label class="indent">
-                      <input type="radio" name="search.options" value="true" #(search.options)#::checked="checked"#(/search.options)# id="advancedSearchOptionsOn"/>
-                      Show Advanced Search Options on search-page.
-                    </label>
-                  </p>
-                  <p>
-                    <label class="indent">
-                      <input type="radio" name="search.options" value="false" #(search.options)#checked="checked"::#(/search.options)#/>
-                      Do not show Advanced Search.
-                    </label>
-                  </p>
-                </div>
-              </fieldset>
-              <fieldset class="formSection">
-                <legend>Additional Interaction Features</legend>
-                <div class="content">
-                  <label class="indent">
-                    <input type="checkbox" name="interaction.userlogon" value="true" #(interaction.userlogon)#::checked="checked"#(/interaction.userlogon)# />
-                    Show <i>User-Logon</i> option in footer.
-                  </label>
-                </div>
-              </fieldset>
-            </fieldset>
+      <fieldset class="formGroup collapsible">
+        <legend>Controls</legend>
+        <fieldset class="formSection">
+          <legend>Navigation Bar</legend>
+          <div class="content">
+            <p>
+              <label class="indent">
+                <input type="radio" name="publicTopmenu" value="true" #(publicTopmenu)#::checked="checked"#(/publicTopmenu)#/>
+                Show Navigation Top-Menu on search-pages.
+              </label>
+            </p>
+            <p>
+              <label class="indent">
+                <input type="radio" name="publicTopmenu" value="false" #(publicTopmenu)#checked="checked"::#(/publicTopmenu)#/>
+                Do not display a link to YaCy Menu (admin must navigate to /Status.html manually).
+              </label>
+            </p>
+          </div>
+        </fieldset>
+        <fieldset class="formSection">
+          <legend>Advanced Search Options</legend>
+          <div class="content">
+            <p>
+              <label class="indent">
+                <input type="radio" name="search.options" value="true" #(search.options)#::checked="checked"#(/search.options)# id="advancedSearchOptionsOn"/>
+                Show Advanced Search Options on search-page.
+              </label>
+            </p>
+            <p>
+              <label class="indent">
+                <input type="radio" name="search.options" value="false" #(search.options)#checked="checked"::#(/search.options)#/>
+                Do not show Advanced Search.
+              </label>
+            </p>
+          </div>
+        </fieldset>
+        <fieldset class="formSection">
+          <legend>Additional Interaction Features</legend>
+          <div class="content">
+            <label class="indent">
+              <input type="checkbox" name="interaction.userlogon" value="true" #(interaction.userlogon)#::checked="checked"#(/interaction.userlogon)# />
+              Show <i>User-Logon</i> option in footer.
+            </label>
+          </div>
+        </fieldset>
+      </fieldset>
 
-            <fieldset class="formGroup collapsible">
-              <legend>Snippets &amp; Link Verification</legend>
-              <div class="description">
-                <p>
-                  <s class="sym sym-hint" title="Hint"></s> You can speed up your search results with this options! (use <code>CacheOnly</code> or <code>False</code> to switch off verification)
-                </p>
-              </div>
-              <fieldset class="formSection">
-                <legend>Navigation Bar</legend>
-                <div class="content">
-                  <p>
-                    <label class="indent">
-                      <input type="radio" name="search.verify" value="nocache" #(search.verify.nocache)#::checked="checked"#(/search.verify.nocache)# onclick="document.getElementById('search_verify_delete').disabled=false;document.getElementById('search_verify_delete').checked=true;" id="searchVerifyNoCache"/>
-                      <code>NoCache</code>:
-                      No use of web cache, load all snippets online.
-                    </label>
-                  </p>
-                  <p>
-                    <label class="indent">
-                      <input type="radio" name="search.verify" value="iffresh" #(search.verify.iffresh)#::checked="checked"#(/search.verify.iffresh)# onclick="document.getElementById('search_verify_delete').disabled=false;document.getElementById('search_verify_delete').checked=true;"/>
-                      <code>IfFresh</code>:
-                      Use the cache if the cache exists and is fresh otherwise load online.
-                    </label>
-                  </p>
-                  <p>
-                    <label class="indent">
-                      <input type="radio" name="search.verify" value="ifexist" #(search.verify.ifexist)#::checked="checked"#(/search.verify.ifexist)# id="searchVerifyIfExist"/>
-                      <code>IfExist</code>:
-                      Use the cache if the cache exist or load online.
-                    </label>
-                  </p>
-                  <p>
-                    <label class="indent">
-                      <input type="checkbox" name="search.verify.delete" id="search_verify_delete" value="true" #(search.verify.delete)#::checked="checked"#(/search.verify.delete)#/>
-                      If verification fails, delete index reference.
-                    </label>
-                  </p>
-                  <p>
-                    <label class="indent">
-                      <input type="radio" name="search.verify" value="cacheonly" #(search.verify.cacheonly)#::checked="checked"#(/search.verify.cacheonly)# onclick="document.getElementById('search_verify_delete').disabled=true;document.getElementById('search_verify_delete').checked=false;"/>
-                      <code>CacheOnly</code>:
-                      Never go online, use all content from cache. If no cache entry exist, consider content nevertheless as available and show result without snippet.</label>
-                    </p>
-                  <p>
-                    <label class="indent">
-                      <input type="radio" name="search.verify" value="false" #(search.verify.false)#::checked="checked"#(/search.verify.false)# onclick="document.getElementById('search_verify_delete').disabled=true;document.getElementById('search_verify_delete').checked=false;"/>
-                      <code>False</code>:
-                      No link verification and not snippet generation: all search results are valid without verification.
-                    </label>
-                  </p>
-                </div>
-              </fieldset>
-            </fieldset>
-
-            <fieldset class="formGroup collapsible">
-              <legend>Greedy Learning Mode</legend>
-              <fieldset class="formSection">
-                <legend>Limit</legend>
-                <div class="content">
-                  <label>
-                    <input type="checkbox" name="greedylearning.active" value="true" #(greedylearning.active)#::checked="checked"#(/greedylearning.active)# />
-                    Load documents linked in search results, will be deactivated automatically when index size &gt; #[greedylearning.limit.doccount]#
-                  </label>
-                </div>
-              </fieldset>
-            </fieldset>
-
-            <fieldset class="formGroup collapsible">
-              <legend>Default Pop-Up Page</legend>
-              <fieldset class="formSection">
-                <legend>Page Type</legend>
-                <div class="content">
-                  <p>
-                    <label>
-                      <input type="radio" name="popup" value="status" #(popupStatus)#::checked="checked"#(/popupStatus)# />
-                      Status Page
-                    </label>
-                  </p>
-                  <p>
-                    <label>
-                      <input type="radio" name="popup" value="front" #(popupFront)#::checked="checked"#(/popupFront)# />
-                      Search Front Page
-                    </label>
-                  </p>
-                  <p>
-                    <label>
-                      <input type="radio" name="popup" value="search" #(popupSearch)#::checked="checked"#(/popupSearch)# />
-                      Search Page (small header)
-                    </label>
-                  </p>
-                  <p>
-                    <label>
-                      <input type="radio" name="popup" value="interactive" #(popupInteractive)#::checked="checked"#(/popupInteractive)# />
-                      Interactive Search Page
-                    </label>
-                  </p>
-                </div>
-              </fieldset>
-            </fieldset>
-
-            <fieldset class="formGroup collapsible">
-              <legend>Search Page</legend>
-              <fieldset class="formSection">
-                <legend>Results</legend>
-                <div class="content">
-                  <label>
-                    Default maximum number of results per page:
-                    <input type="text" name="maximumRecords" value="#[maximumRecords]#" size="3" class="spinner"/>
-                  </label>
-                </div>
-              </fieldset>
-              <fieldset class="formSection">
-                <legend>Default index.html</legend>
-                <div class="content">
-                  <label>
-                    Default index.html Page (by forwarder):
-                    <input type="text" name="indexForward" value="#[indexForward]#"/>
-                  </label>
-                </div>
-              </fieldset>
-              <fieldset class="formSection">
-                <legend>Results Click Target</legend>
-                <div class="content">
-                  <select name="target">
-                    <option value="_blank" #(target_selected_blank)#::selected="selected"#(/target_selected_blank)#>"_blank" (new window)</option>
-                    <option value="_self" #(target_selected_self)#::selected="selected"#(/target_selected_self)#>"_self" (same window)</option>
-                    <option value="_parent" #(target_selected_parent)#::selected="selected"#(/target_selected_parent)#>"_parent" (the parent frame of a frameset)</option>
-                    <option value="_top" #(target_selected_top)#::selected="selected"#(/target_selected_top)#>"_top" (top of all frames)</option>
-                    <option value="searchresult" #(target_selected_searchresult)#::selected="selected"#(/target_selected_searchresult)#>"searchresult" (a default custom page name for search results)</option>
-                  </select>
-                </div>
-              </fieldset>
-              <fieldset class="formSection">
-                <legend>Special Results Click Target</legend>
-                <div class="content">
-                  <p>
-                    <select name="target_special">
-                      <option value="_blank" #(target_selected_special_blank)#::selected="selected"#(/target_selected_special_blank)#>"_blank" (new window)</option>
-                      <option value="_self" #(target_selected_special_self)#::selected="selected"#(/target_selected_special_self)#>"_self" (same window)</option>
-                      <option value="_parent" #(target_selected_special_parent)#::selected="selected"#(/target_selected_special_parent)#>"_parent" (the parent frame of a frameset)</option>
-                      <option value="_top" #(target_selected_special_top)#::selected="selected"#(/target_selected_special_top)#>"_top" (top of all frames)</option>
-                      <option value="searchresult" #(target_selected_special_searchresult)#::selected="selected"#(/target_selected_special_searchresult)#>"searchresult" (a default custom page name for search results)</option>
-                    </select>
-                  </p>
-                  <p>
-                    <label>
-                      Pattern:
-                      <input type="text" name="target_special_pattern" value="#[target_special_pattern]#"/>
-                    </label>
-                  </p>
-                </div>
-              </fieldset>
-              <fieldset class="formSection">
-                <legend>Exclude Hosts</legend>
-                <div class="content">
-                  <label>
-                    List of hosts that shall be excluded from search results by default but can be included using the site:&lt;host&gt; operator:
-                    <input type="text" name="search.excludehosts" value="#[search.excludehosts]#"/>
-                  </label>
-                  <br/>
-                  #[search.excludehosth]#
-                </div>
-              </fieldset>
-            </fieldset>
-
-            <fieldset class="formGroup collapsible">
-              <legend><em>About</em> Column</legend>
-              <div class="description">
-                <p>
-                  The <em>About</em> Column is shown in a column alongside with the search result page.
-                </p>
-              </div>
-              <div class="content">
-                <p>
-                  <label>
-                    Headline<br/>
-                    <input type="text" name="about.headline" value="#[about.headline]#" size="60" />
-                  </label>
-                </p>
-                <p>
-                  <label>
-                    Content <em>(HTML code)</em><br/>
-                    <textarea name="about.body" cols="60" rows="8">#[about.body]#</textarea>
-                  </label>
-                </p>
-              </div>
-            </fieldset>
-
-            <fieldset class="formControl">
-              <div class="description">
-                <p>You have to <a href="ConfigAccounts_p.html">set a remote user/password</a> to change this options.</p>
-              </div>
-              <div class="content">
-                <button type="submit" name="searchpage_default" class="icon-run">Set to Default Values</button>
-                <button type="submit" name="searchpage_set" class="primary icon-run">Change Search Page</button>
-              </div>
-            </fieldset>
+      <fieldset class="formGroup collapsible">
+        <legend>Snippets &amp; Link Verification</legend>
+        <div class="description">
+          <p>
+            <s class="sym sym-hint" title="Hint"></s> You can speed up your search results with this options! (use <code>CacheOnly</code> or <code>False</code> to switch off verification)
+          </p>
+        </div>
+        <fieldset class="formSection">
+          <legend>Navigation Bar</legend>
+          <div class="content">
+            <p>
+              <label class="indent">
+                <input type="radio" name="search.verify" value="nocache" #(search.verify.nocache)#::checked="checked"#(/search.verify.nocache)# onclick="document.getElementById('search_verify_delete').disabled=false;document.getElementById('search_verify_delete').checked=true;" id="searchVerifyNoCache"/>
+                <code>NoCache</code>:
+                No use of web cache, load all snippets online.
+              </label>
+            </p>
+            <p>
+              <label class="indent">
+                <input type="radio" name="search.verify" value="iffresh" #(search.verify.iffresh)#::checked="checked"#(/search.verify.iffresh)# onclick="document.getElementById('search_verify_delete').disabled=false;document.getElementById('search_verify_delete').checked=true;"/>
+                <code>IfFresh</code>:
+                Use the cache if the cache exists and is fresh otherwise load online.
+              </label>
+            </p>
+            <p>
+              <label class="indent">
+                <input type="radio" name="search.verify" value="ifexist" #(search.verify.ifexist)#::checked="checked"#(/search.verify.ifexist)# id="searchVerifyIfExist"/>
+                <code>IfExist</code>:
+                Use the cache if the cache exist or load online.
+              </label>
+            </p>
+            <p>
+              <label class="indent">
+                <input type="checkbox" name="search.verify.delete" id="search_verify_delete" value="true" #(search.verify.delete)#::checked="checked"#(/search.verify.delete)#/>
+                If verification fails, delete index reference.
+              </label>
+            </p>
+            <p>
+              <label class="indent">
+                <input type="radio" name="search.verify" value="cacheonly" #(search.verify.cacheonly)#::checked="checked"#(/search.verify.cacheonly)# onclick="document.getElementById('search_verify_delete').disabled=true;document.getElementById('search_verify_delete').checked=false;"/>
+                <code>CacheOnly</code>:
+                Never go online, use all content from cache. If no cache entry exist, consider content nevertheless as available and show result without snippet.</label>
+              </p>
+              <p>
+                <label class="indent">
+                  <input type="radio" name="search.verify" value="false" #(search.verify.false)#::checked="checked"#(/search.verify.false)# onclick="document.getElementById('search_verify_delete').disabled=true;document.getElementById('search_verify_delete').checked=false;"/>
+                  <code>False</code>:
+                  No link verification and not snippet generation: all search results are valid without verification.
+                </label>
+              </p>
+            </div>
           </fieldset>
-        </form>
+        </fieldset>
 
-        <h2>Search page integration</h2>
-        <p>
-          The search page can be integrated in your own web pages with an iframe.
-        </p>
+        <fieldset class="formGroup collapsible">
+          <legend>Greedy Learning Mode</legend>
+          <fieldset class="formSection">
+            <legend>Limit</legend>
+            <div class="content">
+              <label>
+                <input type="checkbox" name="greedylearning.active" value="true" #(greedylearning.active)#::checked="checked"#(/greedylearning.active)# />
+                Load documents linked in search results, will be deactivated automatically when index size &gt; #[greedylearning.limit.doccount]#
+              </label>
+            </div>
+          </fieldset>
+        </fieldset>
 
-        <h3>Default YaCy Search Page</h3>
-        <p>
-          Simply use the following code:
-        </p>
-        <pre><code>
+        <fieldset class="formGroup collapsible">
+          <legend>Default Pop-Up Page</legend>
+          <fieldset class="formSection">
+            <legend>Page Type</legend>
+            <div class="content">
+              <p>
+                <label>
+                  <input type="radio" name="popup" value="status" #(popupStatus)#::checked="checked"#(/popupStatus)# />
+                  Status Page
+                </label>
+              </p>
+              <p>
+                <label>
+                  <input type="radio" name="popup" value="front" #(popupFront)#::checked="checked"#(/popupFront)# />
+                  Search Front Page
+                </label>
+              </p>
+              <p>
+                <label>
+                  <input type="radio" name="popup" value="search" #(popupSearch)#::checked="checked"#(/popupSearch)# />
+                  Search Page (small header)
+                </label>
+              </p>
+              <p>
+                <label>
+                  <input type="radio" name="popup" value="interactive" #(popupInteractive)#::checked="checked"#(/popupInteractive)# />
+                  Interactive Search Page
+                </label>
+              </p>
+            </div>
+          </fieldset>
+        </fieldset>
+
+        <fieldset class="formGroup collapsible">
+          <legend>Search Page</legend>
+          <fieldset class="formSection">
+            <legend>Results</legend>
+            <div class="content">
+              <label>
+                Default maximum number of results per page:
+                <input type="text" name="maximumRecords" value="#[maximumRecords]#" size="3" class="spinner"/>
+              </label>
+            </div>
+          </fieldset>
+          <fieldset class="formSection">
+            <legend>Default index.html</legend>
+            <div class="content">
+              <label>
+                Default index.html Page (by forwarder):
+                <input type="text" name="indexForward" value="#[indexForward]#"/>
+              </label>
+            </div>
+          </fieldset>
+          <fieldset class="formSection">
+            <legend>Results Click Target</legend>
+            <div class="content">
+              <select name="target">
+                <option value="_blank" #(target_selected_blank)#::selected="selected"#(/target_selected_blank)#>"_blank" (new window)</option>
+                <option value="_self" #(target_selected_self)#::selected="selected"#(/target_selected_self)#>"_self" (same window)</option>
+                <option value="_parent" #(target_selected_parent)#::selected="selected"#(/target_selected_parent)#>"_parent" (the parent frame of a frameset)</option>
+                <option value="_top" #(target_selected_top)#::selected="selected"#(/target_selected_top)#>"_top" (top of all frames)</option>
+                <option value="searchresult" #(target_selected_searchresult)#::selected="selected"#(/target_selected_searchresult)#>"searchresult" (a default custom page name for search results)</option>
+              </select>
+            </div>
+          </fieldset>
+          <fieldset class="formSection">
+            <legend>Special Results Click Target</legend>
+            <div class="content">
+              <p>
+                <select name="target_special">
+                  <option value="_blank" #(target_selected_special_blank)#::selected="selected"#(/target_selected_special_blank)#>"_blank" (new window)</option>
+                  <option value="_self" #(target_selected_special_self)#::selected="selected"#(/target_selected_special_self)#>"_self" (same window)</option>
+                  <option value="_parent" #(target_selected_special_parent)#::selected="selected"#(/target_selected_special_parent)#>"_parent" (the parent frame of a frameset)</option>
+                  <option value="_top" #(target_selected_special_top)#::selected="selected"#(/target_selected_special_top)#>"_top" (top of all frames)</option>
+                  <option value="searchresult" #(target_selected_special_searchresult)#::selected="selected"#(/target_selected_special_searchresult)#>"searchresult" (a default custom page name for search results)</option>
+                </select>
+              </p>
+              <p>
+                <label>
+                  Pattern:
+                  <input type="text" name="target_special_pattern" value="#[target_special_pattern]#"/>
+                </label>
+              </p>
+            </div>
+          </fieldset>
+          <fieldset class="formSection">
+            <legend>Exclude Hosts</legend>
+            <div class="content">
+              <label>
+                List of hosts that shall be excluded from search results by default but can be included using the site:&lt;host&gt; operator:
+                <input type="text" name="search.excludehosts" value="#[search.excludehosts]#"/>
+              </label>
+              <br/>
+              #[search.excludehosth]#
+            </div>
+          </fieldset>
+        </fieldset>
+
+        <fieldset class="formGroup collapsible">
+          <legend><em>About</em> Column</legend>
+          <div class="description">
+            <p>
+              The <em>About</em> Column is shown in a column alongside with the search result page.
+            </p>
+          </div>
+          <div class="content">
+            <p>
+              <label>
+                Headline<br/>
+                <input type="text" name="about.headline" value="#[about.headline]#" size="60" />
+              </label>
+            </p>
+            <p>
+              <label>
+                Content <em>(HTML code)</em><br/>
+                <textarea name="about.body" cols="60" rows="8">#[about.body]#</textarea>
+              </label>
+            </p>
+          </div>
+        </fieldset>
+
+        <fieldset class="formControl">
+          <div class="description">
+            <p>You have to <a href="ConfigAccounts_p.html">set a remote user/password</a> to change this options.</p>
+          </div>
+          <div class="content">
+            <button type="submit" name="searchpage_default" class="icon-run">Set to Default Values</button>
+            <button type="submit" name="searchpage_set" class="primary icon-run">Change Search Page</button>
+          </div>
+        </fieldset>
+      </fieldset>
+    </form>
+
+    <h2>Search page integration</h2>
+    <p>
+      The search page can be integrated in your own web pages with an iframe.
+    </p>
+
+    <h3>Default YaCy Search Page</h3>
+    <p>
+      Simply use the following code:
+    </p>
+    <pre><code>
 &lt;iframe
   src=&quot;http://#[myaddress]#/index.html?display=2&amp;resource=local&quot;
   width=&quot;100%&quot;
   height=&quot;410&quot;
 &lt;/iframe&gt;
-        </code></pre>
-        This would look like:
-        <iframe name="target"
-          src="http://#[myaddress]#/index.html?display=2&amp;resource=local&amp;focus=0" class="autoSize border" sandbox="allow-same-origin"></iframe>
+    </code></pre>
+    This would look like:
+    <iframe name="target"
+    src="http://#[myaddress]#/index.html?display=2&amp;resource=local&amp;focus=0" class="autoSize border" sandbox="allow-same-origin"></iframe>
 
-        <h3>Small Header</h3>
-        <p>
-          For a search page with a small header, use this code:
-        </p>
-        <pre><code>
+    <h3>Small Header</h3>
+    <p>
+      For a search page with a small header, use this code:
+    </p>
+    <pre><code>
 &lt;iframe
   src=&quot;http://#[myaddress]#/yacysearch.html?display=2&amp;resource=local&quot;
   width=&quot;100%&quot;
   height=&quot;180&quot;
 &lt;/iframe&gt;
-        </code></pre>
-        This would look like:
-        <iframe name="target2"
-          src="http://#[myaddress]#/yacysearch.html?display=2&amp;resource=local&amp;focus=0" class="autoSize border" sandbox="allow-same-origin"></iframe>
+    </code></pre>
+    This would look like:
+    <iframe name="target2"
+    src="http://#[myaddress]#/yacysearch.html?display=2&amp;resource=local&amp;focus=0" class="autoSize border" sandbox="allow-same-origin"></iframe>
 
-        <h3>Interactive search</h3>
-        <p>
-          A third option is the interactive search. Use this code:
-        </p>
-        <pre><code>
+    <h3>Interactive search</h3>
+    <p>
+      A third option is the interactive search. Use this code:
+    </p>
+    <pre><code>
 &lt;iframe
   src=&quot;http://#[myaddress]#/yacyinteractive.html?display=2&quot;
   width=&quot;100%&quot;
   height=&quot;180&quot;
 &lt;/iframe&gt;
-        </code></pre>
-        This would look like:
-        <iframe src="http://#[myaddress]#/yacyinteractive.html?display=2&amp;focus=0" class="autoSize border" sandbox="allow-same-origin"></iframe>
+    </code></pre>
+    This would look like:
+    <iframe src="http://#[myaddress]#/yacyinteractive.html?display=2&amp;focus=0" class="autoSize border" sandbox="allow-same-origin"></iframe>
 
-#%env/templates/page-end.template%#
-</body>
-</html>
+    #%env/templates/page-end.template%#
+  </body>
+  </html>
