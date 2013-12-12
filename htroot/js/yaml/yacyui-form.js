@@ -587,7 +587,7 @@ YaCyUi.Func.Form.Hints.prototype = {
    * @param {jQuery} Form elements */
   update: function(formElements) {
     formElements.each(function() {
-      if ($(this).next('.formHint').is(':visible')) {
+      if (YaCyUi.DataStore.get($(this), 'hints', 'element').is(':visible')) {
         YaCyUi.Form.Hints.show($(this));
       }
     });
