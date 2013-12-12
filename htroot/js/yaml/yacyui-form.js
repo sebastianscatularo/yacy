@@ -597,7 +597,7 @@ YaCyUi.Func.Form.Hints.prototype = {
    * @param {jQuery} Form elements */
   show: function(formElements) {
     var self = this;
-    formElements.each(function() {
+    formElements.not(':disabled').each(function() {
       if (self.private.set($(this)) > 0) {
         var leftOffset = $(this).offset().left;
         YaCyUi.DataStore.get($(this), 'hints', 'element').slideDown('fast', function() {
