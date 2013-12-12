@@ -5,3 +5,4 @@
 - remove sizes from input fields contained in fieldsets
 - find javascript event handlers on elements (onClick, onChange, ..) and refactor to external scripts
 - check form attributes (some are missing)
+- set #target for forms submitting to the same page
