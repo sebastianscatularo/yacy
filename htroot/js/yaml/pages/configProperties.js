@@ -37,11 +37,11 @@ YaCyPage.init = function() {
     YaCyPage.clearForm();
   });
 
-  $('#key').on('keyup', function() {
+  $('#key').on('input', function() {
     YaCyPage.filterList($(this).val(), 'id');
   });
 
-  $('#value').on('keyup', function() {
+  $('#value').on('input', function() {
     YaCyPage.filterList($(this).val(), 'value');
   });
 
