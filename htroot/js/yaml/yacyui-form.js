@@ -1060,19 +1060,20 @@ YaCyUi.Func.Form.Data = YaCyUi.Func.Form.Data || function() {
         case 'checkbox':
         case 'radio':
           if (e.is(':checked')) {
-            data[this.id] = true;
-          } else {
-            data[this.id] = false;
+            data[this.name] = this.value || true;
           }
           break;
         case 'text':
           var defaultValue = this.placeholder;
           var value = e.val().trim();
           if (typeof defaultValue !== 'undefined' && defaultValue === value) {
-            data[this.id] = null;
+            data[this.name] = null;
           } else {
-            data[this.id] = e.val().trim();
+            data[this.name] = e.val().trim();
           }
+          break;
+        default:
+          data[this.name] = e.val().trim();
           break;
       }
     });
@@ -1087,15 +1088,17 @@ YaCyUi.Func.Form.Data = YaCyUi.Func.Form.Data || function() {
     form.find('fieldset.toggleable').each(function() {
       var fieldset = $(this);
       var fieldToggleId = fieldset.data('toggle-fieldid');
+      var dataOn = fieldset.data('toggle-value-on');
+      var dataOff = fieldset.data('toggle-value-off');
       if (typeof fieldToggleId !== 'undefined') {
         if (fieldset.is('.ycu-toggle-hidden')) {
-          data[fieldToggleId] = false;
+          data[fieldToggleId] = dataOff || false;
           // unset inputs inside toggled element
           fieldset.find('input:not([type="button"])').each(function() {
             data[this.id] = null;
           });
         } else {
-          data[fieldToggleId] = true;
+          data[fieldToggleId] = dataOn || true;
         }
       }
     });
@@ -1118,7 +1121,7 @@ YaCyUi.Func.Form.Data = YaCyUi.Func.Form.Data || function() {
       if (val === false || val === null) {
         delete data[key];
       } else if (val === true) {
-        data[key] = 1;
+        data[key] = 'on'; // FIXME: on and 1 are mixed up in YaCy source
       } else {
         data[key] = encodeURIComponent(data[key]);
       }
@@ -1135,7 +1138,11 @@ YaCyUi.Func.Form.Data = YaCyUi.Func.Form.Data || function() {
       url += key + "=" + data[key] + "&";
     }
     url = submitUrl + '?' + url.substring(0, url.length - 1);
+
     console.debug("submit URL", url);
+    if (confirm('URL printed to console, continue?')) {
+      window.location = url;
+    }
   };
 };
 

@@ -10,17 +10,9 @@
 <body id="crawlStartSite">
   #%env/templates/page-start.template%#
 
-  <div id="devInfo">
-    Todo:
-    - generate post URL
-    - better help strings
-    - check which hidden inputs are needed and which can be omitted as they are set to default values by Crawler_p
+  <div id="devInfo" data-done="html5">
     - handle 'robots not allowed' when starting a crawl
-    - handle form errors (missing fields)
     - the start-point selection should not be here?!
-    Non working:
-    - no form submission
-    Status: valid html5
   </div>
 
   <h1>Site Crawling</h1>
@@ -51,7 +43,7 @@
     </li>
   </ul>
 
-  <form method="post" action="Crawler_p.html" enctype="multipart/form-data" accept-charset="UTF-8">
+  <form method="post" id="crawler" action="Crawler_p.html" enctype="multipart/form-data" accept-charset="UTF-8">
     <fieldset class="main">
       <legend>Site Crawl Start</legend>
 
@@ -129,7 +121,7 @@
         <fieldset class="formSection control-group" data-review="skip-title">
           <legend>Sub-path</legend>
           <div class="content">
-            <input type="radio" name="range" id="rangeSubpath" value="subpath" />
+            <input type="radio" name="range" id="rangeSubpath" value="subpath"/>
             <label for="rangeSubpath">load only files in a sub-path of given url</label>
           </div>
         </fieldset>
@@ -137,12 +129,12 @@
 
       <fieldset class="formGroup">
         <legend>Limitation</legend>
-        <fieldset class="formSection toggleable" data-toggle-type="activate" data-toggle-fieldid="maxPagesPerDomain">
+        <fieldset class="formSection toggleable" data-toggle-type="activate" data-toggle-fieldid="crawlingDomMaxCheck" data-toggle-value-on="on">
           <legend>Maximum Pages per Domain</legend>
           <div class="content">
             <div class="control-group">
               <label for="crawlingDomMaxPages">Set the maximum number of loaded pages to</label>
-              <input name="crawlingDomMaxPages" id="crawlingDomMaxPages" type="text" size="6" maxlength="6" value="#[crawlingDomMaxPages]#" class="spinner" data-min="-1" data-max="999999"/>.
+              <input name="crawlingDomMaxPages" id="crawlingDomMaxPages" type="text" maxlength="6" value="#[crawlingDomMaxPages]#" class="spinner" data-min="-1"/>.
               <div class="formHint hidden">
                 <p class="error">
                   Please enter a value in the range <code>-1&mdash;999999</code>.
@@ -168,7 +160,7 @@
           <div class="content">
             <div class="control-group">
               <label for="collection">Target collection(s)</label>
-              <input name="collection" id="collection" type="text" size="60" maxlength="100" value="#[collection]#" #(collectionEnabled)#disabled="disabled"::#(/collectionEnabled)# placeholder="#[defaultCollection]#"/>
+              <input name="collection" id="collection" type="text" maxlength="100" value="#[collection]#" #(collectionEnabled)#disabled="disabled"::#(/collectionEnabled)# placeholder="#[defaultCollection]#"/>
               <div class="formHint hidden">
                 <p class="help">
                   Please enter a comma seperated list of collections, where the results should be added.
@@ -188,23 +180,21 @@
         </fieldset>
       </fieldset>
 
-      <input type="hidden" name="crawlingDepth" id="crawlingDepth" value="99" />
-      <input type="hidden" name="deleteold" id="deleteold" value="on" />
-      <input type="hidden" name="mustnotmatch" id="mustnotmatch"/>
-      <input type="hidden" name="crawlingDomFilterCheck" id="crawlingDomFilterCheck" value="off" />
-      <input type="hidden" name="crawlingDomFilterDepth" id="crawlingDomFilterDepth" value="#[crawlingDomFilterDepth]#" />
-      <input type="hidden" name="directDocByURL" id="directDocByURL" value="off" />
-      <input type="hidden" name="recrawl" id="recrawl" value="reload" />
-      <input type="hidden" name="reloadIfOlderNumber" id="reloadIfOlderNumber" value="3" />
-      <input type="hidden" name="reloadIfOlderUnit" id="reloadIfOlderUnit" value="day" />
-      <input type="hidden" name="storeHTCache" id="storeHTCache" value="on" />
-      <input type="hidden" name="cachePolicy" id="cachePolicy" value="iffresh" />
-      <input type="hidden" name="crawlingQ" id="crawlingQ" value="on" />
-      <input type="hidden" name="followFrames" id="followFrames" value="on" />
-      <input type="hidden" name="obeyHtmlRobotsNoindex" id="obeyHtmlRobotsNoindex" value="on" />
-      <input type="hidden" name="indexText" id="indexText" value="on" />
-      <input type="hidden" name="indexMedia" id="indexMedia" value="on" />
-      <input type="hidden" name="intention" id="intention"/>
+      <input type="hidden" name="crawlingDepth" value="99"/>
+      <input type="hidden" name="deleteold" value="on"/>
+      <input type="hidden" name="mustnotmatch"/>
+      <input type="hidden" name="directDocByURL" value="off"/>
+      <input type="hidden" name="recrawl" value="reload"/>
+      <input type="hidden" name="reloadIfOlderNumber" value="3"/>
+      <input type="hidden" name="reloadIfOlderUnit" value="day"/>
+      <input type="hidden" name="storeHTCache" value="on"/>
+      <input type="hidden" name="cachePolicy" value="iffresh"/>
+      <input type="hidden" name="crawlingQ" value="on"/>
+      <input type="hidden" name="followFrames" value="on"/>
+      <input type="hidden" name="obeyHtmlRobotsNoindex" value="on"/>
+      <input type="hidden" name="indexText" value="on"/>
+      <input type="hidden" name="indexMedia" value="on"/>
+      <input type="hidden" name="crawlingstart"/>
 
       <fieldset class="formControl">
         <div id="ycu-error-count" class="description hiddden"></div>

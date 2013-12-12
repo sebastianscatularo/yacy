@@ -57,6 +57,10 @@ YaCyPage.init = function() {
     }
   });
 
-  //new YaCyPage.Parts.FormControl();
   YaCyPage.CrawlStart = new YaCyPage.Func.CrawlStart();
+
+  $('#submitCrawl').on('click', function(evObj) {
+    evObj.preventDefault();
+    YaCyUi.Form.Data.submit($('#crawler'));
+  });
 };
