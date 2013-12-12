@@ -64,11 +64,8 @@
   #%env/templates/page-start.template%#
   #(/topmenu)#
 
-  <div id="devInfo">
+  <div id="devInfo" data-done="html5" data-todo="code scipts">
     - use a template for InfoCacheEntry
-    - scripts need updates
-    State:
-    * valid HTML5
   </div>
 
   <h1>Host Browser</h1>
@@ -150,7 +147,7 @@
   #(/hosts)#
 
   #(files)#::
-  <fieldset class="framed">
+  <fieldset class="framed" id="hostBrowserFiles">
     <legend>Browser for <a href="#[path]#" target="_blank">#[path]#</a></legend>
     <div class="description">
       <p>
@@ -182,7 +179,7 @@
               #(root)#
               <tr>
                 <td></td>
-                <td class="breakAll"><a href="/HostBrowser.html?path=#[path]#" class="listing">..</a></td>
+                <td class="breakAll"><a href="/HostBrowser.html?path=#[path]##hostBrowserFiles" class="listing">..</a></td>
                 <td colspan="5"></td>
               </tr>
               ::
@@ -204,7 +201,7 @@
                 <td colspan="5" class="listingem">link, detected from context</td>
                 ::
                 <td colspan="5" class="listingnok">
-                  <a href="/HostBrowser.html?load=#[url]#&path=#[path]#"><span class="state stateError">load &amp; index</span></a>
+                  <a href="/HostBrowser.html?load=#[url]#&path=#[path]##hostBrowserFiles"><span class="state stateError">load &amp; index</span></a>
                 </td>
                 #(/load)#
                 ::
@@ -219,7 +216,7 @@
               ::<!--folder-->
               <tr>
                 <td><i class="fa fa-folder"></i></td>
-                <td><a href="/HostBrowser.html?path=#[url]#" class="listing">#[url]#</a></td>
+                <td><a href="/HostBrowser.html?path=#[url]##hostBrowserFiles" class="listing">#[url]#</a></td>
                 <td class="commit">#[stored]#</td>
                 <td>#[linked]#</td>
                 <td #(pendingVisible)#class="listingem"::class="pending"#(/pendingVisible)#>#[pending]#</td>
@@ -248,7 +245,7 @@
           <ul class="hostList fa-ul">
             #{list}#
             <li>
-              <a href="/HostBrowser.html?path=#[link]#">#[host]#</a>
+              <a href="/HostBrowser.html?path=#[link]#hostBrowserFiles">#[host]#</a>
               <p>
                 #[count]# URLs
               </p>
@@ -280,7 +277,7 @@
           <ul class="hostList fa-ul">
             #{list}#
             <li>
-              <a href="/HostBrowser.html?path=#[host]#">#[host]#</a>
+              <a href="/HostBrowser.html?path=#[host]#hostBrowserFiles">#[host]#</a>
               <p>
                 #[count]# URLs
               </p>
