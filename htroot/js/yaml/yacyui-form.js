@@ -104,7 +104,9 @@ YaCyUi.Func.Form = YaCyUi.Func.Form || {
       }
       $(this).spinner({
         min: typeof data.min === 'undefined' ? null : data.min,
-        max: max
+        max: max,
+        numberFormat: data.format || null,
+        step: data.step || 1
       });
     });
 
@@ -1665,6 +1667,7 @@ YaCyUi.Form.Validator.prototype = {
       YaCyUi.error('Form.Validator:addElement:', 'element is undefined/empty!', element);
       return null;
     }
+    console.debug('el', element);
     var self = this;
     element.each(function() {
       element.uniqueId(); // we need an id attribute set
