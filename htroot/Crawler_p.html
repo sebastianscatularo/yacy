@@ -21,252 +21,253 @@
     - generated urls have unescaped characters!
   </div>
 
-  <div id="formResults">
-    #(info)#
-    <!-- 0 -->
-    ::
-    <!-- 1 -->
-    <p class="error">
-      Error with profile management. Please stop YaCy, delete the file <code>DATA/PLASMADB/crawlProfiles0.db</code> and restart.
-    </p>
-    ::
-    <!-- 2 -->
-    <p class="error">
-      Error: #[errmsg]#
-    </p>
-    ::
-    <!-- 3 -->
+  #(info)#
+  <!-- 0 -->
+  ::
+  <!-- 1 -->
+  <p class="ycu-message ycu-message-error">
+    Error with profile management. Please stop YaCy, delete the file <code>DATA/PLASMADB/crawlProfiles0.db</code> and restart.
+  </p>
+  ::
+  <!-- 2 -->
+  <p class="ycu-message ycu-message-error">
+    Error: #[errmsg]#
+  </p>
+  ::
+  <!-- 3 -->
+  <p class="ycu-message ycu-message-info">
     Application not yet initialized. Sorry. Please wait some seconds and repeat
     the request.
-    ::
-    <!-- 4 -->
-    <p class="error">
-      <strong>Crawl filter "#[newcrawlingfilter]#" does not match with
-        crawl root "#[crawlingStart]#".</strong>
-        Please try again with different
-        filter.
-      </p>
-      ::
-      <!-- 5 -->
-      <p class="error">
-        Crawling of "#[crawlingURL]#" failed. Reason: #[reasonString]#
-      </p>
-      ::
-      <!-- 6 -->
-      <p class="error">
-        Error with URL input "#[crawlingStart]#": #[error]#
-      </p>
-      ::
-      <!-- 7 -->
-      <p class="error">
-        Error with file input "#[crawlingStart]#": #[error]#
-      </p>
-      ::
-      <!-- 8 -->
-      <p class="success">
-        Crawling of <code>#[crawlingURL]#</code> started.
-        <br/>
-        <strong>Please wait some seconds, it may take some seconds until the first result appears there.</strong>
-        If you crawl any un-wanted pages, you can delete them <a href="IndexCreateQueues_p.html?stack=LOCAL">here</a>.
-      </p>
-      #(/info)#
-    </div>
+  </p>
+  ::
+  <!-- 4 -->
+  <p class="ycu-message ycu-message-error">
+    <strong>
+      Crawl filter <code>#[newcrawlingfilter]#</code> does not match with
+      crawl root <code>#[crawlingStart]#</code>.
+    </strong>
+    Please try again with different filter.
+  </p>
+  ::
+  <!-- 5 -->
+  <p class="ycu-message ycu-message-error">
+    Crawling of "#[crawlingURL]#" failed. Reason: #[reasonString]#
+  </p>
+  ::
+  <!-- 6 -->
+  <p class="ycu-message ycu-message-error">
+    Error with URL input "#[crawlingStart]#": #[error]#
+  </p>
+  ::
+  <!-- 7 -->
+  <p class="ycu-message ycu-message-error">
+    Error with file input "#[crawlingStart]#": #[error]#
+  </p>
+  ::
+  <!-- 8 -->
+  <p class="ycu-message ycu-message-info">
+    Crawling of <code>#[crawlingURL]#</code> started.
+    <br/>
+    <strong>Please wait some seconds, it may take some seconds until the first result appears there.</strong>
+    If you crawl any un-wanted pages, you can delete them <a href="IndexCreateQueues_p.html?stack=LOCAL">here</a>.
+  </p>
+  #(/info)#
 
-    <h1>Crawler</h1>
+  <h1>Crawler</h1>
 
-    <h2>Queues</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Queue</th>
-          <th>Size</th>
-          <th>Pause/Resume</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Local Crawler</td>
-          <td><span id="localCrawlerQueueSize">#[localCrawlSize]#</span></td>
-          <td>
-            <a href="" id="localCrawlerStateLink" class="iconic"></a>
-          </td>
-        </tr>
-        <tr>
-          <td>Limit Crawler</td>
-          <td><span id="limitCrawlerQueueSize">#[limitCrawlSize]#</span></td>
-          <td>
-            <a href="" title="" id="limitCrawlerStateLink" class="iconic"></a>
-          </td>
-        </tr>
-        <tr>
-          <td>Remote Crawler</td>
-          <td><span id="remoteCrawlerQueueSize">#[remoteCrawlSize]#</span></td>
-          <td>
-            <a href="" title="" id="remoteCrawlerStateLink" class="iconic"></a>
-          </td>
-        </tr>
-        <tr>
-          <td>No-Load Crawler</td>
-          <td><span id="noLoadCrawlerQueueSize">#[noloadCrawlSize]#</span></td>
-          <td>
-            <a href="" title="" id="noLoadCrawlerStateLink" class="iconic"></a>
-          </td>
-        </tr>
-        <tr>
-          <td>Loader (<span id="loaderQueueMax">#[loaderMax]#</span>)</td>
-          <td><span id="loaderQueueSize">#[loaderSize]#</span></td>
-          <td>&nbsp;</td>
-        </tr>
-      </tbody>
-    </table>
-    <div class="warning" id="message">&nbsp;#[queuemessage]#</div>
-
-    <h2>Index Size</h2>
-    <table>
-      <thead>
-        <tr class="TableHeader">
-          <th>Database</th>
-          <th>Entries</th>
-          <th>Segments</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Documents<br/><a href="#[urlpublictextSolrURL]#">solr search api</a></td>
-          <td><span id="urlPublicTextSize">#[urlpublictextSize]#</span></td>
-          <td><span id="urlPublicTextSegmentCount">#[urlpublictextSegmentCount]#</span></td>
-        </tr>
-        <tr>
-          <td>Webgraph Edges<br/><a href="#[webgraphSolrURL]#">solr search api</a></td>
-          <td><span id="webgraphSize">#[webgraphSize]#</span></td>
-          <td><span id="webgraphSegmentCount">#[webgraphSegmentCount]#</span></td>
-        </tr>
-        <tr>
-          <td>Citations<br/>(reverse link index)</td>
-          <td><span id="citationSize">#[citationSize]#</span></td>
-          <td><span id="citationSegmentCount">#[citationSegmentCount]#</span></td>
-        </tr>
-        <tr>
-          <td>RWIs<br/>(P2P Chunks)</td>
-          <td><span id="rwiPublicTextSize">#[rwipublictextSize]#</span></td>
-          <td><span id="rwiPublicTextSegmentCount">#[rwipublictextSegmentCount]#</span></td>
-        </tr>
-      </tbody>
-    </table>
-
-    <h2>Progress</h2>
-    <form action="Crawler_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
-      <table>
-        <thead>
-          <tr>
-            <th>Indicator</th>
-            <th colspan="4">Level</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr class="TableCellLight">
-            <td>Speed / <abbr title="Pages Per Minute">PPM</abbr></td>
-            <td colspan="4">
-              <button #(crawlingSpeedMinChecked)#::class="TableCellDark"#(/crawlingSpeedMinChecked)# type="submit" name="crawlingPerformance">Minimum</button>
-              <input #(crawlingSpeedCustChecked)#::class="TableCellDark"#(/crawlingSpeedCustChecked)# id="customPPM" name="customPPM" type="text" size="5" maxlength="5" value="#[customPPMdefault]#" /><abbr title="Pages Per Minute">PPM</abbr>
-              <button type="submit" name="crawlingPerformance">custom</button>
-              <button #(crawlingSpeedMaxChecked)#::class="TableCellDark"#(/crawlingSpeedMaxChecked)# type="submit" name="crawlingPerformance">maximum</button>
-            </td>
-          </tr>
-          <tr>
-            <td>Crawler <abbr title="Pages Per Minute">PPM</abbr></td>
-            <td><span id="ppmNum"></span></td>
-            <td colspan="3">
-              <progress id="ppmBar" max="30000" value="0" style="width:94%;"></progress>
-            </td>
-          </tr>
-          <tr>
-            <td rowspan="2">
-              Postprocessing Progress <span id="postprocessing_speed"></span>
-            </td>
-            <td>
-              <span id="postprocessingStatus"></span>
-            </td>
-            <td colspan="3">
-              <progress id="postprocessingBar" max="100" value="0" style="width:94%;"></progress>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <span id="postprocessingRemainingTimeMinutes">0</span>:<span id="postprocessingRemainingTimeSeconds">0</span>
-            </td>
-            <td>
-              <span id="postprocessingCollection"></span>
-            </td>
-            <td>
-              <span id="postprocessingWebgraph"></span>
-            </td>
-            <td></td>
-          </tr>
-          <tr>
-            <td>Traffic (Crawler)</td>
-            <td><span id="trafficCrawler"></span> MB</td>
-            <td colspan="3"></td>
-          </tr>
-          <tr>
-            <td>Load</td>
-            <td><span id="load"></span></td>
-            <td colspan="3"></td>
-          </tr>
-        </tbody>
-      </table>
-    </form>
-
-    <!-- crawl profile list -->
-    #(crawlProfilesShow)#::
-    <h2>Running Crawls (#[count]#)</h2>
-    <table summary="A list of crawl profiles and their current settings.">
-      <colgroup>
-      <col width="16" />
-      <col width="140"/>
-    </colgroup>
+  <h2>Queues</h2>
+  <table>
     <thead>
       <tr>
-        <th>Name</th>
-        #(debug)#::<th>Count</th>#(/debug)#
-        <th>Status</th>
+        <th>Queue</th>
+        <th>Size</th>
+        <th>Pause/Resume</th>
       </tr>
     </thead>
     <tbody>
-      #{list}#
       <tr>
-        <td>#[name]#</td>
-        #(debug)#::<td>#[count]#</td>#(/debug)#
+        <td>Local Crawler</td>
+        <td><span id="localCrawlerQueueSize">#[localCrawlSize]#</span></td>
         <td>
-          #(terminateButton)#::
-          <div style="text-decoration:blink;float:left;">Running</div>
-          <form style="float:left;" action="Crawler_p.html" method="get" enctype="multipart/form-data" accept-charset="UTF-8"><div>
-            <input type="hidden" name="handle" value="#[handle]#" />
-            <input type="submit" name="terminate" value="Terminate" />
-          </form>
-        </div>
-        #(/terminateButton)#
-      </td>
-    </tr>
-    #{/list}#
-  </table>
-  #(linkstructure)#::
-  <div style="clear:both; text-align:left;">
-    <img id="webPicture" src="/env/grafics/invisible.png"/>
-  </div>
-  #(/linkstructure)#
-
-  <h2>Crawled Pages</h2>
-  <table id="crawlList">
-    <thead>
-      <tr>
-        <th>Title</th>
-        <th>URL</th>
+          <a href="" id="localCrawlerStateLink" class="iconic"></a>
+        </td>
       </tr>
-    </thead>
-    <tbody>
+      <tr>
+        <td>Limit Crawler</td>
+        <td><span id="limitCrawlerQueueSize">#[limitCrawlSize]#</span></td>
+        <td>
+          <a href="" title="" id="limitCrawlerStateLink" class="iconic"></a>
+        </td>
+      </tr>
+      <tr>
+        <td>Remote Crawler</td>
+        <td><span id="remoteCrawlerQueueSize">#[remoteCrawlSize]#</span></td>
+        <td>
+          <a href="" title="" id="remoteCrawlerStateLink" class="iconic"></a>
+        </td>
+      </tr>
+      <tr>
+        <td>No-Load Crawler</td>
+        <td><span id="noLoadCrawlerQueueSize">#[noloadCrawlSize]#</span></td>
+        <td>
+          <a href="" title="" id="noLoadCrawlerStateLink" class="iconic"></a>
+        </td>
+      </tr>
+      <tr>
+        <td>Loader (<span id="loaderQueueMax">#[loaderMax]#</span>)</td>
+        <td><span id="loaderQueueSize">#[loaderSize]#</span></td>
+        <td>&nbsp;</td>
+      </tr>
     </tbody>
   </table>
+  <div class="warning" id="message">&nbsp;#[queuemessage]#</div>
+
+  <h2>Index Size</h2>
+  <table>
+    <thead>
+      <tr class="TableHeader">
+        <th>Database</th>
+        <th>Entries</th>
+        <th>Segments</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Documents<br/><a href="#[urlpublictextSolrURL]#">solr search api</a></td>
+        <td><span id="urlPublicTextSize">#[urlpublictextSize]#</span></td>
+        <td><span id="urlPublicTextSegmentCount">#[urlpublictextSegmentCount]#</span></td>
+      </tr>
+      <tr>
+        <td>Webgraph Edges<br/><a href="#[webgraphSolrURL]#">solr search api</a></td>
+        <td><span id="webgraphSize">#[webgraphSize]#</span></td>
+        <td><span id="webgraphSegmentCount">#[webgraphSegmentCount]#</span></td>
+      </tr>
+      <tr>
+        <td>Citations<br/>(reverse link index)</td>
+        <td><span id="citationSize">#[citationSize]#</span></td>
+        <td><span id="citationSegmentCount">#[citationSegmentCount]#</span></td>
+      </tr>
+      <tr>
+        <td>RWIs<br/>(P2P Chunks)</td>
+        <td><span id="rwiPublicTextSize">#[rwipublictextSize]#</span></td>
+        <td><span id="rwiPublicTextSegmentCount">#[rwipublictextSegmentCount]#</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Progress</h2>
+  <form action="Crawler_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
+    <table>
+      <thead>
+        <tr>
+          <th>Indicator</th>
+          <th colspan="4">Level</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="TableCellLight">
+          <td>Speed / <abbr title="Pages Per Minute">PPM</abbr></td>
+          <td colspan="4">
+            <button #(crawlingSpeedMinChecked)#::class="TableCellDark"#(/crawlingSpeedMinChecked)# type="submit" name="crawlingPerformance">Minimum</button>
+            <input #(crawlingSpeedCustChecked)#::class="TableCellDark"#(/crawlingSpeedCustChecked)# id="customPPM" name="customPPM" type="text" size="5" maxlength="5" value="#[customPPMdefault]#" /><abbr title="Pages Per Minute">PPM</abbr>
+            <button type="submit" name="crawlingPerformance">custom</button>
+            <button #(crawlingSpeedMaxChecked)#::class="TableCellDark"#(/crawlingSpeedMaxChecked)# type="submit" name="crawlingPerformance">maximum</button>
+          </td>
+        </tr>
+        <tr>
+          <td>Crawler <abbr title="Pages Per Minute">PPM</abbr></td>
+          <td><span id="ppmNum"></span></td>
+          <td colspan="3">
+            <progress id="ppmBar" max="30000" value="0" style="width:94%;"></progress>
+          </td>
+        </tr>
+        <tr>
+          <td rowspan="2">
+            Postprocessing Progress <span id="postprocessing_speed"></span>
+          </td>
+          <td>
+            <span id="postprocessingStatus"></span>
+          </td>
+          <td colspan="3">
+            <progress id="postprocessingBar" max="100" value="0" style="width:94%;"></progress>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <span id="postprocessingRemainingTimeMinutes">0</span>:<span id="postprocessingRemainingTimeSeconds">0</span>
+          </td>
+          <td>
+            <span id="postprocessingCollection"></span>
+          </td>
+          <td>
+            <span id="postprocessingWebgraph"></span>
+          </td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>Traffic (Crawler)</td>
+          <td><span id="trafficCrawler"></span> MB</td>
+          <td colspan="3"></td>
+        </tr>
+        <tr>
+          <td>Load</td>
+          <td><span id="load"></span></td>
+          <td colspan="3"></td>
+        </tr>
+      </tbody>
+    </table>
+  </form>
+
+  <!-- crawl profile list -->
+  #(crawlProfilesShow)#::
+  <h2>Running Crawls (#[count]#)</h2>
+  <table summary="A list of crawl profiles and their current settings." id="runningCrawls">
+    <colgroup>
+    <col width="16" />
+    <col width="140"/>
+  </colgroup>
+  <thead>
+    <tr>
+      <th>Name</th>
+      #(debug)#::<th>Count</th>#(/debug)#
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    #{list}#
+    <tr>
+      <td>#[name]#</td>
+      #(debug)#::<td>#[count]#</td>#(/debug)#
+      <td>
+        #(terminateButton)#::
+        <form action="Crawler_p.html#runningCrawls" method="get" enctype="multipart/form-data" accept-charset="UTF-8"><div>
+          <input type="hidden" name="handle" value="#[handle]#" />
+          <span class="blink">Running</span>
+          <button type="submit" name="terminate" class="icon-stop">Terminate</button>
+        </form>
+      </div>
+      #(/terminateButton)#
+    </td>
+  </tr>
+  #{/list}#
+</table>
+#(linkstructure)#::
+<div style="clear:both; text-align:left;">
+  <img id="webPicture" src="/env/grafics/invisible.png"/>
+</div>
+#(/linkstructure)#
+
+<h2>Crawled Pages</h2>
+<table id="crawlList">
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th>URL</th>
+    </tr>
+  </thead>
+  <tbody>
+  </tbody>
+</table>
 </fieldset>
 #(/crawlProfilesShow)#
 #%env/templates/page-end.template%#
