@@ -50,7 +50,7 @@ YaCyPage.init = function() {
 
   window.setInterval(function() {
     if ($('#autoReload').is(':checked')) {
-      $('#graph').attr('src', 'PerformanceGraph.png?time=' + (new Date()).getTime());
+      $('#graph').attr('src', 'PerformanceGraph.png?nopeers=&amp;time=' + (new Date()).getTime());
     }
   }, 1000);
 };
