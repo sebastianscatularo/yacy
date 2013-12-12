@@ -57,7 +57,6 @@ import net.yacy.crawler.retrieval.SMBLoader;
 import net.yacy.crawler.robots.RobotsTxt;
 import net.yacy.document.TextParser;
 import net.yacy.kelondro.data.citation.CitationReference;
-import net.yacy.kelondro.rwi.IndexCell;
 import net.yacy.kelondro.workflow.WorkflowProcessor;
 import net.yacy.peers.SeedDB;
 import net.yacy.repository.Blacklist.BlacklistType;
@@ -138,11 +137,14 @@ public final class CrawlStacker {
 
         // record the link graph for this request; this can be overwritten, replaced and enhanced by an index writing process in Segment.storeDocument
         byte[] anchorhash = entry.url().hash();
-        IndexCell<CitationReference> urlCitationIndex = this.indexSegment.urlCitation();
-        if (urlCitationIndex != null && entry.referrerhash() != null) try {
-            urlCitationIndex.add(anchorhash, new CitationReference(entry.referrerhash(), entry.appdate().getTime()));
-        } catch (final Exception e) {
-            ConcurrentLog.logException(e);
+        if (entry.referrerhash() != null) {
+            if (this.indexSegment.connectedCitation()) try {
+                this.indexSegment.urlCitation().add(anchorhash, new CitationReference(entry.referrerhash(), entry.appdate().getTime()));
+            } catch (final Exception e) {
+                ConcurrentLog.logException(e);
+            }
+            
+            // TODO: write to webgraph??
         }
         
         try {
@@ -390,13 +392,14 @@ public final class CrawlStacker {
 
         final String urlstring = url.toString();
         // check if the url is double registered
+        String urlhash = ASCII.String(url.hash());
         final HarvestProcess dbocc = this.nextQueue.exists(url.hash()); // returns the name of the queue if entry exists
-        final Date oldDate = this.indexSegment.fulltext().getLoadDate(ASCII.String(url.hash()));
+        final Date oldDate = this.indexSegment.fulltext().getLoadDate(urlhash); // TODO: combine the exists-query with this one
         if (oldDate == null) {
             if (dbocc != null) {
                 // do double-check
                 if (dbocc == HarvestProcess.ERRORS) {
-                    final CollectionConfiguration.FailDoc errorEntry = this.nextQueue.errorURL.get(ASCII.String(url.hash()));
+                    final CollectionConfiguration.FailDoc errorEntry = this.nextQueue.errorURL.get(urlhash);
                     return "double in: errors (" + errorEntry.getFailReason() + ")";
                 }
                 return "double in: " + dbocc.toString();
@@ -412,7 +415,7 @@ public final class CrawlStacker {
                     return "double in: LURL-DB, oldDate = " + oldDate.toString();
                 }
                 if (dbocc == HarvestProcess.ERRORS) {
-                    final CollectionConfiguration.FailDoc errorEntry = this.nextQueue.errorURL.get(ASCII.String(url.hash()));
+                    final CollectionConfiguration.FailDoc errorEntry = this.nextQueue.errorURL.get(urlhash);
                     if (CrawlStacker.log.isInfo()) CrawlStacker.log.info("URL '" + urlstring + "' is double registered in '" + dbocc.toString() + "', previous cause: " + errorEntry.getFailReason());
                     return "double in: errors (" + errorEntry.getFailReason() + "), oldDate = " + oldDate.toString();
                 }

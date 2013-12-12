@@ -7,7 +7,7 @@
   <!--
   function reloadGraph() {
     if(document.forms["optionreloadGraph"].option.checked) {
-      document.images["graph"].src="PerformanceGraph.png?time="+(new Date()).getTime();
+      document.images["graph"].src="PerformanceGraph.png?nopeers=&amp;time="+(new Date()).getTime();
     }
     window.status="";
   }
@@ -27,7 +27,7 @@
 
   <fieldset class="framed" style="width:600px;">
     <legend class="light">Performance Graph</legend>
-    <img src="PerformanceGraph.png" id="graph" alt="Performance Graph"/>
+    <img src="PerformanceGraph.png?nopeers=" id="graph" alt="Performance Graph"/>
   </fieldset>
 
   <form id="optionreloadGraph" action="" method="get">

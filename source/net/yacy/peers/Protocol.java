@@ -911,9 +911,6 @@ public final class Protocol {
             }
             
             String filter = event.query.urlMask.pattern().toString();
-            if (event.query.tld != null) filter = ".*" + event.query.tld + ".*" + filter;
-            if (event.query.modifier.protocol != null) filter = ".*" + event.query.modifier.protocol + ".*" + filter;
-            if (event.query.modifier.filetype != null) filter = filter + ".*" + event.query.modifier.filetype + ".*";
             parts.put("myseed", UTF8.StringBody((event.peers.mySeed() == null) ? "" : event.peers.mySeed().genSeedStr(key)));
             parts.put("count", UTF8.StringBody(Integer.toString(Math.max(10, count))));
             parts.put("time", UTF8.StringBody(Long.toString(Math.max(3000, time))));
@@ -1009,13 +1006,14 @@ public final class Protocol {
             final int offset,
             final int count,
             Seed target,
+            final int partitions,
             final Blacklist blacklist) {
 
         if (event.query.getQueryGoal().getOriginalQueryString(false) == null || event.query.getQueryGoal().getOriginalQueryString(false).length() == 0) {
             return -1; // we cannot query solr only with word hashes, there is no clear text string
         }
         event.addExpectedRemoteReferences(count);
-        
+        if (partitions > 0) solrQuery.set("partitions", partitions);
         solrQuery.setStart(offset);
         solrQuery.setRows(count);
         
