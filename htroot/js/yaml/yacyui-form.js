@@ -687,7 +687,7 @@ YaCyUi.Func.Form.ResizeableTextarea.prototype = {
       if (param.initial) {
         YaCyUi.Form.ResizeableTextarea.resize($(this), param.maxHeight);
       }
-      $(this).on('keyup', function() {
+      $(this).on('input', function() {
         YaCyUi.Form.ResizeableTextarea.resize($(this), param.maxHeight);
       });
     });
