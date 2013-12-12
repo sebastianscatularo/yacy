@@ -1333,7 +1333,6 @@ YaCyUi.Form.ValidatorFunc = YaCyUi.Form.ValidatorFunc || {
    * @param {string} Id of element whose value should be tested against
    */
   same: function(data, elementId) {
-    console.debug('SAME', data, elementId);
     return data.trim() == $(elementId).val().trim();
   },
 
@@ -1404,10 +1403,6 @@ YaCyUi.Form.ValidatorElement = YaCyUi.Form.ValidatorElement ||
       // set validators
       if ('validators' in setup) {
         self.addValidators(setup.validators);
-      }
-      // custom value getter function
-      if ('get' in setup) {
-        self.setGetter(setup.get);
       }
     }
 
@@ -1548,15 +1543,22 @@ YaCyUi.Form.ValidatorElement.prototype = {
     return this.element;
   },
 
-  setGetter: function(getterFunc) {
-    console.debug('ValidatorElement:setGetter', getterFunc, ' set for ', this.element);
-    this.getterFunc = getterFunc;
-  },
-
   validate: function() {
-    if (typeof this.getterFunc !== 'undefined') {
-      console.debug('ValidatorElement:validate ', this.element, ' with custom getter func!');
-      this.getterFunc(this.element);
+    if (this.element.is(':disabled')) {
+      // return none state, if disabled
+      this.isValid = true;
+      this.isDisabled = true;
+      return {
+        hints: {
+          show: false,
+          clear: true
+        },
+        validation: {
+          valid: 'none'
+        }
+      };
+    } else {
+      this.isDisabled = false;
     }
     var data = this.element.val();
     if (this.element[0].tagName.toLowerCase() == 'textarea') {
