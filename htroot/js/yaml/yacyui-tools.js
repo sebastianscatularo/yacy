@@ -44,26 +44,6 @@ YaCyUi.Tools = YaCyUi.Tools || {
     elements.find('input[type="checkbox"]').prop('checked', state);
   },
 
-  isTextChangingKeyEvent: function(evObj) {
-    // filter out non printable keys on key events
-    if (evObj.type == 'keyup' || evObj.type == 'keydown' ||
-      evObj.type == 'keypress') {
-
-      var code = evObj.which;
-      if (typeof code == "number" && code > 0) {
-        if (evObj.ctrlKey || evObj.metaKey || evObj.altKey) {
-          return false;
-        }
-        var skipCodes = [9, 13, 16, 18, 20, 27, 33, 34, 35, 36, 37, 38, 39, 40, 45, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 144];
-        if (skipCodes.indexOf(code) > -1) {
-          return false;
-        }
-      }
-      return true;
-    }
-    return false;
-  },
-
   /** Get the URL parametera of the current URL.
    * @return {Object} Key, value pairs of the URL parameters.
    */
