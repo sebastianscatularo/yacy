@@ -45,7 +45,7 @@ YaCyUi.Func.Form = YaCyUi.Func.Form || {
     }
 
     // general objects
-    modules.Validate = new YaCyUi.Func.Form.Validate();
+    YaCyUi.Form.Validate = new YaCyUi.Func.Form.Validate();
 
     // form help
     var helpElements = $('fieldset.formSection > .formHelp');
@@ -87,29 +87,6 @@ YaCyUi.Func.Form = YaCyUi.Func.Form || {
 
     YaCyUi.Form.Button = new YaCyUi.Func.Form.Button();
 
-    // init jQuery UI spinner elements
-    $('.spinner').each(function() {
-      var data = $(this).data();
-      var max = typeof data.max === 'undefined' ? null : data.max;
-      var maxLength = $(this).attr('maxlength') || null;
-      // check for digits notation
-      if (maxLength !== null) {
-        if (max === null) {
-          max = new Array(parseInt($(this).attr('maxlength')) + 1).join('9');
-        }
-        // if size is set, then the jQuery spinner will adapt the size
-        if (typeof $(this).attr('size') === 'undefined') {
-          $(this).attr('size', maxLength);
-        }
-      }
-      $(this).spinner({
-        min: typeof data.min === 'undefined' ? null : data.min,
-        max: max,
-        numberFormat: data.format || null,
-        step: data.step || 1
-      });
-    });
-
     // set checkAll button action for tables with checkboxes
     $('table th input[type="checkbox"][data-action~="checkAllToggle"]').on('change', function() {
       YaCyUi.Tools.checkAllBoxes($(this).closest('table'), $(this).is(':checked'));
@@ -133,10 +110,41 @@ YaCyUi.Func.Form = YaCyUi.Func.Form || {
         YaCyUi.Form[module] = modules[module];
       }
 
+      // run parts that should be executed after all modules have done loading
+      YaCyUi.Func.Form.finalize();
+
       console.debug("YaCyUi.Form: finished loading");
       YaCyUi.Func.Form.loaded = true;
     }, 125);
   }
+};
+
+/** Things to do, after all Form modules have loaded. */
+YaCyUi.Func.Form.finalize = function() {
+  // init jQuery UI spinner elements
+  $('.spinner').each(function() {
+    var element = $(this);
+    var data = $(this).data();
+    var max = typeof data.max === 'undefined' ? null : data.max;
+    var maxLength = $(this).attr('maxlength') || null;
+    // check for digits notation
+    if (maxLength !== null) {
+      if (max === null) {
+        max = new Array(parseInt($(this).attr('maxlength')) + 1).join('9');
+      }
+      // if size is set, then the jQuery spinner will adapt the size
+      if (typeof $(this).attr('size') === 'undefined') {
+        $(this).attr('size', maxLength);
+      }
+    }
+    $(this).spinner({
+      min: typeof data.min === 'undefined' ? null : data.min,
+      max: max,
+      numberFormat: data.format || null,
+      step: data.step || 1,
+      disabled: element.is(':disabled')
+    });
+  });
 };
 
 /** Make form fieldsets collapseable.
@@ -696,36 +704,7 @@ YaCyUi.Func.Form.ResizeableTextarea.prototype = {
   }
 };
 
-YaCyUi.Func.Form.Validate = YaCyUi.Func.Form.Validate || function() {
-  var self = this;
-  this.loaded = false;
-  this.dialog = null;
-
-  function addValidationDialog() {
-    var dialogHtml = '<div class="hidden" id="ycu-validation-dialog"></div>';
-    $('body').append(dialogHtml);
-    self.dialog = $('#ycu-validation-dialog').dialog({
-      closeOnEscape: true,
-      autoOpen: false,
-      autoResize: true,
-      modal: true,
-      title: 'Validation results',
-      buttons: {
-        'Show errors': function() {
-          $(this).dialog('close');
-          self.private.dialogCallback.call(self, 'show');
-        },
-        Cancel: function() {
-          $(this).dialog('close');
-          self.private.dialogCallback.call(self, 'cancel');
-        }
-      }
-    });
-    self.loaded = true;
-  }
-
-  addValidationDialog();
-};
+YaCyUi.Func.Form.Validate = YaCyUi.Func.Form.Validate || function() {};
 YaCyUi.Func.Form.Validate.prototype = {
   // private functions
   private: {
@@ -791,7 +770,12 @@ YaCyUi.Func.Form.Validate.prototype = {
     setNone: function(formElements, setData) {
       setData = typeof setData !== 'boolean' ? true : setData;
       formElements.each(function() {
-        $(this).removeClass('valid invalid');
+        var parent = $(this).parent();
+        if (parent.hasClass('ui-widget')) {
+          parent.removeClass('valid invalid');
+        } else {
+          $(this).removeClass('valid invalid');
+        }
         if (setData) {
           YaCyUi.DataStore.set($(this), {
             space: 'validation',
@@ -826,33 +810,14 @@ YaCyUi.Func.Form.Validate.prototype = {
       if ('validation' in states && 'valid' in states.validation) {
         switch (states.validation.valid) {
           case true:
-            this.private.setValid(formElement);
+            YaCyUi.Form.Validate.private.setValid(formElement);
             break;
           case false:
-            this.private.setInvalid(formElement);
+            YaCyUi.Form.Validate.private.setInvalid(formElement);
             break;
-          case null:
-            this.private.setNone(formElement);
+          default:
+            YaCyUi.Form.Validate.private.setNone(formElement);
             break;
-        }
-      }
-    },
-
-    /** Callback function for validation results dialog. */
-    dialogCallback: function(type) {
-      if (type == 'show') {
-        var position = null;
-        var offset;
-        for (var i = 0; i < this.elements.length; i++) {
-          this.elements[i].uniqueId();
-          var id = this.elements[i].attr('id');
-          YaCyUi.Form.digOut(id);
-          // jump to topmost element
-          offset = this.elements[i].offset();
-          if (position === null || offset.top < position) {
-            position = offset.top;
-            location.hash = '#' + id;
-          }
         }
       }
     }
@@ -872,9 +837,6 @@ YaCyUi.Func.Form.Validate.prototype = {
    *   scope {object} Scope for callback function
    */
   addValidator: function(formElements, param) {
-    var validators = [];
-    var self = this;
-
     if (!('func' in param) || typeof param.func !== 'function') {
       YaCyUi.error('YaCyUi.Form.Validate.addValidator',
         "Invalid or no validation function specified.");
@@ -896,10 +858,22 @@ YaCyUi.Func.Form.Validate.prototype = {
       YaCyUi.DataStore.set(e, {
         space: 'validation',
         data: {
-          func: true
+          scope: param.scope,
+          trigger: function(element, evObj) {
+            var state;
+            var scope = YaCyUi.DataStore.get(element, 'validation', 'scope');
+            if (typeof scope !== undefined) {
+              state = param.func.call(scope, element, evObj);
+            } else {
+              state = param.func(element, evObj);
+            }
+            if (typeof state === 'object' && state !== null) {
+              YaCyUi.Form.Validate.private.setState(element, state);
+            }
+          }
         }
       });
-      self.private.setNone(e);
+      YaCyUi.Form.Validate.private.setNone(e);
 
       e.on(param.events, function(evObj) {
         var timeout = e.data('validationTimeout');
@@ -908,15 +882,7 @@ YaCyUi.Func.Form.Validate.prototype = {
           window.clearTimeout(timeout);
         }
         timeout = window.setTimeout(function() {
-          var state;
-          if ('scope' in param) {
-            state = param.func.call(param.scope, e, evObj);
-          } else {
-            state = param.func(e, evObj);
-          }
-          if (typeof state === 'object' && state !== null) {
-            self.private.setState.call(self, e, state);
-          }
+          YaCyUi.DataStore.get(e, 'validation', 'trigger')(e, evObj);
         }, param.delay);
         e.data('validationTimeout', timeout);
       });
@@ -929,7 +895,7 @@ YaCyUi.Func.Form.Validate.prototype = {
           state = param.func(e, null);
         }
         if (typeof state === 'object' && state !== null) {
-          self.private.setState.call(self, e, state);
+          YaCyUi.Form.Validate.private.setState(e, state);
         }
       }
     });
@@ -958,47 +924,8 @@ YaCyUi.Func.Form.Validate.prototype = {
    * @param {jQuery} The element to test
    * @return {boolean} True, if validable */
   isValidable: function(formElement) {
-    return YaCyUi.DataStore.get(formElement, 'validation', 'func') === true;
-  },
-
-  /** Show a validation results dialog.
-   * @param {array} Array of elements (jQuery objects) to inlude in results.
-   * Only those elements with errors will be handled. */
-  showResultsDialog: function(elements) {
-    this.dialog.empty();
-    this.elements = [];
-    var labels = [];
-    var moreErrors = 0;
-    for (var i = 0; i < elements.length; i++) {
-      var element = elements[i];
-      if (!YaCyUi.Form.Validate.isValid(element)) {
-        var id = element.attr('id');
-        var label = $('label[for="' + id + '"]');
-        this.elements.push(element);
-        if (label.length > 0) {
-          labels.push(label.text());
-        } else {
-          moreErrors++;
-        }
-      }
-    }
-    if (labels.length > 0) {
-      var labelList = $('<ul/>');
-      this.dialog.append('<div>The following elements contain invalid values:</div><br/>');
-      for (var j = 0; j < labels.length; j++) {
-        labelList.append('<li>' + labels[j] + '</li>');
-      }
-      this.dialog.append(labelList);
-      if (moreErrors > 0) {
-        this.dialog.append('<div>And ' + moreErrors + ' more.</div>');
-      }
-    } else {
-      if (moreErrors > 0) {
-        this.dialog.append('<div>There are ' + moreErrors + ' errors.</div>');
-      }
-    }
-
-    this.dialog.dialog('open');
+    return typeof YaCyUi.DataStore.get(formElement, 'validation',
+      'trigger') === 'function';
   }
 };
 
@@ -1008,32 +935,64 @@ YaCyUi.Func.Form.ToggleableFormElement = YaCyUi.Func.Form.ToggleableFormElement 
     this.loaded = false;
 
     /** Enable a collection of elements and their associated labels.
-     * @param {jQuery} Elements to enable */
+     * @param {jQuery} Elements to enable
+     */
 
     function toggleOn(elementsArray) {
-      $.each(elementsArray, function(i, v) {
-        var e = $(this);
+      $.each(elementsArray, function() {
         // toggle element..
-        e.prop('disabled', false);
+        if ($(this).hasClass('spinner')) {
+          // we don't know if spinner has already loaded
+          try {
+            $(this).spinner('option', 'disabled', false);
+          } catch (e) {
+            $(this).prop('disabled', false);
+          }
+        } else {
+          $(this).prop('disabled', false);
+        }
         // ..set focus if we should..
-        if (e.data('toggle-focus') === true) {
-          e.focus();
+        if ($(this).data('toggle-focus') === true) {
+          $(this).focus();
         }
         // ..and re-enable the associated label
         $('label[for="' + this.id + '"]').removeClass('disabled');
+
+        // check if a validator is attached
+        var validatorFunc = YaCyUi.DataStore.get($(this), 'validation', 'trigger');
+        if (typeof validatorFunc === 'function') {
+          console.debug('revalidate');
+          validatorFunc($(this), null);
+        }
       });
     }
 
     /** Disable a collection of elements and their associated labels.
-     * @param {jQuery} Elements to disable */
+     * @param {jQuery} Elements to disable
+     */
 
     function toggleOff(elementsArray) {
-      $.each(elementsArray, function(i, v) {
-        var e = $(this);
+      $.each(elementsArray, function() {
         // toggle element..
-        e.prop('disabled', true);
+        if ($(this).hasClass('spinner')) {
+          // we don't know if spinner has already loaded
+          try {
+            $(this).spinner('option', 'disabled', true);
+          } catch (e) {
+            $(this).prop('disabled', true);
+          }
+        } else {
+          $(this).prop('disabled', true);
+        }
         // ..and label
         $('label[for="' + this.id + '"]').addClass('disabled');
+
+        // check if a validator is attached
+        var validatorFunc = YaCyUi.DataStore.get($(this), 'validation', 'trigger');
+        if (typeof validatorFunc === 'function') {
+          console.debug('revalidate');
+          validatorFunc($(this), null);
+        }
       });
     }
 
@@ -1094,11 +1053,10 @@ YaCyUi.Func.Form.ToggleableFormElement = YaCyUi.Func.Form.ToggleableFormElement 
           }
         });
       });
-
-      self.loaded = true;
     }
 
     init();
+    self.loaded = true;
 };
 
 YaCyUi.Func.Form.Data = YaCyUi.Func.Form.Data || function() {
@@ -1556,7 +1514,7 @@ YaCyUi.Form.ValidatorElement.prototype = {
           clear: true
         },
         validation: {
-          valid: 'none'
+          valid: null
         }
       };
     } else {
@@ -1667,7 +1625,6 @@ YaCyUi.Form.Validator.prototype = {
       YaCyUi.error('Form.Validator:addElement:', 'element is undefined/empty!', element);
       return null;
     }
-    console.debug('el', element);
     var self = this;
     element.each(function() {
       element.uniqueId(); // we need an id attribute set
