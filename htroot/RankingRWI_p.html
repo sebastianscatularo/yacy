@@ -8,70 +8,70 @@
 <body id="rankingRWI">
   #%env/templates/page-start.template%#
 
-<div id="devInfo">
-  Unfinished!
-Todo:
- - Slider values are not preset!
- - JAVA code should return slider value as single template var, to set the HTML5 sliders
-</div>
+  <div id="devInfo" data-todo="code html5">
+    Unfinished!
+    Todo:
+    - Slider values are not preset!
+    - JAVA code should return slider value as single template var, to set the HTML5 sliders
+  </div>
 
-        <h1>RWI Ranking Configuration</h1>
-        <p>
-          The document ranking influences the order of the search result entities.
-          A ranking is computed using a number of attributes from the documents that match with the search word.
-          The attributes are first normalized over all search results and then the normalized attribut is multiplied with the ranking coefficient computed from this list.
-          The ranking coefficient grows exponentially with the ranking levels given in the following table. If you increase a single value by one, then the strength of the parameter doubles.
-        </p>
+  <h1>RWI Ranking Configuration</h1>
+  <p>
+    The document ranking influences the order of the search result entities.
+    A ranking is computed using a number of attributes from the documents that match with the search word.
+    The attributes are first normalized over all search results and then the normalized attribut is multiplied with the ranking coefficient computed from this list.
+    The ranking coefficient grows exponentially with the ranking levels given in the following table. If you increase a single value by one, then the strength of the parameter doubles.
+  </p>
 
-        <form action="RankingRWI_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
-          <fieldset>
-            <legend>Ranking Configuration</legend>
-            <fieldset class="formGroup">
-              <legend>Pre-Ranking</legend>
-              #{attrPre}#
-              <fieldset class="formSection">
-                <legend>#[name]#</legend>
-                <div class="content">
-                  <p>
-                    <input type="range" name="#[nameorg]#" min="0" max="15"/>
-                  </p>
-                  <p>
-                    #[info]#
-                  </p>
-                </div>
-              </fieldset>
-              #{/attrPre}#
-            </fieldset>
-
-        <dl>#{attrPre}#
-          <dt style="width:260px"><label for="#[nameorg]#">#[name]#</label>&nbsp;<span class="info" style="float:right"><img src="/env/grafics/i16.gif" width="16" height="16" alt="info"/><span>#[info]#</span></span></dt>
-          <dd style="width:360px; float:left; display:inline;" id="#[nameorg]#">
-            <select style="float:left; display:inline;" name="#[nameorg]#">#{select}#
-				<option value="#[value]#" #(checked)#:: selected="selected"#(/checked)#>#[value]#</option>#{/select}#
-			</select>
-          </dd>#{/attrPre}#
-        </dl>
+  <form action="RankingRWI_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
+    <fieldset>
+      <legend>Ranking Configuration</legend>
+      <fieldset class="formGroup">
+        <legend>Pre-Ranking</legend>
+        #{attrPre}#
+        <fieldset class="formSection">
+          <legend>#[name]#</legend>
+          <div class="content">
+            <p>
+              <input type="range" name="#[nameorg]#" min="0" max="15"/>
+            </p>
+            <p>
+              #[info]#
+            </p>
+          </div>
+        </fieldset>
+        #{/attrPre}#
       </fieldset>
-      <p>There are two ranking stages: first all results are ranked using the pre-ranking and from the resulting list the documents are ranked again with a post-ranking.
+
+      <dl>#{attrPre}#
+        <dt style="width:260px"><label for="#[nameorg]#">#[name]#</label>&nbsp;<span class="info" style="float:right"><img src="/env/grafics/i16.gif" width="16" height="16" alt="info"/><span>#[info]#</span></span></dt>
+        <dd style="width:360px; float:left; display:inline;" id="#[nameorg]#">
+          <select style="float:left; display:inline;" name="#[nameorg]#">#{select}#
+            <option value="#[value]#" #(checked)#:: selected="selected"#(/checked)#>#[value]#</option>#{/select}#
+          </select>
+        </dd>#{/attrPre}#
+      </dl>
+    </fieldset>
+    <p>There are two ranking stages: first all results are ranked using the pre-ranking and from the resulting list the documents are ranked again with a post-ranking.
       The two stages are separated because they need statistical information from the result of the pre-ranking.
-      </p>
-      <fieldset>
-        <legend>Post-Ranking</legend>
-        <dl>#{attrPost}#
-          <dt style="width:260px"><label for="#[nameorg]#">#[name]#</label>&nbsp;<span class="info" style="float:right"><img src="/env/grafics/i16.gif" width="16" height="16" alt="info"/><span>#[info]#</span></span></dt>
-          <dd style="width:360px" id="#[nameorg]#">
-          	<select name="#[nameorg]#">#{select}#
-				<option value="#[value]#" #(checked)#:: selected="selected"#(/checked)#>#[value]#</option>#{/select}#
-			</select>
-          </dd>#{/attrPost}#
-        </dl>
-      </fieldset>
-      <fieldset>
-        <input type="submit" name="EnterRanking" value="Set as Default Ranking" />
-        <input type="submit" name="ResetRanking" value="Re-Set to Built-In Ranking" />
-      </fieldset>
-    </form>
+    </p>
+    <fieldset>
+      <legend>Post-Ranking</legend>
+      <dl>#{attrPost}#
+        <dt style="width:260px"><label for="#[nameorg]#">#[name]#</label>&nbsp;<span class="info" style="float:right"><img src="/env/grafics/i16.gif" width="16" height="16" alt="info"/><span>#[info]#</span></span></dt>
+        <dd style="width:360px" id="#[nameorg]#">
+         <select name="#[nameorg]#">#{select}#
+          <option value="#[value]#" #(checked)#:: selected="selected"#(/checked)#>#[value]#</option>#{/select}#
+        </select>
+      </dd>#{/attrPost}#
+    </dl>
+  </fieldset>
+  <fieldset>
+    <input type="submit" name="EnterRanking" value="Set as Default Ranking" />
+    <input type="submit" name="ResetRanking" value="Re-Set to Built-In Ranking" />
+  </fieldset>
+</form>
 
 #%env/templates/page-end.template%#
-  </body>
+</body>
 </html>
