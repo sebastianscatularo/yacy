@@ -3,27 +3,26 @@
 <head>
   <title>YaCy '#[clientname]#': Solr Ranking Configuration</title>
   #%env/templates/header-backend.template%#
+  <script type="text/javascript" src="/js/yaml/pages/rankingSolr.js"></script>
 </head>
 
 <body id="rankingSolr">
   #%env/templates/page-start.template%#
 
-  <div id="devInfo">
-    Status: valid html5
-  </div>
+  <div id="devInfo" data-done="html5 scripts"></div>
 
   <h1>Solr Ranking Configuration</h1>
   <p>
-    These are ranking attributes for Solr. This ranking applies for internal and remote (P2P or shard) Solr access.
+    These are ranking attributes for Solr. This ranking applies for internal and remote (<abbr>P2P</abbr> or shard) Solr access.
   </p>
 
-  <form action="RankingSolr_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
+  <form action="RankingSolr_p.html#profileSelectForm" id="profileSelectForm" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
     <fieldset>
       <legend>Profile Selection</legend>
       <fieldset class="formSection">
         <legend>Profile</legend>
         <div class="content">
-          <select id="profile" name="profileNr" onchange='submit()'>
+          <select id="profile" name="profileNr">
             #{profiles}#
             <option value="#[nr]#" #(selected)#::selected="selected"#(/selected)#>#[name]#</option>
             #{/profiles}#
@@ -59,8 +58,8 @@
 
       <fieldset class="formControl">
         <div class="content">
-          <button type="submit" name="ResetBF" class="icon-revert">Re-Set to default</button>
-          <button type="submit" name="EnterBF" class="icon-run primary">Set Boost Function</button>
+          <button type="submit" name="ResetBF" class="icon-revert">Reset to default</button>
+          <button type="submit" name="EnterBF" id="submitEnterBF" class="icon-run primary">Set Boost Function</button>
         </div>
       </fieldset>
     </fieldset>
@@ -92,7 +91,7 @@
       <fieldset class="formControl">
         <div class="content">
           <button type="submit" name="ResetBQ" class="icon-revert">Re-Set to default</button>
-          <button type="submit" name="EnterBQ" class="icon-run primary">Set Boost Query</button>
+          <button type="submit" name="EnterBQ" id="submitEnterBQ" class="icon-run primary">Set Boost Query</button>
         </div>
       </fieldset>
     </fieldset>
@@ -107,28 +106,43 @@
         </p>
       </div>
 
-      #{boosts}#
-      <fieldset class="formSection">
-        <legend>#[field]#</legend>
-        <div class="content">
-          <p>
-            <input type="checkbox" id="#[field]#" name="#[field]#"#(checked)#:: checked="checked"#(/checked)#/>
-            <label for="#[field]#">#[comment]#</label>
-          </p>
-          <p>
-            <input #(notinindexwarning)#::class="TableCellActive"#(/notinindexwarning)# name="boost_#[field]#" id="boost_#[field]#" type="text" value="#[boost]#" data-toggle-id="#[field]#" placeholder="1.0"/>
-            #(notinindexwarning)#::field not in local index (boost has no effect)#(/notinindexwarning)#
-          </p>
-        </div>
-      </fieldset>
-      #{/boosts}#
+      <div id="boostFields">
+        #{boosts}#
+        <fieldset class="formSection">
+          <legend>#[field]#</legend>
+          <div class="content">
+            <p>
+              <input type="checkbox" id="#[field]#" name="#[field]#"#(checked)#:: checked="checked"#(/checked)#/>
+              <label for="#[field]#">#[comment]#</label>
+            </p>
+            <div class="p">
+              <input name="boost_#[field]#" id="boost_#[field]#" type="text" value="#[boost]#" data-toggle-id="#[field]#" placeholder="1.0" data-min="0" class="spinner" data-format="n" data-step="0.5"/>
+              <div class="formHint hidden">
+                <p class="warning">
+                  Using the previous set value.
+                </p>
+                <p class="error">
+                  Please enter only numbers (greater than <code>0</code>).
+                </p>
+              </div>
+              #(notinindexwarning)#::
+              <br/>
+              <s class="sym sym-warning"></s>
+              Field not in local index (boost has no effect)
+              #(/notinindexwarning)#
+            </div>
+          </div>
+        </fieldset>
+        #{/boosts}#
+      </div>
 
       <input type="hidden" name="profileNr" value="#[profileNr]#" />
 
       <fieldset class="formControl">
+        <div class="description hidden" id="ycu-error-count"></div>
         <div class="content">
           <button type="submit" name="ResetBoosts" class="icon-revert">Re-Set to default</button>
-          <button type="submit" name="EnterBoosts" class="icon-run primary">Set Field Boosts</button>
+          <button type="submit" name="EnterBoosts" id="submitEnterBoosts" class="icon-run primary">Set Field Boosts</button>
         </div>
       </fieldset>
     </fieldset>
