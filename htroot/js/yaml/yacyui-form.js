@@ -27,6 +27,28 @@ YaCyUi.Form = YaCyUi.Form || {
         YaCyUi.Form.showFieldsetContent($(this));
       }
     });
+  },
+
+  setElementsDisabledState: function(element, state) {
+    element.each(function() {
+      // toggle element..
+      if ($(this).hasClass('spinner')) {
+        // we don't know if spinner has already loaded
+        try {
+          $(this).spinner('option', 'disabled', state);
+        } catch (e) {
+          $(this).prop('disabled', state);
+        }
+      } else {
+        $(this).prop('disabled', state);
+      }
+      // check if a validator is attached
+      var validatorFunc = YaCyUi.DataStore.get($(this), 'validation', 'trigger');
+      if (typeof validatorFunc === 'function') {
+        console.debug('revalidate');
+        validatorFunc($(this), null);
+      }
+    });
   }
 };
 
@@ -315,7 +337,7 @@ YaCyUi.Func.Form.ToggleableFormSection.prototype = {
       }
       // enable contained form elements
       var inputs = content.find('input, textarea, select');
-      inputs.prop('disabled', false);
+      YaCyUi.Form.setElementsDisabledState(inputs, false);
       YaCyUi.Event.trigger('toggle-section-elements', ['enable', inputs]);
     });
   },
@@ -340,7 +362,7 @@ YaCyUi.Func.Form.ToggleableFormSection.prototype = {
 
       // disable contained form elements
       var inputs = content.find('input, textarea, select');
-      inputs.prop('disabled', true);
+      YaCyUi.Form.setElementsDisabledState(inputs, true);
       YaCyUi.Event.trigger('toggle-section-elements', ['disable', inputs]);
 
       YaCyUi.DataStore.set(content.parent(), {
@@ -941,29 +963,13 @@ YaCyUi.Func.Form.ToggleableFormElement = YaCyUi.Func.Form.ToggleableFormElement 
     function toggleOn(elementsArray) {
       $.each(elementsArray, function() {
         // toggle element..
-        if ($(this).hasClass('spinner')) {
-          // we don't know if spinner has already loaded
-          try {
-            $(this).spinner('option', 'disabled', false);
-          } catch (e) {
-            $(this).prop('disabled', false);
-          }
-        } else {
-          $(this).prop('disabled', false);
-        }
+        YaCyUi.Form.setElementsDisabledState($(this), false);
         // ..set focus if we should..
         if ($(this).data('toggle-focus') === true) {
           $(this).focus();
         }
         // ..and re-enable the associated label
         $('label[for="' + this.id + '"]').removeClass('disabled');
-
-        // check if a validator is attached
-        var validatorFunc = YaCyUi.DataStore.get($(this), 'validation', 'trigger');
-        if (typeof validatorFunc === 'function') {
-          console.debug('revalidate');
-          validatorFunc($(this), null);
-        }
       });
     }
 
@@ -974,25 +980,9 @@ YaCyUi.Func.Form.ToggleableFormElement = YaCyUi.Func.Form.ToggleableFormElement 
     function toggleOff(elementsArray) {
       $.each(elementsArray, function() {
         // toggle element..
-        if ($(this).hasClass('spinner')) {
-          // we don't know if spinner has already loaded
-          try {
-            $(this).spinner('option', 'disabled', true);
-          } catch (e) {
-            $(this).prop('disabled', true);
-          }
-        } else {
-          $(this).prop('disabled', true);
-        }
+        YaCyUi.Form.setElementsDisabledState($(this), true);
         // ..and label
         $('label[for="' + this.id + '"]').addClass('disabled');
-
-        // check if a validator is attached
-        var validatorFunc = YaCyUi.DataStore.get($(this), 'validation', 'trigger');
-        if (typeof validatorFunc === 'function') {
-          console.debug('revalidate');
-          validatorFunc($(this), null);
-        }
       });
     }
 
