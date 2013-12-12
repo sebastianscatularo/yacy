@@ -865,7 +865,7 @@ YaCyUi.Func.Form.Validate.prototype = {
    *   the triggering event-object, or null if it was triggered on-load.
    *   delay {int} milliseconds to delay the validation (default: 700)
    *   events {String} space delimited events to trigger the validation.
-   *   (default: focus, keyup)
+   *   (default: focus, input)
    *   onload {boolean} Immediatly validate (default: false)
    *   scope {object} Scope for callback function
    */
@@ -878,7 +878,7 @@ YaCyUi.Func.Form.Validate.prototype = {
         "Invalid or no validation function specified.");
     }
     if (!('events' in param)) {
-      param.events = 'focus keyup';
+      param.events = 'focus input';
     }
     if (!('delay' in param)) {
       param.delay = 700;
@@ -900,28 +900,23 @@ YaCyUi.Func.Form.Validate.prototype = {
       self.private.setNone(e);
 
       e.on(param.events, function(evObj) {
-        // check if key is changing input
-        var skip = !YaCyUi.Tools.isTextChangingKeyEvent(evObj);
+        var timeout = e.data('validationTimeout');
 
-        if (!skip) {
-          var timeout = e.data('validationTimeout');
-
-          if (typeof timeout !== 'undefined') {
-            window.clearTimeout(timeout);
-          }
-          timeout = window.setTimeout(function() {
-            var state;
-            if ('scope' in param) {
-              state = param.func.call(param.scope, e, evObj);
-            } else {
-              state = param.func(e, evObj);
-            }
-            if (typeof state === 'object' && state !== null) {
-              self.private.setState.call(self, e, state);
-            }
-          }, param.delay);
-          e.data('validationTimeout', timeout);
+        if (typeof timeout !== 'undefined') {
+          window.clearTimeout(timeout);
         }
+        timeout = window.setTimeout(function() {
+          var state;
+          if ('scope' in param) {
+            state = param.func.call(param.scope, e, evObj);
+          } else {
+            state = param.func(e, evObj);
+          }
+          if (typeof state === 'object' && state !== null) {
+            self.private.setState.call(self, e, state);
+          }
+        }, param.delay);
+        e.data('validationTimeout', timeout);
       });
 
       if (param.onload === true) {
