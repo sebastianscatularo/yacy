@@ -12,122 +12,115 @@
 </head>
 
 <body id="loadMediaWiki">
-#%env/templates/page-start.template%#
+  #%env/templates/page-start.template%#
 
-<div id="devInfo">
-Todo:
- - jQuery UI tooltips not working
- - handle robots not allowed
- status: valid html5
-</div>
+  <div id="devInfo" data-done="html5">
+    - handle robots not allowed
+  </div>
 
-        <h1>Integration in MediaWiki</h1>
-        <p>
-          It is possible to insert wiki pages into the YaCy index using a web crawl on that pages.
-          This guide helps you to crawl your wiki and to insert a search window in your wiki pages.
-        </p>
+  <h1>Integration in MediaWiki</h1>
+  <p>
+    It is possible to insert wiki pages into the YaCy index using a web crawl on that pages.
+    This guide helps you to crawl your wiki and to insert a search window in your wiki pages.
+  </p>
 
-        <h2>Retrieval of Wiki Pages</h2>
-        <p>
-          The following form is a simplified crawl start that uses the proper values for a wiki crawl.
-          Just insert the front page URL of your wiki. After you started the crawl you may want to get back to this page to read the integration hints below.
-        </p>
+  <h2>Retrieval of Wiki Pages</h2>
+  <p>
+    The following form is a simplified crawl start that uses the proper values for a wiki crawl.
+    Just insert the front page URL of your wiki. After you started the crawl you may want to get back to this page to read the integration hints below.
+  </p>
 
-        <form action="Crawler_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
-
-         <fieldset>
-          <legend>MediaWiki</legend>
-          <fieldset id="startPoint" class="formGroup">
-            <legend>Start Point</legend>
-            <div class="description">
-              <p>
-                The URL of the wiki main page is the start-point for your crawl.
+  <form action="Crawler_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
+    <fieldset>
+      <legend>MediaWiki</legend>
+      <fieldset id="startPoint" class="formGroup">
+        <legend>Start Point</legend>
+        <div class="description">
+          <p>
+            The URL of the wiki main page is the start-point for your crawl.
+          </p>
+        </div>
+        <fieldset class="formSection">
+          <legend>Main page</legend>
+          <div class="content">
+            <input type="text" name="crawlingURL" id="crawlingURL" value="#[starturl]#" maxlength="256"/>
+            <div class="formHint hidden">
+              <p class="error" data-id="protocol">
+                The entered URL is not valid. Only <code>HTTP</code> protocol URLs are allowed.
+              </p>
+              <p class="error" data-id="invalid">
+                The entered URL is not valid.
+              </p>
+              <p class="error" data-id="empty">
+                You need to enter a URLs to start your crawl.
+              </p>
+              <p class="help">
+                Please define a start-url for your crawl.
               </p>
             </div>
-            <fieldset class="formSection">
-              <legend>Main page</legend>
-              <div class="content">
-                <input type="text" name="crawlingURL" id="crawlingURL" value="#[starturl]#" maxlength="256"/>
-                <div class="formHint hidden">
-                  <p class="ok">
-                    The entered location looks correct.
-                  </p>
-                  <p class="error" data-id="protocol">
-                    The entered URL is not valid. Only <code>HTTP</code> protocol URLs are allowed.
-                  </p>
-                  <p class="error" data-id="invalid">
-                    The entered URL is not valid.
-                  </p>
-                  <p class="error" data-id="empty">
-                    You need to enter a URLs to start your crawl.
-                  </p>
-                  <p class="help">
-                    Please define a start-url for your crawl.
-                  </p>
-                </div>
-              </div>
-            </fieldset>
-          </fieldset>
-
-          <input type="hidden" name="crawlingMode" value="url"/>
-          <input type="hidden" name="createBookmark" value="off" />
-          <input type="hidden" name="crawlingDepth" value="8" />
-          <input type="hidden" name="mustmatch" value=".*" />
-          <input type="hidden" name="mustnotmatch" value="(.*Recentchangeslinked.*)|(.*Whatlinkshere.*)|(.*MediaWiki.*)" />
-          <input type="hidden" name="range" value="subpath" />
-          <input type="hidden" name="crawlingIfOlderCheck" value="on"/>
-          <input type="hidden" name="crawlingIfOlderNumber" value="1" />
-          <input type="hidden" name="crawlingIfOlderUnit" value="day" />
-          <input type="hidden" name="crawlingDomFilterCheck" value="off" />
-          <input type="hidden" name="crawlingDomFilterDepth" value="0" />
-          <input type="hidden" name="crawlingDomMaxCheck" value="off" />
-          <input type="hidden" name="crawlingDomMaxPages" value="" />
-          <input type="hidden" name="crawlingQ" value="off" />
-          <input type="hidden" name="storeHTCache" value="off" />
-          <input type="hidden" name="indexText" value="on" />
-          <input type="hidden" name="indexMedia" value="on" />
-          <input type="hidden" name="crawlOrder" value="off" />
-          <input type="hidden" name="intention" value="" />
-          <input type="hidden" name="xsstopw" value="off" />
-          <input type="hidden" name="xdstopw" value="off" />
-          <input type="hidden" name="xpstopw" value="off" />
-
-          <fieldset class="formControl">
-            <div id="ycuErrorCount" class="description hiddden"></div>
-            <div class="content">
-              <button type="submit" id="submitCrawlStart" class="primary icon-run">Start crawl job <span class="errors"></span></button>
-            </div>
-          </fieldset>
+          </div>
         </fieldset>
-      </form>
+      </fieldset>
 
-      <h2>Inserting a Search Window to MediaWiki</h2>
-      <p>
-        To integrate a search window into a MediaWiki, you must insert some code into the wiki template.
-        There are several templates that can be used for MediaWiki, but in this guide we consider that
-        you are using the default template, 'MonoBook.php':
-      </p>
-      <ul>
-        <li>open skins/MonoBook.php</li>
-        <li>
-          find the line where the default search window is displayed, there are the following statements:
-          <pre>
-  &lt;form name="searchform" action="&lt;?php $this-&gt;text('searchaction') ?&gt;" id="searchform"&gt;
-    &lt;input id="searchInput" name="search" type="text"
+      <input type="hidden" name="crawlingMode" value="url"/>
+      <input type="hidden" name="createBookmark" value="off" />
+      <input type="hidden" name="crawlingDepth" value="8" />
+      <input type="hidden" name="mustmatch" value=".*" />
+      <input type="hidden" name="mustnotmatch" value="(.*Recentchangeslinked.*)|(.*Whatlinkshere.*)|(.*MediaWiki.*)" />
+      <input type="hidden" name="range" value="subpath" />
+      <input type="hidden" name="crawlingIfOlderCheck" value="on"/>
+      <input type="hidden" name="crawlingIfOlderNumber" value="1" />
+      <input type="hidden" name="crawlingIfOlderUnit" value="day" />
+      <input type="hidden" name="crawlingDomFilterCheck" value="off" />
+      <input type="hidden" name="crawlingDomFilterDepth" value="0" />
+      <input type="hidden" name="crawlingDomMaxCheck" value="off" />
+      <input type="hidden" name="crawlingDomMaxPages" value="" />
+      <input type="hidden" name="crawlingQ" value="off" />
+      <input type="hidden" name="storeHTCache" value="off" />
+      <input type="hidden" name="indexText" value="on" />
+      <input type="hidden" name="indexMedia" value="on" />
+      <input type="hidden" name="crawlOrder" value="off" />
+      <input type="hidden" name="intention" value="" />
+      <input type="hidden" name="xsstopw" value="off" />
+      <input type="hidden" name="xdstopw" value="off" />
+      <input type="hidden" name="xpstopw" value="off" />
+
+      <fieldset class="formControl">
+        <div id="ycuErrorCount" class="description hiddden"></div>
+        <div class="content">
+          <button type="submit" id="submitCrawlStart" class="primary icon-run">Start crawl job</button>
+        </div>
+      </fieldset>
+    </fieldset>
+  </form>
+
+  <h2>Inserting a Search Window to MediaWiki</h2>
+  <p>
+    To integrate a search window into a MediaWiki, you must insert some code into the wiki template.
+    There are several templates that can be used for MediaWiki, but in this guide we consider that
+    you are using the default template, 'MonoBook.php':
+  </p>
+  <ul>
+    <li>open skins/MonoBook.php</li>
+    <li>
+      find the line where the default search window is displayed, there are the following statements:
+      <pre>
+&lt;form name="searchform" action="&lt;?php $this-&gt;text('searchaction') ?&gt;" id="searchform"&gt;
+  &lt;input id="searchInput" name="search" type="text"
     &lt;?php if($this-&gt;haveMsg('accesskey-search')) {
-    ?&gt;accesskey="&lt;?php $this-&gt;msg('accesskey-search') ?&gt;"&lt;?php }
-    if( isset( $this-&gt;data['search'] ) ) {
-    ?&gt; value="&lt;?php $this-&gt;text('search') ?&gt;"&lt;?php } ?&gt; /&gt;
-    &lt;input type='submit' name="go" class="searchButton" id="searchGoButton"
-    value="&lt;?php $this-&gt;msg('go') ?&gt;"
-    /&gt;&nbsp;&lt;input type='submit' name="fulltext"
-    class="searchButton"
-    value="&lt;?php $this-&gt;msg('search') ?&gt;" /&gt;
+        ?&gt;accesskey="&lt;?php $this-&gt;msg('accesskey-search') ?&gt;"&lt;?php
+      }
+      if(isset($this-&gt;data['search'])) {
+        ?&gt; value="&lt;?php $this-&gt;text('search') ?&gt;"&lt;?php
+      } ?&gt;
+  /&gt;
+  &lt;input type='submit' name="go" class="searchButton" id="searchGoButton" value="&lt;?php $this-&gt;msg('go') ?&gt;" /&gt;
+  &lt;input type='submit' name="fulltext" class="searchButton" value="&lt;?php $this-&gt;msg('search') ?&gt;" /&gt;
 &lt;/form&gt;</pre>
-        </li>
-        <li>Remove that code or set it in comments using '&lt;!--' and '--&gt;' </li>
-        <li>Insert the following code:
-          <pre>
+    </li>
+    <li>Remove that code or set it in comments using '&lt;!--' and '--&gt;' </li>
+    <li>Insert the following code:
+      <pre>
 &lt;p&gt;Search with YaCy in this Wiki:&lt;/p&gt;
 &lt;script src="http://#[address]#/yacy/ui/js/jquery-1.3.2.min.js" type="text/javascript"&gt;&lt;/script&gt;
 &lt;script&gt;
@@ -157,15 +150,15 @@ Todo:
     &lt;input type="submit" name="Enter" value="Search" /&gt;
   &lt;/form&gt;
 &lt;/div&gt;</pre>
-        </li>
-        <li>
-          Check all appearances of static IPs given in the code snippet and replace it with your own IP, or your host name
-        </li>
-        <li>You may want to change the default text elements in the code snippet</li>
-        <li>
-          To see all options for the search widget, look at the more generic description of search widgets at the <a href="ConfigLiveSearch.html">configuration for live search</a>.
-        </li>
-      </ul>
-#%env/templates/page-end.template%#
+    </li>
+    <li>
+      Check all appearances of static IPs given in the code snippet and replace it with your own IP, or your host name
+    </li>
+    <li>You may want to change the default text elements in the code snippet</li>
+    <li>
+      To see all options for the search widget, look at the more generic description of search widgets at the <a href="ConfigLiveSearch.html">configuration for live search</a>.
+    </li>
+  </ul>
+  #%env/templates/page-end.template%#
 </body>
 </html>
