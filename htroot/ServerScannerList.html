@@ -1,62 +1,86 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>YaCy '#[clientname]#': Network Scanner Monitor</title>
-    #%env/templates/metas.template%#
-  </head>
-  <body id="IndexCreate">
-#(embedded)#
-#%env/templates/header.template%#
-<h2>Network Scanner Monitor</h2>
-::
-#%env/templates/embeddedheader.template%#
-#(/embedded)#
+<head>
+  <title>YaCy '#[clientname]#': Network Scanner Monitor</title>
+  #(embedded)#
+  #%env/templates/header-backend.template%#
+  ::
+  #%env/templates/header-backend-inline.template%#
+  #(/embedded)#
+</head>
 
-	#(servertable)#::
-	<p>
-	  The following servers can be searched:
-	</p>
-	<form id="servertable" action="CrawlStartScanner_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8" ><fieldset>
-	  <legend><label for="servertable">Available server within the given IP range</label></legend>
-      <table class="sortable" border="0" cellpadding="2" cellspacing="1">
-        <tr class="TableHeader" valign="bottom">
-          #(edit)#::
-          <th>
-          <input type="checkbox" name="allswitch" data-action="checkAllToggle"/>
-          </th>
-          #(/edit)#
-          <th>Protocol</th>
-          <th>IP</th>
-          <th>URL</th>
-          <th>Access</th>
-          <th>Process</th>
-        </tr>
-        #{list}#
-        <tr class="TableCellLight">
-          #(edit)#::
-          <td align="left"><input type="checkbox" name="item_#[count]#" value="mark_#[pk]#" #(preselected)#::checked="checked"#(/preselected)# /></td>
-          #(/edit)#
-          <td>#[protocol]#</td>
-          <td><a href="#[url]#">#[ip]#</a></td>
-          <td><a href="#[url]#">#[url]#</a></td>
-          #(accessUnknown)#::<td class="info">unknown</td>#(/accessUnknown)#
-          #(accessEmpty)#::<td class="info">empty</td>#(/accessEmpty)#
-          #(accessGranted)#::<td class="commit">granted</td>#(/accessGranted)#
-          #(accessDenied)#::<td class="error">denied</td>#(/accessDenied)#
-          #(process)#<td class="info">not in index</td>::<td class="commit">indexed</td>#(/process)#
-        </tr>
-        #{/list}#
-      </table>
+<body id="serverScannerList">
+  #(embedded)#
+  #%env/templates/page-start.template%#
+  <h1>Network Scanner Monitor</h1>
+  ::
+  #%env/templates/page-start-inline.template%#
+  #(/embedded)#
+
+  <div id="devInfo" data-done="html5" data-todo="untested"></div>
+
+  #(servertable)#::
+  <p>
+    The following servers can be searched:
+  </p>
+  <form id="servertable" action="CrawlStartScanner_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8" >
+    <fieldset>
+      <legend>Available server within the given <abbr>IP</abbr> range</legend>
+      <fieldset class="formSection">
+        <div class="content noIndent">
+          <table class="sortable">
+            <thead>
+              <tr>
+                #(edit)#::
+                <th>
+                  <input type="checkbox" data-action="checkAllToggle"/>
+                </th>
+                #(/edit)#
+                <th>Protocol</th>
+                <th>IP</th>
+                <th>URL</th>
+                <th>Access</th>
+                <th>Process</th>
+              </tr>
+            </thead>
+            <tbody>
+              #{list}#
+              <tr>
+                #(edit)#::
+                <td>
+                  <input type="checkbox" name="item_#[count]#" value="mark_#[pk]#" #(preselected)#::checked="checked"#(/preselected)# />
+                </td>
+                #(/edit)#
+                <td>#[protocol]#</td>
+                <td class="breakAll"><a href="#[url]#">#[ip]#</a></td>
+                <td class="breakAll"><a href="#[url]#">#[url]#</a></td>
+                #(accessUnknown)#::<td class="info">unknown</td>#(/accessUnknown)#
+                #(accessEmpty)#::<td class="info">empty</td>#(/accessEmpty)#
+                #(accessGranted)#::<td class="commit">granted</td>#(/accessGranted)#
+                #(accessDenied)#::<td class="error">denied</td>#(/accessDenied)#
+                #(process)#<td class="info">not in index</td>::<td class="commit">indexed</td>#(/process)#
+              </tr>
+              #{/list}#
+            </tbody>
+          </table>
+        </div>
+      </fieldset>
       #(edit)#::
-      <p>
-      <input type="hidden" name="num" value="#[num]#" />
-      <input type="submit" name="crawl" value="Add Selected Servers to Crawler" />
-      </p>
+      <fieldset class="formControl">
+        <div class="content">
+          <input type="hidden" name="num" value="#[num]#" />
+          <button type="submit" name="crawl" class="primary icon-add">Add Selected Servers to Crawler</button>
+        </div>
+      </fieldset>
       #(/edit)#
-    </fieldset></form>
-	#(/servertable)#
+    </fieldset>
+  </form>
+  #(/servertable)#
 
-
-    #%env/templates/footer.template%#
-  </body>
+  #(embedded)#
+  #%env/templates/page-end.template%#
+  ::
+  #%env/templates/page-end-inline.template%#
+  #(/embedded)#
+</body>
 </html>
