@@ -136,7 +136,7 @@ YaCyUi.Messages = YaCyUi.Messages || {
     var messages = $('.ycu-message');
     var closeBtn = $('<span class="closeBtn"></span>');
     if (messages.length > 0) {
-      messages.each(function() {
+      messages.not(':empty').each(function() {
         var msgItem = $(this);
         msgItem.prepend(closeBtn.clone().on('click', function() {
           msgItem.slideUp('slow');
@@ -148,6 +148,7 @@ YaCyUi.Messages = YaCyUi.Messages || {
         } else {
           msgItem.prepend('<span class="type">&nbsp;</span>');
         }
+        msgItem.show(); // in case it's hidden
         msgItem.appendTo('#ycu-messages');
       });
 
