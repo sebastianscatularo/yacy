@@ -162,4 +162,17 @@ YaCyPage.init = function() {
       YaCyPage.doWebPictureAnimation(500);
     }, 500);
   }
+
+  var validator = new YaCyUi.Form.Validator({
+    toggle: $('#crawlingPerformanceCustom')
+  }).addElement($('#customPPM'), {
+    onload: true,
+    validators: [{
+      type: 'notEmpty'
+    }, {
+      type: 'number'
+    }, {
+      type: 'range'
+    }]
+  });
 };
