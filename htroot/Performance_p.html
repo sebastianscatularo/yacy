@@ -9,9 +9,7 @@
 <body id="performance">
   #%env/templates/page-start.template%#
 
-  <div id="devInfo">
-    status: valid html5
-  </div>
+  <div id="devInfo" data-done="html5"></div>
 
   #(setStartupCommit)#::
   <p class="ycu-message ycu-message-info">
@@ -33,7 +31,7 @@
     <label for="autoReload">refresh graph</label>
   </fieldset>
 
-  <form action="Performance_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
+  <form action="Performance_p.html#partPerformance" id="partPerformance" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
     <fieldset>
       <legend>Memory Settings</legend>
       <fieldset class="formSection">
@@ -60,7 +58,7 @@
   </form>
 
 
-  <fieldset class="main">
+  <fieldset class="main" id="partObserver">
     <legend>Resource Observer</legend>
     <fieldset class="formSection">
       <legend>DHT-Trigger</legend>
@@ -68,12 +66,12 @@
         <p>
           #(observerTrigger)#not triggered::<strong>triggered</strong>#(/observerTrigger)#
         </p>
-        <form action="?resetObserver=">
+        <form action="?resetObserver=#partObserver" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
           <button class="icon-run">reset state</button>
         </form>
       </div>
     </fieldset>
-    <form action="Performance_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
+    <form action="Performance_p.html#partObserver" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
       <fieldset class="formGroup">
         <legend>Disk space</legend>
         <fieldset class="formSection">
@@ -136,7 +134,7 @@
     </form>
   </fieldset>
 
-  <form action="Performance_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
+  <form action="Performance_p.html#partProfile" id="partProfile" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
     <fieldset>
       <legend>Use Default Profile</legend>
       <fieldset class="formSection">
@@ -171,7 +169,7 @@
   </fieldset>
 </form>
 
-<form action="Performance_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
+<form action="Performance_p.html#partPriority" id="partPriority" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
   <fieldset>
     <legend>YaCy Priority Settings</legend>
     <fieldset class="formSection">
@@ -198,7 +196,7 @@
   </fieldset>
 </form>
 
-<form action="Performance_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
+<form action="Performance_p.html#partCaution" id="partCaution" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
   <fieldset>
     <legend>Online Caution</legend>
     <div class="description">
