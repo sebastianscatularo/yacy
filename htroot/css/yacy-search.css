@@ -2564,10 +2564,10 @@ input[type="checkbox"] {
   border: 0 none;
   background: transparent; }
 
-input[type='text'],
-input[type='password'],
-input[type="range"],
-textarea,
+input[type='text']:not('.fixed'),
+input[type='password']:not('.fixed'),
+input[type="range"]:not('.fixed'),
+textarea:not('.fixed'),
 select.fullSize {
   width: 100%; }
 
