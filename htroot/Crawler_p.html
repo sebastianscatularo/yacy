@@ -14,7 +14,7 @@
     <a href="/api/status_p.xml" title="Click on this API button to see an XML with information about the crawler status."><img src="/env/grafics/api.png" width="60" height="40" alt="API"/></a>
   </div>
 
-  <div id="devInfo" data-todo="validation style"></div>
+  <div id="devInfo" data-done="html5 validation script" data-todo="style"></div>
 
   #(info)#
   <!-- 0 -->
@@ -61,10 +61,11 @@
   ::
   <!-- 8 -->
   <p class="ycu-message ycu-message-info">
-    Crawling of <code>#[crawlingURL]#</code> started.
-    <br/>
-    <strong>Please wait some seconds, it may take some seconds until the first result appears there.</strong>
-    If you crawl any unwanted pages, you can delete them <a href="IndexCreateQueues_p.html?stack=LOCAL">here</a>.
+    <span class="header">Crawling of <code>#[crawlingURL]#</code> started.</span>
+    <span class="content">
+      <strong>Please wait some seconds, it may take some seconds until the first result appears there.</strong>
+      If you crawl any unwanted pages, you can delete them <a href="IndexCreateQueues_p.html?stack=LOCAL">here</a>.
+    </span>
   </p>
   #(/info)#
 
@@ -115,7 +116,7 @@
       </tr>
     </tbody>
   </table>
-  <div class="warning" id="message">&nbsp;#[queuemessage]#</div>
+  <p class="ycu-message ycu-message-warning hidden">#[queuemessage]#</p>
 
   <h2>Index Size</h2>
   <table>
@@ -163,10 +164,15 @@
         <tr>
           <td>Speed / <abbr title="Pages Per Minute">PPM</abbr></td>
           <td colspan="4">
-            <button type="submit" name="crawlingPerformance">Minimum</button>
+            <button type="submit" name="crawlingPerformance" value="minimum">Minimum</button>
             <input class="fixed" id="customPPM" name="customPPM" type="text" size="5" maxlength="5" value="#[customPPMdefault]#" /><abbr title="Pages Per Minute">PPM</abbr>
-            <button type="submit" name="crawlingPerformance">custom</button>
-            <button type="submit" name="crawlingPerformance">maximum</button>
+            <button type="submit" name="crawlingPerformance" id="crawlingPerformanceCustom" value="custom">custom</button>
+            <button type="submit" name="crawlingPerformance" value="maximum">maximum</button>
+            <div class="formHint hidden">
+              <p class="error">
+                Please enter a number greater than <code>0</code>.
+              </p>
+            </div>
           </td>
         </tr>
         <tr>
@@ -237,7 +243,7 @@
         #(terminateButton)#::
         <form action="Crawler_p.html#runningCrawls" method="get" enctype="multipart/form-data" accept-charset="UTF-8"><div>
           <input type="hidden" name="handle" value="#[handle]#" />
-          <span class="blink">Running</span>
+          <span class="blink ok-txt">Running</span>
           <button type="submit" name="terminate" class="icon-stop">Terminate</button>
         </form>
       </div>
