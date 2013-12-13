@@ -1063,13 +1063,15 @@ YaCyUi.Func.Form.Data = YaCyUi.Func.Form.Data || function() {
           }
           break;
         case 'text':
-          var defaultValue = this.placeholder;
-          var value = e.val().trim();
-          if (typeof defaultValue !== 'undefined' && defaultValue === value) {
-            data[this.name] = null;
-          } else {
-            data[this.name] = e.val().trim();
-          }
+          //var defaultValue = this.placeholder;
+          //var value = e.val().trim();
+          // default value passed to template often differs with value used in
+          // code, so skip this test
+          //if (typeof defaultValue !== 'undefined' && defaultValue === value) {
+          //  data[this.name] = null;
+          //} else {
+          data[this.name] = e.val().trim();
+          //}
           break;
         default:
           data[this.name] = e.val().trim();
@@ -1080,7 +1082,7 @@ YaCyUi.Func.Form.Data = YaCyUi.Func.Form.Data || function() {
     // find textareas
     form.find('textarea').each(function() {
       var e = $(this);
-      data[this.id] = e.val().trim();
+      data[this.name] = e.val().trim();
     });
 
     // exclude toggleable elements
@@ -1089,17 +1091,43 @@ YaCyUi.Func.Form.Data = YaCyUi.Func.Form.Data || function() {
       var fieldToggleId = fieldset.data('toggle-fieldid');
       var dataOn = fieldset.data('toggle-value-on');
       var dataOff = fieldset.data('toggle-value-off');
-      if (typeof fieldToggleId !== 'undefined') {
-        if (fieldset.is('.ycu-toggle-hidden')) {
+
+      if (fieldset.is('.ycu-toggle-hidden')) {
+        if (typeof fieldToggleId !== 'undefined') {
           data[fieldToggleId] = dataOff || false;
           // unset inputs inside toggled element
           fieldset.find('input:not([type="button"])').each(function() {
-            data[this.id] = null;
+            data[this.name] = null;
           });
         } else {
-          data[fieldToggleId] = dataOn || true;
+          // use default values
+          fieldset.find('input:not([type="button"])').each(function() {
+            if (!this.hasAttribute('placeholder') &&
+              typeof $(this).data('default') === 'undefined') {
+              YaCyUi.error('YaCyUi.Func.Form.Data:getFormData',
+                'Placeholder for element (id:' + this.id + ') is empty! ' +
+                'This may lead to unexpected behaviour!');
+            }
+            var placeholder = this.placeholder.trim() || $(this).data('default') || '';
+            switch (this.type.toLowerCase()) {
+              case 'radio':
+              case 'checkbox':
+                if (placeholder == 'checked') {
+                  data[this.name] = this.value || true;
+                } else {
+                  data[this.name] = null;
+                }
+                break;
+              default:
+                data[this.name] = placeholder;
+                break;
+            }
+          });
         }
+      } else if (typeof fieldToggleId !== 'undefined') {
+        data[fieldToggleId] = dataOn || true;
       }
+
     });
     return data;
   }
