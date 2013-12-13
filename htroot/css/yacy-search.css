@@ -1069,6 +1069,9 @@
     tbody tr:hover th,
     tbody tr:hover td {
       background: #f8f8f8; } }
+.error, .info, .success, .info, .warning {
+  background: transparent; }
+
 /*!
  *  Font Awesome 4.0.1
  *  the iconic font designed for Bootstrap

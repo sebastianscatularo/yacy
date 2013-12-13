@@ -1069,6 +1069,9 @@
     tbody tr:hover th,
     tbody tr:hover td {
       background: #f8f8f8; } }
+.error, .info, .success, .info, .warning {
+  background: transparent; }
+
 /*!
  *  Font Awesome 4.0.1
  *  the iconic font designed for Bootstrap
@@ -2461,7 +2464,7 @@
 
 header .logo, #footerMenu, table tr.th td,
 table th, code.key, fieldset .content, fieldset.framed > legend, fieldset.formSection > legend, nav,
-#navSub, #breadCrumb, #ycu-messages, #formResults, body#crawlStartExpert #formReview dt, body#hostBrowser .hostList, body#network .extNodeInfo, body#terminal {
+#navSub, #breadCrumb, #ycu-messages, body#crawlStartExpert #formReview dt, body#hostBrowser .hostList, body#network .extNodeInfo, body#terminal {
   font-family: "Droid Sans", Arial, Helvetica, sans-serif; }
 
 input:not([type="range"]),
@@ -3372,9 +3375,17 @@ s.sym-warning i:last-of-type:before {
   #ycu-messages .ycu-message-warning:before {
     content: "\f071"; }
 
-#formResults p, #formResults div .p, div #formResults .p {
-  border-radius: 5px;
-  padding: 0.5em; }
+.error-txt {
+  color: #c87b65; }
+
+.info-txt {
+  color: #c6ff75; }
+
+.warning-txt {
+  color: #c4cb32; }
+
+.ok-txt {
+  color: #7ee329; }
 
 iframe {
   display: block;

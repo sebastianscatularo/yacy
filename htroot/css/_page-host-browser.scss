@@ -69,7 +69,7 @@ body#hostBrowser {
     content:'#{$fa-var-cogs}\00a0';
   }
   .stateError:before {
-    color:darken($ycu-var-color-error-bg, 8);
+    color:$ycu-var-color-error-text;
     content:'#{$fa-var-exclamation-triangle}\00a0';
   }
 

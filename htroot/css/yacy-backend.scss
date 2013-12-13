@@ -113,12 +113,18 @@
   }
 }
 
-#formResults {
-  @extend %font-sans;
-  p {
-    border-radius:5px;
-    padding:0.5em;
-  }
+// colored feedback text
+.error-txt {
+  color:$ycu-var-color-error-text;
+}
+.info-txt {
+  color:$ycu-var-color-info-text;
+}
+.warning-txt {
+  color:$ycu-var-color-warning-text;
+}
+.ok-txt {
+  color:$ycu-var-color-ok-text;
 }
 
 iframe {
@@ -178,6 +184,7 @@ main .ym-wbox:first-of-type {
   }
 }
 
+// control type icons
 .icon-control-run:before,
 .icon-control-pause:before,
 .icon-control-stop:before {
