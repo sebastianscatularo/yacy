@@ -121,7 +121,7 @@ YaCyPage.setQueueState = function(queue, state) {
 YaCyPage.showRSS = function(rssObj) {
   var crawlList = $('#crawlList');
   var itemsToShow = 50; // number of entries to show
-  var entryTemplate = '<tr><td><a href="ViewFile.html?action=info&amp;urlHash=%GUID%" target="_blank" title="%LINK%">%DESCRIPTION%</a></td><td><a href="ViewFile.html?action=info&amp;urlHash=%GUID%" target="_blank" title="%LINK%">%LINK%</a></td></tr>';
+  var entryTemplate = '<tr><td class="breakAll"><a href="ViewFile.html?action=info&amp;urlHash=%GUID%" target="_blank" title="%LINK%">%DESCRIPTION%</a></td><td class="breakAll"><a href="ViewFile.html?action=info&amp;urlHash=%GUID%" target="_blank" title="%LINK%">%LINK%</a></td></tr>';
 
   if (rssObj.items.length > 0 && crawlList.length > 0) {
     var tBody = crawlList.find('tbody');
@@ -129,11 +129,12 @@ YaCyPage.showRSS = function(rssObj) {
       tBody.empty();
     }
     for (var i = 0; i < rssObj.items.length; i++) {
+      console.debug('rssObj', rssObj.items[i]);
       tBody.append(
         entryTemplate
-        .replace('%GUID%', rssObj[i].data.guid.value, 'g')
-        .replace('%LINK%', encodeURI(rssObj[i].data.link), 'g')
-        .replace('%DESCRIPTION%', rssObj[i].data.description, 'g')
+        .replace('%GUID%', rssObj.items[i].data.guid ? rssObj.items[i].data.guid.value : '', 'g')
+        .replace('%LINK%', encodeURI(rssObj.items[i].data.link), 'g')
+        .replace('%DESCRIPTION%', rssObj.items[i].data.description, 'g')
       );
     }
   }
