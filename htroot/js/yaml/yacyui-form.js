@@ -45,7 +45,6 @@ YaCyUi.Form = YaCyUi.Form || {
       // check if a validator is attached
       var validatorFunc = YaCyUi.DataStore.get($(this), 'validation', 'trigger');
       if (typeof validatorFunc === 'function') {
-        console.debug('revalidate');
         validatorFunc($(this), null);
       }
     });
@@ -1200,13 +1199,30 @@ YaCyUi.Func.Form.Button.prototype = {
 };
 
 YaCyUi.Form.ValidatorFunc = YaCyUi.Form.ValidatorFunc || {
-  ipv4: function(data, withPort) {
+  /** Test if the given data is a valid IPv4 address.
+   * @param {String} Data to test
+   * @param {RegExp} Expression to split the given string. (null will stop
+   * splitting)
+   * @param {Boolean} if true, include port checking
+   * @return {boolean} true, if the given data contains only IPv4 addresses,
+   * false otherwise
+   */
+  ipv4: function(data, splitExp, withPort) {
+    data = YaCyUi.Tools.toArray(data, splitExp);
     var regEx;
+    var valid = true;
     if (withPort === true) {
       regEx = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\:([0-9]{1,4}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])$/;
     }
     var regEx = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
-    return regEx.test(data.trim());
+
+    for (var i = 0; i < data.length; i++) {
+      if (!regEx.test(data[i].trim())) {
+        valid = false;
+        break;
+      }
+    }
+    return valid;
   },
 
   /** Test if given string length is in range.
@@ -1229,6 +1245,10 @@ YaCyUi.Form.ValidatorFunc = YaCyUi.Form.ValidatorFunc || {
     return 0;
   },
 
+  /** Test if the given string is not empty.
+   * @param {String} String to test
+   * @return {boolean} false, if it is empty, true otherwise
+   */
   notEmpty: function(data) {
     if (typeof data === 'string') {
       return data.trim().length === 0 ? false : true;
@@ -1288,6 +1308,7 @@ YaCyUi.Form.ValidatorFunc = YaCyUi.Form.ValidatorFunc || {
   /** Check for same value on current element and input element referenced by id.
    * @param {string} String to test
    * @param {string} Id of element whose value should be tested against
+   * @return {boolean} true if both strings are the same, false otherwise
    */
   same: function(data, elementId) {
     return data.trim() == $(elementId).val().trim();
@@ -1296,9 +1317,12 @@ YaCyUi.Form.ValidatorFunc = YaCyUi.Form.ValidatorFunc || {
   /** Check if the given string(s) look like URLs. This simply checks for spaces
    * in URLs, because URL validation is error prone.
    * @param {string, array} Strings to test
+   * @param {RegExp} Expression to split the given string. (null will stop
+   * splitting)
+   * @return {boolean} true, if the data contains only urls, false otherwise
    */
-  url: function(data) {
-    data = YaCyUi.Tools.toArray(data);
+  url: function(data, splitExp) {
+    data = YaCyUi.Tools.toArray(data, splitExp);
     var regEx = /\s/;
     var valid = true;
     for (var i = 0; i < data.length; i++) {
@@ -1315,10 +1339,12 @@ YaCyUi.Form.ValidatorFunc = YaCyUi.Form.ValidatorFunc || {
   /** Check the given URLs for valid protocols.
    * @param {string, array} URLs to test
    * @param {string, array} Allowed protocols (e.g. ['https?', 'ftp'])
+   * @return {boolean} true, if the data uses only specified protocols, false
+   * otherwise
    */
-  urlProtocol: function(data, protocols) {
-    data = YaCyUi.Tools.toArray(data);
-    protocols = YaCyUi.Tools.toArray(protocols);
+  urlProtocol: function(data, splitExp, protocols) {
+    data = YaCyUi.Tools.toArray(data, splitExp);
+    protocols = YaCyUi.Tools.toArray(protocols, null);
     var regEx = new RegExp('^(' + protocols.join('|') + '):\/\/', 'i');
     var valid = true;
 
@@ -1398,7 +1424,8 @@ YaCyUi.Form.ValidatorElement.prototype = {
       case 'ipv4':
         this.validators.push(function(data) {
           return self.private.parseResult(
-            YaCyUi.Form.ValidatorFunc.ipv4(data, validator.withPort), validator);
+            YaCyUi.Form.ValidatorFunc.ipv4(data, validator.splitExp,
+              validator.withPort), validator);
         });
         break;
       case 'length':
@@ -1444,8 +1471,8 @@ YaCyUi.Form.ValidatorElement.prototype = {
         break;
       case 'range':
         this.validators.push(function(data) {
-          var result = YaCyUi.Form.ValidatorFunc.range(data, validator.min, validator.max,
-            validator.invert);
+          var result = YaCyUi.Form.ValidatorFunc.range(data, validator.min,
+            validator.max, validator.invert);
           if (result !== 0) {
             var state = {
               type: validator.failType || 'error',
@@ -1479,14 +1506,14 @@ YaCyUi.Form.ValidatorElement.prototype = {
       case 'url':
         this.validators.push(function(data) {
           return self.private.parseResult(
-            YaCyUi.Form.ValidatorFunc.url(data), validator);
+            YaCyUi.Form.ValidatorFunc.url(data, validator.splitExp), validator);
         });
         break;
       case 'urlProtocol':
         this.validators.push(function(data) {
           return self.private.parseResult(
-            YaCyUi.Form.ValidatorFunc.urlProtocol(data, validator.protocols),
-            validator);
+            YaCyUi.Form.ValidatorFunc.urlProtocol(data, validator.splitExp,
+              validator.protocols), validator);
         });
         break;
       default:
@@ -1518,9 +1545,9 @@ YaCyUi.Form.ValidatorElement.prototype = {
       this.isDisabled = false;
     }
     var data = this.element.val();
-    if (this.element[0].tagName.toLowerCase() == 'textarea') {
+    /*if (this.element[0].tagName.toLowerCase() == 'textarea') {
       data = YaCyUi.Tools.cleanStringArray(data.split('\n'));
-    }
+    }*/
     var result;
     var state = null;
     for (var i = 0; i < this.validators.length; i++) {

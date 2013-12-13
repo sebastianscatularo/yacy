@@ -14,9 +14,23 @@ YaCyUi.Tools = YaCyUi.Tools || {
     return cleanArr;
   },
 
-  toArray: function(data) {
+  /** Convert the given strin to an array.
+   * @param {String} The string to convert
+   * @param {RegExp} Expression to split the string, or null if no splitting
+   * is desired. (default windows & linux line endings)
+   * @return {String} The given string as array
+   */
+  toArray: function(data, splitAt) {
+    splitAt = typeof splitAt === 'undefined' ? /[^\r\n]+/g : splitAt;
     if (typeof data === 'string') {
-      return [data];
+      if (data.trim().length === 0) {
+        return [];
+      }
+      if (splitAt === null) {
+        return [data];
+      } else {
+        return data.match(splitAt);
+      }
     }
     return data;
   },
