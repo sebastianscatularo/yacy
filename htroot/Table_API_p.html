@@ -2,7 +2,11 @@
 <html lang="en">
 <head>
   <title>YaCy '#[clientname]#': Peer Steering</title>
+  #(inline)#
   #%env/templates/header-backend.template%#
+  ::
+  #%env/templates/header-backend-inline.template%#
+  #(/inline)#
   <script type="text/javascript" src="/js/yaml/tablesorter/jquery.tablesorter.min.js"></script>
   #(showtable)#::
   <link rel="alternate" type="application/xml" title="Tables" href="Tables.rss?table=#[table]#" />
