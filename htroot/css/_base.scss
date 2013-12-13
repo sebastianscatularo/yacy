@@ -29,14 +29,14 @@ $ycu-var-color-fieldset-fg:#18294A;
 $ycu-var-color-table-cell-base:$ycu-var-color-fieldset-bg;
 // feedback colors
 $ycu-var-color-error-bg:#D39583;
-$ycu-var-color-error-text:darken($ycu-var-color-error-bg, 8);
+$ycu-var-color-error-text:#D01F14;
 $ycu-var-color-help-bg:#AAD2E6;
 $ycu-var-color-info-bg:#D7FF9E;
-$ycu-var-color-info-text:darken($ycu-var-color-info-bg, 8);
+$ycu-var-color-info-text:#1A1074;
 $ycu-var-color-ok-bg:#94E84D;
-$ycu-var-color-ok-text:darken($ycu-var-color-ok-bg, 8);
+$ycu-var-color-ok-text:#1B9532;
 $ycu-var-color-warning-bg:#CED452;
-$ycu-var-color-warning-text:darken($ycu-var-color-warning-bg, 8);
+$ycu-var-color-warning-text:#DBA339;
 $ycu-var-icon-msg-ok:$fa-var-check-circle;
 $ycu-var-icon-msg-help:$fa-var-question-circle;
 $ycu-var-icon-msg-info:$fa-var-info-circle;
