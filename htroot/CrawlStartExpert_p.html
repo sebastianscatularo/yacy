@@ -14,7 +14,7 @@
     <a href="http://www.yacy-websuche.de/wiki/index.php/Dev:API#Managing_crawl_jobs" title="Click on this API button to see a documentation of the POST request parameter for crawl starts."><img src="/env/grafics/api.png" width="60" height="40" alt="API"/></a>
   </div>
 
-  <div id="devInfo">
+  <div id="devInfo" data-done="html5">
     Todo:
     - allow setting bookmark-title through post vars
     - better help strings
@@ -23,7 +23,6 @@
     - provide more feedback, if URL validation process is running
     Non working:
     - form submission will be intercepted (URL given in dev-console)
-    Status: valid html5
   </div>
 
   <h1>Expert Crawl Start</h1>
@@ -34,7 +33,7 @@
     A crawl can also be started using <a href="http://www.gnu.org/s/wget/">wget</a> and the <a href="http://www.yacy-websuche.de/wiki/index.php/Dev:API#Managing_crawl_jobs">post arguments</a> for this web page.
   </p>
 
-  <form action="Crawler_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
+  <form action="Crawler_p.html" id="crawlerForm" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
 
     <fieldset data-id="main" id="crawler">
       <legend>Crawl Job</legend>
@@ -52,9 +51,6 @@
             <label for="crawlingURL" class="hidden">Crawl start point</label>
             <textarea name="crawlingURL" id="crawlingURL">#[starturl]#</textarea>
             <div class="formHint hidden">
-              <p class="ok">
-                The entered locations are looking correct.
-              </p>
               <p class="error" data-id="invalid">
                 One or more <abbr>URLs</abbr> entered are not valid.
               </p>
@@ -65,7 +61,7 @@
                 One or more <abbr>URLs</abbr> entered have an unknown or missing protocol.
               </p>
               <p class="help">
-                Please define one or more start-<abbr>URLs</abbr> for your crawl.
+                Please define one or more start-<abbr>URLs</abbr> (one per line) for your crawl.
               </p>
             </div>
             <div data-id="getSiteData" class="hidden">
@@ -99,7 +95,7 @@
           <legend>Start point selection</legend>
           <div class="content">
             <label for="startPointSelectBox">Start crawl from</label>
-            <select id="startPointSelectBox" data-review="custom">
+            <select id="startPointSelectBox">
               <option data-id="urlList" selected="selected">URL-list</option>
               <option data-id="linkList">Link-list</option>
               <option data-id="siteList">Site-list</option>
@@ -122,7 +118,7 @@
               <div class="control-group">
                 <div class="p">
                   <label for="crawlingDepth">Crawl to a maximum depth of</label>
-                  <input name="crawlingDepth" id="crawlingDepth" type="text" maxlength="2" data-min="0" data-max="99" value="#[crawlingDepth]#" class="spinner" />
+                  <input name="crawlingDepth" id="crawlingDepth" type="text" maxlength="2" data-min="0" value="#[crawlingDepth]#" class="spinner" placeholder="#[crawlingDepth]#"/>
                   <div class="formHint hidden">
                     <p class="error" data-id="range">
                       Please enter a number between <code>0&mdash;99</code>
@@ -133,7 +129,7 @@
                   </div>
                 </div>
                 <p>
-                  <input type="checkbox" name="directDocByURL" id="directDocByURL" #(directDocByURLChecked)#::checked="checked"#(/directDocByURLChecked)# />
+                  <input type="checkbox" name="directDocByURL" id="directDocByURL" #(directDocByURLChecked)#::checked="checked"#(/directDocByURLChecked)# data-default="#(directDocByURLChecked)#::checked#(/directDocByURLChecked)#"/>
                   <label for="directDocByURL">include all linked non-parsable documents</label>
                 </p>
               </div>
@@ -142,7 +138,7 @@
             <fieldset>
               <div class="control-group">
                 <label for="crawlingDepthExtension">Ignore the crawling depth for <abbr>URLs</abbr> matching with</label>:
-                <input name="crawlingDepthExtension" id="crawlingDepthExtension" type="text" maxlength="100" value="#[crawlingDepthExtension]#" />
+                <input name="crawlingDepthExtension" id="crawlingDepthExtension" type="text" maxlength="100" value="#[crawlingDepthExtension]#" placeholder="#[crawlingDepthExtension]#"/>
                 <div class="formHint hidden">
                   <p class="help">
                     Please enter a regular expression for <abbr>URLs</abbr>, where the crawling depth should not be limited.
@@ -175,7 +171,7 @@
             </p>
           </div>
         </fieldset>
-        <fieldset class="formSection toggleable" data-toggle-type="activate" data-toggle-fieldid="maxPagesPerDomain">
+        <fieldset class="formSection toggleable" data-toggle-type="activate" data-toggle-fieldid="crawlingDomMaxCheck" data-toggle-value-on="on">
           <legend>Maximum Pages per Domain</legend>
           <div class="content">
             <div class="control-group">
@@ -205,10 +201,10 @@
           <div class="content">
             <div class="control-group">
               <p>
-                <input type="checkbox" name="crawlingQ" id="crawlingQ" #(crawlingQChecked)#::checked="checked"#(/crawlingQChecked)#/>
+                <input type="checkbox" name="crawlingQ" #(crawlingQChecked)#::checked="checked"#(/crawlingQChecked)# data-default="#(crawlingQChecked)#::checked#(/crawlingQChecked)#"/>
                 <label for="crawlingQ">Accept URLs with query-part ('<code>?</code>')</label>
               </p><p>
-              <input type="checkbox" name="obeyHtmlRobotsNoindex" id="obeyHtmlRobotsNoindex" #(obeyHtmlRobotsNoindexChecked)#::checked="checked"#(/obeyHtmlRobotsNoindexChecked)# />
+              <input type="checkbox" name="obeyHtmlRobotsNoindex" id="obeyHtmlRobotsNoindex" #(obeyHtmlRobotsNoindexChecked)#::checked="checked"#(/obeyHtmlRobotsNoindexChecked)# data-default="#(obeyHtmlRobotsNoindexChecked)#::checked#(/obeyHtmlRobotsNoindexChecked)#"/>
               <label for ="obeyHtmlRobotsNoindex">Obey html-robots-noindex</label>
             </p>
           </div>
@@ -237,19 +233,19 @@
             </legend>
             <p>
               <label class="indent">
-                <input type="radio" name="range" id="rangeDomain" value="domain" #(range_domain)#::checked="checked"#(/range_domain)#/>
+                <input type="radio" name="range" value="domain" #(range_domain)#::checked="checked"#(/range_domain)# data-default="#(range_domain)#::checked#(/range_domain)#"/>
                 Restrict to start domain(s)
               </label>.
             </p>
             <p>
               <label class="indent">
-                <input type="radio" name="range" id="rangeSubpath" value="subpath" #(range_subpath)#::checked="checked"#(/range_subpath)#/>
+                <input type="radio" name="range" value="subpath" #(range_subpath)#::checked="checked"#(/range_subpath)# data-default="#(range_subpath)#::checked#(/range_subpath)#"/>
                 Restrict to sub-path(s)
               </label>.
             </p>
             <div>
               <label class="indent">
-                <input type="radio" name="range" id="rangeWide" value="wide" #(range_wide)#::checked="checked"#(/range_wide)#/>
+                <input type="radio" name="range" id="rangeWide" value="wide" #(range_wide)#::checked="checked"#(/range_wide)# data-default="#(range_wide)#::checked#(/range_wide)#"/>
                 Use custom match filter
               </label>.
               <label for="mustmatch">Filter expression for URL inclusion</label>:
@@ -335,7 +331,7 @@
         <div class="content">
           <div class="control-group">
             <label for="countryMustMatchList">Only allow domains matching the following country codes</label>:
-            <input name="countryMustMatchList" id="countryMustMatchList" type="text" maxlength="256" value="#[countryMustMatch]#" data-review="validable"/>
+            <input name="countryMustMatchList" id="countryMustMatchList" type="text" maxlength="256" value="#[countryMustMatch]#"/>
             <div class="formHint hidden">
               <p class="error" data-id="invalid">
                 One or more entries are no valid country codes.
@@ -465,37 +461,37 @@
           To remove old files from the search index it is not sufficient to just consider them for re-load but it may be necessary to delete them because they simply do not exist any more. Use this in combination with re-crawl while this time should be longer.
         </p>
       </div>
-      <fieldset class="formSection control-group" data-review="skip-title">
+      <fieldset class="formSection control-group">
         <legend>No deletion</legend>
         <div class="content">
           <label class="indent">
-            <input type="radio" name="deleteold" id="deleteoldoff" value="off" #(deleteold_off)#::checked="checked"#(/deleteold_off)#/>
+            <input type="radio" name="deleteold" value="off" #(deleteold_off)#::checked="checked"#(/deleteold_off)# data-default="#(deleteold_off)#::checked#(/deleteold_off)#"/>
             Do not delete any document before the crawl is started.
           </label>
         </div>
       </fieldset>
-      <fieldset class="formSection control-group" data-review="skip-title">
+      <fieldset class="formSection control-group">
         <legend>Delete old</legend>
         <div class="content">
           <label class="indent">
-            <input type="radio" name="deleteold" id="deleteoldon" value="on" #(deleteold_on)#::checked="checked"#(/deleteold_on)#/>
+            <input type="radio" name="deleteold" value="on" #(deleteold_on)#::checked="checked"#(/deleteold_on)# data-default="#(deleteold_on)#::checked#(/deleteold_on)#"/>
             For each host in the start <abbr>URL</abbr> list, delete all documents (in the given subpath) from that host.
           </label>
         </div>
       </fieldset>
-      <fieldset class="formSection control-group" data-review="skip-title">
+      <fieldset class="formSection control-group">
         <legend>Delete aged</legend>
         <div class="content">
           <label class="indent">
-            <input type="radio" name="deleteold" id="deleteoldage" value="age" #(deleteold_age)#::checked="checked"#(/deleteold_age)# data-review="custom"/>
+            <input type="radio" name="deleteold" id="deleteOldAge" value="age" #(deleteold_age)#::checked="checked"#(/deleteold_age)# data-default="#(deleteold_age)#::checked#(/deleteold_age)#"/>
             Treat documents older than
           </label>
-          <select name="deleteIfOlderNumber" id="deleteIfOlderNumber" data-toggle-id="deleteoldage" data-review="skip">
+          <select name="deleteIfOlderNumber" id="deleteIfOlderNumber" data-toggle-id="deleteOldAge">
             #(deleteIfOlderSelect)#::
             #{list}#<option value="#[name]#" #(default)#::selected="selected"#(/default)#>#[name]#</option>#{/list}#
             #(/deleteIfOlderSelect)#
           </select>
-          <select name="deleteIfOlderUnit" id="deleteIfOlderUnit" data-toggle-id="deleteoldage" data-review="skip">
+          <select name="deleteIfOlderUnit" id="deleteIfOlderUnit" data-toggle-id="deleteOldAge">
             #(deleteIfOlderUnitSelect)#::
             #{list}#<option value="#[value]#" #(default)#::selected="selected"#(/default)#>#[name]#</option>#{/list}#
             #(/deleteIfOlderUnitSelect)#
@@ -513,26 +509,26 @@
           A url may be loaded again when it has reached a specific age, to use that check the <em>Re-load</em> option.
         </p>
       </div>
-      <fieldset class="formSection control-group" data-review="skip-title">
+      <fieldset class="formSection control-group">
         <legend>No doubles</legend>
         <div class="content">
           <label class="indent">
-            <input type="radio" name="recrawl" id="reloadoldoff" value="nodoubles" #(recrawl_nodoubles)#::checked="checked"#(/recrawl_nodoubles)#/>
+            <input type="radio" name="recrawl" value="nodoubles" #(recrawl_nodoubles)#::checked="checked"#(/recrawl_nodoubles)# data-default="#(recrawl_nodoubles)#::checked#(/recrawl_nodoubles)#"/>
             Never load any page that is already known. Only the start-url may be loaded again.
           </label>
         </div>
       </fieldset>
-      <fieldset class="formSection control-group" data-review="skip-title">
+      <fieldset class="formSection control-group">
         <legend>Re-load</legend>
         <div class="content">
-          <input type="radio" name="recrawl" id="reloadoldage" value="reload" #(recrawl_reload)#::checked="checked"#(/recrawl_reload)# data-review="custom"/>
+          <input type="radio" name="recrawl" id="reloadOldAge" value="reload" #(recrawl_reload)#::checked="checked"#(/recrawl_reload)# data-default="#(recrawl_reload)#::checked#(/recrawl_reload)#"/>
           Treat documents that are loaded
-          <select name="reloadIfOlderNumber" id="reloadIfOlderNumber" data-review="skip" data-toggle-id="reloadoldage">
+          <select name="reloadIfOlderNumber" id="reloadIfOlderNumber" data-toggle-id="reloadOldAge">
             #(reloadIfOlderSelect)#::
             #{list}#<option value="#[name]#" #(default)#::selected="selected"#(/default)#>#[name]#</option>#{/list}#
             #(/reloadIfOlderSelect)#
           </select>
-          <select name="reloadIfOlderUnit" id="reloadIfOlderUnit" data-review="skip" data-toggle-id="reloadoldage">
+          <select name="reloadIfOlderUnit" id="reloadIfOlderUnit" data-toggle-id="reloadOldAge">
             #(reloadIfOlderUnitSelect)#::
             #{list}#<option value="#[value]#" #(default)#::selected="selected"#(/default)#>#[name]#</option>#{/list}#
             #(/reloadIfOlderUnitSelect)#
@@ -546,7 +542,7 @@
       <fieldset class="formSection control-group">
         <legend>Store to Web Cache</legend>
         <div class="content">
-          <input type="checkbox" name="storeHTCache" id="storeHTCache" #(storeHTCacheChecked)#::checked="checked"#(/storeHTCacheChecked)# />
+          <input type="checkbox" name="storeHTCache" id="storeHTCache" #(storeHTCacheChecked)#::checked="checked"#(/storeHTCacheChecked)# data-default="#(storeHTCacheChecked)#::checked#(/storeHTCacheChecked)#"/>
           <label for="storeHTCache">Store crawled documents in Web Cache</label>
         </div>
         <div class="formHelp hidden">
@@ -558,25 +554,25 @@
         <div class="content">
           <p>
             <label class="indent">
-              <input type="radio" name="cachePolicy" value="nocache" id="cachePolicy-noCache" #(cachePolicy_nocache)#::checked="checked"#(/cachePolicy_nocache)#/>
+              <input type="radio" name="cachePolicy" value="nocache" id="cachePolicy-noCache" #(cachePolicy_nocache)#::checked="checked"#(/cachePolicy_nocache)# data-default="#(cachePolicy_nocache)#::checked#(/cachePolicy_nocache)#"/>
               Do not use any caches, always download fresh documents.
             </label>
           </p>
           <p>
             <label class="indent">
-              <input type="radio" name="cachePolicy" value="iffresh" id="cachePolicy-ifFresh" #(cachePolicy_iffresh)#::checked="checked"#(/cachePolicy_iffresh)# />
+              <input type="radio" name="cachePolicy" value="iffresh" id="cachePolicy-ifFresh" #(cachePolicy_iffresh)#::checked="checked"#(/cachePolicy_iffresh)# data-default="#(cachePolicy_iffresh)#::checked#(/cachePolicy_iffresh)#"/>
               Use cache, if document is fresh.
             </label>
           </p>
           <p>
             <label class="indent">
-              <input type="radio" name="cachePolicy" value="ifexist" id="cachePolicy-ifExist" #(cachePolicy_ifexist)#::checked="checked"#(/cachePolicy_ifexist)#/>
+              <input type="radio" name="cachePolicy" value="ifexist" id="cachePolicy-ifExist" #(cachePolicy_ifexist)#::checked="checked"#(/cachePolicy_ifexist)# data-default="#(cachePolicy_ifexist)#::checked#(/cachePolicy_ifexist)#"/>
               Use cache, if document exist.
             </label>
           </p>
           <p>
             <label class="indent">
-              <input type="radio" name="cachePolicy" value="cacheonly" id="cachePolicy-cacheOnly" #(cachePolicy_cacheonly)#::checked="checked"#(/cachePolicy_cacheonly)#/>
+              <input type="radio" name="cachePolicy" value="cacheonly" id="cachePolicy-cacheOnly" #(cachePolicy_cacheonly)#::checked="checked"#(/cachePolicy_cacheonly)# data-default="#(cachePolicy_cacheonly)#::checked#(/cachePolicy_cacheonly)#"/>
               Use the cache only, do not download any new documents.
             </label>
           </p>
@@ -601,7 +597,7 @@
       </fieldset>
     </fieldset>
 
-    #(agentSelect)#<input type="hidden" name="agentName" id="agentName" value="#[defaultAgentName]#" />::
+    #(agentSelect)#<input type="hidden" name="agentName" id="agentName" value="#[defaultAgentName]#"/>::
     <fieldset class="formGroup collapsible">
       <legend>Robot Behaviour</legend>
       <fieldset class="formSection control-group">
@@ -632,11 +628,11 @@
         <legend>Local indexing</legend>
         <div class="content">
           <p>
-            <input type="checkbox" name="indexText" id="indexText" #(indexingTextChecked)#::checked="checked"#(/indexingTextChecked)# />
+            <input type="checkbox" name="indexText" id="indexText" #(indexingTextChecked)#::checked="checked"#(/indexingTextChecked)# data-default="#(indexingTextChecked)#::checked#(/indexingTextChecked)#"/>
             <label for="indexText">index text</label>
           </p>
           <p>
-            <input type="checkbox" name="indexMedia" id="indexMedia" #(indexingMediaChecked)#::checked="checked"#(/indexingMediaChecked)# />
+            <input type="checkbox" name="indexMedia" id="indexMedia" #(indexingMediaChecked)#::checked="checked"#(/indexingMediaChecked)# data-default="#(indexingMediaChecked)#::checked#(/indexingMediaChecked)#"/>
             <label for="indexMedia">index media</label>
           </p>
         </div>
@@ -654,7 +650,7 @@
             Describe your intention to start this global crawl <em>(optional)</em>. This message will appear in the <em>Other Peer Crawl Start</em> table of other peers.
             <br/>
             <label for="intention">Crawl intention</label>:
-            <input name="intention" id="intention" type="text" size="40" maxlength="100" value="#[intention]#" /><br />
+            <input name="intention" id="intention" type="text" size="40" maxlength="100" value="#[intention]#"/><br/>
           </fieldset>
         </div>
         <div class="formHelp hidden">
@@ -695,23 +691,10 @@
       </fieldset>
     </fieldset>
 
-    <div id="formReview" class="hidden">
-      <div class="reviewHeader">
-        <div class="controls">
-          <button data-id="hideDefaults" class="icon-showLess">Hide default settings</button>
-          <button data-id="showDefaults" class="hidden icon-showMore">Show default settings</button>
-        </div>
-      </div>
-      <div class="reviewContent">
-      </div>
-    </div>
-
     <fieldset class="formControl" id="formControl">
       <div id="ycu-error-count" class="description hiddden"></div>
       <div class="content">
         <input type="hidden" name="crawlingstart" value="1"/>
-        <button data-id="check" class="icon-check">Review job details</button>
-        <button data-id="edit" class="icon-config hidden">Edit job details</button>
         <button type="submit" id="submitCrawlStart" class="primary icon-run">Start crawl job</button>
       </div>
     </fieldset>
