@@ -1072,6 +1072,9 @@
 .error, .info, .success, .info, .warning {
   background: transparent; }
 
+.center {
+  margin: 0; }
+
 /*!
  *  Font Awesome 4.0.1
  *  the iconic font designed for Bootstrap
@@ -2462,8 +2465,7 @@
 .ym-wbox {
   padding: 1.5em; }
 
-header .logo, #footerMenu, table tr.th td,
-table th, code.key, fieldset .content, fieldset.framed > legend, fieldset.formSection > legend, nav,
+.fontSans, header .logo, #footerMenu, table, code.key, fieldset .content, fieldset.framed > legend, fieldset.formSection > legend, nav,
 #navSub, #breadCrumb, #ycu-messages, body#crawlStartExpert #formReview dt, body#hostBrowser .hostList, body#network .extNodeInfo, body#terminal {
   font-family: "Droid Sans", Arial, Helvetica, sans-serif; }
 

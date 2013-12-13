@@ -1072,6 +1072,9 @@
 .error, .info, .success, .info, .warning {
   background: transparent; }
 
+.center {
+  margin: 0; }
+
 /*!
  *  Font Awesome 4.0.1
  *  the iconic font designed for Bootstrap
@@ -2462,8 +2465,7 @@
 .ym-wbox {
   padding: 1.5em; }
 
-header .logo, #footerMenu, table tr.th td,
-table th, code.key, nav,
+.fontSans, header .logo, #footerMenu, table, code.key, nav,
 #navSub, body#yacySearch header,
 body#webSearch header, body#yacySearch main,
 body#webSearch main, body#yacySearch #searchTrailer .ui-widget {

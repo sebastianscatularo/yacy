@@ -5,6 +5,9 @@
 .error, .info, .success, .info, .warning {
   background:transparent;
 }
+.center {
+  margin:0;
+}
 
 $fa-font-path:'font-awesome/fonts'; // set font path
 @import 'font-awesome/scss/font-awesome';
@@ -169,6 +172,10 @@ iframe {
   white-space:nowrap;
 }
 
+.fontSans {
+  @extend %font-sans;
+}
+
 h1 {
   font-size:200%;
 }
@@ -277,6 +284,8 @@ footer {
 * Tables. */
 // general tables
 table {
+  @extend %font-sans;
+
   tbody {
     tr:not(.th):nth-child(odd) {
       background-color:darken($ycu-var-color-table-cell-base, 5);
@@ -293,7 +302,6 @@ table {
 
   tr.th td,
   th {
-    @extend %font-sans;
     vertical-align:bottom;
     color:#555;
     border-color:#555;
