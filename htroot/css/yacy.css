@@ -2470,7 +2470,7 @@ select,
 .ui-spinner {
   font-family: Arial, Helvetica, sans-serif; }
 
-body#rssTerminal span.cursor:before {
+.blink, body#rssTerminal span.cursor:before {
   animation: blink 1s steps(2, start) infinite; }
 
 @keyframes blink {

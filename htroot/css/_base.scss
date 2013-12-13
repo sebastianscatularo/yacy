@@ -176,6 +176,9 @@ h4, h5, h6 {
 .tt {
   @extend tt;
 }
+.blink {
+  @extend %blink-text;
+}
 
 /**********
 * Page layout. */
