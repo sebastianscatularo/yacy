@@ -7,6 +7,7 @@
   ::
   #%env/templates/header-backend-inline.template%#
   #(/embedded)#
+  <script type="text/javascript" src="/js/yaml/tablesorter/jquery.tablesorter.min.js"></script>
 </head>
 
 <body id="serverScannerList">
@@ -20,10 +21,8 @@
   <div id="devInfo" data-done="html5" data-todo="untested"></div>
 
   #(servertable)#::
-  <p>
-    The following servers can be searched:
-  </p>
-  <form id="servertable" action="CrawlStartScanner_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8" >
+  <h2 class="noNumber">Searchable servers</h2>
+  <form action="CrawlStartScanner_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8" >
     <fieldset>
       <legend>Available server within the given <abbr>IP</abbr> range</legend>
       <fieldset class="formSection">
@@ -54,11 +53,11 @@
                 <td>#[protocol]#</td>
                 <td class="breakAll"><a href="#[url]#">#[ip]#</a></td>
                 <td class="breakAll"><a href="#[url]#">#[url]#</a></td>
-                #(accessUnknown)#::<td class="info">unknown</td>#(/accessUnknown)#
-                #(accessEmpty)#::<td class="info">empty</td>#(/accessEmpty)#
-                #(accessGranted)#::<td class="commit">granted</td>#(/accessGranted)#
-                #(accessDenied)#::<td class="error">denied</td>#(/accessDenied)#
-                #(process)#<td class="info">not in index</td>::<td class="commit">indexed</td>#(/process)#
+                #(accessUnknown)#::<td class="info-txt">unknown</td>#(/accessUnknown)#
+                #(accessEmpty)#::<td class="info-txt">empty</td>#(/accessEmpty)#
+                #(accessGranted)#::<td class="ok-txt">granted</td>#(/accessGranted)#
+                #(accessDenied)#::<td class="error-txt">denied</td>#(/accessDenied)#
+                #(process)#<td class="info-txt">not in index</td>::<td class="commit">indexed</td>#(/process)#
               </tr>
               #{/list}#
             </tbody>
