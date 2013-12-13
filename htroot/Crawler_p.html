@@ -14,12 +14,7 @@
     <a href="/api/status_p.xml" title="Click on this API button to see an XML with information about the crawler status."><img src="/env/grafics/api.png" width="60" height="40" alt="API"/></a>
   </div>
 
-  <div id="devInfo">
-    Todo:
-    - scripts need testing (rewritten)
-    - style
-    - generated urls have unescaped characters!
-  </div>
+  <div id="devInfo" data-todo="validation style"></div>
 
   #(info)#
   <!-- 0 -->
@@ -69,7 +64,7 @@
     Crawling of <code>#[crawlingURL]#</code> started.
     <br/>
     <strong>Please wait some seconds, it may take some seconds until the first result appears there.</strong>
-    If you crawl any un-wanted pages, you can delete them <a href="IndexCreateQueues_p.html?stack=LOCAL">here</a>.
+    If you crawl any unwanted pages, you can delete them <a href="IndexCreateQueues_p.html?stack=LOCAL">here</a>.
   </p>
   #(/info)#
 
@@ -165,13 +160,13 @@
         </tr>
       </thead>
       <tbody>
-        <tr class="TableCellLight">
+        <tr>
           <td>Speed / <abbr title="Pages Per Minute">PPM</abbr></td>
           <td colspan="4">
-            <button #(crawlingSpeedMinChecked)#::class="TableCellDark"#(/crawlingSpeedMinChecked)# type="submit" name="crawlingPerformance">Minimum</button>
-            <input #(crawlingSpeedCustChecked)#::class="TableCellDark"#(/crawlingSpeedCustChecked)# id="customPPM" name="customPPM" type="text" size="5" maxlength="5" value="#[customPPMdefault]#" /><abbr title="Pages Per Minute">PPM</abbr>
+            <button type="submit" name="crawlingPerformance">Minimum</button>
+            <input class="fixed" id="customPPM" name="customPPM" type="text" size="5" maxlength="5" value="#[customPPMdefault]#" /><abbr title="Pages Per Minute">PPM</abbr>
             <button type="submit" name="crawlingPerformance">custom</button>
-            <button #(crawlingSpeedMaxChecked)#::class="TableCellDark"#(/crawlingSpeedMaxChecked)# type="submit" name="crawlingPerformance">maximum</button>
+            <button type="submit" name="crawlingPerformance">maximum</button>
           </td>
         </tr>
         <tr>
