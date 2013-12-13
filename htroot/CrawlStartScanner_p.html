@@ -3,34 +3,28 @@
 <head>
   <title>YaCy '#[clientname]#': Network Scanner</title>
   #%env/templates/header-backend.template%#
+  <script type="text/javascript" src="/js/yaml/pages/crawlStartScanner.js"></script>
 </head>
 
 <body id="crawlStartScanner">
   #%env/templates/page-start.template%#
 
-  <div id="devInfo">
-    Completely untested
-    Todo:
-    - lost the default value for 'subnet'
-    - scripts needs updates
-    - 'intranet scan' hint?
-    status: valid html5
-  </div>
+  <div id="devInfo" data-done="html5 script"></div>
 
   <h1>Network Scanner</h1>
 
   <p>
-    YaCy can scan a network segment for available http, ftp and smb server.
-    You must first select a IP range and then, after this range is scanned, it is possible to select servers that had been found for a full-site crawl.
+    YaCy can scan a network segment for available <abbr>HTTP</abbr>, <abbr>FTP</abbr> and <abbr>SMB</abbr> server.
+    You must first select a <abbr>IP</abbr> range and then, after this range is scanned, it is possible to select servers that had been found for a full-site crawl.
   </p>
 
   #(noserverdetected)#::
-  <p>
-    No servers had been detected in the given IP range #[iprange]#. Please enter a different IP range for another scan.
+  <p class="ycu-message ycu-message-info">
+    No servers had been detected in the given <abbr>IP</abbr> range #[iprange]#. Please enter a different <abbr>IP</abbr> range for another scan.
   </p>
   #(/noserverdetected)#
 
-  <form onsubmit="document.getElementById('scanhostinfo').innerHTML='Please wait...'; disableSubmit();" action="CrawlStartScanner_p.html" method="get" accept-charset="UTF-8">
+  <form action="CrawlStartScanner_p.html#serverScannerList" id="scanForm" method="get" accept-charset="UTF-8">
     <fieldset>
       <legend>Network Scanner</legend>
 
@@ -40,26 +34,41 @@
         <fieldset class="formSection">
           <legend>With given Host</legend>
           <div class="content">
-            <input type="radio" name="source" id="sourcehost" value="hosts"#(intranet.checked)# checked="checked"::#(/intranet.checked)# />
-            <label for="sourcehost">Scan sub-range with given host</label>
-            <textarea name="scanhosts" id="scanhosts">#[scanhosts]#</textarea>
+            <input type="radio" name="source" id="sourceHost" value="hosts"#(intranet.checked)# checked="checked"::#(/intranet.checked)# />
+            <label for="sourceHost">Scan sub-range with given host</label>
+            <textarea name="scanhosts" id="scanHosts" data-toggle-id="sourceHost">#[scanhosts]#</textarea>
+            <div class="formHint hidden">
+              <p class="error" data-id="empty">
+                Please define one or more <abbr>IPs</abbr> (one per line).
+              </p>
+              <p class="error" data-id="invalid">
+                One or more <abbr>IPs</abbr> entered are not valid.
+              </p>
+              <p class="help">
+                Please define one or more <abbr>IPs</abbr> (one per line) to scan.
+              </p>
+            </div>
           </div>
         </fieldset>
         <fieldset class="formSection">
           <legend>Full Intranet Scan</legend>
           <div class="content">
-            <input type="radio" name="source" id="sourcenet" value="intranet"#(intranet.checked)#:: checked="checked"#(/intranet.checked)# />
-            <label for="sourcenet">Full Intranet Scan: #[intranethosts]#</label>
-            #(intranetHint)#::
-            <div class="info">Do not use intranet scan results, you are not in an intranet environment!</div>
+            #(intranetHint)#
+            <input type="radio" name="source" id="sourceNet" value="intranet"#(intranet.checked)#:: checked="checked"#(/intranet.checked)# />
+            <label for="sourceNet">Full Intranet Scan: #[intranethosts]#</label>
+            ::
+            <p>
+              <s class="sym sym-hint"></s>
+              Disabled. You are not in an intranet environment.
+            </p>
             #(/intranetHint)#
           </div>
         </fieldset>
         <fieldset class="formSection">
           <legend>Known Hosts</legend>
           <div class="content">
-            <input type="radio" name="source" id="sourceall" value="all" />
-            <label for="sourceall">All known hosts in the search index (/31 subnet recommended!)</label>
+            <input type="radio" name="source" id="sourceAll" value="all" />
+            <label for="sourceAll">All known hosts in the search index (/31 subnet recommended!)</label>
           </div>
         </fieldset>
       </fieldset>
@@ -89,7 +98,18 @@
           <legend>Milliseconds</legend>
           <div class="content">
             <label for="timeoutMs">Time-Out after</label>
-            <input type="text" name="timeout" id="timeoutMs" value ="2000" maxlength="4" class="spinner"/> ms
+            <input type="text" name="timeout" id="timeoutMs" #(intranetHint)#value="200" placeholder="200"::value="3000" placeholder="3000"#(/intranetHint)# maxlength="4" class="spinner" data-min="0"/> ms
+            <div class="formHint hidden">
+              <p class="error" data-id="range">
+                Please enter a value greater than <code>-1</code>.
+              </p>
+              <p class="error" data-id="invalid">
+                Please enter only digits (<code>0&mdash;9</code>).
+              </p>
+              <p class="warning">
+                Using the default value (<code>#(intranetHint)#200::3000#(/intranetHint)#</code>).
+              </p>
+            </div>
           </div>
         </fieldset>
       </fieldset>
@@ -99,8 +119,8 @@
         <fieldset class="formSection">
           <legend>Accumulate</legend>
           <div class="content">
-            <input type="checkbox" name="accumulatescancache" id="accumulatescancache" checked="checked" />
-            <label for="accumulatescancache">accumulate scan results with access type "granted" into scan cache (do not delete old scan result)</label>
+            <input type="checkbox" name="accumulatescancache" id="accumulateScanCache" checked="checked" />
+            <label for="accumulateScanCache">accumulate scan results with access type <em>granted</em> into scan cache (do not delete old scan result)</label>
           </div>
         </fieldset>
       </fieldset>
@@ -142,8 +162,8 @@
         <fieldset class="formSection">
           <legend>Timed rescan</legend>
           <div class="content">
-            <input type="radio" name="rescan" value="scheduler" id="scheduleUse" onclick="document.getElementById('accumulatescancache').checked = false" #(rescanCheck)#::checked="checked"#(/rescanCheck)# />
-            <label for="scheduleUse">scan and add all sites with granted access automatically. This disables the scan cache accumulation.</label>
+            <input type="radio" name="rescan" value="scheduler" id="scheduleUse" #(rescanCheck)#::checked="checked"#(/rescanCheck)# />
+            <label for="scheduleUse">scan and add all sites with <em>granted</em> access automatically. This disables the scan cache accumulation.</label>
             Look every
             <select name="repeat_time" data-toggle-id="scheduleUse">
              <option value="1">1</option><option value="2">2</option><option value="3">3</option>
@@ -164,15 +184,17 @@
      </fieldset>
 
      <fieldset class="formControl">
+      <div id="ycu-error-count" class="description hiddden"></div>
       <div class="content">
-        <button type="submit" id="scan" name="scan" class="submitready icon-run primary">Start Scan</button>
-        <div class="info" id="scanhostinfo" style="text-decoration: blink;">&nbsp;</div>
+        <button type="submit" id="submitScan" name="scan" class="submitready icon-run primary">Start Scan</button>
+        <div class="info blink" id="scanHostInfo"></div>
       </div>
     </fieldset>
   </fieldset>
 </form>
 
-<iframe src="/ServerScannerList.html?embedded=&amp;edit=" class="autoSize" sandbox="allow-same-origin"></iframe>
+<a name="#serverScannerList"></a>
+<iframe src="/ServerScannerList.html?embedded=&amp;edit=" class="autoSize"></iframe>
 
 #%env/templates/page-end.template%#
 </body>
