@@ -52,9 +52,9 @@
       <legend>Protection</legend>
       <div class="content">
         #(protection)#
-        <strong>Password is missing.</strong>
+        <strong class="error-txt">Password is missing.</strong>
         ::
-        password-protected
+        <span class="ok-txt">password-protected</span>
         #(/protection)#
       </div>
     </fieldset>
@@ -91,7 +91,7 @@
       <legend>Public Address</legend>
       <div class="content">
         #(peerAddress)#
-        peer address not assigned
+        <span class="warning-txt">peer address not assigned</span>
         ::
         <a href="http://#[address]#">http://#[address]#</a>
         <br/>
@@ -246,12 +246,8 @@
         <em>Enabled</em>&nbsp;&nbsp;<button type="submit" class="icon-config">Disable</button>
       </form>
       ::
-      <p>
-        <s class="sym sym-warning"></s>
-        <em>WARNING:</em> You do this on your own risk. If you do this without YaCy running on a desktop-pc, this will possibly break startup. In this case, you will have to edit the configuration manually in <code>DATA/SETTINGS/yacy.conf</code>.
-      </p>
       <form class="noSpace" action="Status.html?tray=true">
-        <button type="submit" class="icon-config">Enable</button>
+        <button type="submit" id="submitEnableTray" class="icon-config">Enable</button>
       </form>
       #(/tray)#
     </div>
