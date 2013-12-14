@@ -2772,20 +2772,30 @@ footer {
 
 /**********
 * Tables. */
-table tbody tr:not(.th):nth-child(odd) {
-  background-color: #cbd8ec; }
-table tbody tr:not(.th):nth-child(even) {
-  background-color: #b9cae5; }
-table tbody tr:not(.th):hover {
-  background-color: #f1f4fa; }
-table tr.th td,
-table th {
-  vertical-align: bottom;
-  color: #555;
-  border-color: #555;
-  font-weight: bold; }
-table td.breakAll {
-  word-wrap: break-word; }
+table {
+  border-bottom-width: 2px;
+  border-bottom-color: #555555;
+  border-bottom-style: solid; }
+  table tbody tr:not(.th):nth-child(odd) {
+    background-color: #cbd8ec; }
+  table tbody tr:not(.th):nth-child(even) {
+    background-color: #b9cae5; }
+  table tbody tr:not(.th):hover {
+    background-color: #f1f4fa; }
+  table tr.th td,
+  table th {
+    border-bottom-width: 2px;
+    border-bottom-color: #555555;
+    border-bottom-style: solid;
+    vertical-align: bottom;
+    color: #555;
+    font-weight: bold; }
+  table > tfoot td {
+    border-top-width: 1px;
+    border-top-color: #555555;
+    border-top-style: solid; }
+  table td.breakAll {
+    word-wrap: break-word; }
 
 table.fixed {
   table-layout: fixed; }

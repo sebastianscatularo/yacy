@@ -284,7 +284,12 @@ footer {
 * Tables. */
 // general tables
 table {
+  $color-table-line:#555;
+  $table-line-height:2px;
   @extend %font-sans;
+  border-bottom-width:$table-line-height;
+  border-bottom-color:$color-table-line;
+  border-bottom-style:solid;
 
   tbody {
     tr:not(.th):nth-child(odd) {
@@ -302,10 +307,18 @@ table {
 
   tr.th td,
   th {
+    border-bottom-width:$table-line-height;
+    border-bottom-color:$color-table-line;
+    border-bottom-style:solid;
     vertical-align:bottom;
     color:#555;
-    border-color:#555;
     font-weight:bold;
+  }
+
+  > tfoot td {
+    border-top-width:($table-line-height - 1px);
+    border-top-color:$color-table-line;
+    border-top-style:solid;
   }
 
   td.breakAll {
