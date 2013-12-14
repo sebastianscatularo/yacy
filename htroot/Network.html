@@ -57,6 +57,8 @@ function doanimation() {
   #%env/templates/page-start.template%#
   #(/menu)#
 
+  <div id="devInfo" data-todo="html"></div>
+
   <div id="api">
     <img src="/env/grafics/api.png" width="60" height="40" alt="API"/>
     <div>
@@ -122,14 +124,14 @@ function doanimation() {
   <table class="sortable">
     <thead>
       <tr>
-        <th>Name </th>
-        <th class="noSort">Info </th>
+        <th>Name</th>
+        <th class="noSort">Info</th>
         <th>Release</th>
         <th>PPM</th>
         <th>QPH</th>
         <th>Last Seen</th>
         <th>UTC Offset</th>
-        <th>Location </th>
+        <th>Location</th>
         <th>Uptime</th>
         <th>Links</th>
         <th>RWIs</th>
@@ -143,8 +145,8 @@ function doanimation() {
         <th>Hash</th>
         <th>Age</th>
         <th>#Seeds</th>
-        <th>con/h </th>
-        <th>user agent </th>
+        <th>con/h</th>
+        <th>user agent</th>
         <th>Peer Ping</th>
         #(/complete)#
       </tr>
@@ -152,7 +154,7 @@ function doanimation() {
     <tbody>
       #{list}#
       <tr>
-        <td #(special)#::class="TableCellActive"#(/special)#>
+        <td>
           <span class="nobr">
             <a href="http://www.#[fullname]#.yacy" class="noExt">#[shortname]#</a>
             #(ssl)#::&nbsp;<i class="fa fa-lock" title="SSL supported"></i>#(/ssl)#
@@ -227,29 +229,29 @@ function doanimation() {
             </span>
           </span>
         </td>
-        <td align="right">#[version]#</td>
-        <td align="right">#[ppm]#</td>
-        <td align="right">#[qph]#</td>
-        <td align="right">#[lastSeen]#</td>
-        <td align="right">#[utc]#</td>
-        <td align="right">#[location]#</td>
-        <td align="right" nowrap>#[uptime]#</td>
-        <td align="right">#[LCount]#</td>
-        <td align="right">#[ICount]#</td>
-        <td align="right">#[RCount]#</td>
-        <td align="right">#[sI]#</td>
-        <td align="right">#[sU]#</td>
-        <td align="right">#[rI]#</td>
-        <td align="right">#[rU]#</td>
+        <td>#[version]#</td>
+        <td>#[ppm]#</td>
+        <td>#[qph]#</td>
+        <td>#[lastSeen]#</td>
+        <td>#[utc]#</td>
+        <td>#[location]#</td>
+        <td>#[uptime]#</td>
+        <td>#[LCount]#</td>
+        <td>#[ICount]#</td>
+        <td>#[RCount]#</td>
+        <td>#[sI]#</td>
+        <td>#[sU]#</td>
+        <td>#[rI]#</td>
+        <td>#[rU]#</td>
         #(complete)#
         ::
         <td><a href="http://#[ip]#:#[port]#/Network.html?page=1&amp;ip=">http://#[ip]#:#[port]#</a></td>
-        <td >#[hash]#</td>
-        <td >#[age]#</td>
-        <td align="right">#[seeds]#</td>
-        <td align="right">#[connects]#</td>
-        <td align="right">#[userAgent]#</td>
-        <td align="right">[<a href="Network.html?page=4&amp;peerHash=#[hash]#&amp;peerIP=#[ip]#&amp;peerPort=#[port]#&amp;addPeer=add+Peer">Ping</a>]</td>
+        <td>#[hash]#</td>
+        <td>#[age]#</td>
+        <td>#[seeds]#</td>
+        <td>#[connects]#</td>
+        <td>#[userAgent]#</td>
+        <td>[<a href="Network.html?page=4&amp;peerHash=#[hash]#&amp;peerIP=#[ip]#&amp;peerPort=#[port]#&amp;addPeer=add+Peer">Ping</a>]</td>
         #(/complete)#
       </tr>
       #{/list}#
@@ -261,58 +263,84 @@ function doanimation() {
   ::
   <div>
     <table>
-      <tr class="TableHeader">
-        <td rowspan="5" class="TableHeader" width="10%">Network</td>
-        <td colspan="#(active-switch)#2::3::4::5::6#(/active-switch)#" width="22%">Online Peers</td>
-        <td rowspan="2" width="22%">Number of<br/>Documents</td>
-        <td rowspan="2" width="22%">Indexing Speed:<br/>Pages Per Minute (PPM)</td>
-        <td rowspan="2" width="22%">Query Frequency:<br/>Queries Per Hour (QPH)</td>
-      </tr>
-      <tr class="TableHeader">
-        #(active-switch)#::
-        <td>Last Hour</td>::
-        <td>Today</td><td>Last Hour</td>::
-        <td>Last&nbsp;Week</td><td>Today</td><td>Last Hour</td>::
-        <td>Last&nbsp;Month</td><td>Last&nbsp;Week</td><td>Today</td><td>Last Hour</td>
-        #(/active-switch)#
-        <td colspan="2">Now</td>
-      </tr>
-      <tr class="TableCellDark">
-        #(active-switch)#::
-        <td align="right" rowspan="3">#[last-hour]#</td>::
-        <td align="right" rowspan="3">#[last-day]#</td><td align="right" rowspan="3">#[last-hour]#</td>::
-        <td align="right" rowspan="3">#[last-week]#</td><td align="right" rowspan="3">#[last-day]#</td><td align="right" rowspan="3">#[last-hour]#</td>::
-        <td align="right" rowspan="3">#[last-month]#</td><td align="right" rowspan="3">#[last-week]#</td><td align="right" rowspan="3">#[last-day]#</td><td align="right" rowspan="3">#[last-hour]#</td>
-        #(/active-switch)#
-        <td align="left">Active</td>
-        <td align="right">#[active-count]#</td>
-        <td align="right">#[active-links]#</td>
-        <td align="right" rowspan="3">#[gppm]#</td>
-        <td align="right" rowspan="3">#[gqph]#</td>
-      </tr>
-      <tr class="TableCellDark">
-        <td align="left">Passive</td>
-        <td align="right">#[passive-count]#</td>
-        <td align="right">#[passive-links]#</td>
-      </tr>
-      <tr class="TableCellDark">
-        <td align="left">Potential</td>
-        <td align="right">#[potential-count]#</td>
-        <td align="right">#[potential-links]#</td>
-      </tr>
-      <tr class="TableCellSummary">
-        <td align="left" colspan="#(active-switch)#3::4::5::6::7#(/active-switch)#">This Peer</td>
-        <td align="right">#[my-LCount]#</td>
-        <td align="right">#[my-ppm]#</td>
-        <td align="right">#[my-qph]#</td>
-      </tr>
+      <thead>
+        <tr>
+          <th rowspan="5">Network</th>
+          <th colspan="#(active-switch)#2::3::4::5::6#(/active-switch)#">Online Peers</th>
+          <th rowspan="2">Number of<br/>Documents</th>
+          <th rowspan="2">Indexing Speed (<abbr title="Pages Per Minute">PPM</abbr>)</th>
+          <th rowspan="2">Query Frequency (<abbr title="Queries Per Hour">QPH</abbr>)</th>
+        </tr>
+        <tr class="TableHeader">
+          #(active-switch)#::
+          <th>Last Hour</th>
+          ::
+          <th>Today</th>
+          <th>Last Hour</th>
+          ::
+          <th>Last Week</th>
+          <th>Today</th>
+          <th>Last Hour</th>
+          ::
+          <th>Last Month</th>
+          <th>Last Week</th>
+          <th>Today</th>
+          <th>Last Hour</th>
+          #(/active-switch)#
+          <th colspan="2">Now</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          #(active-switch)#::
+          <td rowspan="3">#[last-hour]#</td>
+          ::
+          <td rowspan="3">#[last-day]#</td>
+          <td rowspan="3">#[last-hour]#</td>
+          ::
+          <td rowspan="3">#[last-week]#</td>
+          <td rowspan="3">#[last-day]#</td>
+          <td rowspan="3">#[last-hour]#</td>
+          ::
+          <td rowspan="3">#[last-month]#</td>
+          <td rowspan="3">#[last-week]#</td>
+          <td rowspan="3">#[last-day]#</td>
+          <td rowspan="3">#[last-hour]#</td>
+          #(/active-switch)#
+          <td>Active</td>
+          <td>#[active-count]#</td>
+          <td>#[active-links]#</td>
+          <td rowspan="3">#[gppm]#</td>
+          <td rowspan="3">#[gqph]#</td>
+        </tr>
+        <tr>
+          <td>Passive</td>
+          <td>#[passive-count]#</td>
+          <td>#[passive-links]#</td>
+        </tr>
+        <tr>
+          <td>Potential</td>
+          <td>#[potential-count]#</td>
+          <td>#[potential-links]#</td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="#(active-switch)#3::4::5::6::7#(/active-switch)#">This Peer</td>
+          <td>#[my-LCount]#</td>
+          <td>#[my-ppm]#</td>
+          <td>#[my-qph]#</td>
+        </tr>
+      </tfoot>
     </table>
   </div>
 
   <h2>Network Picture</h2>
-  <a href="NetworkPicture.png?width=1024&amp;height=720&amp;bgcolor=FFFFFF">
-    <img id="NetworkPicture" src="NetworkPicture.png?width=1024&amp;height=720&amp;bgcolor=FFFFFF&amp;coronaangle=0" alt="The YaCy Network" width="1024" height="720" />
-  </a>
+  <div style="max-width:1024" class="border">
+    <a href="NetworkPicture.png?width=1024&amp;height=720&amp;bgcolor=FFFFFF">
+      <img id="NetworkPicture" src="NetworkPicture.png?width=1024&amp;height=720&amp;bgcolor=FFFFFF&amp;coronaangle=0" alt="The YaCy Network" style="width:100%; height:auto;"/>
+    </a>
+  </div>
   <table>
     <tr>
       <td style="background-color:#668877">&nbsp;</td>
