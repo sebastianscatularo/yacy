@@ -265,13 +265,10 @@ function doanimation() {
     <table>
       <thead>
         <tr>
-          <th rowspan="5">Network</th>
           <th colspan="#(active-switch)#2::3::4::5::6#(/active-switch)#">Online Peers</th>
-          <th rowspan="2">Number of<br/>Documents</th>
-          <th rowspan="2">Indexing Speed (<abbr title="Pages Per Minute">PPM</abbr>)</th>
-          <th rowspan="2">Query Frequency (<abbr title="Queries Per Hour">QPH</abbr>)</th>
+          <th colspan="3">Index</th>
         </tr>
-        <tr class="TableHeader">
+        <tr>
           #(active-switch)#::
           <th>Last Hour</th>
           ::
@@ -288,45 +285,68 @@ function doanimation() {
           <th>Last Hour</th>
           #(/active-switch)#
           <th colspan="2">Now</th>
+          <th>Number of<br/>Documents</th>
+          <th>Indexing Speed (<abbr title="Pages Per Minute">PPM</abbr>)</th>
+          <th>Query Frequency (<abbr title="Queries Per Hour">QPH</abbr>)</th>
         </tr>
       </thead>
       <tbody>
         <tr>
           #(active-switch)#::
-          <td rowspan="3">#[last-hour]#</td>
+          <td>#[last-hour]#</td>
           ::
-          <td rowspan="3">#[last-day]#</td>
-          <td rowspan="3">#[last-hour]#</td>
+          <td>#[last-day]#</td>
+          <td>#[last-hour]#</td>
           ::
-          <td rowspan="3">#[last-week]#</td>
-          <td rowspan="3">#[last-day]#</td>
-          <td rowspan="3">#[last-hour]#</td>
+          <td>#[last-week]#</td>
+          <td>#[last-day]#</td>
+          <td>#[last-hour]#</td>
           ::
-          <td rowspan="3">#[last-month]#</td>
-          <td rowspan="3">#[last-week]#</td>
-          <td rowspan="3">#[last-day]#</td>
-          <td rowspan="3">#[last-hour]#</td>
+          <td>#[last-month]#</td>
+          <td>#[last-week]#</td>
+          <td>#[last-day]#</td>
+          <td>#[last-hour]#</td>
           #(/active-switch)#
           <td>Active</td>
           <td>#[active-count]#</td>
           <td>#[active-links]#</td>
-          <td rowspan="3">#[gppm]#</td>
-          <td rowspan="3">#[gqph]#</td>
+          <td>#[gppm]#</td>
+          <td>#[gqph]#</td>
         </tr>
         <tr>
+          #(active-switch)#::
+          <td></td>
+          ::
+          <td></td><td></td>
+          ::
+          <td></td><td></td><td></td>
+          ::
+          <td></td><td></td><td></td><td></td>
+          #(/active-switch)#
           <td>Passive</td>
           <td>#[passive-count]#</td>
           <td>#[passive-links]#</td>
+          <td></td><td></td>
         </tr>
         <tr>
+          #(active-switch)#::
+          <td></td>
+          ::
+          <td></td><td></td>
+          ::
+          <td></td><td></td><td></td>
+          ::
+          <td></td><td></td><td></td><td></td>
+          #(/active-switch)#
           <td>Potential</td>
           <td>#[potential-count]#</td>
           <td>#[potential-links]#</td>
+          <td></td><td></td>
         </tr>
       </tbody>
       <tfoot>
         <tr>
-          <td colspan="#(active-switch)#3::4::5::6::7#(/active-switch)#">This Peer</td>
+          <td colspan="#(active-switch)#2::3::4::5::6#(/active-switch)#">This Peer</td>
           <td>#[my-LCount]#</td>
           <td>#[my-ppm]#</td>
           <td>#[my-qph]#</td>
@@ -337,58 +357,34 @@ function doanimation() {
 
   <h2>Network Picture</h2>
   <div style="max-width:1024" class="border">
-    <a href="NetworkPicture.png?width=1024&amp;height=720&amp;bgcolor=FFFFFF">
+    <a href="NetworkPicture.png?width=1024&amp;height=720&amp;bgcolor=FFFFFF" class="iconic">
       <img id="NetworkPicture" src="NetworkPicture.png?width=1024&amp;height=720&amp;bgcolor=FFFFFF&amp;coronaangle=0" alt="The YaCy Network" style="width:100%; height:auto;"/>
     </a>
   </div>
   <table>
     <tr>
-      <td style="background-color:#668877">&nbsp;</td>
-      <td>dark green font</td>
-      <td>:</td>
-      <td>senior/principal peers</td>
+      <td style="background-color:#668877" class="border">&nbsp;</td>
+      <td>Dark green font: Senior/Principal peers</td>
+      <td style="background-color:#B3CCB3" class="border">&nbsp;</td>
+      <td>Light green font: Passive peers</td>
     </tr>
     <tr>
-      <td style="background-color:#B3CCB3">&nbsp;</td>
-      <td>light green font</td>
-      <td>:</td>
-      <td>passive peers</td>
+      <td style="background-color:#CCB3B3" class="border">&nbsp;</td>
+      <td>Pink font: Junior peers</td>
+      <td style="background-color:#BE6F4F" class="border">&nbsp;</td>
+      <td>Red point: This peer</td>
     </tr>
     <tr>
-      <td style="background-color:#CCB3B3">&nbsp;</td>
-      <td>pink font</td>
-      <td>:</td>
-      <td>junior peers</td>
+      <td style="background-color:#AAAAAA" class="border">&nbsp;</td>
+      <td>Grey waves: Crawling activity</td>
+      <td style="background-color:#66FF66" class="border">&nbsp;</td>
+      <td>Green radiation: Strong query activity</td>
     </tr>
     <tr>
-      <td style="background-color:#BE6F4F">&nbsp;</td>
-      <td>red point</td>
-      <td>:</td>
-      <td>this peer</td>
-    </tr>
-    <tr>
-      <td style="background-color:#AAAAAA">&nbsp;</td>
-      <td>grey waves</td>
-      <td>:</td>
-      <td>crawling activity</td>
-    </tr>
-    <tr>
-      <td style="background-color:#66FF66">&nbsp;</td>
-      <td>green radiation</td>
-      <td>:</td>
-      <td>strong query activity</td>
-    </tr>
-    <tr>
-      <td style="background-color:#FF6666">&nbsp;</td>
-      <td>red lines</td>
-      <td>:</td>
-      <td>DHT-out</td>
-    </tr>
-    <tr>
-      <td style="background-color:#44FF44">&nbsp;</td>
-      <td>green lines</td>
-      <td>:</td>
-      <td>DHT-in</td>
+      <td style="background-color:#FF6666" class="border">&nbsp;</td>
+      <td>Red lines: DHT-out</td>
+      <td style="background-color:#44FF44" class="border">&nbsp;</td>
+      <td>Green lines: DHT-in</td>
     </tr>
   </table>
 
