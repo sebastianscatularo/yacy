@@ -22,7 +22,9 @@
   #%env/templates/page-start.template%#
   #(/menu)#
 
-  <div id="devInfo" data-done="html5 script"></div>
+  <div id="devInfo" data-done="html5 script">
+    code cannot be valid
+  </div>
 
   <div id="api">
     <img class="api" src="/env/grafics/api.png" alt="API"/>
@@ -78,7 +80,7 @@
       </fieldset>
       <fieldset class="formControl">
         <div class="content">
-          <button type="submit" name="search" class="primary icon-search">Search</button>
+          <button type="submit" name="search" id="submitSearch" class="primary icon-search">Search</button>
         </div>
       </fieldset>
       <input type="hidden" name="page" value="#[page]#" />
