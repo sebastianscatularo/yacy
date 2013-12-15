@@ -503,7 +503,7 @@ YaCyUi.Func.Form.Hints.prototype = {
       };
 
       // check if element has hints defined
-      if (data === null || hint.length === 0) {
+      if (data === null || hint === null || hint.length === 0) {
         return 0;
       }
 
