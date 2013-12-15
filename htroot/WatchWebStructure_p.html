@@ -39,6 +39,12 @@
   <form action="/WatchWebStructure_p.html" id="configForm" accept-charset="UTF-8">
     <fieldset>
       <legend>Settings</legend>
+      <div class="description">
+        <p>
+          <s class="sym sym-hint"></s>
+          Changes will take effect immediately.
+        </p>
+      </div>
       <fieldset class="formSection">
         <legend>Host</legend>
         <div class="content">
@@ -138,7 +144,7 @@
   </form>
 
   <div style="max-width:100%;" class="border">
-    <img id="webPicture" src="WebStructurePicture_p.png?host=#[besthost]#&amp;depth=#[depth]#&amp;width=#[width]#&amp;height=#[height]#&amp;nodes=#[nodes]#&amp;time=#[time]#&amp;colortext=#[colortext]#&amp;colorback=#[colorback]#&amp;colordot0=#[colordot0]#&amp;colordota=#[colordota]#&amp;colorline=#[colorline]#&amp;colorlineend=#[colorlineend]#" alt="WebStructurePicture" style="width:100%; height:auto;"/>
+    <img id="webPicture" src="WebStructurePicture_p.png" alt="WebStructurePicture" style="width:100%; height:auto;"/>
   </div>
 
   #%env/templates/page-end.template%#

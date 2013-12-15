@@ -66,6 +66,8 @@ YaCyPage.init = function() {
       YaCyPage.changeImage();
     }
   });
+
+  YaCyPage.changeImage();
 };
 
 function changeHost() {
