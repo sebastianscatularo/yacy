@@ -30,4 +30,8 @@ YaCyPage.init = function() {
   window.setInterval(function() {
     YaCyPage.reloadGraph();
   }, 8000);
+
+  $('#submitEnableTray').on('click', function() {
+    return confirm('WARNING\nYou do this on your own risk. If you do this without YaCy running on a desktop-pc, this will possibly break startup. In this case, you will have to edit the configuration manually in "DATA/SETTINGS/yacy.conf".');
+  });
 };

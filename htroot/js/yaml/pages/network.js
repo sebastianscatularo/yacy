@@ -58,4 +58,13 @@ YaCyPage.init = function() {
       YaCyPage.doAnimation()
     }, 1000);
   }
+
+  var validator = new YaCyUi.Form.Validator({
+    toggle: $('#submitSearch')
+  }).addElement($('#match'), {
+    onload: true,
+    validators: [{
+      type: 'notEmpty'
+    }]
+  });
 };
