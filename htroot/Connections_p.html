@@ -1,27 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>YaCy '#[clientname]#': Server Connection Tracking</title>
-    #%env/templates/metas.template%#
-    <script type="text/javascript" src="/js/yaml/tablesorter/jquery.tablesorter.min.js"></script>
-    <meta http-equiv="REFRESH" content="3" />
-  </head>
-  <body id="Connections">
-    #%env/templates/header.template%#
+<head>
+  <title>YaCy '#[clientname]#': Server Connection Tracking</title>
+  #%env/templates/header-backend.template%#
+  <script type="text/javascript" src="/js/yaml/tablesorter/jquery.tablesorter.min.js"></script>
+  <meta http-equiv="REFRESH" content="3" />
+</head>
 
-    <h2>Server Connection Tracking</h2>
-    <h3>Incoming Connections</h3>
-    <p>Showing #[numActiveRunning]# active, #[numActivePending]# pending connections from a max. of #[numMax]# allowed incoming connections.</p>
-    <table class="sortable" border="0" cellpadding="2" cellspacing="1">
-      <tr class="TableHeader" valign="bottom">
-        <td>Protocol</td>
-        <td>Duration</td>
-        <td>Source IP[:Port]</td>
-        <td>Dest. IP[:Port]</td>
-        <td>Command</td>
-        <td>Used</td>
-        <td>Close</td>
+<body id="connections">
+  #%env/templates/page-start.template%#
+
+  <div id="devInfo" data-done="html5" data-todo="code">
+    data should be retrieved as JSON/XML and updated via JS to avoid page refreshes
+  </div>
+
+  <h1>Server Connection Tracking</h1>
+  <h2>Incoming Connections</h2>
+  <p>
+    Showing <code>#[numActiveRunning]#</code> active, <code>#[numActivePending]#</code> pending connections from a maximum of <code>#[numMax]#</code> allowed incoming connections.
+  </p>
+  <table class="sortable">
+    <thead>
+      <tr>
+        <th>Protocol</th>
+        <th>Duration</th>
+        <th>Source IP[:Port]</th>
+        <th>Dest. IP[:Port]</th>
+        <th>Command</th>
+        <th>Used</th>
+        <th>Close</th>
       </tr>
+    </thead>
+    <tbody>
       #{list}#
       <tr class="TableCell#(dark)#Light::Dark::Summary#(/dark)#" title="#[sessionName]#">
         <td>#[proto]#</td>
@@ -33,19 +43,25 @@
         <td><a href="Connections_p.html?closeServerSession=#[serverSessionID]#">[Close]</a></td>
       </tr>
       #{/list}#
-    </table>
+    </tbody>
+  </table>
 
-	<h3>Outgoing Connections</h3>
-	<p>Showing #[clientActive]# pooled outgoing connections used as:</p>
-    <table class="sortable" border="0" cellpadding="2" cellspacing="1">
-      <tr class="TableHeader" valign="bottom">
-        <td>Protocol</td>
-        <td>Duration</td>
-        <td>Up-Bytes</td>
-        <td>Dest. IP[:Port]</td>
-        <td>Command</td>
-        <td>ID</td>
+  <h2>Outgoing Connections</h2>
+  <p>
+    Showing <code>#[clientActive]#</code> pooled outgoing connections used as:
+  </p>
+  <table class="sortable">
+    <thead>
+      <tr>
+        <th>Protocol</th>
+        <th>Duration</th>
+        <th>Up-Bytes</th>
+        <th>Dest. IP[:Port]</th>
+        <th>Command</th>
+        <th>ID</th>
       </tr>
+    </thead>
+    <tbody>
       #{clientList}#
       <tr class="TableCell#(dark)#Light::Dark#(/dark)#">
         <td>#[clientProtocol]#</td>
@@ -56,8 +72,9 @@
         <td>#[clientID]#</td>
       </tr>
       #{/clientList}#
-    </table>
+    </tbody>
+  </table>
 
-    #%env/templates/footer.template%#
-  </body>
+  #%env/templates/page-end.template%#
+</body>
 </html>
