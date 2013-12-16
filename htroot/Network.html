@@ -24,6 +24,7 @@
 
   <div id="devInfo" data-done="html5 script">
     code cannot be valid
+    not all parts are tested
   </div>
 
   <div id="api">
@@ -472,7 +473,7 @@
         <td>#[my-ppm]# <abbr title="Pages per minute">PPM</abbr></td>
       </tr>
       <tr>
-        <td>Queries per hour (public &nbsp; local)</td>
+        <td>Queries per hour (public local)</td>
         <td>#[my-qph-publocal]#</td>
       </tr>
       <tr>
@@ -511,13 +512,11 @@
         <td><input name="peerPort" type="text" size="32" maxlength="128" value="#[peerPort]#" /></td>
       </tr>
       <tr>
-        <td>&nbsp;<input name="page" type="hidden" value="4" /></td>
+        <td><input name="page" type="hidden" value="4" /></td>
         <td><input type="submit" name="addPeer" value="add Peer" /></td>
       </tr>
     </table>
   </form>
-
-  <p>&nbsp;</p>
 
   Contacting current peer from another:
   <table>
@@ -526,7 +525,7 @@
       <td><input id="otherPeerAddress" type="text" size="32" maxlength="128" value=":8090" /></td>
     </tr>
     <tr>
-      <td>&nbsp;</td>
+      <td></td>
       <td><input type="button" value="contact current peer from this peer" onclick="top.location.href='http://' + document.getElementById('otherPeerAddress').value + '/Network.html?peerHash=#[my-hash]#&peerIP=#[my-ip]#&peerPort=#[my-port]#&page=4&addPeer=add+Peer'"/></td>
     </tr>
   </table>
