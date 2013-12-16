@@ -61,8 +61,8 @@ YaCyUi.Tools = YaCyUi.Tools || {
   /** Get the URL parametera of the current URL.
    * @return {Object} Key, value pairs of the URL parameters.
    */
-  getUrlParameters: function() {
-    var query = window.location.search.substring(1);
+  getUrlParameters: function(url) {
+    var query = url.substring(url.indexOf("?") + 1) || window.location.search.substring(1);
     var vars = query.split("&");
     var parameters = {};
 
