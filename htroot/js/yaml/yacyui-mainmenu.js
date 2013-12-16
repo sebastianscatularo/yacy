@@ -67,6 +67,7 @@ YaCyUi.Func.MainMenu = YaCyUi.Func.MainMenu || function() {
               currentMatches++;
             }
             if (currentMatches > matchesCount) {
+              matchesCount = currentMatches;
               current = candidate;
             }
           }
