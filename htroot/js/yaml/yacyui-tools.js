@@ -104,7 +104,7 @@ YaCyUi.Tools.PictureAnimation = function(conf) {
     imageArray[phase][0].src = conf.imageStub + angle + "&amp;handle=" + handle;
   }
 
-  function doAnimation(initial) {
+  function doAnimation() {
     for (var i = 0; i < imageArray.length; i++) {
       if (i == imageAnimIndex) {
         imageArray[i].show();
