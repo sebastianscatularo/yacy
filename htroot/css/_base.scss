@@ -269,6 +269,10 @@ footer {
   }
 }
 
+.breakAll {
+  word-wrap:break-word;
+}
+
 /* API bubble. */
 #api {
   position:absolute;
@@ -291,7 +295,7 @@ table {
   border-bottom-color:$color-table-line;
   border-bottom-style:solid;
 
-  tbody {
+  tbody:not(.plain) {
     tr:not(.th):nth-child(odd) {
       background-color:darken($ycu-var-color-table-cell-base, 5);
     }
@@ -319,10 +323,6 @@ table {
     border-top-width:($table-line-height - 1px);
     border-top-color:$color-table-line;
     border-top-style:solid;
-  }
-
-  td.breakAll {
-    word-wrap:break-word;
   }
 }
 // fixed width table

@@ -373,6 +373,15 @@ main {
   }
 }
 
+table.sideBar {
+  td {
+    padding:0.2em 0;
+  }
+  td:first-of-type {
+    padding-left:0.5em;
+  }
+}
+
 #searchMode {
   padding:0.5em;
   border:1px solid #ccc;

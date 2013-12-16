@@ -26,99 +26,134 @@
     #(nav-protocols)#::
     <div id="sidebarProtocols" class="accordion">
       <h3>Protocol Navigator</h3>
-      <div>
-        #{element}#
-        <label>
-          <input type="checkbox" onchange="window.location.href='#[url]#'"#(on)# checked="checked"::#(/on)#/>
-          #[name]# (#[count]#)
-        </label>
-        #{/element}#
-      </div>
+      <table class="sideBar">
+        <tbody class="plain">
+          #{element}#
+          <tr>
+            <td>
+              <input type="checkbox" onchange="window.location.href='#[url]#'"#(on)# checked="checked"::#(/on)#/>
+            </td>
+            <td>
+              #[name]# (#[count]#)
+            </td>
+          </tr>
+          #{/element}#
+        </tbody>
+      </table>
     </div>
     #(/nav-protocols)#
 
     #(nav-filetypes)#::
     <div id="sidebarFiletypes" class="accordion">
       <h3>Filetype Navigator</h3>
-      <div>
-        #{element}#
-        <label>
-          <input type="checkbox" onchange="window.location.href='#[url]#'"#(on)# checked="checked"::#(/on)#/>
-          #[name]# (#[count]#)
-        </label>
-        #{/element}#
-      </div>
+      <table class="sideBar">
+        <tbody class="plain">
+          #{element}#
+          <tr>
+            <td>
+              <input type="checkbox" onchange="window.location.href='#[url]#'"#(on)# checked="checked"::#(/on)#/>
+            </td>
+            <td>
+              #[name]# (#[count]#)
+            </td>
+          </tr>
+          #{/element}#
+        </tbody>
+      </table>
     </div>
     #(/nav-filetypes)#
 
     #(nav-domains)#::
     <div id="sidebarDomains" class="accordion">
       <h3>Domain Navigator</h3>
-      <div>
-        #{element}#
-        <label>
-          <input type="checkbox" onchange="window.location.href='#[url]#'"#(on)# checked="checked"::#(/on)#/>
-          #[name]# (#[count]#)
-        </label>
-        #{/element}#
+      <table class="sideBar">
+        <tbody class="plain">
+          #{element}#
+          <tr>
+            <td>
+              <input type="checkbox" onchange="window.location.href='#[url]#'"#(on)# checked="checked"::#(/on)#/>
+            </td>
+            <td class="breakAll">
+              #[name]# (#[count]#)
+            </td>
+            #{/element}#
+          </tbody>
+        </table>
       </div>
-    </div>
-    #(/nav-domains)#
+      #(/nav-domains)#
 
-    #(nav-namespace)#::
-    <div id="sidebarNameSpace" class="accordion">
-      <h3>Name Space Navigator</h3>
-      <div>
-        #{element}#
-        <label>
-          <input type="checkbox" onchange="window.location.href='#[url]#'"#(on)# checked="checked"::#(/on)#/>
-          #[name]# (#[count]#)
-        </label>
-        #{/element}#
+      #(nav-namespace)#::
+      <div id="sidebarNameSpace" class="accordion">
+        <h3>Name Space Navigator</h3>
+        <table class="sideBar">
+          <tbody class="plain">
+            #{element}#
+            <tr>
+              <td>
+                <input type="checkbox" onchange="window.location.href='#[url]#'"#(on)# checked="checked"::#(/on)#/>
+              </td>
+              <td>
+                #[name]# (#[count]#)
+              </td>
+            </tr>
+            #{/element}#
+          </tbody>
+        </table>
       </div>
-    </div>
-    #(/nav-namespace)#
+      #(/nav-namespace)#
 
-    #(nav-authors)#::
-    <div id="sidebarAuthors" class="accordion">
-      <h3>Author Navigator</h3>
-      <div>
-        #{element}#
-        <label>
-          <input type="checkbox" onchange="window.location.href='#[url]#'"#(on)# checked="checked"::#(/on)#/>
-          #[name]# (#[count]#)
-        </label>
-        #{/element}#
+      #(nav-authors)#::
+      <div id="sidebarAuthors" class="accordion">
+        <h3>Author Navigator</h3>
+        <table class="sideBar">
+          <tbody class="plain">
+            #{element}#
+            <tr>
+              <td>
+                <input type="checkbox" onchange="window.location.href='#[url]#'"#(on)# checked="checked"::#(/on)#/>
+              </td>
+              <td>
+                #[name]# (#[count]#)
+              </td>
+            </tr>
+            #{/element}#
+          </tbody>
+        </table>
       </div>
-    </div>
-    #(/nav-authors)#
+      #(/nav-authors)#
 
-    #{nav-vocabulary}#
-    <div id="sidebar#[navname]#" class="accordion">
-      <h3>#[navname]# Navigator</h3>
-      <div>
-        #{element}#
-        <label>
-          <input type="checkbox" onchange="window.location.href='#[url]#'"#(on)# checked="checked"::#(/on)#/>
-          #[name]# (#[count]#)
-        </label>
-        #{/element}#
+      #{nav-vocabulary}#
+      <div id="sidebar#[navname]#" class="accordion">
+        <h3>#[navname]# Navigator</h3>
+        <table class="sideBar">
+          <tbody class="plain">
+            #{element}#
+            <tr>
+              <td>
+                <input type="checkbox" onchange="window.location.href='#[url]#'"#(on)# checked="checked"::#(/on)#/>
+              </td>
+              <td>
+                #[name]# (#[count]#)
+              </td>
+            </tr>
+            #{/element}#
+          </tbody>
+        </table>
       </div>
-    </div>
-    #{/nav-vocabulary}#
+      #{/nav-vocabulary}#
 
-    #(nav-about)#::
-    <div id="sidebarAbout" class="accordion">
-      <h3>#[headline]#</h3>
-      <div>
-        #[body]#
+      #(nav-about)#::
+      <div id="sidebarAbout" class="accordion">
+        <h3>#[headline]#</h3>
+        <div>
+          #[body]#
+        </div>
       </div>
+      #(/nav-about)#
     </div>
-    #(/nav-about)#
-  </div>
-</aside>
+  </aside>
 
-<script type="text/javascript">
+  <script type="text/javascript">
   //<![CDATA[
   $(function() {
     $('#searchTrailer .ym-cbox').children('.accordion').accordion({
@@ -146,4 +181,4 @@
     ::#(/activate)##(/nav-protocols)#
   });
   //]]>
-</script>
+  </script>
