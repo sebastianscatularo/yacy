@@ -12,18 +12,18 @@ body#viewLog {
       opacity:0.7;
     }
     .level-info {
-      color:#2250EE;
+      color:$ycu-var-color-info-text;
     }
     .level-severe {
       font-weight:bold;
-      color:#880000;
+      color:$ycu-var-color-error-text;
     }
     .level-system {
       color:#EE22CE;
     }
     .level-warning {
       font-weight:bold;
-      color:#C38411;
+      color:$ycu-var-color-warning-text;
     }
   }
 }
