@@ -3693,15 +3693,6 @@ body#status #sidebar {
 body#status #queueMeters progress {
   width: 50%; }
 
-body#surftips #searchResults .searchResult {
-  border: 1px solid #d5e8f4;
-  border-radius: 5px;
-  background-color: #fdfefe;
-  padding: 1em;
-  margin-bottom: 1em; }
-body#surftips #searchResults h2 {
-  font-size: 1.1em; }
-
 body#terminal {
   background-color: #3d3d3d;
   color: #fff;
@@ -3825,3 +3816,14 @@ body#rssTerminal {
 
 body#configProperties .filtered {
   display: none; }
+
+body#surftips #searchResults .searchResult,
+body#supporter #searchResults .searchResult {
+  border: 1px solid #d5e8f4;
+  border-radius: 5px;
+  background-color: #fdfefe;
+  padding: 1em;
+  margin-bottom: 1em; }
+body#surftips #searchResults h2,
+body#supporter #searchResults h2 {
+  font-size: 1.1em; }
