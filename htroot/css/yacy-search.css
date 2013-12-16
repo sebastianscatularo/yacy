@@ -2615,6 +2615,8 @@ button {
     content: "\f00e\00a0"; }
   button.icon-showLess:before {
     content: "\f010\00a0"; }
+  button.icon-lock:before {
+    content: "\f023\00a0"; }
   button.icon-loader:before {
     -webkit-animation: spin 2s infinite linear;
     -moz-animation: spin 2s infinite linear;
@@ -2982,10 +2984,11 @@ body#yacySearch {
         line-height: 1.3em;
         text-align: center; }
         body#yacySearch .searchResult .icon .controls > * {
-          display: block; }
-        body#yacySearch .searchResult .icon .controls a i {
+          display: block;
+          margin-bottom: 0.3em; }
+        body#yacySearch .searchResult .icon .controls i.fa {
           opacity: 0.6; }
-        body#yacySearch .searchResult .icon .controls a:hover i {
+        body#yacySearch .searchResult .icon .controls a:hover i.fa {
           opacity: 1; }
     body#yacySearch .searchResult .content {
       margin-left: 30px; }

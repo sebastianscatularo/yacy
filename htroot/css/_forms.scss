@@ -151,6 +151,10 @@ button {
     content:'#{$fa-var-search-minus}\00a0';
   }
 
+  &.icon-lock:before {
+    content:'#{$fa-var-lock}\00a0';
+  }
+
   &.icon-loader:before {
     // 'spin' from fontAwesome SASS
     -webkit-animation: spin 2s infinite linear;

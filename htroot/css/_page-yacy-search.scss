@@ -143,14 +143,15 @@ main {
 
       > * {
         display:block;
+        margin-bottom:0.3em;
+      }
+
+      i.fa {
+        opacity:0.6;
       }
 
       a {
-        i {
-          opacity:0.6;
-        }
-
-        &:hover i {
+        &:hover i.fa {
           opacity:1;
         }
       }
