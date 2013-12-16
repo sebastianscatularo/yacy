@@ -3,14 +3,14 @@
 <head>
   <title>YaCy '#[clientname]#': Performance of Concurrent Processes</title>
   #%env/templates/header-backend.template%#
-  <meta http-equiv="REFRESH" content="3; url=/PerformanceConcurrency_p.html" />
+  <meta http-equiv="REFRESH" content="3"/>
 </head>
 
 <body id="performanceConcurrency">
   #%env/templates/page-start.template%#
 
-  <div id="devInfo">
-    refresh should be toggleable
+  <div id="devInfo" data-done="html5" data-todo="code">
+    data should be retrieved as JSON/XML and updated via JS to avoid page refreshes
   </div>
 
   <h1>Performance of Concurrent Processes</h1>
@@ -35,18 +35,18 @@
     <tbody>
       <tr>
         <td><code>#[threadname]#</code></td>
-        <td align="right">#[queuesize]#</td>
-        <td align="right">#[queuesizemax]#</td>
-        <td align="right">#[executors]#</td>
-        <td align="right">#[concurrency]#</td>
-        <td align="right"><code>#[childs]#</code></td>
-        <td align="right">#[blockreadtime]#&nbsp;ms</td>
-        <td align="right">#[blockreadpercent]#%</td>
-        <td align="right">#[exectime]#&nbsp;ms</td>
-        <td align="right">#[execpercent]#%</td>
-        <td align="right">#[blockwritetime]#&nbsp;ms</td>
-        <td align="right">#[blockwritepercent]#%</td>
-        <td align="right">#[totalcycles]#</td>
+        <td>#[queuesize]#</td>
+        <td>#[queuesizemax]#</td>
+        <td>#[executors]#</td>
+        <td>#[concurrency]#</td>
+        <td><code>#[childs]#</code></td>
+        <td>#[blockreadtime]#&nbsp;ms</td>
+        <td>#[blockreadpercent]#%</td>
+        <td>#[exectime]#&nbsp;ms</td>
+        <td>#[execpercent]#%</td>
+        <td>#[blockwritetime]#&nbsp;ms</td>
+        <td>#[blockwritepercent]#%</td>
+        <td>#[totalcycles]#</td>
       </tr>
       <tr>
         <td></td>
