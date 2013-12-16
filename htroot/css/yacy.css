@@ -3798,15 +3798,15 @@ body#viewLog #logContent code {
 body#viewLog #logContent .level-debug {
   opacity: 0.7; }
 body#viewLog #logContent .level-info {
-  color: #2250EE; }
+  color: #1a1074; }
 body#viewLog #logContent .level-severe {
   font-weight: bold;
-  color: #880000; }
+  color: #d01f14; }
 body#viewLog #logContent .level-system {
   color: #EE22CE; }
 body#viewLog #logContent .level-warning {
   font-weight: bold;
-  color: #C38411; }
+  color: #dba339; }
 
 body#rssTerminal {
   background: transparent; }
