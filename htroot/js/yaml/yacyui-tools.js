@@ -73,3 +73,62 @@ YaCyUi.Tools = YaCyUi.Tools || {
     return parameters;
   }
 };
+
+/**
+ * @prama {object} configuration:
+ * width {number}: width of the image
+ * height {number}: height of the image
+ * imageStub {string}: base file of the image
+ * element {jQuery}: html element to operate on
+ */
+YaCyUi.Tools.PictureAnimation = function(conf) {
+  var imageArray = [];
+  var imageAnimIndex = 0;
+  var imageCycles = 0;
+  var imageLoadIndex = 0;
+  conf.container = conf.element.parent();
+
+  function init() {
+    var handle = new Date().getTime();
+    for (var i = 0; i < 6; i++) {
+      conf.element.before(conf.element.clone().removeAttr('id').attr('data-index', i));
+      imageArray.push(conf.container.find('img[data-index="' + i + '"]').first());
+      initPhase(i, handle);
+    }
+    conf.element.remove();
+    doAnimation();
+  }
+
+  function initPhase(phase, handle) {
+    var angle = phase * 60;
+    imageArray[phase][0].src = conf.imageStub + angle + "&amp;handle=" + handle;
+  }
+
+  function doAnimation(initial) {
+    for (var i = 0; i < imageArray.length; i++) {
+      if (i == imageAnimIndex) {
+        imageArray[i].show();
+      } else {
+        imageArray[i].hide();
+      }
+    }
+    imageAnimIndex++;
+    if (imageAnimIndex == 6) {
+      imageAnimIndex = 0;
+    }
+    imageCycles++;
+    if (imageCycles == 25) {
+      initPhase(imageLoadIndex, new Date().getTime());
+      imageLoadIndex++;
+      if (imageLoadIndex == 6) {
+        imageLoadIndex = 0;
+      }
+      imageCycles = 0;
+    }
+    setTimeout(function() {
+      doAnimation()
+    }, 100);
+  };
+
+  init();
+};
