@@ -3,15 +3,20 @@
 <head>
   <title>YaCy '#[clientname]#': Performance Settings of Search Sequence</title>
   #%env/templates/header-backend.template%#
+  <script type="text/javascript" src="/js/yaml/pages/performanceSearch.js"></script>
 </head>
 
 <body id="performanceSearch">
   #%env/templates/page-start.template%#
 
+  <div id="devInfo" data-done="html5" data-todo="code">
+    generated URLS are not HTML escaped!
+  </div>
+
   <h1>Search Sequence Timing</h1>
 
   <h2>Timing results of latest search request</h2>
-  <table class="fixed">
+  <table class="fixed" id="latestRequests">
     <thead>
       <tr>
         <th>Query</th>
@@ -38,15 +43,22 @@
     </tbody>
   </table>
 
-  <p>
-    The network picture below shows how the latest search query was solved by asking corresponding peers in the <abbr>DHT</abbr>:
-    <ul>
-      <li>red: Request list alive</li>
-      <li>green: Request has terminated</li>
-      <li>grey: The search target hash order position(s) (more targets if a dht partition is used)</li>
-    </ul>
-    <img src="SearchEventPicture.png" alt="Search event picture" />
-  </p>
+  <div id="partsearchEventPicture">
+    <h2 class="numbered">Search Event Picture</h2>
+    <div class="p">
+      The network picture below shows how the latest search query was solved by asking corresponding peers in the <abbr>DHT</abbr>:
+      <ul>
+        <li>red: Request list alive</li>
+        <li>green: Request has terminated</li>
+        <li>
+          grey: The search target hash order position(s) (more targets if a <abbr>DHT</abbr> partition is used)
+        </li>
+      </ul>
+    </div>
+    <div style="max-width:100%;" class="center">
+      <img src="SearchEventPicture.png" alt="Search event picture" class="border"/>
+    </div>
+  </div>
   #%env/templates/page-end.template%#
 </body>
 </html>
