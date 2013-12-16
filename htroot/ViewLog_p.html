@@ -7,6 +7,9 @@
 
 <body id="viewLog">
   #%env/templates/page-start.template%#
+
+  <div id="devInfo" data-done="html5"></div>
+
   <h1>Server Log</h1>
 
   <form action="ViewLog_p.html" method="get" accept-charset="UTF-8">
@@ -42,9 +45,11 @@
   <fieldset id="logContent" class="framed">
     <legend>Log</legend>
     <code>
-      #{log}#<span class="level-#(level)#debug::info::system::warning::severe#(/level)#">#[line]#</span>#{/log}#
+      #{log}#
+      <span class="level-#(level)#debug::info::system::warning::severe#(/level)#">#[line]#</span>
+      #{/log}#
     </code>
-  </div>
+  </fieldset>
   #%env/templates/page-end.template%#
 </body>
 </html>
