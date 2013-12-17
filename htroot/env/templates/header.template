@@ -289,7 +289,7 @@
       <li><span>Project</span>
         <ul class="hidden">
           <li><a href="http://www.yacy.net/" target="_blank">Project Home</a></li>
-          <li><a href="/Help.html" target="_blank">Tutorials</a></li>
+          <li><a href="/Help.html">Tutorials</a></li>
           <li><a href="http://forum.yacy.de" target="_blank">Forum/Discussion</a></li>
           <li><a href="http://wiki.yacy.de" target="_blank">Project Wiki</a></li>
           <li><a href="https://gitorious.org/yacy/rc1/commits/master" target="_blank">Git Repository</a></li>
