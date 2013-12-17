@@ -1,207 +1,289 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>YaCy '#[clientname]#': Wiki</title>
-    #%env/templates/metas.template%#
-  </head>
-  <body id="Wiki">
-    #(topmenu)#
-    #%env/templates/embeddedheader.template%#
-    ::
-    #%env/templates/simpleheader.template%#
-    #(/topmenu)#
+<head>
+  <title>YaCy '#[clientname]#': Wiki</title>
+  #%env/templates/header-backend.template%#
+  <script type="text/javascript" src="/js/yaml/tablesorter/jquery.tablesorter.min.js"></script>
+  <script type="text/javascript" src="/js/yaml/pages/wiki.js"></script>
+</head>
 
-    #(mode)#
-    <!-- 0: viewing -->
-    <div class="Post">
-      <h2 class="PostSubject">YaCyWiki page: #[pagename]#</h2>
-      <div class="PostBody">
-        #[page]#
-      </div>
-      <p class="PostInfo">
-         last edited by #[author]# | change date #[date]# | <a href="Wiki.html?page=#[pagename]#&amp;edit=Edit">Edit</a> #(access)#(only granted to admin)::#(/access)#
-      </p>
-    </div>
-    <p class="Navigation">
-      <a href="Wiki.html">Start Page</a> -
-      <a href="Wiki.html?index=Index">Index</a> -
-      <a href="Wiki.html?page=#[pagename]#&amp;diff=">Versions</a> -
-    </p>
-    <form method="post" action="Wiki.html"><div>
+<body id="wiki">
+  #%env/templates/page-start.template%#
+
+  <div id="devInfo" data-done="html5 script"></div>
+
+  #(mode)#
+  <!-- 0: viewing -->
+  <h1 class="numbered">YaCyWiki page: #[pagename]#</h1>
+  #[page]#
+  <p class="postInfo">
+    last edited by #[author]# | change date #[date]# | <a href="Wiki.html?page=#[pagename]#&amp;edit=Edit">Edit</a> #(access)#(only granted to admin)::#(/access)#
+  </p>
+  <p class="navigation">
+    <a href="Wiki.html" class="pointLeft">Start Page</a> -
+    <a href="Wiki.html?index=Index">Index</a> -
+    <a href="Wiki.html?page=#[pagename]#&amp;diff=">Versions</a>
+  </p>
+  <form method="post" action="Wiki.html" enctype="multipart/form-data" accept-charset="UTF-8">
+    <div>
       <label for="access">Grant Write Access to</label>
-      #(access)#<input type="submit" id="access" name="access" value="all" />::<input type="submit" id="access" name="access" value="admin" />#(/access)#
-    </div></form>
-    ::
-    <!-- 1: edit -->
-    <h2>Edit</h2>
-    <form action="Wiki.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
-      <fieldset>
-        <dl>
-          <dt><label for="author">Author:</label></dt>
-          <dd>
-            <input name="author" id="author" type="text" size="80" maxlength="80" value="#[author]#" />
-          </dd>
-          <dt><label for="content">Text:</label></dt>
-          <dd>
-            <textarea name="content" id="content" cols="80" rows="24">#[page-code]#</textarea>
-          </dd>
-        </dl>
-        <p class="help">
-          You can use <a href="WikiHelp.html" onclick="window.open('WikiHelp.html','WikiHelp','toolbar=0,scrollbars=1,location=0,statusbar=0,menubar=0,resizable=1,width=640,height=480');return false;">Wiki Code</a> here.
-        </p>
-        <input type="hidden" name="page" value="#[pagename]#" />
-        <input type="hidden" name="reason" value="edit" />
-        <input type="submit" name="submit" value="Submit" />
-        <input type="submit" name="preview" value="Preview" />
-        <input type="submit" name="view" value="Discard" />
-      </fieldset>
-    </form>
-    ::
-    <!-- 2: preview -->
-    <h2>Preview</h2>
-    <p>No changes have been submitted so far!</p>
-    <div class="Post">
-      <h2 class="PostSubject">YaCyWiki page: #[pagename]#</h2>
-      <div class="PostBody">
-        #[page]#
-      </div>
-      <p class="PostInfo">
-        last edited by #[author]# | change date #[date]#
-      </p>
+      #(access)#<button type="submit" name="access" value="all" class="icon-user">All</button>::<button type="submit" name="access" value="admin" class="icon-user">Admin</button>#(/access)#
     </div>
-    <form action="Wiki.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
-      <fieldset>
-        <input type="submit" name="submit" value="Submit" />
-        <input type="submit" name="view" value="Discard" />
+  </form>
+  ::<!-- 1: edit -->
+  <h1>Edit</h1>
+  <form action="Wiki.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
+    <fieldset>
+      <legend>Page: <em>#[pagename]#</em></legend>
+      <fieldset class="formSection">
+        <legend>Author</legend>
+        <div class="content">
+          <input name="author" id="author" type="text" maxlength="80" value="#[author]#"/>
+          <div class="formHint hidden">
+            <p class="warning">
+              Author will be set to <code>anonymous</code>.
+            </p>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="formSection">
+        <legend>Text</legend>
+        <div class="content">
+          <textarea name="content">#[page-code]#</textarea>
+          <p class="help">
+            <s class="sym sym-hint"></s>
+            You can use <a href="WikiHelp.html" data-id="wikiHelp">Wiki Code</a> here.
+          </p>
+        </div>
+      </fieldset>
+      <fieldset class="formControl">
+        <div class="content">
+          <input type="hidden" name="page" value="#[pagename]#" />
+          <input type="hidden" name="reason" value="edit" />
+          <button type="submit" name="view" class="icon-revert">Discard</button>
+          <button type="submit" name="preview" class="icon-showMore">Preview</button>
+          <button type="submit" name="submit" class="primary icon-save">Save</button>
+        </div>
       </fieldset>
 
-    <h2>Edit</h2>
-
-      <fieldset>
-        <dl>
-          <dt><label for="author">Author:</label></dt>
-          <dd>
-            <input name="author" id="author" type="text" size="80" maxlength="80" value="#[author]#" />
-          </dd>
-          <dt><label for="content">Text:</label></dt>
-          <dd>
-            <textarea name="content" id="content" cols="80" rows="24">#[page-code]#</textarea>
-          </dd>
-        </dl>
-        <p class="help">
-          You can use <a href="WikiHelp.html" onclick="window.open('WikiHelp.html','WikiHelp','toolbar=0,scrollbars=1,location=0,statusbar=0,menubar=0,resizable=1,width=640,height=480');return false;">Wiki Code</a> here.
+    </fieldset>
+  </form>
+  <p>
+    <s class="sym sym-hint"></s>
+    Changes will be published as announcement on YaCyNews
+  </p>
+  ::<!-- 2: preview -->
+  <h1>Preview</h1>
+  <p>
+    <s class="sym sym-warning"></s>
+    No changes have been submitted so far!
+  </p>
+  <form action="Wiki.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
+    <fieldset>
+      <legend>Preview</legend>
+      <div class="content noIndent padded">
+        <h2>YaCyWiki page: #[pagename]#</h2>
+        #[page]#
+        <p class="postInfo">
+          last edited by #[author]# | change date #[date]#
         </p>
-        <input type="hidden" name="page" value="#[pagename]#" />
-        <input type="hidden" name="reason" value="edit" />
-        <input type="submit" name="submit" value="Submit" />
-        <input type="submit" name="preview" value="Preview" />
-        <input type="submit" name="view" value="Discard" />
+      </div>
+      <fieldset class="formControl">
+        <div class="content">
+          <button type="submit" name="view" class="icon-revert">Discard</button>
+          <button type="submit" name="submit" class="primary icon-save">Save</button>
+        </div>
       </fieldset>
-    </form>
-    ::
-    <!-- 3: Index -->
-    <h2>Index</h2>
-    <table border="0" cellpadding="5" cellspacing="0">
-      <tr class="TableHeader">
-        <td>Subject</td>
-        <td>Change Date</td>
-        <td>Last Author</td>
+    </fieldset>
+
+    <h2 class="numbered">Edit</h2>
+    <fieldset class="main">
+      <legend>Edit page</legend>
+      <fieldset class="formSection">
+        <legend>Author</legend>
+        <div class="content">
+          <input name="author" id="author" type="text" maxlength="80" value="#[author]#" />
+          <div class="formHint hidden">
+            <p class="warning">
+              Author will be set to <code>anonymous</code>.
+            </p>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="formSection">
+        <legend>Text</legend>
+        <div class="content">
+          <textarea name="content">#[page-code]#</textarea>
+          <p>
+            <s class="sym sym-hint"></s>
+            You can use <a href="WikiHelp.html" data-id="wikiHelp">Wiki Code</a> here.
+          </p>
+        </div>
+      </fieldset>
+      <fieldset class="formControl">
+        <div class="content">
+          <input type="hidden" name="page" value="#[pagename]#" />
+          <input type="hidden" name="reason" value="edit" />
+          <button type="submit" name="view" class="icon-revert">Discard</button>
+          <button type="submit" name="preview" class="icon-showMore">Update preview</button>
+          <button type="submit" name="submit" class="primary icon-save">Save</button>
+        </div>
+      </fieldset>
+    </fieldset>
+  </form>
+  <p>
+    <s class="sym sym-hint"></s>
+    Changes will be published as announcement on YaCyNews
+  </p>
+  ::
+  <!-- 3: Index -->
+  <h1>Index</h1>
+  <table class="sortable">
+    <thead>
+      <tr>
+        <th>Subject</th>
+        <th>Change Date</th>
+        <th>Last Author</th>
       </tr>
+    </thead>
+    <tbody>
       #{pages}#
-      <tr class="TableCellLight">
+      <tr>
         <td><a href="Wiki.html?page=#[name]#">#[subject]#</a></td>
         <td>#[date]#</td>
         <td>#[author]#</td>
       </tr>
       #{/pages}#
-    </table>
-    #(error)#::<p class="error">IO Error reading wiki database: #[message]#</p>#(/error)#
-    <p class="Navigation">
-      <a href="Wiki.html">Start Page</a>
-    </p>
-    ::
-    <!-- 4: Diff -->
-    <h2>Versions</h2>
-    #(error)#<!-- no error -->
-    <form method="get" action="Wiki.html">
-      <fieldset><legend>Select versions of page '#[page]#'</legend>
-        <input type="hidden" name="page" value="#[page]#" />
-        <input type="hidden" name="diff"/>
-        <dl>
-          <dt><label for="old">Compare version from</label>:</dt>
-          <dd>
-            <select id="old" name="old">#{versions}#
-              <option value="#[date]#"#(oldselected)#:: selected="selected"#(/oldselected)#>#[fdate]#</option>#{/versions}#
-            </select>
-            <input type="submit" name="viewold" value="Show" />
-          </dd>
-          <dt><label for="new">with version from</label>:</dt>
-          <dd>
-            <select id="new" name="new">
-              <optgroup label="current"><option value="#[curdate]#"#(curselected)#:: selected="selected"#(/curselected)#>#[curfdate]#</option></optgroup>#{versions}#
-              <option value="#[date]#"#(newselected)#:: selected="selected"#(/newselected)#>#[fdate]#</option>#{/versions}#
-            </select>
-          </dd>
-          <dt><input type="submit" name="compare" value="Compare" /></dt>
-        </dl>
+    </tbody>
+  </table>
+  #(error)#::
+  <p class="ycu-message ycu-message-error">
+    <span class="header">IO Error reading wiki database:</span>
+    <span class="content">#[message]#</span>
+  </p>
+  #(/error)#
+  <p class="navigation">
+    <a href="Wiki.html" class="pointLeft">Start Page</a>
+  </p>
+  ::
+  <!-- 4: Diff -->
+  <h1>Versions</h1>
+  #(error)#<!-- no error -->
+  <form method="get" action="Wiki.html#partPreview" enctype="multipart/form-data" accept-charset="UTF-8">
+    <fieldset>
+      <legend>Select versions of page <em>#[page]#</em></legend>
+      <input type="hidden" name="page" value="#[page]#" />
+      <input type="hidden" name="diff"/>
+      <fieldset class="formSection">
+        <legend>Compare version from</legend>
+        <div class="content">
+          <select name="old">
+            #{versions}#
+            <option value="#[date]#"#(oldselected)#:: selected="selected"#(/oldselected)#>
+              #[fdate]#
+            </option>
+            #{/versions}#
+          </select>
+          <button type="submit" name="viewold" class="plain pointRight">Show</button>
+        </div>
       </fieldset>
-    </form>
-    ::<!-- IO error -->
-    <h2>Error</h2>
-    <p class="error">IO Error reading wiki database: #[message]#</p>
-    ::<!-- no entries available for #[name]# -->
-    #(/error)#
-    #(versioning)#
-    ::<!-- 1: View diff -->
-    #[diff]#
-    ::<!-- 2: View selected version -->
-    <h2>Preview</h2>
-    <p>No changes have been submitted so far!</p>
-    <div class="Post">
-      <h2 class="PostSubject">YaCyWiki page: #[pagename]#</h2>
-      <div class="PostBody">
+      <fieldset class="formSection">
+        <legend>With version</legend>
+        <div class="content">
+          <select name="new">
+            <optgroup label="current">
+              <option value="#[curdate]#"#(curselected)#:: selected="selected"#(/curselected)#>
+                #[curfdate]#
+              </option>
+            </optgroup>
+            #{versions}#
+            <option value="#[date]#"#(newselected)#:: selected="selected"#(/newselected)#>
+              #[fdate]#
+            </option>
+            #{/versions}#
+          </select>
+        </div>
+      </fieldset>
+      <fieldset class="formControl">
+        <div class="content">
+          <button type="submit" name="compare" class="primary icon-run">Compare</button>
+        </div>
+      </fieldset>
+    </fieldset>
+  </form>
+  ::<!-- IO error -->
+  <h1>Error</h1>
+  <p class="error">IO Error reading wiki database: #[message]#</p>
+  ::<!-- no entries available for #[name]# -->
+  #(/error)#
+  #(versioning)#
+  ::<!-- 1: View diff -->
+  <a name="partPreview"></a>
+  #[diff]#
+  ::<!-- 2: View selected version -->
+  <h1 id="partPreview">Preview</h1>
+  <p>
+    <s class="sym sym-warning"></s>
+    No changes have been submitted so far!
+  </p>
+  <form action="Wiki.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
+    <fieldset class="main">
+      <legend>Preview</legend>
+      <div class="content noIndent padded">
+        <h2 class="PostSubject">YaCyWiki page: #[pagename]#</h2>
         #[page]#
-      </div>
-      <p class="PostInfo">
-        last edited by #[author]# | change date #[date]#
-      </p>
-    </div>
-    <form action="Wiki.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
-      <fieldset>
-        <input type="submit" name="submit" value="Submit" />
-        <input type="submit" name="view" value="Discard" />
-      </fieldset>
-      <h2>Edit</h2>
-      <fieldset>
-        <dl>
-          <dt><label for="author">Author:</label></dt>
-          <dd>
-            <input name="author" id="author" type="text" size="80" maxlength="80" value="#[author]#" />
-          </dd>
-          <dt><label for="content">Text:</label></dt>
-          <dd>
-            <textarea name="content" id="content" cols="80" rows="24">#[page-code]#</textarea>
-          </dd>
-        </dl>
-        <p class="help">
-          You can use
-          <a href="WikiHelp.html" onclick="window.open('WikiHelp.html','WikiHelp','toolbar=0,scrollbars=1,location=0,statusbar=0,menubar=0,resizable=1,width=640,height=480');return false;">Wiki Code</a> here.
+        <p class="postInfo">
+          last edited by #[author]# | change date #[date]#
         </p>
-        <input type="hidden" name="page" value="#[pagename]#" />
-        <input type="hidden" name="reason" value="edit" />
-        <input type="submit" name="submit" value="Submit" />
-        <input type="submit" name="preview" value="Preview" />
-        <input type="submit" name="view" value="Discard" />
+      </div>
+      <fieldset class="formControl">
+        <div class="content">
+          <button type="submit" name="view" class="icon-revert">Discard</button>
+          <button type="submit" name="submit" class="primary icon-save">Save</button>
+        </div>
       </fieldset>
-    </form>
-    #(/versioning)#
-    <p class="Navigation">
-      <a href="Wiki.html">Start Page</a> -
-      <a href="Wiki.html?page=#[page]#">Return to #[page]#</a>
-    </p>
-    #(/mode)#
+    </fieldset>
+    <fieldset class="main">
+      <legend>Edit</legend>
+      <fieldset class="formSection">
+        <legend>Author</legend>
+        <div class="content">
+          <input name="author" id="author" type="text" maxlength="80" value="#[author]#" />
+          <div class="formHint hidden">
+            <p class="warning">
+              Author will be set to <code>anonymous</code>.
+            </p>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="formSection">
+        <legend>Text</legend>
+        <div class="content">
+          <textarea name="content">#[page-code]#</textarea>
+          <p>
+            <s class="sym sym-hint"></s>
+            You can use <a href="WikiHelp.html" data-id="wikiHelp">Wiki Code</a> here.
+          </p>
+        </div>
+      </fieldset>
+      <fieldset class="formControl">
+        <div class="content">
+          <input type="hidden" name="page" value="#[pagename]#"/>
+          <input type="hidden" name="reason" value="edit"/>
+          <button type="submit" name="view" class="icon-revert">Discard</button>
+          <button type="submit" name="preview" class="icon-showMore">Preview</button>
+          <button type="submit" name="submit" class="primary icon-save">Submit</button>
+        </div>
+      </fieldset>
+    </fieldset>
+  </form>
+  #(/versioning)#
+  <p class="navigation">
+    <a href="Wiki.html" class="pointLeft">Start Page</a> -
+    <a href="Wiki.html?page=#[page]#">Return to #[page]#</a>
+  </p>
+  #(/mode)#
 
-    <p>Changes will be published as announcement on YaCyNews</p>
-    #%env/templates/footer.template%#
-  </body>
+  #%env/templates/page-end.template%#
+</body>
 </html>
