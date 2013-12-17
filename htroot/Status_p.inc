@@ -40,7 +40,7 @@
     <fieldset class="formControl">
       <div class="content">
         <form class="noSpace" action="PerformanceMemory_p.html">
-          <button class="icon-showMore" type="submit">View Memory Details</button>
+          <button class="plain icon-showMore" type="submit">View Memory Details</button>
         </form>
       </div>
     </fieldset>
@@ -67,7 +67,7 @@
     <fieldset class="formControl">
       <div class="content">
         <form class="noSpace" action="ConfigAccounts_p.html">
-          <button class="icon-config" type="submit">Configure accounts</button>
+          <button class="plain icon-config" type="submit">Configure accounts</button>
         </form>
       </div>
     </fieldset>
@@ -117,7 +117,7 @@
         </p>
         <div class="p">
           <form class="noSpace" action="Status.html?ResetTraffic=true">
-            <button class="icon-delete" type="submit">Reset traffic counters</button>
+            <button class="plain icon-delete" type="submit">Reset traffic counters</button>
           </form>
         </div>
       </div>
@@ -132,7 +132,7 @@
         </p>
         <div class="p">
           <form class="noSpace" action="Connections_p.html">
-            <button class="icon-showMore" type="submit">View details</button>
+            <button class="plain icon-showMore" type="submit">View details</button>
           </form>
         </div>
       </div>
@@ -142,7 +142,7 @@
       <div class="content">
         #(seedServer)#
         <form class="noSpace" action="Settings_p.html?page=seed">
-          <em>Disabled</em>&nbsp;&nbsp;<button class="icon-config" type="submit">Configure</button>
+          <em>Disabled</em>&nbsp;&nbsp;<button class="plain icon-config" type="submit">Configure</button>
         </form>
         ::
         Enabled: Updating to server #[seedServer]#.
@@ -176,7 +176,7 @@
         #[loaderQueueSize]#&nbsp;<progress max="#[loaderQueueMax]#" value="#[loaderQueueSize]#"></progress>&nbsp;#[loaderQueueMax]#
         <div class="p">
           <form class="noSpace" action="IndexCreateLoaderQueue_p.html">
-            <button type="submit" class="icon-showMore">View loader queue</button>
+            <button type="submit" class="plain icon-showMore">View loader queue</button>
           </form>
         </div>
       </div>
@@ -188,10 +188,10 @@
         #(localCrawlPaused)#::<em>(paused)</em>#(/localCrawlPaused)#
         <div class="p">
           <form class="noSpace inline" action="Status.html?#(localCrawlPaused)#pauseCrawlJob::continueCrawlJob#(/localCrawlPaused)#=&amp;jobType=localCrawl">
-            <button type="submit" class="icon-run">#(localCrawlPaused)#pause local crawl::continue local crawl#(/localCrawlPaused)#</button>
+            <button type="submit" class="plain icon-run">#(localCrawlPaused)#pause local crawl::continue local crawl#(/localCrawlPaused)#</button>
           </form>
           <form class="noSpace inline" action="IndexCreateQueues_p.html?stack=LOCAL">
-            <button type="submit" class="icon-run">View local queue</button>
+            <button type="submit" class="plain icon-run">View local queue</button>
           </form>
         </div>
       </div>
@@ -202,10 +202,10 @@
           #(localCrawlPaused)#::<em>(paused)</em>#(/localCrawlPaused)#
           <div class="p">
             <form class="noSpace inline" action="Status.html?#(remoteTriggeredCrawlPaused)#pauseCrawlJob::continueCrawlJob#(/remoteTriggeredCrawlPaused)#=&amp;jobType=remoteTriggeredCrawl">
-              <button type="submit" class="icon-run">#(remoteTriggeredCrawlPaused)#pause remote crawl::continue remote crawl#(/remoteTriggeredCrawlPaused)#</button>
+              <button type="submit" class="plain icon-run">#(remoteTriggeredCrawlPaused)#pause remote crawl::continue remote crawl#(/remoteTriggeredCrawlPaused)#</button>
             </form>
             <form class="noSpace inline" action="IndexCreateQueues_p.html?stack=REMOTE">
-              <button type="submit" class="icon-run">View remote queue</button>
+              <button type="submit" class="plain icon-run">View remote queue</button>
             </form>
           </div>
         </div>
@@ -224,11 +224,11 @@
     <div class="content">
       #(popup)#
       <form class="noSpace" action="Status.html?popup=true">
-        <em>Disabled</em>&nbsp;&nbsp;<button type="submit" class="icon-config">Enable</button>
+        <em>Disabled</em>&nbsp;&nbsp;<button type="submit" class="plain icon-config">Enable</button>
       </form>
       ::
       <form class="noSpace" action="Status.html?popup=false">
-        <em>Enabled</em>&nbsp;&nbsp;<button type="submit" class="icon-config">Disable</button>
+        <em>Enabled</em>&nbsp;&nbsp;<button type="submit" class="plain icon-config">Disable</button>
       </form>
       #(/popup)#
     </div>
@@ -239,15 +239,15 @@
     <div class="content">
       #(tray)#
       <form class="noSpace" action="ConfigProperties_p.html?tray=true">
-        <em>Disabled</em>&nbsp;&nbsp;<button type="submit" class="icon-config">Enable</button>
+        <em>Disabled</em>&nbsp;&nbsp;<button type="submit" class="plain icon-config">Enable</button>
       </form>
       ::
       <form class="noSpace" action="ConfigProperties_p.html?tray=false">
-        <em>Enabled</em>&nbsp;&nbsp;<button type="submit" class="icon-config">Disable</button>
+        <em>Enabled</em>&nbsp;&nbsp;<button type="submit" class="plain icon-config">Disable</button>
       </form>
       ::
       <form class="noSpace" action="Status.html?tray=true">
-        <button type="submit" id="submitEnableTray" class="icon-config">Enable</button>
+        <button type="submit" id="submitEnableTray" class="plain icon-config">Enable</button>
       </form>
       #(/tray)#
     </div>
