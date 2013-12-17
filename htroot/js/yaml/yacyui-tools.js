@@ -71,6 +71,30 @@ YaCyUi.Tools = YaCyUi.Tools || {
       parameters[pair[0]] = pair[1];
     }
     return parameters;
+  },
+
+  /** Open a new window.
+   * @param {string} url to open
+   * @param {string} title of new window
+   * @param {object} configuration for new window, use default, if undefined
+   */
+  openWindow: function(url, title, conf) {
+    conf = conf || {
+      toolbar: 0,
+      scrollbars: 1,
+      location: 0,
+      status: 0,
+      menubar: 0,
+      resizable: 1,
+      width: 640,
+      height: 480
+    };
+    var confStr = '';
+    for (var key in conf) {
+      confStr += key + '=' + conf[key] + ',';
+    }
+    confStr = confStr.replace(/,$/, '');
+    window.open(url, title, confStr);
   }
 };
 
