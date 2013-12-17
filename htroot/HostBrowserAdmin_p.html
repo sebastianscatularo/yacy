@@ -1,12 +1,10 @@
-
-    #(hosts)#::  
-     <form action="HostBrowser.html" method="get">  
-     <fieldset><legend>Administration Options</legend>
-       <dl>             
-         <dd>
-           <div>Delete all <spawn class="error">Load Errors</spawn> from index <input style="width:240px " type="submit" name="deleteLoadErrors" value="Delete Load Errors" class="submitready"/></div>
-         </dd>
-       </dl>
-     </fieldset>
-     </form>  
-    #(/hosts)#
+#(hosts)#::
+<form action="HostBrowser.html" method="get">
+  <fieldset>
+    <legend>Administration Options</legend>
+    <div class="content noIndent padded">
+      <button type="submit" name="deleteLoadErrors" class="plain icon-delete">Delete all <em>Load Errors</em> from index</button>
+    </div>
+  </fieldset>
+</form>
+#(/hosts)#
