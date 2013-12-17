@@ -23,11 +23,11 @@
 
   <h1>Performance Settings</h1>
 
-  <fieldset class="framed" style="width:600px;">
+  <fieldset class="centered framed" style="width:600px;">
     <legend class="light">Performance Graph</legend>
     <img src="PerformanceGraph.png?nopeers=" id="graph" alt="PerformanceGraph" width="660" height="240"/>
     <br/>
-    <input type="checkbox" id="autoReload"/>
+    <input type="checkbox" id="autoReload" checked="checked"/>
     <label for="autoReload">refresh graph</label>
   </fieldset>
 
@@ -67,7 +67,7 @@
           #(observerTrigger)#not triggered::<strong>triggered</strong>#(/observerTrigger)#
         </p>
         <form action="?resetObserver=#partObserver" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
-          <button class="icon-run">reset state</button>
+          <button class="plain icon-run">reset state</button>
         </form>
       </div>
     </fieldset>
@@ -95,13 +95,13 @@
             <label for="diskFreeHardlimit">If free disk space is below</label>
             <input name="diskFreeHardlimit" id="diskFreeHardlimit" placeholder="1000" type="text" size="4" value="#[diskFreeHardlimit]#" class="spinner"/> <abbr>MiB</abbr>
             <div class="formHint hidden">
-            <p class="warning">
-              Using the default value of <code>1.000</code>.
-            </p>
-            <p class="error">
-              Please enter only digits (<code>0&mdash;9</code>).
-            </p>
-          </div>
+              <p class="warning">
+                Using the default value of <code>1.000</code>.
+              </p>
+              <p class="error">
+                Please enter only digits (<code>0&mdash;9</code>).
+              </p>
+            </div>
           </div>
         </fieldset>
       </fieldset>
@@ -114,13 +114,13 @@
             <label for="memoryAcceptDHT">If free memory space is below</label>
             <input name="memoryAcceptDHT" id="memoryAcceptDHT" placeholder="50" type="text" size="4" value="#[memoryAcceptDHT]#" class="spinner"/> <abbr>MiB</abbr>
             <div class="formHint hidden">
-            <p class="warning">
-              Using the default value of <code>50</code>.
-            </p>
-            <p class="error">
-              Please enter only digits (<code>0&mdash;9</code>).
-            </p>
-          </div>
+              <p class="warning">
+                Using the default value of <code>50</code>.
+              </p>
+              <p class="error">
+                Please enter only digits (<code>0&mdash;9</code>).
+              </p>
+            </div>
           </div>
         </fieldset>
       </fieldset>
