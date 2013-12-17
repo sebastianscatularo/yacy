@@ -59,4 +59,10 @@ YaCyPage.init = function() {
       YaCyPage.enableMode();
     }
   });
+
+  $('#addCustomUrl').on('click', function(evObj) {
+    evObj.preventDefault();
+    $('#networkDefinitionURLfield').show();
+    $(this).hide();
+  });
 };
