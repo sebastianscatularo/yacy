@@ -173,7 +173,9 @@
     <fieldset class="formSection">
       <legend>Loader queue</legend>
       <div class="content">
-        #[loaderQueueSize]#&nbsp;<progress max="#[loaderQueueMax]#" value="#[loaderQueueSize]#"></progress>&nbsp;#[loaderQueueMax]#
+        <p>
+          #[loaderQueueSize]#&nbsp;<progress max="#[loaderQueueMax]#" value="#[loaderQueueSize]#"></progress>&nbsp;#[loaderQueueMax]#
+        </p>
         <div class="p">
           <form class="noSpace" action="IndexCreateLoaderQueue_p.html">
             <button type="submit" class="plain icon-showMore">View loader queue</button>
@@ -184,8 +186,10 @@
     <fieldset class="formSection">
       <legend>Local crawl</legend>
       <div class="content">
-        Size: #[localCrawlQueueSize]#
-        #(localCrawlPaused)#::<em>(paused)</em>#(/localCrawlPaused)#
+        <p>
+          Size: #[localCrawlQueueSize]#
+          #(localCrawlPaused)#::<em>(paused)</em>#(/localCrawlPaused)#
+        </p>
         <div class="p">
           <form class="noSpace inline" action="Status.html?#(localCrawlPaused)#pauseCrawlJob::continueCrawlJob#(/localCrawlPaused)#=&amp;jobType=localCrawl">
             <button type="submit" class="plain icon-run">#(localCrawlPaused)#pause local crawl::continue local crawl#(/localCrawlPaused)#</button>
@@ -198,8 +202,10 @@
       <fieldset class="formSection">
         <legend>Remote crawl</legend>
         <div class="content">
-          Size: #[remoteTriggeredCrawlQueueSize]#
-          #(localCrawlPaused)#::<em>(paused)</em>#(/localCrawlPaused)#
+          <p>
+            Size: #[remoteTriggeredCrawlQueueSize]#
+            #(localCrawlPaused)#::<em>(paused)</em>#(/localCrawlPaused)#
+          </p>
           <div class="p">
             <form class="noSpace inline" action="Status.html?#(remoteTriggeredCrawlPaused)#pauseCrawlJob::continueCrawlJob#(/remoteTriggeredCrawlPaused)#=&amp;jobType=remoteTriggeredCrawl">
               <button type="submit" class="plain icon-run">#(remoteTriggeredCrawlPaused)#pause remote crawl::continue remote crawl#(/remoteTriggeredCrawlPaused)#</button>
