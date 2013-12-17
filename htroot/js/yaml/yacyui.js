@@ -193,7 +193,7 @@ YaCyUi.init = function() {
   }
 
   // init form element functions, if forms are available
-  if ($('form').length > 0 && typeof YaCyUi.modules.form === 'undefined') {
+  if ($('form, input[type="text"], textarea').length > 0 && typeof YaCyUi.modules.form === 'undefined') {
     YaCyUi.modules.form = YaCyUi.Func.Form;
     YaCyUi.modules.form.init();
   }
