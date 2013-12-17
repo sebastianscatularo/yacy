@@ -2814,6 +2814,9 @@ footer {
   #api img.hasInfo {
     cursor: pointer; }
 
+.centered {
+  margin: auto; }
+
 /** Link classes */
 a.pointLeft:before, button.pointLeft.plain:before,
 button[type="submit"].plain.pointLeft:before {
