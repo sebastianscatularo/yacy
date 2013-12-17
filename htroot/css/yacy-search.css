@@ -605,7 +605,7 @@
         list-style-type: none;
         margin: 0 .25em 0 0;
         padding: 0; }
-        .ym-hlist ul li a, .ym-hlist ul li strong {
+        .ym-hlist ul li a, .ym-hlist ul li button.plain, .ym-hlist ul li strong {
           background: transparent;
           color: #aaa;
           display: block;
@@ -616,9 +616,11 @@
           text-decoration: none;
           text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
           width: auto; }
-        .ym-hlist ul li a:focus,
+        .ym-hlist ul li a:focus, .ym-hlist ul li button.plain:focus,
         .ym-hlist ul li a:hover,
-        .ym-hlist ul li a:active {
+        .ym-hlist ul li button.plain:hover,
+        .ym-hlist ul li a:active,
+        .ym-hlist ul li button.plain:active {
           color: #ccc;
           background: #666;
           background: rgba(255, 255, 255, 0.25);
@@ -632,8 +634,11 @@
           color: #fff; }
           .ym-hlist ul li.active strong,
           .ym-hlist ul li.active a:focus,
+          .ym-hlist ul li.active button.plain:focus,
           .ym-hlist ul li.active a:hover,
-          .ym-hlist ul li.active a:active {
+          .ym-hlist ul li.active button.plain:hover,
+          .ym-hlist ul li.active a:active,
+          .ym-hlist ul li.active button.plain:active {
             background: transparent;
             color: #fff;
             text-decoration: none; }
@@ -890,18 +895,19 @@
     border-bottom: 1px #eeeeee solid; }
 
   /*--- Links ----------------------------------------------------------------------------------------- */
-  a {
+  a, button.plain {
     color: #4d87c7;
     background: transparent;
     text-decoration: none; }
 
-  a:active {
+  a:active, button.plain:active {
     outline: none; }
 
   /* (en) maximum constrast for tab focus - change with great care */
   /* (en) Maximaler Kontrast für Tab Focus - Ändern Sie diese Regel mit Bedacht */
-  a:hover,
-  a:focus {
+  a:hover, button.plain:hover,
+  a:focus,
+  button.plain:focus {
     background-color: #4d87c7;
     color: white;
     text-decoration: none; }
@@ -2484,18 +2490,21 @@ select,
   to {
     visibility: hidden; } }
 
-a[href^="http://"]:not(.noExt):before,
-a[href^="https://"]:not(.noExt):before, table.sortable th:not(.noSort):after, button[class*='icon-']:before {
+a[href^="http://"]:not(.noExt):before, button[href^="http://"].plain:not(.noExt):before,
+a[href^="https://"]:not(.noExt):before,
+button[href^="https://"].plain:not(.noExt):before, table.sortable th:not(.noSort):after, button[class*='icon-']:before {
   opacity: 0.7; }
 
-a[href^="http://"]:not(.noExt):before,
-a[href^="https://"]:not(.noExt):before, table.sortable th:not(.noSort):after, body#yacySearch #messages > p:before, body#yacySearch div #messages > .p:before, div body#yacySearch #messages > .p:before {
+a[href^="http://"]:not(.noExt):before, button[href^="http://"].plain:not(.noExt):before,
+a[href^="https://"]:not(.noExt):before,
+button[href^="https://"].plain:not(.noExt):before, table.sortable th:not(.noSort):after, body#yacySearch #messages > p:before, body#yacySearch div #messages > .p:before, div body#yacySearch #messages > .p:before {
   font-family: FontAwesome;
   font-style: normal;
   font-size: 0.85em; }
 
-a[href^="http://"]:not(.noExt):before,
-a[href^="https://"]:not(.noExt):before, table.sortable th:not(.noSort):after, body#yacySearch #messages > p:before, body#yacySearch div #messages > .p:before, div body#yacySearch #messages > .p:before {
+a[href^="http://"]:not(.noExt):before, button[href^="http://"].plain:not(.noExt):before,
+a[href^="https://"]:not(.noExt):before,
+button[href^="https://"].plain:not(.noExt):before, table.sortable th:not(.noSort):after, body#yacySearch #messages > p:before, body#yacySearch div #messages > .p:before, div body#yacySearch #messages > .p:before {
   display: inline-block; }
 
 #devInfo {
@@ -2564,12 +2573,16 @@ input[type="checkbox"] {
   border: 0 none;
   background: transparent; }
 
-input[type='text']:not('.fixed'),
-input[type='password']:not('.fixed'),
-input[type="range"]:not('.fixed'),
-textarea:not('.fixed'),
+input[type='text'],
+input[type='password'],
+input[type="range"],
+textarea,
 select.fullSize {
   width: 100%; }
+
+input.fixed,
+textarea.fixed {
+  width: auto; }
 
 button {
   display: inline-block;
@@ -2617,6 +2630,8 @@ button {
     content: "\f010\00a0"; }
   button.icon-lock:before {
     content: "\f023\00a0"; }
+  button.icon-user:before {
+    content: "\f007\00a0"; }
   button.icon-loader:before {
     -webkit-animation: spin 2s infinite linear;
     -moz-animation: spin 2s infinite linear;
@@ -2655,24 +2670,40 @@ button {
   button[type="submit"] .errors {
     font-style: italic; }
 
+button.plain {
+  background: transparent;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 0;
+  cursor: pointer;
+  margin: 0;
+  padding: 0; }
+  button.plain:focus {
+    border: none; }
+  button.plain:hover {
+    border: none; }
+  button.plain:active {
+    border: none; }
+
 label.disabled {
   opacity: 0.75; }
 
 .ui-spinner input {
   border-width: 0; }
 
-a {
+a, button.plain {
   color: #4d87c7; }
-  a.iconic:active, a.iconic:hover {
+  a.iconic:active, button.iconic.plain:active, a.iconic:hover, button.iconic.plain:hover {
     background-color: transparent;
     color: #4d87c7; }
 
-a[href^="http://"]:not(.noExt):before,
-a[href^="https://"]:not(.noExt):before {
+a[href^="http://"]:not(.noExt):before, button[href^="http://"].plain:not(.noExt):before,
+a[href^="https://"]:not(.noExt):before,
+button[href^="https://"].plain:not(.noExt):before {
   font-size: 0.7em;
   content: "\f045\00a0"; }
 
-.noExtLinkIcon a:before {
+.noExtLinkIcon a:before, .noExtLinkIcon button.plain:before {
   display: none !important; }
 
 /** Base */
@@ -2752,12 +2783,15 @@ footer {
 
 /**********
 * Special elements. */
-.noHover a.api:before,
-#api a.api:before {
+.noHover a.api:before, .noHover button.api.plain:before,
+#api a.api:before,
+#api button.api.plain:before {
   display: none; }
-.noHover a.api:active, .noHover a.api:hover,
+.noHover a.api:active, .noHover button.api.plain:active, .noHover a.api:hover, .noHover button.api.plain:hover,
 #api a.api:active,
-#api a.api:hover {
+#api button.api.plain:active,
+#api a.api:hover,
+#api button.api.plain:hover {
   background-color: transparent; }
 .noHover img.api,
 #api img.api {
@@ -2774,6 +2808,14 @@ footer {
   right: 1em; }
   #api img.hasInfo {
     cursor: pointer; }
+
+/** Link classes */
+a.pointLeft:before, button.pointLeft.plain:before,
+button[type="submit"].plain.pointLeft:before {
+  content: '\00ab\00a0'; }
+a.pointRight:after, button.pointRight.plain:after,
+button[type="submit"].plain.pointRight:after {
+  content: '\00a0\00bb'; }
 
 /**********
 * Tables. */
@@ -2849,9 +2891,10 @@ nav li,
   #navSub li * {
     color: #fff;
     text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3); }
-nav a,
+nav a, nav button.plain,
 nav span,
 #navSub a,
+#navSub button.plain,
 #navSub span {
   cursor: pointer;
   display: block;
@@ -2875,8 +2918,9 @@ body#yacySearch nav ul,
 body#webSearch nav ul {
   font-size: 0.8em;
   padding: 0; }
-body#yacySearch main a:before,
-body#webSearch main a:before {
+body#yacySearch main a:before, body#yacySearch main button.plain:before,
+body#webSearch main a:before,
+body#webSearch main button.plain:before {
   display: none; }
 body#yacySearch h1.greeting,
 body#webSearch h1.greeting {
@@ -2908,7 +2952,7 @@ body#yacySearch {
   body#yacySearch nav ul {
     font-size: 0.8em;
     padding: 0; }
-  body#yacySearch main a:before {
+  body#yacySearch main a:before, body#yacySearch main button.plain:before {
     display: none; }
   body#yacySearch h1.greeting {
     font-style: italic;
@@ -2966,7 +3010,7 @@ body#yacySearch {
     margin-right: 1.5em; }
   body#yacySearch #searchProgress {
     height: 1em; }
-  body#yacySearch main a:before {
+  body#yacySearch main a:before, body#yacySearch main button.plain:before {
     display: none; }
   body#yacySearch #resultsList {
     margin-right: 1em; }
@@ -2988,7 +3032,7 @@ body#yacySearch {
           margin-bottom: 0.3em; }
         body#yacySearch .searchResult .icon .controls i.fa {
           opacity: 0.6; }
-        body#yacySearch .searchResult .icon .controls a:hover i.fa {
+        body#yacySearch .searchResult .icon .controls a:hover i.fa, body#yacySearch .searchResult .icon .controls button.plain:hover i.fa {
           opacity: 1; }
     body#yacySearch .searchResult .content {
       margin-left: 30px; }
@@ -3008,7 +3052,7 @@ body#yacySearch {
           content: '|';
           display: inline-block;
           padding-right: 0.3em; }
-      body#yacySearch .searchResult .urlInfo a.iconic {
+      body#yacySearch .searchResult .urlInfo a.iconic, body#yacySearch .searchResult .urlInfo button.iconic.plain {
         font-size: 1.2em; }
     body#yacySearch .searchResult .date {
       font-style: italic; }
@@ -3049,10 +3093,10 @@ body#yacySearch {
       padding: 0 0.3em; }
   body#yacySearch #tagCloud {
     text-align: center; }
-    body#yacySearch #tagCloud a {
+    body#yacySearch #tagCloud a, body#yacySearch #tagCloud button.plain {
       display: inline-block;
       padding: 3px; }
-      body#yacySearch #tagCloud a:hover {
+      body#yacySearch #tagCloud a:hover, body#yacySearch #tagCloud button.plain:hover {
         border-radius: 5px;
         color: #fff !important; }
   body#yacySearch #sidebarAbout .ui-accordion-content {
@@ -3071,19 +3115,19 @@ body#yacySearch {
       font-family: FontAwesome;
       font-style: normal;
       font-size: 1.2em; }
-    body#yacySearch .resNav a,
+    body#yacySearch .resNav a, body#yacySearch .resNav button.plain,
     body#yacySearch .resNav span {
       display: inline-block;
       margin: 0 0.2em;
       padding: 0 0.25em; }
     body#yacySearch .resNav span.current {
       font-weight: bold; }
-    body#yacySearch .resNav a:not(.iconic) {
+    body#yacySearch .resNav a:not(.iconic), body#yacySearch .resNav button.plain:not(.iconic) {
       border-top: 3px solid transparent;
       font-weight: bold;
       border-radius: 3px;
       background-color: #d5e8f4; }
-      body#yacySearch .resNav a:not(.iconic):hover {
+      body#yacySearch .resNav a:not(.iconic):hover, body#yacySearch .resNav button.plain:not(.iconic):hover {
         border-top: 3px solid #94E84D;
         color: #4d87c7; }
     body#yacySearch .resNav .left:before {

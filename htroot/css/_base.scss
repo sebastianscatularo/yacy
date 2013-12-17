@@ -284,6 +284,17 @@ footer {
   }
 }
 
+/** Link classes */
+a,
+button[type="submit"].plain {
+  &.pointLeft:before {
+    content:'\00ab\00a0'; // &laquo;
+  }
+  &.pointRight:after {
+    content:'\00a0\00bb'; // &raquo;
+  }
+}
+
 /**********
 * Tables. */
 // general tables

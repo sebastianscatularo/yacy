@@ -605,7 +605,7 @@
         list-style-type: none;
         margin: 0 .25em 0 0;
         padding: 0; }
-        .ym-hlist ul li a, .ym-hlist ul li strong {
+        .ym-hlist ul li a, .ym-hlist ul li button.plain, .ym-hlist ul li strong {
           background: transparent;
           color: #aaa;
           display: block;
@@ -616,9 +616,11 @@
           text-decoration: none;
           text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
           width: auto; }
-        .ym-hlist ul li a:focus,
+        .ym-hlist ul li a:focus, .ym-hlist ul li button.plain:focus,
         .ym-hlist ul li a:hover,
-        .ym-hlist ul li a:active {
+        .ym-hlist ul li button.plain:hover,
+        .ym-hlist ul li a:active,
+        .ym-hlist ul li button.plain:active {
           color: #ccc;
           background: #666;
           background: rgba(255, 255, 255, 0.25);
@@ -632,8 +634,11 @@
           color: #fff; }
           .ym-hlist ul li.active strong,
           .ym-hlist ul li.active a:focus,
+          .ym-hlist ul li.active button.plain:focus,
           .ym-hlist ul li.active a:hover,
-          .ym-hlist ul li.active a:active {
+          .ym-hlist ul li.active button.plain:hover,
+          .ym-hlist ul li.active a:active,
+          .ym-hlist ul li.active button.plain:active {
             background: transparent;
             color: #fff;
             text-decoration: none; }
@@ -890,18 +895,19 @@
     border-bottom: 1px #eeeeee solid; }
 
   /*--- Links ----------------------------------------------------------------------------------------- */
-  a {
+  a, button.plain {
     color: #4d87c7;
     background: transparent;
     text-decoration: none; }
 
-  a:active {
+  a:active, button.plain:active {
     outline: none; }
 
   /* (en) maximum constrast for tab focus - change with great care */
   /* (en) Maximaler Kontrast für Tab Focus - Ändern Sie diese Regel mit Bedacht */
-  a:hover,
-  a:focus {
+  a:hover, button.plain:hover,
+  a:focus,
+  button.plain:focus {
     background-color: #4d87c7;
     color: white;
     text-decoration: none; }
@@ -2482,16 +2488,20 @@ select,
   to {
     visibility: hidden; } }
 
-a[href^="http://"]:not(.noExt):before,
-a[href^="https://"]:not(.noExt):before, table.sortable th:not(.noSort):after, .formHint > *:not(.clear):not(.tip):before, .resourceQueryBox .queryBox:after, #nav a.lock:before,
-#navSub a.lock:before, #breadCrumb span:not(:last-of-type):after, #breadCrumb:before, .icon-item-new:before, .icon-item-queued:before, .icon-item-done:before, #ycu-messages .closeBtn:before, body#crawlStartExpert #startPointDetails dd:before,
+a[href^="http://"]:not(.noExt):before, button[href^="http://"].plain:not(.noExt):before,
+a[href^="https://"]:not(.noExt):before,
+button[href^="https://"].plain:not(.noExt):before, table.sortable th:not(.noSort):after, .formHint > *:not(.clear):not(.tip):before, .resourceQueryBox .queryBox:after, #nav a.lock:before, #nav button.lock.plain:before,
+#navSub a.lock:before,
+#navSub button.lock.plain:before, #breadCrumb span:not(:last-of-type):after, #breadCrumb:before, .icon-item-new:before, .icon-item-queued:before, .icon-item-done:before, #ycu-messages .closeBtn:before, body#crawlStartExpert #startPointDetails dd:before,
 body#crawlStartSite #startPointDetails dd:before, body#crawlStartExpert #formReview dt:not(.notConfigured):before, body#crawlStartExpert .ycu-data-true:before, body#crawlStartExpert .ycu-data-false:before, button[class*='icon-']:before, fieldset.collapsible > legend:hover:before, fieldset.collapsible.collapsed > legend:before {
   opacity: 0.7; }
 
-a[href^="http://"]:not(.noExt):before,
-a[href^="https://"]:not(.noExt):before, table.sortable th:not(.noSort):after, .formHint > *:not(.clear):not(.tip):before, .resourceQueryBox .queryBox:after, #nav a.lock:before,
-#navSub a.lock:before, #breadCrumb span:not(:last-of-type):after, #breadCrumb:before, .icon-item-new:before, .icon-item-queued:before, .icon-item-done:before, #ycu-messages .closeBtn:before, body#crawlStartExpert #startPointDetails dd:before,
-body#crawlStartSite #startPointDetails dd:before, body#crawlStartExpert #formReview dt:not(.notConfigured):before, body#crawlStartExpert .ycu-data-true:before, body#crawlStartExpert .ycu-data-false:before, fieldset.collapsible > legend:before, fieldset.formSection .hasHelp:before, #navSub li a:after,
+a[href^="http://"]:not(.noExt):before, button[href^="http://"].plain:not(.noExt):before,
+a[href^="https://"]:not(.noExt):before,
+button[href^="https://"].plain:not(.noExt):before, table.sortable th:not(.noSort):after, .formHint > *:not(.clear):not(.tip):before, .resourceQueryBox .queryBox:after, #nav a.lock:before, #nav button.lock.plain:before,
+#navSub a.lock:before,
+#navSub button.lock.plain:before, #breadCrumb span:not(:last-of-type):after, #breadCrumb:before, .icon-item-new:before, .icon-item-queued:before, .icon-item-done:before, #ycu-messages .closeBtn:before, body#crawlStartExpert #startPointDetails dd:before,
+body#crawlStartSite #startPointDetails dd:before, body#crawlStartExpert #formReview dt:not(.notConfigured):before, body#crawlStartExpert .ycu-data-true:before, body#crawlStartExpert .ycu-data-false:before, fieldset.collapsible > legend:before, fieldset.formSection .hasHelp:before, #navSub li a:after, #navSub li button.plain:after,
 #navSub li span:after, #ycu-messages > *:before, .icon-control-run:before,
 .icon-control-pause:before,
 .icon-control-stop:before, body#hostBrowser .state:before, fieldset.formGroup > legend:before, fieldset.formGroup > legend:after {
@@ -2499,10 +2509,12 @@ body#crawlStartSite #startPointDetails dd:before, body#crawlStartExpert #formRev
   font-style: normal;
   font-size: 0.85em; }
 
-a[href^="http://"]:not(.noExt):before,
-a[href^="https://"]:not(.noExt):before, table.sortable th:not(.noSort):after, .formHint > *:not(.clear):not(.tip):before, .resourceQueryBox .queryBox:after, #nav a.lock:before,
-#navSub a.lock:before, #breadCrumb span:not(:last-of-type):after, #breadCrumb:before, .icon-item-new:before, .icon-item-queued:before, .icon-item-done:before, #ycu-messages .closeBtn:before, body#crawlStartExpert #startPointDetails dd:before,
-body#crawlStartSite #startPointDetails dd:before, body#crawlStartExpert #formReview dt:not(.notConfigured):before, body#crawlStartExpert .ycu-data-true:before, body#crawlStartExpert .ycu-data-false:before, fieldset.collapsible > legend:before, fieldset.formSection .hasHelp:before, #navSub li a:after,
+a[href^="http://"]:not(.noExt):before, button[href^="http://"].plain:not(.noExt):before,
+a[href^="https://"]:not(.noExt):before,
+button[href^="https://"].plain:not(.noExt):before, table.sortable th:not(.noSort):after, .formHint > *:not(.clear):not(.tip):before, .resourceQueryBox .queryBox:after, #nav a.lock:before, #nav button.lock.plain:before,
+#navSub a.lock:before,
+#navSub button.lock.plain:before, #breadCrumb span:not(:last-of-type):after, #breadCrumb:before, .icon-item-new:before, .icon-item-queued:before, .icon-item-done:before, #ycu-messages .closeBtn:before, body#crawlStartExpert #startPointDetails dd:before,
+body#crawlStartSite #startPointDetails dd:before, body#crawlStartExpert #formReview dt:not(.notConfigured):before, body#crawlStartExpert .ycu-data-true:before, body#crawlStartExpert .ycu-data-false:before, fieldset.collapsible > legend:before, fieldset.formSection .hasHelp:before, #navSub li a:after, #navSub li button.plain:after,
 #navSub li span:after, #ycu-messages > *:before, .icon-control-run:before,
 .icon-control-pause:before,
 .icon-control-stop:before, body#hostBrowser .state:before {
@@ -2574,12 +2586,16 @@ input[type="checkbox"] {
   border: 0 none;
   background: transparent; }
 
-input[type='text']:not('.fixed'),
-input[type='password']:not('.fixed'),
-input[type="range"]:not('.fixed'),
-textarea:not('.fixed'),
+input[type='text'],
+input[type='password'],
+input[type="range"],
+textarea,
 select.fullSize {
   width: 100%; }
+
+input.fixed,
+textarea.fixed {
+  width: auto; }
 
 button {
   display: inline-block;
@@ -2627,6 +2643,8 @@ button {
     content: "\f010\00a0"; }
   button.icon-lock:before {
     content: "\f023\00a0"; }
+  button.icon-user:before {
+    content: "\f007\00a0"; }
   button.icon-loader:before {
     -webkit-animation: spin 2s infinite linear;
     -moz-animation: spin 2s infinite linear;
@@ -2665,24 +2683,40 @@ button {
   button[type="submit"] .errors {
     font-style: italic; }
 
+button.plain {
+  background: transparent;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 0;
+  cursor: pointer;
+  margin: 0;
+  padding: 0; }
+  button.plain:focus {
+    border: none; }
+  button.plain:hover {
+    border: none; }
+  button.plain:active {
+    border: none; }
+
 label.disabled {
   opacity: 0.75; }
 
 .ui-spinner input {
   border-width: 0; }
 
-a {
+a, button.plain {
   color: #4d87c7; }
-  a.iconic:active, a.iconic:hover {
+  a.iconic:active, button.iconic.plain:active, a.iconic:hover, button.iconic.plain:hover {
     background-color: transparent;
     color: #4d87c7; }
 
-a[href^="http://"]:not(.noExt):before,
-a[href^="https://"]:not(.noExt):before {
+a[href^="http://"]:not(.noExt):before, button[href^="http://"].plain:not(.noExt):before,
+a[href^="https://"]:not(.noExt):before,
+button[href^="https://"].plain:not(.noExt):before {
   font-size: 0.7em;
   content: "\f045\00a0"; }
 
-.noExtLinkIcon a:before {
+.noExtLinkIcon a:before, .noExtLinkIcon button.plain:before {
   display: none !important; }
 
 /** Base */
@@ -2762,12 +2796,15 @@ footer {
 
 /**********
 * Special elements. */
-.noHover a.api:before,
-#api a.api:before {
+.noHover a.api:before, .noHover button.api.plain:before,
+#api a.api:before,
+#api button.api.plain:before {
   display: none; }
-.noHover a.api:active, .noHover a.api:hover,
+.noHover a.api:active, .noHover button.api.plain:active, .noHover a.api:hover, .noHover button.api.plain:hover,
 #api a.api:active,
-#api a.api:hover {
+#api button.api.plain:active,
+#api a.api:hover,
+#api button.api.plain:hover {
   background-color: transparent; }
 .noHover img.api,
 #api img.api {
@@ -2784,6 +2821,14 @@ footer {
   right: 1em; }
   #api img.hasInfo {
     cursor: pointer; }
+
+/** Link classes */
+a.pointLeft:before, button.pointLeft.plain:before,
+button[type="submit"].plain.pointLeft:before {
+  content: '\00ab\00a0'; }
+a.pointRight:after, button.pointRight.plain:after,
+button[type="submit"].plain.pointRight:after {
+  content: '\00a0\00bb'; }
 
 /**********
 * Tables. */
@@ -2877,6 +2922,8 @@ fieldset {
       padding-left: 0;
       width: auto;
       display: block; }
+    fieldset .content.padded {
+      padding: 0.5em; }
     fieldset .content hr {
       border: 0;
       height: 1px;
@@ -3169,9 +3216,10 @@ nav li,
   #navSub li * {
     color: #fff;
     text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3); }
-nav a,
+nav a, nav button.plain,
 nav span,
 #navSub a,
+#navSub button.plain,
 #navSub span {
   cursor: pointer;
   display: block;
@@ -3201,7 +3249,7 @@ nav span,
     padding-bottom: 0.2em;
     padding-left: 1em;
     margin: 0; }
-    #navSub li a:after,
+    #navSub li a:after, #navSub li button.plain:after,
     #navSub li span:after {
       margin-left: 0.3em;
       content: "\f0da";
@@ -3246,8 +3294,9 @@ nav span,
     #navSub div.menuLevel-3 li:hover {
       background-color: #8f8f8f; }
 
-#nav a.lock:before,
-#navSub a.lock:before {
+#nav a.lock:before, #nav button.lock.plain:before,
+#navSub a.lock:before,
+#navSub button.lock.plain:before {
   content: "\f023\00a0"; }
 
 #breadCrumb {
@@ -3484,8 +3533,9 @@ body#crawlStartSite #startPointDetails dd {
   body#crawlStartExpert #startPointDetails dd.ycu-data-false,
   body#crawlStartSite #startPointDetails dd.ycu-data-false {
     font-style: italic; }
-  body#crawlStartExpert #startPointDetails dd a:before,
-  body#crawlStartSite #startPointDetails dd a:before {
+  body#crawlStartExpert #startPointDetails dd a:before, body#crawlStartExpert #startPointDetails dd button.plain:before,
+  body#crawlStartSite #startPointDetails dd a:before,
+  body#crawlStartSite #startPointDetails dd button.plain:before {
     display: none; }
   body#crawlStartExpert #startPointDetails dd p.extInfo, body#crawlStartExpert #startPointDetails dd div .extInfo.p, div body#crawlStartExpert #startPointDetails dd .extInfo.p,
   body#crawlStartSite #startPointDetails dd p.extInfo,
@@ -3511,8 +3561,9 @@ body#crawlStartSite #startPointDetails li {
   margin: 0;
   margin-bottom: 0.3em;
   list-style: none; }
-  body#crawlStartExpert #startPointDetails li a,
-  body#crawlStartSite #startPointDetails li a {
+  body#crawlStartExpert #startPointDetails li a, body#crawlStartExpert #startPointDetails li button.plain,
+  body#crawlStartSite #startPointDetails li a,
+  body#crawlStartSite #startPointDetails li button.plain {
     display: inline-block;
     white-space: nowrap; }
   body#crawlStartExpert #startPointDetails li span,
@@ -3589,12 +3640,13 @@ body#crawlStartExpert .reviewContent {
 
 body#hostBrowser .hostList {
   font-size: 0.9em; }
-  body#hostBrowser .hostList li:hover a,
-  body#hostBrowser .hostList a:hover {
+  body#hostBrowser .hostList li:hover a, body#hostBrowser .hostList li:hover button.plain,
+  body#hostBrowser .hostList a:hover,
+  body#hostBrowser .hostList button.plain:hover {
     text-overflow: inherit;
     white-space: inherit;
     word-wrap: break-word; }
-  body#hostBrowser .hostList a {
+  body#hostBrowser .hostList a, body#hostBrowser .hostList button.plain {
     display: block;
     width: 12em;
     overflow: hidden;
@@ -3639,7 +3691,7 @@ body#hostBrowser .iconLegend p, body#hostBrowser .iconLegend div .p, div body#ho
   float: left;
   margin-right: 1.5em; }
 
-body#network a.updated {
+body#network a.updated, body#network button.updated.plain {
   color: #EE9922; }
 body#network .extNodeInfo {
   font-size: 0.8em; }
@@ -3707,9 +3759,9 @@ body#terminal {
   body#terminal p, body#terminal div .p, div body#terminal .p {
     margin: 5px 0 5px;
     padding: 0; }
-  body#terminal a {
+  body#terminal a, body#terminal button.plain {
     color: #fff; }
-    body#terminal a:hover {
+    body#terminal a:hover, body#terminal button.plain:hover {
       color: #EA672E;
       background-color: transparent; }
   body#terminal ul {
@@ -3734,7 +3786,7 @@ body#terminal {
     padding: 0 2px 0 2px;
     color: #666;
     font-size: 10px; }
-    body#terminal #location a {
+    body#terminal #location a, body#terminal #location button.plain {
       display: inline-block;
       margin-right: 0.5em; }
   body#terminal #left {
@@ -3747,7 +3799,7 @@ body#terminal {
     padding: 0 2px 0 2px;
     float: right;
     width: 680px; }
-    body#terminal #right a {
+    body#terminal #right a, body#terminal #right button.plain {
       color: #EA672E; }
   body#terminal div .bars {
     height: 3px;
@@ -3810,6 +3862,15 @@ body#viewLog #logContent .level-system {
 body#viewLog #logContent .level-warning {
   font-weight: bold;
   color: #dba339; }
+
+body#wiki .navigation {
+  border-top: 1px solid #ccc;
+  padding-top: 0.5em; }
+body#wiki .postInfo {
+  margin-top: 1.5em;
+  border: 1px solid #ccc;
+  padding: 0 0.5em;
+  border-radius: 5px; }
 
 body#rssTerminal {
   background: transparent; }

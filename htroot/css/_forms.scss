@@ -68,12 +68,17 @@ input[type="checkbox"] {
   background:transparent;// !important;
 }
 
-input[type='text']:not('.fixed'),
-input[type='password']:not('.fixed'),
-input[type="range"]:not('.fixed'),
-textarea:not('.fixed'),
+input[type='text'],
+input[type='password'],
+input[type="range"],
+textarea,
 select.fullSize {
   width:100%;
+}
+
+input.fixed,
+textarea.fixed {
+  width:auto;
 }
 
 button {
@@ -155,6 +160,10 @@ button {
     content:'#{$fa-var-lock}\00a0';
   }
 
+  &.icon-user:before {
+    content:'#{$fa-var-user}\00a0';
+  }
+
   &.icon-loader:before {
     // 'spin' from fontAwesome SASS
     -webkit-animation: spin 2s infinite linear;
@@ -216,6 +225,34 @@ button {
     font-style:italic;
   }
 }
+
+// plain buttons are displayed like text links
+button.plain {
+  @extend a;
+  background:transparent;
+  border:none !important;
+  box-shadow:none !important;
+  border-radius:0;
+  cursor:pointer;
+  margin:0;
+  padding:0;
+
+  &:focus {
+    @extend a:focus;
+    border:none;
+  }
+
+  &:hover {
+    @extend a:hover;
+    border:none;
+  }
+
+  &:active {
+    @extend a:active;
+    border:none;
+  }
+}
+
 
 label.disabled {
   opacity:$ycu-var-opacity-form-text-light;
