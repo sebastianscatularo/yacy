@@ -47,8 +47,8 @@
           </select>
           <em>(<a href="https://gitorious.org/yacy/rc1/commits/master">changelog</a> and <a href="https://gitorious.org/yacy/rc1/commits/master/feed.atom">RSS feed</a>)</em>
           <p>
-            <button type="submit" name="downloadRelease">Download Release</button>
-            <button type="submit" name="checkRelease">Check for new Release</button>
+            <button type="submit" name="downloadRelease" class="plain icon-run">Download Release</button>
+            <button type="submit" name="checkRelease" class="plain icon-run">Check for new Release</button>
           </p>
         </form>
       </div>
@@ -63,11 +63,9 @@
             ::
             <select name="releaseinstall">
               #(/downloadsAvailable)#
-
               #{downloadedreleases}#
               <option #(selected)#::selected="selected"#(/selected)# value="#[file]#">#[name]# #(signature)#(no signature)::(signed)#(/signature)#</option>
               #{/downloadedreleases}#
-
               #(downloadsAvailable)#::
             </select>
             #(/downloadsAvailable)#
@@ -75,8 +73,8 @@
             #(deployenabled)#::
             no automated installation on development environments
             ::
-            <button type="submit" name="deleteRelease" class="icon-delete" #(buttonsActive)#disabled="disabled"::#(/buttonsActive)#>Delete Release</button>
-            <button type="submit" name="update" class="icon-run" #(buttonsActive)#disabled="disabled"::#(/buttonsActive)#>Install Release</button>
+            <button type="submit" name="deleteRelease" class="plain icon-delete" #(buttonsActive)#disabled="disabled"::#(/buttonsActive)#>Delete Release</button>
+            <button type="submit" name="update" class="plain icon-run" #(buttonsActive)#disabled="disabled"::#(/buttonsActive)#>Install Release</button>
             #(/deployenabled)#
           </p>
         </form>
@@ -88,7 +86,7 @@
         <form action="ConfigUpdate_p.html#manualUpdateForm" method="get" accept-charset="UTF-8"><p>
           This will check for new releases, download if available and restart with downloaded release.
           <p>
-            <button type="submit" name="autoUpdate" class="icon-run">Check + Download + Install Release Now</button>
+            <button type="submit" name="autoUpdate" class="plain icon-run">Check + Download + Install Release Now</button>
             #(autoUpdate)#::
             <p class="ycu-message ycu-message-info">Download of release #[downloadedRelease]# finished. Restart Initiated.</p>::
             <p class="ycu-message ycu-message-error">No more recent release found.</p>::
