@@ -96,74 +96,6 @@ button {
   padding:0 1.5em;
   text-transform:capitalize;
 
-  &.icon-run:before {
-    content:'#{$fa-var-cog}\00a0';
-  }
-
-  &.icon-check:before {
-    content:'#{$fa-var-check}\00a0';
-  }
-
-  &.icon-add:before {
-    content:'#{$fa-var-plus}\00a0';
-  }
-
-  &.icon-config:before {
-    content:'#{$fa-var-wrench}\00a0';
-  }
-
-  &.icon-manual:before {
-    content:'#{$fa-var-book}\00a0';
-  }
-
-  &.icon-save:before {
-    content:'#{$fa-var-cog}\00a0';
-  }
-
-  &.icon-stop:before {
-    content:'#{$fa-var-power-off}\00a0';
-  }
-
-  &.icon-edit:before {
-    content:'#{$fa-var-pencil}\00a0';
-  }
-
-  &.icon-fix:before {
-    content:'#{$fa-var-exclamation-triangle}\00a0';
-  }
-
-  &.icon-search:before {
-    content:'#{$fa-var-search}\00a0';
-  }
-
-  &.icon-revert:before {
-    content:'#{$fa-var-times}\00a0';
-  }
-
-  &.icon-delete:before {
-    content:'#{$fa-var-trash-o}\00a0';
-  }
-
-  &.icon-refresh:before {
-    content:'#{$fa-var-refresh}\00a0';
-  }
-
-  &.icon-showMore:before {
-    content:'#{$fa-var-search-plus}\00a0';
-  }
-
-  &.icon-showLess:before {
-    content:'#{$fa-var-search-minus}\00a0';
-  }
-
-  &.icon-lock:before {
-    content:'#{$fa-var-lock}\00a0';
-  }
-
-  &.icon-user:before {
-    content:'#{$fa-var-user}\00a0';
-  }
-
   &.icon-loader:before {
     // 'spin' from fontAwesome SASS
     -webkit-animation: spin 2s infinite linear;
@@ -184,11 +116,8 @@ button {
 
   // button with icon first
   &[class*='icon-']:before {
-    @include icon-font;
-    @extend %opaque-light;
-    float:left;
     margin:0 1em 0 -1em;
-    padding:0 .2em;
+    float:left;
     box-shadow:1px 0 0 rgba(0,0,0,0.5), 2px 0 0 rgba(255,255,255,0.5);
   }
 

@@ -2493,7 +2493,7 @@ a[href^="https://"]:not(.noExt):before,
 button[href^="https://"].plain:not(.noExt):before, table.sortable th:not(.noSort):after, .formHint > *:not(.clear):not(.tip):before, .resourceQueryBox .queryBox:after, #nav a.lock:before, #nav button.lock.plain:before,
 #navSub a.lock:before,
 #navSub button.lock.plain:before, #breadCrumb span:not(:last-of-type):after, #breadCrumb:before, .icon-item-new:before, .icon-item-queued:before, .icon-item-done:before, #ycu-messages .closeBtn:before, body#crawlStartExpert #startPointDetails dd:before,
-body#crawlStartSite #startPointDetails dd:before, body#crawlStartExpert #formReview dt:not(.notConfigured):before, body#crawlStartExpert .ycu-data-true:before, body#crawlStartExpert .ycu-data-false:before, button[class*='icon-']:before, fieldset.collapsible > legend:hover:before, fieldset.collapsible.collapsed > legend:before {
+body#crawlStartSite #startPointDetails dd:before, body#crawlStartExpert #formReview dt:not(.notConfigured):before, body#crawlStartExpert .ycu-data-true:before, body#crawlStartExpert .ycu-data-false:before, *[class*='icon-']:before, fieldset.collapsible > legend:hover:before, fieldset.collapsible.collapsed > legend:before {
   opacity: 0.7; }
 
 a[href^="http://"]:not(.noExt):before, button[href^="http://"].plain:not(.noExt):before,
@@ -2611,40 +2611,6 @@ button {
   margin: 0 0.75em 0 0;
   padding: 0 1.5em;
   text-transform: capitalize; }
-  button.icon-run:before {
-    content: "\f013\00a0"; }
-  button.icon-check:before {
-    content: "\f00c\00a0"; }
-  button.icon-add:before {
-    content: "\f067\00a0"; }
-  button.icon-config:before {
-    content: "\f0ad\00a0"; }
-  button.icon-manual:before {
-    content: "\f02d\00a0"; }
-  button.icon-save:before {
-    content: "\f013\00a0"; }
-  button.icon-stop:before {
-    content: "\f011\00a0"; }
-  button.icon-edit:before {
-    content: "\f040\00a0"; }
-  button.icon-fix:before {
-    content: "\f071\00a0"; }
-  button.icon-search:before {
-    content: "\f002\00a0"; }
-  button.icon-revert:before {
-    content: "\f00d\00a0"; }
-  button.icon-delete:before {
-    content: "\f014\00a0"; }
-  button.icon-refresh:before {
-    content: "\f021\00a0"; }
-  button.icon-showMore:before {
-    content: "\f00e\00a0"; }
-  button.icon-showLess:before {
-    content: "\f010\00a0"; }
-  button.icon-lock:before {
-    content: "\f023\00a0"; }
-  button.icon-user:before {
-    content: "\f007\00a0"; }
   button.icon-loader:before {
     -webkit-animation: spin 2s infinite linear;
     -moz-animation: spin 2s infinite linear;
@@ -2657,10 +2623,8 @@ button {
     outline: 0;
     background: #fafafa; }
   button[class*='icon-']:before {
-    font-family: FontAwesome;
-    float: left;
     margin: 0 1em 0 -1em;
-    padding: 0 .2em;
+    float: left;
     box-shadow: 1px 0 0 rgba(0, 0, 0, 0.5), 2px 0 0 rgba(255, 255, 255, 0.5); }
   button.primary {
     border: 1px solid #007;
@@ -2837,6 +2801,63 @@ button[type="submit"].plain.pointLeft:before {
 a.pointRight:after, button.pointRight.plain:after,
 button[type="submit"].plain.pointRight:after {
   content: '\00a0\00bb'; }
+
+/** Icon classes */
+*[class*='icon-']:before {
+  font-family: FontAwesome;
+  padding: 0 .2em;
+  display: inline-block; }
+
+.icon-run:before {
+  content: "\f013\00a0"; }
+
+.icon-check:before {
+  content: "\f00c\00a0"; }
+
+.icon-add:before {
+  content: "\f067\00a0"; }
+
+.icon-config:before {
+  content: "\f0ad\00a0"; }
+
+.icon-manual:before {
+  content: "\f02d\00a0"; }
+
+.icon-save:before {
+  content: "\f013\00a0"; }
+
+.icon-stop:before {
+  content: "\f011\00a0"; }
+
+.icon-edit:before {
+  content: "\f040\00a0"; }
+
+.icon-fix:before {
+  content: "\f071\00a0"; }
+
+.icon-search:before {
+  content: "\f002\00a0"; }
+
+.icon-revert:before {
+  content: "\f00d\00a0"; }
+
+.icon-delete:before {
+  content: "\f014\00a0"; }
+
+.icon-refresh:before {
+  content: "\f021\00a0"; }
+
+.icon-showMore:before {
+  content: "\f00e\00a0"; }
+
+.icon-showLess:before {
+  content: "\f010\00a0"; }
+
+.icon-lock:before {
+  content: "\f023\00a0"; }
+
+.icon-user:before {
+  content: "\f007\00a0"; }
 
 /**********
 * Tables. */
