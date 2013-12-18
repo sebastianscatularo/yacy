@@ -1115,7 +1115,8 @@
   font-weight: normal;
   font-style: normal; }
 
-.fa, s.sym i:before {
+.fa, .lb-cancel:before, .lb-next:hover:before,
+.lb-prev:hover:before, .lb-data .lb-close:before, s.sym i:before {
   display: inline-block;
   font-family: FontAwesome;
   font-style: normal;
@@ -1173,12 +1174,14 @@
 .pull-left {
   float: left; }
 
-.fa.pull-left, s.sym i.pull-left:before {
+.fa.pull-left, .pull-left.lb-cancel:before, .pull-left.lb-next:hover:before,
+.pull-left.lb-prev:hover:before, .lb-data .pull-left.lb-close:before, s.sym i.pull-left:before {
   margin-right: .3em; }
-.fa.pull-right, s.sym i.pull-right:before {
+.fa.pull-right, .pull-right.lb-cancel:before, .pull-right.lb-next:hover:before,
+.pull-right.lb-prev:hover:before, .lb-data .pull-right.lb-close:before, s.sym i.pull-right:before {
   margin-left: .3em; }
 
-.fa-spin {
+.fa-spin, .lb-cancel:before {
   -webkit-animation: spin 2s infinite linear;
   -moz-animation: spin 2s infinite linear;
   -o-animation: spin 2s infinite linear;
@@ -2033,7 +2036,7 @@
 .fa-quote-right:before {
   content: "\f10e"; }
 
-.fa-spinner:before {
+.fa-spinner:before, .lb-cancel:before {
   content: "\f110"; }
 
 .fa-circle:before {
@@ -2467,6 +2470,162 @@
   font-weight: 400;
   src: url("font-droid/DroidSerif-Italic-webfont.eot");
   src: local("Droid Serif Italic"), local("DroidSerif-Italic"), url("font-droid/DroidSerif-Italic-webfont.eot?#iefix") format("embedded-opentype"), url("font-droid/DroidSerif-Italic-webfont.woff") format("woff"), url("font-droid/DroidSerif-Italic-webfont.ttf") format("truetype"), url("font-droid/DroidSerif-Italic-webfont.svg#droid_serifitalic") format("svg"); }
+
+.lightboxOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  background-color: black;
+  opacity: 0.8;
+  display: none; }
+
+.lightbox {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  z-index: 10000;
+  text-align: center;
+  line-height: 0;
+  font-weight: normal; }
+
+.lightbox .lb-image {
+  display: block;
+  height: auto;
+  max-width: inherit;
+  border-radius: 3px; }
+
+.lightbox a img, .lightbox button.plain img {
+  border: none; }
+
+.lb-outerContainer {
+  position: relative;
+  background-color: white;
+  *zoom: 1;
+  width: 250px;
+  height: 250px;
+  margin: 0 auto;
+  border-radius: 4px; }
+
+.lb-outerContainer:after {
+  content: "";
+  display: table;
+  clear: both; }
+
+.lb-container {
+  padding: 4px; }
+
+.lb-loader {
+  position: absolute;
+  top: 43%;
+  left: 0%;
+  height: 25%;
+  width: 100%;
+  text-align: center;
+  line-height: 0; }
+
+.lb-cancel {
+  display: block;
+  width: 1em;
+  height: 1em;
+  margin: 0 auto; }
+  .lb-cancel:hover {
+    background: transparent !important; }
+
+.lb-nav {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  z-index: 10; }
+
+.lb-container > .nav {
+  left: 0; }
+
+.lb-nav a, .lb-nav button.plain {
+  outline: none; }
+
+.lb-prev, .lb-next {
+  width: 49%;
+  height: 100%;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.6s;
+  /* Trick IE into showing hover */
+  display: block; }
+
+.lb-prev {
+  left: 0;
+  float: left; }
+
+.lb-next:hover,
+.lb-prev:hover {
+  opacity: 1;
+  padding-top: 40%;
+  background: transparent !important; }
+  .lb-next:hover:before,
+  .lb-prev:hover:before {
+    font-size: 1.5em; }
+
+.lb-prev:hover:before {
+  content: "\f137"; }
+
+.lb-next {
+  right: 0;
+  float: right; }
+
+.lb-next:hover:before {
+  content: "\f138"; }
+
+.lb-dataContainer {
+  margin: 0 auto;
+  padding-top: 5px;
+  *zoom: 1;
+  width: 100%;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px; }
+
+.lb-dataContainer:after {
+  content: "";
+  display: table;
+  clear: both; }
+
+.lb-data {
+  padding: 0 4px;
+  color: #bbbbbb; }
+
+.lb-data .lb-details {
+  width: 85%;
+  float: left;
+  text-align: left;
+  line-height: 1.1em; }
+
+.lb-data .lb-caption {
+  font-size: 13px;
+  font-weight: bold;
+  line-height: 1em; }
+
+.lb-data .lb-number {
+  display: block;
+  clear: left;
+  padding-bottom: 1em;
+  font-size: 12px;
+  color: #999999; }
+
+.lb-data .lb-close {
+  display: block;
+  float: right;
+  width: 1em;
+  text-align: right;
+  outline: none;
+  transition: opacity 0.2s; }
+  .lb-data .lb-close:hover {
+    cursor: pointer;
+    opacity: 1;
+    background: transparent !important; }
+  .lb-data .lb-close:before {
+    content: "\f00d"; }
 
 .ym-wbox {
   padding: 1.5em; }
