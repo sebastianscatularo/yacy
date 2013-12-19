@@ -38,6 +38,13 @@ input[type="checkbox"] {
   }
 }
 
+label {
+  display:inline-block;
+  &:first-letter {
+    text-transform:uppercase;
+  }
+}
+
 label.indent {
   display:inline-block;
   text-indent:-2em;

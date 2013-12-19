@@ -2705,6 +2705,11 @@ input[type="checkbox"] {
   input[type="checkbox"]:checked:enabled + label {
     opacity: 1; }
 
+label {
+  display: inline-block; }
+  label:first-letter {
+    text-transform: uppercase; }
+
 label.indent {
   display: inline-block;
   text-indent: -2em;
