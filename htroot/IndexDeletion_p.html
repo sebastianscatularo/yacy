@@ -1,43 +1,103 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>YaCy '#[clientname]#': Index Deletion</title>
-    #%env/templates/metas.template%#
-  </head>
-  <body id="IndexDeletion">
+<head>
+  <title>YaCy '#[clientname]#': Index Deletion</title>
+  #%env/templates/header-backend.template%#
+  <script type="text/javascript" src="/js/yaml/pages/indexDeletion.js"></script>
+</head>
 
-    #%env/templates/header.template%#
-    <h2>Index Deletion</h2>
-    <p>The search index contains #[doccount]# documents. You can delete them here. Deletions are made concurrently which can cause that recently deleted documents are not yet reflected in the document count.</p>
-    <form id="IndexDeletionPath" action="IndexDeletion_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
+<body id="indexDeletion">
+  #%env/templates/page-start.template%#
+
+  <div id="devInfo" data-done="script html5 validation"></div>
+
+  <h1>Index Deletion</h1>
+  <p>
+    The search index currently contains <code>#[doccount]#</code> documents.
+  </p>
+  <div class="p">
+    You may delete individual documents here, by using:
+    <ul class="indent">
+      <li><a href="#indexDeletionPath">A list of <abbr>URL</abbr> stubs or a regular expression</a>,</li>
+      <li><a href="#indexDeletionAge">the age of the documents in the index</a>,</li>
+      <li><a href="#indexDeletionCollection">the collection they belong to</a> or</li>
+      <li><a href="#indexDeletionQuery">a direct Solr query</a>.</li>
+    </ul>
+  </div>
+  <p>
+    <s class="sym sym-hint"></s>
+    Deletions are made concurrently which can cause that recently deleted documents are not yet reflected in the current document count.
+  </p>
+
+  <form id="indexDeletionPath" action="IndexDeletion_p.html#indexDeletionPath" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
     <fieldset>
-      <legend><label>Delete by URL Matching</label></legend>
-      <p>Delete all documents within a sub-path of the given urls. That means all documents must start with one of the url stubs as given here.</p>
-      <dl>
-        <dt>One URL stub, a list of URL stubs<br/>or a regular expression</dt>
-        <dd>
-          <textarea name="urldelete" id="crawlingURL" cols="64" rows="3" size="41" onClick="d=document.getElementById('engage-urldelete');d.disabled=true;d.className='dangerdisarmed';">#[urldelete]#</textarea>
-        </dd>
-        <dt>Matching Method</dt>
-        <dd>
-          <input type="radio" name="urldelete-mm" value="subpath" #(urldelete-mm-subpath-checked)#::checked="checked"#(/urldelete-mm-subpath-checked)# />sub-path of given URLs&nbsp;&nbsp;&nbsp;
-          <input type="radio" name="urldelete-mm" value="regexp" #(urldelete-mm-regexp-checked)#::checked="checked"#(/urldelete-mm-regexp-checked)# />matching with regular expression
-        <dt><input type="submit" name="simulate-urldelete" value="Simulate Deletion" class="submitready" title="no actual deletion, generates only a deletion count"/></dt>
-        <dd><input type="submit" name="engage-urldelete" id="engage-urldelete" value="Engage Deletion" #(urldelete-active)#class="dangerdisarmed" disabled="disabled" title="simulate a deletion first to calculate the deletion count"::class="dangerready"::class="dangerdisarmed" disabled="disabled" title="engaged"#(/urldelete-active)#/>
-          #(urldelete-active)#::<span class="pending">selected #[count]# documents for deletion</span><input type="hidden" name="count" id="count" value="#[count]#" />::<span class="commit">deleted #[count]# documents</span>#(/urldelete-active)#
-        </dd>
-      </dl>
+      <legend>Delete by URL Matching</legend>
+      <div class="description">
+        <p>
+          Delete all documents within a sub-path of the given urls. That means all documents must start with one of the url stubs as given here.
+        </p>
+      </div>
+      <fieldset class="formSection">
+        <legend>One URL stub, a list of URL stubs or a regular expression</legend>
+        <div class="content">
+          <textarea name="urldelete" id="crawlingURL">#[urldelete]#</textarea>
+          <div class="formHint hidden">
+            <p class="error">
+              Please enter one URL stub, a list of URL stubs or a regular expression.
+            </p>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="formSection">
+        <legend>Matching Method</legend>
+        <div class="content">
+          <p>
+            <input type="radio" name="urldelete-mm" value="subpath" #(urldelete-mm-subpath-checked)#::checked="checked"#(/urldelete-mm-subpath-checked)# />sub-path of given <abbr>URLs</abbr>
+          </p>
+          <p>
+            <input type="radio" name="urldelete-mm" value="regexp" #(urldelete-mm-regexp-checked)#::checked="checked"#(/urldelete-mm-regexp-checked)# />matching with regular expression
+          </p>
+        </div>
+      </fieldset>
+      <fieldset class="formControl">
+        <div class="description">
+          #(urldelete-active)#
+          <p>
+            <em>Simulate Deletion</em> does not actual delete anything. It only generates a count for elements that will be deleted, when engaged.
+          </p>
+          ::
+          <p>
+            <s class="sym sym-warning"></s>
+            <strong class="warning-txt">Deletion:</strong> selected <code>#[count]#</code> documents. Engage deletion to remove them.
+          </p>
+          <input type="hidden" name="count" id="count" value="#[count]#" />
+          ::
+          <p>
+            <s class="sym sym-hint"></s>
+            <strong class="info-txt">Deletion:</strong> deleted <code>#[count]#</code> documents.
+          </p>
+          #(/urldelete-active)#
+        </div>
+        <div class="hidden description" id="ycu-error-count-url"></div>
+        <div class="content">
+          <button type="submit" name="engage-urldelete" id="engageUrlDelete" class="icon-delete" #(urldelete-active)#disabled="disabled"::::disabled="disabled"#(/urldelete-active)#>Engage Deletion</button>
+          <button type="submit" id="simulateUrlDelete" name="simulate-urldelete" class="icon-run primary">Simulate Deletion</button>
+        </div>
+      </fieldset>
     </fieldset>
-    </form>
+  </form>
 
-    <form id="IndexDeletionAge" action="IndexDeletion_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
+  <form id="indexDeletionAge" action="IndexDeletion_p.html#indexDeletionAge" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
     <fieldset>
-      <legend><label>Delete by Age</label></legend>
-      <p>Delete all documents which are older than a given time period.</p>
-      <dl>
-        <dt>Time Period</dt>
-        <dd>All documents older than
-          <select name="timedelete-number" id="timedelete-number" onClick="d=document.getElementById('engage-timedelete');d.disabled=true;d.className='dangerdisarmed';">
+      <legend>Delete by Age</legend>
+      <div class="description">
+        <p>Delete all documents which are older than a given time period.</p>
+      </div>
+      <fieldset class="formSection">
+        <legend>Time Period</legend>
+        <div class="content">
+          All documents older than
+          <select name="timedelete-number" id="timeDeleteNumber">
             <option value="1" #(timedelete-n-1)#::selected="selected"#(/timedelete-n-1)#>1</option>
             <option value="2" #(timedelete-n-2)#::selected="selected"#(/timedelete-n-2)#>2</option>
             <option value="3" #(timedelete-n-3)#::selected="selected"#(/timedelete-n-3)#>3</option>
@@ -57,68 +117,158 @@
             <option value="60" #(timedelete-n-60)#::selected="selected"#(/timedelete-n-60)#>60</option>
             <option value="90" #(timedelete-n-90)#::selected="selected"#(/timedelete-n-90)#>90</option>
           </select>
-          <select name="timedelete-unit" id="timedelete-unit" onClick="d=document.getElementById('engage-timedelete');d.disabled=true;d.className='dangerdisarmed';">
+          <select name="timedelete-unit" id="timeDeleteUnit">
             <option value="year" #(timedelete-u-year)#::selected="selected"#(/timedelete-u-year)#>years</option>
             <option value="month" #(timedelete-u-month)#::selected="selected"#(/timedelete-u-month)#>months</option>
             <option value="day" #(timedelete-u-day)#::selected="selected"#(/timedelete-u-day)#>days</option>
             <option value="hour" #(timedelete-u-hour)#::selected="selected"#(/timedelete-u-hour)#>hours</option>
           </select>
-        </dd>
-        <dt>Age Identification</dt>
-        <dd>
-          <input type="radio" name="timedelete-source" value="loaddate" #(timedelete-source-loaddate-checked)#::checked="checked"#(/timedelete-source-loaddate-checked)# onClick="d=document.getElementById('engage-timedelete');d.disabled=true;d.className='dangerdisarmed';"/>load date&nbsp;&nbsp;&nbsp;
-          <input type="radio" name="timedelete-source" value="lastmodified" #(timedelete-source-lastmodified-checked)#::checked="checked"#(/timedelete-source-lastmodified-checked)# onClick="d=document.getElementById('engage-timedelete');d.disabled=true;d.className='dangerdisarmed';"/>last-modified
-        </dd>
-        <dt><input type="submit" name="simulate-timedelete" value="Simulate Deletion" class="submitready" title="no actual deletion, generates only a deletion count"/></dt>
-        <dd><input type="submit" name="engage-timedelete" id="engage-timedelete" value="Engage Deletion" #(timedelete-active)#class="dangerdisarmed" disabled="disabled" title="simulate a deletion first to calculate the deletion count"::class="dangerready"::class="dangerdisarmed" disabled="disabled" title="engaged"#(/timedelete-active)#/>
-          #(timedelete-active)#::<span class="pending">selected #[count]# documents for deletion</span><input type="hidden" name="count" id="count" value="#[count]#" />::<span class="commit">deleted #[count]# documents</span>#(/timedelete-active)#
-        </dd>
-      </dl>
-    </fieldset>
+        </div>
+      </fieldset>
+      <fieldset class="formSection">
+        <legend>Age Identification</legend>
+        <div class="content">
+          <p>
+            <input type="radio" name="timedelete-source" value="loaddate" #(timedelete-source-loaddate-checked)#::checked="checked"#(/timedelete-source-loaddate-checked)# onClick="d=document.getElementById('engage-timedelete');d.disabled=true;d.className='dangerdisarmed';"/>load date</p>
+            <p>
+              <input type="radio" name="timedelete-source" value="lastmodified" #(timedelete-source-lastmodified-checked)#::checked="checked"#(/timedelete-source-lastmodified-checked)# onClick="d=document.getElementById('engage-timedelete');d.disabled=true;d.className='dangerdisarmed';"/>last-modified
+            </p>
+          </div>
+        </fieldset>
+        <fieldset class="formControl">
+          <div class="description">
+            #(timedelete-active)#
+            <p>
+              <em>Simulate Deletion</em> does not actual delete anything. It only generates a count for elements that will be deleted, when engaged.
+            </p>
+            ::
+            <p>
+              <s class="sym sym-warning"></s>
+              <strong class="warning-txt">Deletion:</strong> selected <code>#[count]#</code> documents. Engage deletion to remove them.
+            </p>
+            <input type="hidden" name="count" value="#[count]#" />
+            ::
+            <p>
+              <s class="sym sym-hint"></s>
+              <strong class="info-txt">Deletion:</strong> deleted <code>#[count]#</code> documents.
+            </p>
+            #(/timedelete-active)#
+          </div>
+          <div class="content">
+            <button type="submit" name="engage-timedelete" id="engageTimeDelete" class="icon-delete" #(timedelete-active)#disabled="disabled"::::disabled="disabled"#(/timedelete-active)#>Engage Deletion</button>
+            <button type="submit" name="simulate-timedelete" class="primary icon-run">Simulate Deletion</button>
+          </div>
+        </fieldset>
+      </fieldset>
     </form>
 
-    <form id="IndexDeletionCollection" action="IndexDeletion_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
-    <fieldset>
-      <legend><label>Delete Collections</label></legend>
-      <p>Delete all documents which are inside specific collections.</p>
-      <dl>
-        <dt>Not Assigned</dt>
-        <dd><input type="radio" name="collectiondelete-mode" id="collectiondelete-mode-unassigned" value="unassigned" #(collectiondelete-mode-unassigned-checked)#::checked="checked"#(/collectiondelete-mode-unassigned-checked)# onClick="d=document.getElementById('engage-collectiondelete');d.disabled=true;d.className='dangerdisarmed';"/>Delete all documents which are not assigned to any collection
-        </dd>
-
-        <dt>Assigned</dt>
-        <dd><input type="radio" name="collectiondelete-mode" id="collectiondelete-mode-assigned" value="assigned" #(collectiondelete-mode-assigned-checked)#::checked="checked"#(/collectiondelete-mode-assigned-checked)# onClick="d=document.getElementById('engage-collectiondelete');d.disabled=true;d.className='dangerdisarmed';"/>Delete all documents which are assigned to the following collection(s)
-        #(collectiondelete-select)#, separated by ',' (comma) or '|' (vertical bar); or <a href="IndexDeletion_p.html?collectionlist=">generate the collection list...</a><br/><input type="text" name="collectiondelete" id="collections" value="#[collectiondelete]#" size="96" maxlength="1024" onClick="d=document.getElementById('engage-collectiondelete');d.disabled=true;d.className='dangerdisarmed';document.getElementById('collectiondelete-mode-assigned').checked=true;"/>::
-        <br/><select id="collectiondelete" name="collectiondelete">
-          #{list}#<option value="#[collection-value]#" onClick="d=document.getElementById('engage-collectiondelete');d.disabled=true;d.className='dangerdisarmed';document.getElementById('collectiondelete-mode-assigned').checked=true;">#[collection-name]#</option>#{/list}#
-        </select>
-        #(/collectiondelete-select)#
-        </dd>
-        <dt><input type="submit" name="simulate-collectiondelete" value="Simulate Deletion" class="submitready" title="no actual deletion, generates only a deletion count"/></dt>
-        <dd><input type="submit" name="engage-collectiondelete" id="engage-collectiondelete" value="Engage Deletion" #(collectiondelete-active)#class="dangerdisarmed" disabled="disabled" title="simulate a deletion first to calculate the deletion count"::class="dangerready"::class="dangerdisarmed" disabled="disabled" title="engaged"#(/collectiondelete-active)#/>
-          #(collectiondelete-active)#::<span class="pending">selected #[count]# documents for deletion</span><input type="hidden" name="count" id="count" value="#[count]#" />::<span class="commit">deleted #[count]# documents</span>#(/collectiondelete-active)#
-        </dd>
-      </dl>
-    </fieldset>
+    <form id="indexDeletionCollection" action="IndexDeletion_p.html#indexDeletionCollection" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
+      <fieldset>
+        <legend>Delete Collections</legend>
+        <div class="description">
+          <p>Delete all documents which are inside specific collections.</p>
+        </div>
+        <fieldset class="formSection">
+          <legend>Not Assigned</legend>
+          <div class="content">
+            <input type="radio" name="collectiondelete-mode" id="collectiondelete-mode-unassigned" value="unassigned" #(collectiondelete-mode-unassigned-checked)#::checked="checked"#(/collectiondelete-mode-unassigned-checked)# onClick="d=document.getElementById('engage-collectiondelete');d.disabled=true;d.className='dangerdisarmed';"/>Delete all documents which are not assigned to any collection
+          </div>
+        </fieldset>
+        <fieldset class="formSection">
+          <legend>Assigned</legend>
+          <div class="content">
+            <input type="radio" name="collectiondelete-mode" id="collectionDeleteModeAssigned" value="assigned" #(collectiondelete-mode-assigned-checked)#::checked="checked"#(/collectiondelete-mode-assigned-checked)#/>
+            #(collectiondelete-select)#
+            <label for="collectionDeleteModeAssigned">Delete all documents which are assigned to the following collection(s)</label>
+            <input type="text" name="collectiondelete" id="collections" value="#[collectiondelete]#" maxlength="1024" data-toggle-id="collectionDeleteModeAssigned" data-toggle-focus="true"/>
+            <div class="formHint hidden">
+              <p class="help">
+                Please enter one or more collection names, separated by <code>,</code> (comma) or <code>|</code> (vertical bar).
+              </p>
+            </div>
+            <p>
+              <a class="icon-run" href="IndexDeletion_p.html?collectionlist=#indexDeletionCollection">Generate the collection list.</a>
+            </p>
+            ::
+            <label for="collectionDeleteModeAssigned">Delete all documents which are assigned to the following collection</label>:
+            <select id="collectionDelete" name="collectiondelete" data-toggle-id="collectionDeleteModeAssigned" data-toggle-focus="true">
+              #{list}#<option value="#[collection-value]#">#[collection-name]#</option>#{/list}#
+            </select>
+            #(/collectiondelete-select)#
+          </div>
+        </fieldset>
+        <fieldset class="formControl">
+          <div class="description">
+            #(collectiondelete-active)#
+            <p>
+              <em>Simulate Deletion</em> does not actual delete anything. It only generates a count for elements that will be deleted, when engaged.
+            </p>
+            ::
+            <p>
+              <s class="sym sym-warning"></s>
+              <strong class="warning-txt">Deletion:</strong> selected <code>#[count]#</code> documents. Engage deletion to remove them.
+            </p>
+            <input type="hidden" name="count" id="count" value="#[count]#" />
+            ::
+            <p>
+              <s class="sym sym-hint"></s>
+              <strong class="info-txt">Deletion:</strong> deleted <code>#[count]#</code> documents.
+            </p>
+            #(/collectiondelete-active)#
+          </div>
+          <div class="content">
+            <button type="submit" name="engage-collectiondelete" id="engageCollectionDelete" class="icon-delete" #(collectiondelete-active)#disabled="disabled"::::disabled="disabled"#(/collectiondelete-active)#>Engage Deletion</button>
+            <button type="submit" name="simulate-collectiondelete" class="primary icon-run">Simulate Deletion</button>
+          </div>
+        </fieldset>
+      </fieldset>
     </form>
 
-    <form id="IndexDeletionQuery" action="IndexDeletion_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
-    <fieldset>
-      <legend><label>Delete by Solr Query</label></legend>
-      <p>This is the most generic option: select a set of documents using a solr query.</p>
-      <dl>
-        <dt>q=</dt>
-        <dd>
-        <input type="text" name="querydelete" id="querydelete" value="#[querydelete]#" size="96" maxlength="1024" onClick="d=document.getElementById('engage-querydelete');d.disabled=true;d.className='dangerdisarmed';"/>
-        </dd>
-        <dt><input type="submit" name="simulate-querydelete" value="Simulate Deletion" class="submitready" title="no actual deletion, generates only a deletion count"/></dt>
-        <dd><input type="submit" name="engage-querydelete" id="engage-querydelete" value="Engage Deletion" #(querydelete-active)#class="dangerdisarmed" disabled="disabled" title="simulate a deletion first to calculate the deletion count"::class="dangerready"::class="dangerdisarmed" disabled="disabled" title="engaged"#(/querydelete-active)#/>
-          #(querydelete-active)#::<span class="pending">selected #[count]# documents for deletion</span><input type="hidden" name="count" id="count" value="#[count]#" />::<span class="commit">deleted #[count]# documents</span>#(/querydelete-active)#
-        </dd>
-      </dl>
-    </fieldset>
+    <form id="indexDeletionQuery" action="IndexDeletion_p.html#indexDeletionQuery" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
+      <fieldset>
+        <legend>Delete by Solr Query</legend>
+        <div class="description">
+          <p>This is the most generic option: select a set of documents using a solr query.</p>
+        </div>
+        <fieldset class="formSection">
+          <legend>q=</legend>
+          <div class="content">
+            <input type="text" name="querydelete" id="queryDelete" value="#[querydelete]#" maxlength="1024"/>
+            <div class="formHint hidden">
+            <p class="error">
+              Please enter a Solr query.
+            </p>
+          </div>
+          </div>
+        </fieldset>
+        <fieldset class="formControl">
+          <div class="description">
+            #(querydelete-active)#
+            <p>
+              <em>Simulate Deletion</em> does not actual delete anything. It only generates a count for elements that will be deleted, when engaged.
+            </p>
+            ::
+            <p>
+              <s class="sym sym-warning"></s>
+              <strong class="warning-txt">Deletion:</strong> selected <code>#[count]#</code> documents. Engage deletion to remove them.
+            </p>
+            <input type="hidden" name="count" id="count" value="#[count]#" />
+            ::
+            <p>
+              <s class="sym sym-hint"></s>
+              <strong class="info-txt">Deletion:</strong> deleted <code>#[count]#</code> documents.
+            </p>
+            #(/querydelete-active)#
+          </div>
+          <div class="hidden description" id="ycu-error-count-query"></div>
+          <div class="content">
+            <button type="submit" name="engage-querydelete" id="engageQueryDelete" class="icon-delete" #(querydelete-active)#disabled="disabled"::::disabled="disabled"#(/querydelete-active)#>Engage Deletion</button>
+            <button type="submit" name="simulate-querydelete" id="simulateQueryDelete" class="primary icon-run">Simulate Deletion</button>
+          </div>
+        </fieldset>
+      </fieldset>
     </form>
 
-    #%env/templates/footer.template%#
+    #%env/templates/page-end.template%#
   </body>
-</html>
+  </html>
