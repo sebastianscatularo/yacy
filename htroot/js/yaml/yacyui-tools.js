@@ -22,7 +22,6 @@ YaCyUi.Tools = YaCyUi.Tools || {
    */
   toArray: function(data, splitAt) {
     splitAt = typeof splitAt === 'undefined' ? /[^\r\n]+/g : splitAt;
-    console.debug('toArray', data, splitAt);
     if (typeof data === 'string') {
       if (data.trim().length === 0) {
         return [];
@@ -30,7 +29,7 @@ YaCyUi.Tools = YaCyUi.Tools || {
       if (splitAt === null) {
         return [data];
       } else {
-        return data.match(splitAt) || [data];
+        return data.split(splitAt);
       }
     }
     return data;
