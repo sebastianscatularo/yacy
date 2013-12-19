@@ -1,70 +1,116 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>YaCy '#[clientname]#': Solr Schema Editor</title>
-    #%env/templates/metas.template%#
-  </head>
-  <body id="IndexSchema_p">
-<div id="api">
-<a href="/api/schema.xml?core=#[core]#">
-<img src="env/grafics/api.png" width="60" height="40" alt="API" /></a>
-<span>The solr schema can also be retrieved as xml here. Click the API icon to see the xml. Just copy this xml to solr/conf/schema.xml to configure solr.</span>
-</div>
-    #%env/templates/header.template%#
-    <h2>Solr Schema Editor</h2>
-    <p>If you use a custom Solr schema you may enter a different field name in the column 'Custom Solr Field Name' of the YaCy default attribute name</p>
+<head>
+  <title>YaCy '#[clientname]#': Solr Schema Editor</title>
+  #%env/templates/header-backend.template%#
+  <script type="text/javascript" src="/js/yaml/tablesorter/jquery.tablesorter.min.js"></script>
+  <script type="text/javascript" src="/js/yaml/pages/indexSchema.js"></script>
 
-    <form action="IndexSchema_p.html" method="get" enctype="multipart/form-data" accept-charset="UTF-8">
-    Select a core:
-      <select id="core" name="core" onchange='submit()'>
-          #{cores}#
-            <option value="#[name]#" #(selected)#::selected="selected"#(/selected)#>#[name]#</option>
-          #{/cores}#
-      </select>
-    &nbsp;&nbsp;&nbsp;... the core can be searched at <a href="/solr/select?core=#[core]#&amp;q=*:*&start=0&rows=3">/solr/select?core=#[core]#&amp;q=*:*&amp;start=0&amp;rows=3</a>
-    </form>
+</head>
 
-    <form action="IndexSchema_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
-    <fieldset>
-      <input type="hidden" name="core" value="#[core]#" />
-      <div>
-      <table class="sortable" border="0" cellpadding="2" cellspacing="1">
-      <tr class="TableHeader" valign="bottom">
-        <td>Active</td>
-        <td>Attribute</td>
-        <td>Custom Solr Field Name</td>
-        <td>Comment</td>
-      </tr>
-      #{schema}#
-      <tr class="TableCell#(dark)#Light::Dark::Summary#(/dark)#">
-        <td align="center"><input type="checkbox" name="schema_#[key]#" value="checked" #(checked)#::checked="checked"#(/checked)#/></td>
-        <td align="left">#[key]#</td>
-        <td align="left"><input type="text" name="schema_solrfieldname_#[key]#" value="#[solrfieldname]#"/></td>
-        <td align="left">#[comment]#</td>
-      </tr>
-      #{/schema}#
-      </table>
-      </div>
+<body id="indexSchema">
+  #%env/templates/page-start.template%#
+
+  <div id="api">
+    <a href="/api/schema.xml?core=#[core]#">
+      <img src="env/grafics/api.png" width="60" height="40" alt="API" title="The solr schema can also be retrieved as xml here. Click the API icon to see the xml. Just copy this xml to solr/conf/schema.xml to configure solr."/></a>
+    </div>
+
+
+    <div id="devInfo" data-done="html5 scripts" data-skip="validation"></div>
+
+    <h1>Solr Schema Editor</h1>
+    <p>
+      If you use a custom Solr schema you may enter a different field name in the column <em>Custom Solr Field Name</em> of the YaCy default attribute name.
+    </p>
+
+    <fieldset class="main">
+      <legend>Core Schema Editor</legend>
+      <fieldset class="formSection">
+        <legend>Core</legend>
+        <div class="content">
+          <form action="IndexSchema_p.html#schemaSelectForm" method="get" id="schemaSelectForm" enctype="multipart/form-data" accept-charset="UTF-8">
+            <select id="core" name="core">
+              #{cores}#
+              <option value="#[name]#" #(selected)#::selected="selected"#(/selected)#>#[name]#</option>
+              #{/cores}#
+            </select>
+          </form>
+          <p>
+            &hellip;the core can be searched at <a href="/solr/select?core=#[core]#&amp;q=*:*&amp;start=0&amp;rows=3">/solr/select?core=#[core]#&amp;q=*:*&amp;start=0&amp;rows=3</a>
+          </p>
+        </div>
+      </fieldset>
+
+      <fieldset class="formGroup">
+        <legend>Core Schema</legend>
+
+        <form action="IndexSchema_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
+          <fieldset class="formSection">
+            <div class="content noIndent">
+              <input type="hidden" name="core" value="#[core]#" />
+              <table class="sortable">
+                <thead>
+                  <tr>
+                    <th class="nobr">
+                      Active <input type="checkbox" data-action="checkAllToggle"/>
+                    </th>
+                    <th>Attribute</th>
+                    <th class="noSort">Custom Solr Field Name</th>
+                    <th class="noSort">Comment</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  #{schema}#
+                  <tr>
+                    <td>
+                      <input type="checkbox" name="schema_#[key]#" value="checked" #(checked)#::checked="checked"#(/checked)#/>
+                    </td>
+                    <td class="tt">#[key]#</td>
+                    <td>
+                      <input type="text" name="schema_solrfieldname_#[key]#" value="#[solrfieldname]#"/>
+                    </td>
+                    <td>#[comment]#</td>
+                  </tr>
+                  #{/schema}#
+                </tbody>
+              </table>
+            </div>
+          </fieldset>
+          <fieldset class="formControl">
+            <div class="content">
+              <button type="submit" name="resetselectiontodefault" class="icon-revert">Reset selection to default</button>
+              <button type="submit" name="set" class="primary icon-save">Save Configuration</button>
+            </div>
+          </fieldset>
+        </form>
+      </fieldset>
     </fieldset>
-      <div>
-        <input type="submit" name="set" value="Set" />
-        <input style="float:right" type="submit" name="resetselectiontodefault" value="reset selection to default" />
-      </div>
-    </form>
-    <p><br /></p>
+
     <form action="IndexReIndexMonitor_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
       <fieldset>
-        <legend><label>Reindex documents</label></legend>
-        <p>If you unselected some fields, old documents in the index still contain the unselected fields.
-             To physically remove them from the index you need to reindex the documents.
-             Here you can reindex all documents with inactive fields.</p>
-        <div style="text-align:center ">
-          <input type="submit" name="reindexSolr" value="reindex Solr" />
-          <input type="hidden" name="reindexnow"/>
+        <legend>Reindex documents</legend>
+        <div class="description">
+          <p>
+            If you unselected some fields, old documents in the index still contain the unselected fields.
+            To physically remove them from the index you need to reindex the documents.
+            Here you can reindex all documents with inactive fields.
+          </p>
         </div>
-        <p>You may monitor progress (or stop the job) under <a href="IndexReIndexMonitor_p.html">IndexReIndexMonitor_p.html</a></p>
+        <fieldset class="formControl">
+          <div class="description">
+            <p>
+              <s class="sym sym-hint"></s>
+              You may <a href="IndexReIndexMonitor_p.html">monitor progress (or stop the job)</a>.
+            </p>
+          </div>
+          <div class="content">
+            <input type="hidden" name="reindexnow"/>
+            <button type="submit" name="reindexSolr" class="primary icon-run">Reindex Solr</button>
+          </div>
+        </fieldset>
       </fieldset>
     </form>
-    #%env/templates/footer.template%#
+    #%env/templates/page-end.template%#
   </body>
-</html>
+  </html>
