@@ -282,6 +282,16 @@
               </li>
             </ul>
           </li>
+          <li><span>Bookmarks</span>
+            <ul class="hidden">
+              <li><a href="Bookmarks.html">List Bookmarks</a></li>
+              <li><a href="Bookmarks.html?mode=add">Add Bookmark</a></li>
+              <li><a href="Bookmarks.html?mode=importxml">Import Bookmarks</a></li>
+              <li><a href="/api/bookmarks/xbel/xbel.xml">Bookmarks (XBEL)</a></li>
+              <li><a href="/api/bookmarks/posts/all.xml">Bookmarks (XML)</a></li>
+              <li><a href="Bookmarks.rss">Bookmarks (RSS)</a></li>
+            </ul>
+          </li>
           <li><a href="/Steering.html?restart=" class="lock" onclick="return confirm('Confirm Restart')">Re-Start</a></li>
           <li><a href="/Steering.html?shutdown=" class="lock" onclick="return confirm('Confirm Shutdown')">Shutdown</a></li>
         </ul>
