@@ -8,3 +8,4 @@
 - set #target for forms submitting to the same page
 - remove nowrap from table td's
 - replace highslide with lightbox2
+- check multiline validators
