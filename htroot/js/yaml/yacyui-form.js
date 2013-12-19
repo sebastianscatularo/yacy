@@ -1236,7 +1236,7 @@ YaCyUi.Form.ValidatorFunc = YaCyUi.Form.ValidatorFunc || {
    * false otherwise
    */
   ipv4: function(data, splitExp, withPort) {
-    data = YaCyUi.Tools.toArray(data, splitExp);
+    data = YaCyUi.Tools.toArray(data, splitExp || null);
     var regEx;
     var valid = true;
     if (withPort === true) {
@@ -1350,7 +1350,7 @@ YaCyUi.Form.ValidatorFunc = YaCyUi.Form.ValidatorFunc || {
    * @return {boolean} true, if the data contains only urls, false otherwise
    */
   url: function(data, splitExp) {
-    data = YaCyUi.Tools.toArray(data, splitExp);
+    data = YaCyUi.Tools.toArray(data, splitExp || null);
     var regEx = /\s/;
     var valid = true;
     for (var i = 0; i < data.length; i++) {
@@ -1371,7 +1371,7 @@ YaCyUi.Form.ValidatorFunc = YaCyUi.Form.ValidatorFunc || {
    * otherwise
    */
   urlProtocol: function(data, splitExp, protocols) {
-    data = YaCyUi.Tools.toArray(data, splitExp);
+    data = YaCyUi.Tools.toArray(data, splitExp || null);
     protocols = YaCyUi.Tools.toArray(protocols, null);
     var regEx = new RegExp('^(' + protocols.join('|') + '):\/\/', 'i');
     var valid = true;
@@ -1573,9 +1573,6 @@ YaCyUi.Form.ValidatorElement.prototype = {
       this.isDisabled = false;
     }
     var data = this.element.val();
-    /*if (this.element[0].tagName.toLowerCase() == 'textarea') {
-      data = YaCyUi.Tools.cleanStringArray(data.split('\n'));
-    }*/
     var result;
     var state = null;
     for (var i = 0; i < this.validators.length; i++) {
