@@ -30,8 +30,7 @@ YaCyUi.Tools = YaCyUi.Tools || {
       if (splitAt === null) {
         return [data];
       } else {
-        console.debug('toArray', data, splitAt, data.match(splitAt) || data);
-        return data.match(splitAt) || data;
+        return data.match(splitAt) || [data];
       }
     }
     return data;
