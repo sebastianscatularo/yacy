@@ -138,6 +138,11 @@ iframe {
   border:1px solid #ccc;
 }
 
+ol.indent,
+ul.indent {
+  margin-left:1.5em;
+}
+
 // number & spacing for top level headings
 main .ym-wbox:first-of-type {
   // header spacing
