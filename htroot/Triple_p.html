@@ -1,120 +1,121 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>YaCy '#[clientname]#': Triplestore</title>
-    #%env/templates/metas.template%#
+<head>
+  <title>YaCy '#[clientname]#': Triplestore</title>
+  #%env/templates/header-backend.template%#
+  <script type="text/javascript" src="/js/yaml/pages/triple.js"></script>
+</head>
 
-    #%env/templates/jqueryheader.template%#
+<body id="triple">
+  #%env/templates/page-start.template%#
 
-  </head>
-  <body id="Experiments">
+  <div id="devInfo" data-done="html5"></div>
 
-    #%env/templates/header.template%#
+  #(mode)#
+  <h1>Search RDF</h1>
+  <fieldset class="main">
+    <legend>RDF Source Search</legend>
+    <fieldset class="formSection">
+      <legend>Source</legend>
+      <div class="content">
+        <input id="rdfsearch" name="rdfsearch" type="text" value="rdfdatasource" />
+      </div>
+    </fieldset>
+    <fieldset class="formControl">
+      <div class="content">
+        <button type="submit" class="primary icon-search" id="submitRdfSearch">Search</button>
+      </div>
+    </fieldset>
+  </fieldset>
 
-
-
-    #(mode)#
-    <div class="AddSection">
-    <script type="text/javascript">
-
-    function xyz() {
-
-    $.getJSON('yacysearch.json?query=rdfdatasource&Enter=Search&verify=never&contentdom=text&nav=hosts%2Cauthors%2Cnamespace%2Ctopics%2Cfiletype%2Cprotocol&startRecord=0&indexof=off&meanCount=5&resource=global&urlmaskfilter=.*&prefermaskfilter=&maximumRecords=10', null, function(data) {
-
-    	$('#rdffileslist').val(data.channels[0].items[0].urlname);
-
-
-	});
-
-	}
-
-    </script>
-    <h2>Search RDF</h2>
+  <fieldset class="main">
+    <legend>RDF Triples import</legend>
     <form action="Triple_p.html" method="post" enctype="multipart/form-data">
-
-    <input id="rdfsearch" name="rdfsearch" type="text" size="50" value="rdfdatasource" />
-    <input type="submit" value="Search" onclick="xyz(); return false;"/>
-
-    <br/>
-
-    <textarea id="rdffileslist" name="rdffileslist" cols="100" rows="10">
-
-    </textarea>
-
-	<input type="submit" value="Import Triples" />
-
-	</form>
-	</div>
-
-
-
-    <div class="AddSection">
-    <h2>or import RDF from local filesystem</h2>
+      <fieldset class="formGroup">
+        <legend>Remote</legend>
+        <fieldset class="formSection">
+          <legend>Triples URLs</legend>
+          <div class="content">
+            <textarea id="rdffileslist" name="rdffileslist"></textarea>
+            <div class="formHint hidden">
+              <p class="help">
+                Please enter some source URLs. One source per line.
+              </p>
+            </div>
+          </div>
+        </fieldset>
+        <fieldset class="formControl">
+          <div class="content">
+            <button type="submit" class="primary icon-run">Import Triples</button>
+          </div>
+        </fieldset>
+      </fieldset>
+    </form>
     <form action="Triple_p.html" method="post" enctype="multipart/form-data">
+      <fieldset class="formGroup">
+        <legend>Local</legend>
+        <fieldset class="formSection">
+          <legend>File</legend>
+          <div class="content">
+            <input name="rdffile" type="file"/>
+          </div>
+        </fieldset>
+        <fieldset class="formControl">
+          <div class="content">
+            <button type="submit" class="primary icon-run">Add Triples</button>
+          </div>
+        </fieldset>
+      </fieldset>
+    </form>
+  </fieldset>
 
-    <input name="rdffile" type="file" size="50" maxlength="10000000" />
+  <h1>Query RDF</h1>
+  <form action="Triple_p.html#queryResult" method="post" enctype="multipart/form-data">
+    <fieldset>
+      <legend>Query</legend>
+      <fieldset class="formSection">
+        <legend>Query String</legend>
+        <div class="content">
+          <textarea name="query" cols="100" rows="10">
+            #[query]#
+          </textarea>
+        </div>
+      </fieldset>
+      <fieldset class="formControl">
+        <div class="content">
+          <button type="submit" class="primary icon-run">Run Query</button>
+        </div>
+      </fieldset>
+    </fieldset>
+  </form>
 
-	<input type="submit" value="Add Triples" />
+  <!-- 0: viewing -->
+  <h2>Entries</h2>
+  #{entries}#
+  <div class="p">
+    <a href="./experiments/#[link]#/" target="_blank"><h2 class="PostSubject">#[subject]#</h2></a>
+    <p class="PostInfo">
+      <a href="/Crawler_p.html?createBookmark=off&amp;xsstopw=off&amp;crawlingDomMaxPages=10000&amp;intention=&amp;range=subpath&amp;indexMedia=on&amp;xdstopw=off&amp;storeHTCache=off&amp;sitemapURL=&amp;repeat_time=1&amp;cachePolicy=never&amp;indexText=on&amp;crawlingMode=url&amp;crawlingURL=#[publiclink]#&amp;bookmarkTitle=&amp;mustnotmatch=&amp;crawlingDomFilterDepth=1&amp;crawlingDomFilterCheck=off&amp;crawlingstart=Start%20New%20Crawl&amp;xpstopw=off&amp;crawlingDepth=0" target="_blank">Publish</a> |
+      <a href="/Crawler_p.html?createBookmark=off&amp;xsstopw=off&amp;crawlingDomMaxPages=10000&amp;intention=&amp;range=subpath&amp;indexMedia=on&amp;xdstopw=off&amp;storeHTCache=off&amp;sitemapURL=&amp;repeat_time=1&amp;cachePolicy=never&amp;indexText=on&amp;crawlingMode=url&amp;crawlingURL=#[publiclink_ip]#&amp;bookmarkTitle=&amp;mustnotmatch=&amp;crawlingDomFilterDepth=1&amp;crawlingDomFilterCheck=off&amp;crawlingstart=Start%20New%20Crawl&amp;xpstopw=off&amp;crawlingDepth=0" target="_blank">Publish using IP-Adress</a>
+      | <a href="UnpublishExperiment_p.html?experiment=#[subject]#&amp;urlstring=#[publiclink]#">Unpublish and remove</a> | <a href="#[publiclinkproxy]#">Preview via inbuilt proxy</a>
+    </p>
+  </div>
+  #{/entries}#
 
-	</form>
-	</div>
+  <h2 id="queryResult">Result</h2>
+  <pre><code>#[rdfdump]#</code></pre>
+  #{output}#
+  #[caption]#
+  #{/output}#
 
+  ::
+  <!-- 3: Access Denied (no rights) -->
+  <p class="ycu-message ycu-message-info">
+    <span class="header">Access denied</span>
+    <span class="content">To edit or create experiment entries you need to be logged in as Administrator.</span>
+  </p>
+  #(/mode)#
 
-	<div class="AddSection">
-	<h2>Query</h2>
-	<form action="Triple_p.html" method="post" enctype="multipart/form-data">
-
-    <textarea name="query" cols="100" rows="10">
-    #[query]#
-    </textarea>
-
-	<input type="submit" value="Query" />
-
-	</form>
-    </div>
-    <br></br>
-    <!-- 0: viewing -->
-
-    #{entries}#
-    <div class="Experiment">
-
-      <a href="./experiments/#[link]#/" target="_blank"><h2 class="PostSubject">#[subject]#</h2></a>
-      <p class="PostInfo">
-      	<a href="/Crawler_p.html?createBookmark=off&xsstopw=off&crawlingDomMaxPages=10000&intention=&range=subpath&indexMedia=on&xdstopw=off&storeHTCache=off&sitemapURL=&repeat_time=1&cachePolicy=never&indexText=on&crawlingMode=url&crawlingURL=#[publiclink]#&bookmarkTitle=&mustnotmatch=&crawlingDomFilterDepth=1&crawlingDomFilterCheck=off&crawlingstart=Start%20New%20Crawl&xpstopw=off&crawlingDepth=0" target="_blank">Publish</a> |
-      	<a href="/Crawler_p.html?createBookmark=off&xsstopw=off&crawlingDomMaxPages=10000&intention=&range=subpath&indexMedia=on&xdstopw=off&storeHTCache=off&sitemapURL=&repeat_time=1&cachePolicy=never&indexText=on&crawlingMode=url&crawlingURL=#[publiclink_ip]#&bookmarkTitle=&mustnotmatch=&crawlingDomFilterDepth=1&crawlingDomFilterCheck=off&crawlingstart=Start%20New%20Crawl&xpstopw=off&crawlingDepth=0" target="_blank">Publish using IP-Adress</a>
-         | <a href="UnpublishExperiment_p.html?experiment=#[subject]#&urlstring=#[publiclink]#">Unpublish and remove</a> | <a href="#[publiclinkproxy]#">Preview via inbuilt proxy</a>
-      </p>
-    </div>
-
-    #{/entries}#
-
-
-    <!-- <applet
-  code="org.openscience.jchempaint.applet.JChemPaintEditorApplet"
-  archive="/applets/jchempaint-applet-core.jar"
-  name="Editor"
-  width="600" height="500">
-  <param name="load" value="a-pinene.mol">
-</applet> -->
-
-	<div class="AddSection">
-	<h2>Result</h2>
-
-	#[rdfdump]#
-	<br/>
-	<br/>
-
-	#{output}##[caption]#
-    #{/output}#
-    </div>
-
-    ::
-    <!-- 3: Access Denied (no rights) -->
-    <h3>Access denied</h3>
-    <p>To edit or create experiment entries you need to be logged in as Administrator.</p>
-
-
-    #(/mode)#
-  #%env/templates/footer.template%#
-  </body>
+  #%env/templates/page-end.template%#
+</body>
 </html>
