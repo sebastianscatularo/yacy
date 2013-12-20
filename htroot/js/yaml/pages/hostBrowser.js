@@ -20,7 +20,6 @@ YaCyPage.parseResponse = function(response) {
 };
 
 YaCyPage.search = function(query) {
-  console.debug('search', query);
   var searchStringTemplate = 'sku:%Q% OR host_s:%Q% OR host_dnc_s:%Q% OR host_organization_s:%Q% OR host_organizationdnc_s:%Q% OR host_subdomain_s:%Q% OR url_paths_sxt:%Q% OR url_file_name_s:%Q%';
   $.ajax({
     method: 'GET',
