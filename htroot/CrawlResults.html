@@ -8,6 +8,8 @@
 <body id="crawlResults">
   #%env/templates/page-start.template%#
 
+  <div id="devInfo" data-todo="html5"></div>
+
   #(process)#
   <h1>Crawl Results Overview</h1>
 
@@ -108,7 +110,7 @@
   <table class="sortable">
     <thead>
       <tr>
-        <td align="center" class="noSort"></td>
+        <td class="noSort"></td>
         <td><strong>Domain</strong></td>
         <td><strong>URLs</strong></td>
       </tr>
@@ -116,7 +118,7 @@
     <tbody>
       #{domains}#
       <tr>
-        <td align="center">
+        <td>
           <form action="#[feedbackpage]#" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
             <input type="hidden" name="process" value="#[tabletype]#" />
             <input type="hidden" name="domain" value="#[domain]#" />
@@ -144,7 +146,7 @@
   <table>
     <tbody>
       <tr>
-        <td align="center">
+        <td>
           <form action="#[feedbackpage]#" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
             <input type="hidden" name="process" value="#[tabletype]#" />
             <input type="submit" name="clearlist" value="clear list" />
@@ -162,7 +164,7 @@
       </tr>
       #{indexed}#
       <tr>
-        <td align="center">
+        <td>
           <form action="#[feedbackpage]#" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
             <input type="hidden" name="process" value="#[tabletype]#" />
             <input type="hidden" name="hash" value="#[urlhash]#" />

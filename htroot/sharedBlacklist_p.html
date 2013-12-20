@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <title>YaCy '#[clientname]#': Shared Blacklist</title>
-    #%env/templates/metas.template%#
+    #%env/templates/header-backend.template%#
     <script type="text/javascript">
     <!--
     function selectall(name){
@@ -23,7 +23,9 @@
     </script>
   </head>
   <body marginheight="0" marginwidth="0" leftmargin="0" topmargin="0">
-    #%env/templates/header.template%#
+    #%env/templates/page-start.template%#
+
+    <div id="devInfo" data-todo="all"></div>
     <br />
     <br />
     <h2>Add Items to Blacklist</h2>
@@ -73,7 +75,7 @@
       </table>
       <table border="0" cellspacing="1" cellpadding="3" >
         <tr class="TableHeader">
-		  <th class="small" width="100%" align="left">Blacklist item</th>
+		  <th class="small" width="100%">Blacklist item</th>
 		  <th class="small">&nbsp;</th>
         </tr>#{urllist}#
         <tr class="TableCell#(dark)#Light::Dark#(/dark)#"  class="small">
@@ -91,6 +93,6 @@
       ::<!-- [1] -->
       #(/page)#
     </form>
-    #%env/templates/footer.template%#
+ #%env/templates/page-end.template%#
   </body>
 </html>

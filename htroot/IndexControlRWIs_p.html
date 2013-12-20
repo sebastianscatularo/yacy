@@ -1,11 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>YaCy '#[clientname]#': Reverse Word Index Administration</title>
-    #%env/templates/metas.template%#
-  </head>
+<head>
+  <title>YaCy '#[clientname]#': Reverse Word Index Administration</title>
+  #%env/templates/header-backend.template%#
+</head>
+
   <body id="IndexControl">
-    #%env/templates/header.template%#
+    #%env/templates/page-start.template%#
+
+<div id="devInfo" data-todo="all"></div>
+
     <h2>Reverse Word Index Administration</h2>
     <p>The local index currently contains #[wcount]# reverse word indexes</p>
     <form action="IndexControlRWIs_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
@@ -114,11 +118,11 @@
     </fieldset>
     <fieldset><legend>Word Deletion</legend>
         <dl>
-          <dt><input type="checkbox" id="delurl" name="delurl" align="top" checked /></dt>
+          <dt><input type="checkbox" id="delurl" name="delurl" checked /></dt>
           <dd>delete also the referenced URL (recommended, may produce unresolved references
               at other word indexes but they do not harm)
           </dd>
-          <dt><input type="checkbox" id="delurlref" name="delurlref" align="top" /></dt>
+          <dt><input type="checkbox" id="delurlref" name="delurlref" /></dt>
           <dd>for every resolvable and deleted URL reference, delete the same reference at every other word where
               the reference exists (very extensive, but prevents further unresolved references)
           </dd>
@@ -193,12 +197,12 @@
       #{urlList}#
       <tr class="TableCellLight">
       #(urlExists)#
-        <td><input type="checkbox" id="urlhx.#[urlhxCount]#" name="urlhx.#[urlhxCount]#" checked value="#[urlhxValue]#" align="top" />
+        <td><input type="checkbox" id="urlhx.#[urlhxCount]#" name="urlhx.#[urlhxCount]#" checked value="#[urlhxValue]#" />
             <label for="urlhx.#[urlhxCount]#" class="tt"></label></td>
         <td>#[urlhxValue]#</td>
         <td colspan="20">unresolved URL Hash</td>
         ::
-        <td><input type="checkbox" id="urlhx.#[urlhxCount]#" name="urlhx.#[urlhxCount]#" #(urlhxChecked)#::checked="checked" #(/urlhxChecked)#value="#[urlhxValue]#" align="top" />
+        <td><input type="checkbox" id="urlhx.#[urlhxCount]#" name="urlhx.#[urlhxCount]#" #(urlhxChecked)#::checked="checked" #(/urlhxChecked)#value="#[urlhxValue]#" />
             <label for="urlhx.#[urlhxCount]#" class="tt"></label></td>
         <td><a href="/IndexControlURLs_p.html?keystring=#[keyString]#&amp;keyhash=#[keyHash]#&amp;urlhash=#[urlhxValue]#&amp;urlstringsearch=&amp;urlstring=#[urlString]#" class="tt">#[urlhxValue]#</a></td>
         <td><a href="#[urlString]#">#[urlStringShort]#</a></td>
@@ -218,7 +222,7 @@
         <td>#[lother]#</td>
         <td>#[hitcount]#</td>
         <td>#[props]#</td>
-        <td align="right" class="TableCellDark">#[ranking]#</td>
+        <td class="TableCellDark">#[ranking]#</td>
       #(/urlExists)#
       </tr>
       #{/urlList}#
@@ -232,11 +236,11 @@
       <input type="hidden" name="urlhash"/><br />
       <fieldset><legend>Deletion of selected URLs</legend>
         <dl>
-          <dt><input type="checkbox" id="delurl" name="delurl" align="top" checked /></dt>
+          <dt><input type="checkbox" id="delurl" name="delurl" checked /></dt>
           <dd>delete also the referenced URL (recommended, may produce unresolved references
               at other word indexes but they do not harm)
           </dd>
-          <dt><input type="checkbox" id="delurlref" name="delurlref" align="top" /></dt>
+          <dt><input type="checkbox" id="delurlref" name="delurlref" /></dt>
           <dd>for every resolvable and deleted URL reference, delete the same reference at every other word where
               the reference exists (very extensive, but prevents further unresolved references)
           </dd>
@@ -263,6 +267,6 @@
     <br />#(/genUrlList)#
     #[result]#
 
-    #%env/templates/footer.template%#
+    #%env/templates/page-end.template%#
   </body>
 </html>
