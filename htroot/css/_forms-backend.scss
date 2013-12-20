@@ -2,10 +2,6 @@
  * Addition to general form elements.
  * Styles used in the backend only.
  */
-// colors
-$ycu-var-color-fieldset-formgroup-bg:darken($ycu-var-color-fieldset-bg, 4);
-$ycu-var-color-fieldset-border:darken($ycu-var-color-fieldset-formgroup-bg, 10);//#B8CBE1;
-$ycu-var-color-fieldset-section-border:darken($ycu-var-color-fieldset-border, 10);
 // internal
 $ycu-var-fieldset-legend-fontsize:1.2em;
 $ycu-var-fieldset-legend-collapsed-fontsize:1em;
@@ -132,21 +128,6 @@ fieldset {
 
   + fieldset.formGroup {
     border-top:1px dotted $ycu-var-color-fieldset-border;
-  }
-}
-
-fieldset.framed {
-  border:1px solid $ycu-var-color-fieldset-border;
-  padding:0.5em;
-
-  > legend {
-    @extend %font-sans;
-    font-weight:bold;
-    padding:0 0.5em;
-
-    &.light {
-      opacity:0.7;
-    }
   }
 }
 

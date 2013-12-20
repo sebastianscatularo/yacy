@@ -2630,7 +2630,7 @@
 .ym-wbox {
   padding: 1.5em; }
 
-.fontSans, header .logo, #footerMenu, table, code.key, nav,
+fieldset.framed > legend, .fontSans, header .logo, #footerMenu, table, code.key, nav,
 #navSub, body#yacySearch header,
 body#webSearch header, body#yacySearch main,
 body#webSearch main, body#yacySearch #searchTrailer .ui-widget {
@@ -2821,6 +2821,15 @@ button.plain {
 label.disabled {
   opacity: 0.75; }
 
+fieldset.framed {
+  border: 1px solid #aabee0;
+  padding: 0.5em; }
+  fieldset.framed > legend {
+    font-weight: bold;
+    padding: 0 0.5em; }
+    fieldset.framed > legend.light {
+      opacity: 0.7; }
+
 .ui-spinner input {
   border-width: 0; }
 
@@ -2934,6 +2943,9 @@ footer {
 .breakAll {
   word-wrap: break-word; }
 
+.noMargin {
+  margin: 0 !important; }
+
 /* API bubble. */
 #api {
   position: absolute;
@@ -3013,15 +3025,19 @@ button[type="submit"].plain.pointRight:after {
 /**********
 * Tables. */
 table {
-  border-bottom-width: 2px;
-  border-bottom-color: #555555;
-  border-bottom-style: solid; }
+  border: 0; }
+  table:not(.plain) {
+    border-bottom-width: 2px;
+    border-bottom-color: #555555;
+    border-bottom-style: solid; }
   table tbody:not(.plain) tr:not(.th):nth-child(odd) {
     background-color: #cbd8ec; }
   table tbody:not(.plain) tr:not(.th):nth-child(even) {
     background-color: #b9cae5; }
   table tbody:not(.plain) tr:not(.th):hover {
     background-color: #f1f4fa; }
+  table tr:first-of-type td {
+    border-top-width: 0; }
   table tr.th td,
   table th {
     border-bottom-width: 2px;

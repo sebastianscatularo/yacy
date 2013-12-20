@@ -276,6 +276,10 @@ footer {
   word-wrap:break-word;
 }
 
+.noMargin {
+  margin:0 !important;
+}
+
 /* API bubble. */
 #api {
   position:absolute;
@@ -385,9 +389,14 @@ table {
   $color-table-line:#555;
   $table-line-height:2px;
   @extend %font-sans;
-  border-bottom-width:$table-line-height;
-  border-bottom-color:$color-table-line;
-  border-bottom-style:solid;
+
+  border:0;
+
+  &:not(.plain) {
+    border-bottom-width:$table-line-height;
+    border-bottom-color:$color-table-line;
+    border-bottom-style:solid;
+  }
 
   tbody:not(.plain) {
     tr:not(.th):nth-child(odd) {
@@ -401,6 +410,10 @@ table {
     tr:not(.th):hover {
       background-color:lighten($ycu-var-color-table-cell-base, 5);
     }
+  }
+
+  tr:first-of-type td {
+    border-top-width:0;
   }
 
   tr.th td,

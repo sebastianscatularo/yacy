@@ -41,15 +41,17 @@
           * valid HTML5
         </div>
 
-        <div id="searchBox">
+        <div class="center">
           <a href="#[promoteSearchPageGreeting.homepage]#" class="yacyLogo iconic">
             <img src="#[promoteSearchPageGreeting.largeImage]#" alt="YaCy logo" style="margin: auto;"/>
           </a>
           <h1 class="greeting">
             #[promoteSearchPageGreeting]#
           </h1>
+        </div>
 
-          <form action="yacysearch.html" method="get" id="searchform" accept-charset="UTF-8">
+        <form action="yacysearch.html" method="get" id="searchform" accept-charset="UTF-8">
+          <div class="center">
             <fieldset>
               <input name="query" class="searchinput" id="search" type="text" size="40" maxlength="80" value="#[former]#" onFocus="this.select()" />
               <button type="submit" name="Enter" class="icon-search">Search</button>
@@ -86,57 +88,64 @@
               <input type="hidden" name="indexof" value="off" />
               <input type="hidden" name="meanCount" value="5" />
             </fieldset>
+          </div>
           #(searchoptions)#
           <input type="hidden" name="resource" value="global" />
           <input type="hidden" name="prefermaskfilter"/>
           <input type="hidden" name="maximumRecords" value="#[maximumRecords]#" />
           ::
-
-          <table>
-            <tr>
-              <td><label for="count">Results per page</label>:</td>
-              <td>
-                <input type="radio" name="maximumRecords" id="mr10" value="10" #(count-10)#::checked="checked"#(/count-10)#/><label for="mr10">10</label>
-                <input type="radio" name="maximumRecords" id="mr50" value="50" #(count-50)#::checked="checked"#(/count-50)#/><label for="mr50">50</label>
-                <input type="radio" name="maximumRecords" id="mr100" value="100" #(count-100)#::checked="checked"#(/count-100)#/><label for="mr100">100</label>
-              </td>
-            </tr>
-            <tr>
-              #(resource-select)#::
-              <td><label for="resource">Resource</label>:</td>
-              <td>
-                <input type="radio" name="resource" id="rglobal" value="global" checked="checked" /><label for="rglobal">the peer-to-peer network</label>
-                <input type="radio" name="resource" id="rlocal" value="local"><label for="rlocal">only the local index</label>
-              </td>::
-              <td><label for="resource">Resource</label>:</td>
-              <td>
-                <input type="radio" name="resource" id="rglobal" value="global"/><label for="rglobal">the peer-to-peer network</label>
-                <input type="radio" name="resource" id="rlocal" value="local" checked="checked"/><label for="rlocal">only the local index</label>
-              </td>
-              #(/resource-select)#
-            </tr>
-            <tr>
-              <td>
-                <label for="prefermaskfilter">Prefer mask</label>:
-              </td>
-              <td>
-                #(prefermaskoptions)#
-                <input id="prefermaskfilter" name="prefermaskfilter" type="text" size="12" maxlength="80" value="#[prefermaskfilter]#" />
-                ::
-                <input type="radio" name="prefermask" value="yes" checked="checked" /> restrict on <input name="prefermaskfilter" type="text" size="12" maxlength="80" value="#[prefermaskfilter]#" />
-                <input type="radio" name="prefermask" value="no" /> show all
-                #(/prefermaskoptions)#
-              </td>
-            </tr>
-            <tr>
-              <td>
-                Constraints:
-              </td>
-              <td>
-                <input type="checkbox" id="indexof" name="indexof" #[indexofChecked]# /> <label for="indexof">only index pages</label>
-              </td>
-            </tr>
-          </table>
+          <br/>
+          <fieldset class="framed">
+            <legend>Options</legend>
+            <table class="plain noMargin">
+              <tbody class="plain">
+                <tr>
+                  <td>Results per page:</td>
+                  <td>
+                    <input type="radio" name="maximumRecords" id="mr10" value="10" #(count-10)#::checked="checked"#(/count-10)#/><label for="mr10">10</label>
+                    <input type="radio" name="maximumRecords" id="mr50" value="50" #(count-50)#::checked="checked"#(/count-50)#/><label for="mr50">50</label>
+                    <input type="radio" name="maximumRecords" id="mr100" value="100" #(count-100)#::checked="checked"#(/count-100)#/><label for="mr100">100</label>
+                  </td>
+                </tr>
+                <tr>
+                  #(resource-select)#::
+                  <td>Resource:</td>
+                  <td>
+                    <input type="radio" name="resource" id="rglobal" value="global" checked="checked" /><label for="rglobal">the peer-to-peer network</label>
+                    <input type="radio" name="resource" id="rlocal" value="local"><label for="rlocal">only the local index</label>
+                  </td>::
+                  <td>Resource:</td>
+                  <td>
+                    <input type="radio" name="resource" id="rglobal" value="global"/><label for="rglobal">the peer-to-peer network</label>
+                    <input type="radio" name="resource" id="rlocal" value="local" checked="checked"/><label for="rlocal">only the local index</label>
+                  </td>
+                  #(/resource-select)#
+                </tr>
+                <tr>
+                  <td>
+                    <label for="prefermaskfilter">Prefer mask</label>:
+                  </td>
+                  <td>
+                    #(prefermaskoptions)#
+                    <input id="prefermaskfilter" name="prefermaskfilter" type="text" size="12" maxlength="80" value="#[prefermaskfilter]#" />
+                    ::
+                    <input type="radio" name="prefermask" value="yes" checked="checked" /> restrict on <input name="prefermaskfilter" type="text" size="12" maxlength="80" value="#[prefermaskfilter]#" />
+                    <input type="radio" name="prefermask" value="no" /> show all
+                    #(/prefermaskoptions)#
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    Constraints:
+                  </td>
+                  <td>
+                    <input type="checkbox" id="indexof" name="indexof" #[indexofChecked]# /> <label for="indexof">only index pages</label>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </fieldset>
+          <br/>
 
           <h2>Query Operators</h2>
           <h3>Restrictions</h3>
@@ -229,7 +238,7 @@
           After searching, click-open on the default search engine in the upper right search field of your browser and select <em>Add "YaCy Search.."</em>.
 
           <h3>Search as rss feed</h3>
-          Click on the red icon in the upper right after a search. this works good in combination with the <code>/date</code> ranking modifier. See an <a href="yacysearch.rss?query=news+%2Fdate&Enter=Search&verify=cacheonly&contentdom=text&nav=hosts%2Cauthors%2Cnamespace%2Ctopics%2Cfiletype%2Cprotocol&startRecord=0&indexof=off&meanCount=5&maximumRecords=10&resource=global&prefermaskfilter=">example</a>.
+          Click on the red icon in the upper right after a search. this works good in combination with the <code>/date</code> ranking modifier. See an <a href="yacysearch.rss?query=news+%2Fdate&amp;Enter=Search&amp;verify=cacheonly&amp;contentdom=text&amp;nav=hosts%2Cauthors%2Cnamespace%2Ctopics%2Cfiletype%2Cprotocol&amp;startRecord=0&amp;indexof=off&amp;meanCount=5&amp;maximumRecords=10&amp;resource=global&amp;prefermaskfilter=">example</a>.
 
           <h3>Json search results</h3>
           For ajax developers: get the search rss feed and replace the <code>.rss</code> extension in the search result url with <code>.json</code>.
@@ -244,7 +253,6 @@
         #(/topmenu)#
         <img src="cytag.png?icon=invisible&amp;nick=yacyh_#[clientid]#&amp;tag=search" alt=""/>
       </div>
-    </div>
-  </main>
-</body>
-</html>
+    </main>
+  </body>
+  </html>
