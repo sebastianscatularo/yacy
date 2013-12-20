@@ -3357,6 +3357,34 @@ body#yacySearch {
     body#yacySearch #searchMode .col {
       display: table-cell;
       vertical-align: middle; }
+  body#yacySearch #thumbList .thumbContainer {
+    float: left;
+    margin-right: 0.5em;
+    margin-bottom: 0.5em;
+    width: 150px;
+    height: 150px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-color: #c1ddee;
+    border-radius: 3px;
+    border: 1px solid #ccc; }
+    body#yacySearch #thumbList .thumbContainer > * {
+      visibility: hidden;
+      margin-bottom: 0.3em; }
+    body#yacySearch #thumbList .thumbContainer:hover > * {
+      visibility: visible; }
+    body#yacySearch #thumbList .thumbContainer .content {
+      display: block;
+      font-size: 0.85em;
+      padding: 0.3em;
+      line-height: 1.7em;
+      background-color: rgba(58, 58, 58, 0.65); }
+      body#yacySearch #thumbList .thumbContainer .content > * {
+        display: block; }
+    body#yacySearch #thumbList .thumbContainer .content,
+    body#yacySearch #thumbList .thumbContainer .content a,
+    body#yacySearch #thumbList .thumbContainer .content button.plain {
+      color: #fff !important; }
 
 body#webSearch .searchDomains label {
   padding-right: 0.5em; }

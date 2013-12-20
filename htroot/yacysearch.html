@@ -8,7 +8,6 @@
   <script type="text/javascript" src="/js/yaml/yacyui-widgets.js"></script>
   <script type="text/javascript" src="/js/yaml/pages/yacySearch.js"></script>
   <script type="text/javascript">
-    //<![CDATA[
     var infoUpdates = 0; // number of done updates
     var updateTimes = [500, 1000, 1500, 2000, 3000, 4000, 5000, 6000, 8000, 10000];
 
@@ -35,7 +34,6 @@
         // search is done
         window.setTimeout('getLatestInfo()', updateTimes[0]);
       });
-      //]]>
     </script>
 
     <!-- # %env/templates/interactionheader.template%# -->
@@ -43,15 +41,12 @@
     <link rel="search" type="application/opensearchdescription+xml" title="YaCy Search on '#[clientname]#'" href="http://#[thisaddress]#/opensearchdescription.xml" />
     <!--YCU
     <link rel="stylesheet" type="text/css" media="screen" href="/env/highslide.css" />
-    <script type="text/javascript" src="/js/ajax.js"></script>
-    <script type="text/javascript" src="/js/xml.js"></script>
     <script type="text/javascript" src="/js/yacysearch.js"></script>
     <script type="text/javascript" src="/js/highslide/highslide.js"></script>
     <script type="text/javascript">hs.outlineType = 'rounded-white';</script>
     <link media="screen" type="text/css" href="/yacy/ui/css/themes/start/ui.base.css" rel="stylesheet" />
     <link media="screen" type="text/css" href="/yacy/ui/css/themes/start/ui.theme.css" rel="stylesheet" />
-    <link media="screen" type="text/css" href="/yacy/ui/css/autocomplete.css" rel="stylesheet" />
-    -->
+  -->
 </head>
 
 <body id="yacySearch">
@@ -106,10 +101,8 @@
     </form>
     <div id="searchProgress">
       <script type="text/javascript">
-        //<![CDATA[
-        var progressBar = new YaCyUi.Widgets.ProgressBar($('#searchProgress'),
-          #[results]#);
-        //]]>
+      var progressBar = new YaCyUi.Widgets.ProgressBar($('#searchProgress'),
+        #[results]#);
       </script>
     </div>
   </header>
@@ -120,6 +113,7 @@
       <div id="devInfo">
         - scripts need update
         - HTML5 errors needs to be fixed (jquery plugin involved)
+        - width &amp; height for image search results are always 0
       </div>
 
       <h1 class="greeting">#[promoteSearchPageGreeting]#</h1>
@@ -128,17 +122,14 @@
 
         #(topmenu)#::
         <div id="api">
-          <img src="env/grafics/rss.png" width="32" height="32" alt="RSS"/>
+          <img class="api" src="env/grafics/rss.png" alt="RSS"/>
           <div class="hidden">
             <script type="text/javascript">
-              //<![CDATA[
-              document.write('<a href="yacysearch.rss?' + window.location.search.substring(1) + '>This search results</a>');
-              //]]>
+            document.write('<a href="yacysearch.rss?' + window.location.search.substring(1) + '>This search results</a>');
             </script>
-            can also be retrieved as RSS/<a href="http://www.opensearch.org">opensearch</a> output.
+            can also be retrieved as <abbr>RSS</abbr>/<a href="http://www.opensearch.org">opensearch</a> output.
             The query format is similar to <a href="http://www.loc.gov/standards/sru/">SRU</a>.
-            Click the API icon to see an example call to the search rss API.
-            To see a list of all APIs, please visit the <a href="http://www.yacy-websuche.de/wiki/index.php/Dev:API">API wiki page</a>.
+            To see a list of all <abbr>APIs</abbr>, please visit the <a href="http://www.yacy-websuche.de/wiki/index.php/Dev:API">API wiki page</a>.
           </div>
         </div>
         #(resource-select)#::
@@ -191,16 +182,15 @@
             <strong>Did you mean:</strong> #{suggestions}# <a href="#[url]#">#[word]#</a> #[sep]##{/suggestions}#
           </p>
           #(/didYouMean)#
+          #(excluded)#::
+          <p>
+            <strong>
+              The following words are stop-words and had been excluded from the search: #[stopwords]#.
+            </strong>
+          </p>
+          #(/excluded)#
         </div>
 
-        <!-- show information about search key handling -->
-        #(excluded)#::
-        <p>
-          <strong>The following words are stop-words and had been excluded from the search: #[stopwords]#.</strong>
-        </p>
-        #(/excluded)#
-
-        <!-- type the number of results and navigation bar -->
         #(num-results)#::
         <p>No Results.</p>
         ::
@@ -265,9 +255,7 @@
 
               <!-- linklist begin -->
               <script type="text/javascript">
-                //<![CDATA[
-                YaCyPage.chacheResultElements();
-                //]]>
+              YaCyPage.chacheResultElements();
               </script>
               #(resultTable)#::
               <table width="100%">
@@ -279,6 +267,7 @@
                 #{results}#
                 <!--#include virtual="yacysearchitem.html?item=#[item]#&eventID=#[eventID]#" -->
                 #{/results}#
+                <div class="clear"></div>
                 #(resultTable)#::
               </table>
               #(/resultTable)#

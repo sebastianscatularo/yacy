@@ -1,4 +1,4 @@
-#(content)#::
+#(content)#::<!-- default search result -->
 <div class="searchResult">
   <div class="icon">
     <img width="16" height="16" src="ViewImage.png?width=16&amp;height=16&amp;code=#[faviconCode]#" id="f#[urlhash]#" class="favicon" alt=""/>
@@ -76,19 +76,18 @@
   </div>
   <div class="clear"></div>
 </div>
-::
-#(item)#::
-<div class="thumbcontainer">
-  <a href="#[hrefCache]#" target="#[target]#" class="thumblink" onclick="return hs.expand(this)">
-    <img src="#[href]#" width="128" height="128" alt="#[name]#" />
-  </a>
-  <div class="highslide-caption">
-    <a href="#[href]#" target="#[target]#">#[name]#</a>
-    <br />
-    <a href="#[source]#" target="#[target]#">#[sourcedom]#</a>
+::<!--image content -->
+<div id="thumbList">
+  #(item)#::
+  <div class="thumbContainer breakAll" data-href="#[href]#" data-target="#[target]#" style="background-image:url('#[href]#');">
+    <span class="content">
+      <a class="imgLink" href="#[hrefCache]#" target="#[target]#">Cache Info</a>
+      <a href="#[href]#" target="#[target]#"><em>#[name]#</em></a>
+      <a href="#[source]#" target="#[target]#">#[sourcedom]#</a>
+    </span>
   </div>
+  #(/item)#
 </div>
-#(/item)#
 ::
 #(item)#::<tr><td>#[name]#</td><td><a href="#[href]#" target="#[target]#">#[hrefshort]#</a></tr>#(/item)#
 ::
@@ -98,9 +97,7 @@
 #(/content)#
 
 <script type="text/javascript">
-  //<![CDATA[
-  YaCyPage.statistics("#[offset]#", "#[itemscount]#", "#[itemsperpage]#", "#[totalcount]#", "#[localResourceSize]#", "#[remoteResourceSize]#", "#[remoteIndexCount]#", "#[remotePeerCount]#", "#[navurlBase]#");
-  progressBar.step(1);
-  //]]>
+YaCyPage.statistics("#[offset]#", "#[itemscount]#", "#[itemsperpage]#", "#[totalcount]#", "#[localResourceSize]#", "#[remoteResourceSize]#", "#[remoteIndexCount]#", "#[remotePeerCount]#", "#[navurlBase]#");
+progressBar.step(1);
 </script>
 

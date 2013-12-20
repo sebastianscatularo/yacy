@@ -398,3 +398,45 @@ table.sideBar {
     vertical-align:middle;
   }
 }
+
+// image search results
+#thumbList {
+  .thumbContainer {
+    float:left;
+    margin-right:0.5em;
+    margin-bottom:0.5em;
+    width:150px;
+    height:150px;
+    background-size:contain;
+    background-repeat:no-repeat;
+    background-color:darken($ycu-var-color-page-bg, 10);
+    border-radius:3px;
+    border:1px solid #ccc;
+
+    > * {
+      visibility:hidden;
+      margin-bottom:0.3em;
+    }
+
+    &:hover > * {
+      visibility:visible;
+    }
+
+    .content {
+      display:block;
+      font-size:0.85em;
+      padding:0.3em;
+      line-height:1.7em;
+      background-color:rgba(58,58,58,0.65);
+
+      > * {
+        display:block;
+      }
+    }
+
+    .content,
+    .content a {
+      color:#fff !important;
+    }
+  }
+}
