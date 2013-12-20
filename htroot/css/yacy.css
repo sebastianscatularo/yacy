@@ -2941,7 +2941,7 @@ footer {
   background-color: transparent; }
 .noHover img.api,
 #api img.api {
-  width: 60px;
+  width: auto;
   height: 40px; }
 
 .breakAll {
