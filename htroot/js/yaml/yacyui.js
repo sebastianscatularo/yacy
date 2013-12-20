@@ -274,6 +274,11 @@ YaCyUi.init = function() {
 };
 
 YaCyUi.initFinish = function() {
+  // check for API links
+  if (typeof YaCyAPILink !== 'undefined' && $('#apiLink').length > 0) {
+    $('#apiLink').attr('href', YaCyAPILink);
+  }
+
   // move important messages to top
   YaCyUi.Messages.init();
 
