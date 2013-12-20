@@ -217,7 +217,7 @@
 
         <div class="ym-column">
           <!-- the search results -->
-          <div id="resultsList" class="ym-col1">
+          <div id="resultsList" class="ym-col1 contentdom-#[contentdom]#">
             <div class="ym-cbox">
               <!-- show openstreetmap tiles if geoinfo was found -->
               #(geoinfo)#::
@@ -253,25 +253,13 @@
               </div>
               #(/geoinfo)#
 
-              <!-- linklist begin -->
               <script type="text/javascript">
               YaCyPage.chacheResultElements();
               </script>
-              #(resultTable)#::
-              <table width="100%">
-                <tr class="TableHeader">
-                  <td width="30%">Media</td>
-                  <td width="70%">URL</td>
-                </tr>
-                #(/resultTable)#
-                #{results}#
-                <!--#include virtual="yacysearchitem.html?item=#[item]#&eventID=#[eventID]#" -->
-                #{/results}#
-                <div class="clear"></div>
-                #(resultTable)#::
-              </table>
-              #(/resultTable)#
-              <!-- linklist end -->
+              #{results}#
+              <!--#include virtual="yacysearchitem.html?item=#[item]#&eventID=#[eventID]#" -->
+              #{/results}#
+              <div class="clear"></div>
 
               <div id="resNavBottom" class="resNav"></div>
             </div>

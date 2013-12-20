@@ -88,12 +88,54 @@
   </div>
   #(/item)#
 </div>
-::
-#(item)#::<tr><td>#[name]#</td><td><a href="#[href]#" target="#[target]#">#[hrefshort]#</a></tr>#(/item)#
-::
-#(item)#::<tr><td>#[name]#</td><td><a href="#[href]#" target="#[target]#">#[hrefshort]#</a></tr>#(/item)#
-::
-#(item)#::<tr><td>#[name]#</td><td><a href="#[href]#" target="#[target]#">#[hrefshort]#</a></tr>#(/item)#
+::<!--audio content-->
+#(item)#::
+<div class="searchResult">
+  <div class="icon" title="Content-Type: Audio">
+    <i class="fa fa-music"></i>
+  </div>
+  <div class="content">
+    <h1 class="linktitle">
+      <a href="#[href]#" target="#[target]#">#[name]#</a>
+    </h1>
+    <p class="url">
+      <a href="#[href]#" target="#[target]#">#[hrefshort]#</a>
+    </p>
+  </div>
+</div>
+#(/item)#
+::<!--video content-->
+#(item)#::
+<div class="searchResult">
+  <div class="icon"  title="Content-Type: Video">
+    <i class="fa fa-video-camera"></i>
+  </div>
+  <div class="content">
+    <h1 class="linktitle">
+      <a href="#[href]#" target="#[target]#">#[name]#</a>
+    </h1>
+    <p class="url">
+      <a href="#[href]#" target="#[target]#">#[hrefshort]#</a>
+    </p>
+  </div>
+</div>
+#(/item)#
+::<!--application content-->
+#(item)#::
+<div class="searchResult">
+  <div class="icon" title="Content-Type: Application">
+    <i class="fa fa-file"></i>
+  </div>
+  <div class="content">
+    <h1 class="linktitle">
+      <a href="#[href]#" target="#[target]#">#[name]#</a>
+    </h1>
+    <p class="url">
+      <a href="#[href]#" target="#[target]#">#[hrefshort]#</a>
+    </p>
+  </div>
+</div>
+#(/item)#
 #(/content)#
 
 <script type="text/javascript">
