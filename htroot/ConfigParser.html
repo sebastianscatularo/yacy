@@ -7,18 +7,19 @@
 </head>
 
 <body id="configParser">
-  #%env/templates/header.template%#
+  #%env/templates/page-start.template%#
 
-<div id="devInfo">
- Code:
-  - pre-sort parsers by name
-</div>
+  <div id="devInfo">
+   Code:
+   - pre-sort parsers by name
+ </div>
 
-  <h1>Parser Configuration</h1>
+ <h1>Parser Configuration</h1>
 
-  <form action="ConfigParser.html" method="post" enctype="multipart/form-data">
-    <fieldset>
-      <legend>Content Parser Settings</legend>
+ <form action="ConfigParser.html" method="post" enctype="multipart/form-data">
+  <fieldset>
+    <legend>Content Parser Settings</legend>
+    <div class="description">
       <p>
         With this settings you can activate or deactivate parsing of additional content-types based on their MIME-types.
         <br/>
@@ -27,52 +28,53 @@
         <br/>
         If you want to test a specific parser you can do so using the <a href="ViewFile.html">File Viewer</a>.
       </p>
+    </div>
 
-      #{parser}#
-      <fieldset class="formGroup collapsible">
-        <legend>#[name]#</legend>
-        <div class="content noIndent">
-          <table class="sortable">
-            <thead>
-              <tr>
-                <th><input type="checkbox" data-action="checkAllToggle"/>enable/disable</th>
-                <th>Extension</th>
-                <th>Mime-Type</th>
-              </tr>
-            </thead>
-            <tbody>
-              #{ext}#
-              <tr>
-                <td>
-                  <input type="checkbox" name="extension_#[extension]#" #(status)#::checked="checked" #(/status)#/>
-                </td>
-                <td>#[extension]#</td>
-                <td></td>
-              </tr>
-              #{/ext}#
-              #{mime}#
-              <tr>
-                <td>
-                  <input type="checkbox" name="mimename_#[mimetype]#" #(status)#::checked="checked" #(/status)#/>
-                </td>
-                <td></td>
-                <td>#[mimetype]#</td>
-              </tr>
-              #{/mime}#
-            </tbody>
-          </table>
-        </div>
-      </fieldset>
-      #{/parser}#
-
-      <fieldset class="formControl">
-        <div class="content">
-          <button type="submit" name="parserSettings" class="primary icon-run">Save</button>
-        </div>
-      </fieldset>
+    #{parser}#
+    <fieldset class="formGroup collapsible">
+      <legend>#[name]#</legend>
+      <div class="content noIndent">
+        <table class="sortable">
+          <thead>
+            <tr>
+              <th><input type="checkbox" data-action="checkAllToggle"/>enable/disable</th>
+              <th>Extension</th>
+              <th>Mime-Type</th>
+            </tr>
+          </thead>
+          <tbody>
+            #{ext}#
+            <tr>
+              <td>
+                <input type="checkbox" name="extension_#[extension]#" #(status)#::checked="checked" #(/status)#/>
+              </td>
+              <td>#[extension]#</td>
+              <td></td>
+            </tr>
+            #{/ext}#
+            #{mime}#
+            <tr>
+              <td>
+                <input type="checkbox" name="mimename_#[mimetype]#" #(status)#::checked="checked" #(/status)#/>
+              </td>
+              <td></td>
+              <td>#[mimetype]#</td>
+            </tr>
+            #{/mime}#
+          </tbody>
+        </table>
+      </div>
     </fieldset>
-  </form>
+    #{/parser}#
 
-  #%env/templates/footer.template%#
+    <fieldset class="formControl">
+      <div class="content">
+        <button type="submit" name="parserSettings" class="primary icon-run">Save</button>
+      </div>
+    </fieldset>
+  </fieldset>
+</form>
+
+#%env/templates/page-end.template%#
 </body>
 </html>
