@@ -11,6 +11,9 @@
   #(/menu)#
   <script type="text/javascript" src="/js/yaml/tablesorter/jquery.tablesorter.min.js"></script>
   <script type="text/javascript" src="/js/yaml/pages/network.js"></script>
+  <script type="text/javascript">
+  var YaCyAPILink = 'Network.xml?' + window.location.search.substring(1);
+  </script>
 </head>
 
 <body id="network">
@@ -31,12 +34,7 @@
     <img class="api" src="/env/grafics/api.png" alt="API"/>
     <div>
       The information that is presented on this page can also be retrieved as
-      <script type="text/javascript">
-        //<![CDATA[
-        document.write('<a class="api" href="Network.xml?' + window.location.search.substring(1) + '">XML</a>');
-        //]]>
-      </script>.
-      Click on the link above to see the <abbr>XML</abbr>.
+      <a class="api" id="apiLink" href="#">XML</a>.
       To see a list of all APIs, please visit the <a href="http://www.yacy-websuche.de/wiki/index.php/Dev:API">API wiki page</a>.
     </div>
   </div>

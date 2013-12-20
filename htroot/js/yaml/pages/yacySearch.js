@@ -1,6 +1,9 @@
 /*jslint browser:true */
 /*global YaCyPage:true, YaCyUi:true, $:true, jQuery:true, console:true */
 "use strict";
+
+var YaCyAPILink = 'yacysearch.rss?' + window.location.search.substring(1);
+
 YaCyPage.e; // frequent used elements cache, set by chacheResultElements
 
 YaCyPage.chacheResultElements = function() {
