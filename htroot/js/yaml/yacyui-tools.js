@@ -100,6 +100,16 @@ YaCyUi.Tools = YaCyUi.Tools || {
     }
     confStr = confStr.replace(/,$/, '');
     window.open(url, title, confStr);
+  },
+
+  tplReplace: function(tpl, replace) {
+    var result = tpl;
+    var rex;
+    for (var key in replace) {
+      rex = new RegExp('%' + key.toUpperCase() + '%', "g");
+      result = result.replace(rex, replace[key]);
+    }
+    return result;
   }
 };
 
