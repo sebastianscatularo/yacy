@@ -13,7 +13,7 @@
 <body id="yacyInteractive">
   #(topmenu)#::
   <div id="api">
-    <img class="api" src="env/grafics/api.png"/>
+    <img class="api" src="env/grafics/api.png" alt="API"/>
     <div>
       This search result can also be retrieved as RSS/<a href="http://www.opensearch.org">opensearch</a> <a href="#" id="apiLink">output</a>.
       The query format is similar to <a href="http://www.loc.gov/standards/sru/">SRU</a>.
@@ -29,10 +29,9 @@
       </a>
     </div>
     <form action="yacyinteractive.html" id="searchForm" method="get" accept-charset="UTF-8">
-      <!--#(allowrealtime)#onsubmit="document.getElementById('searchnavigation').innerHTML = '<div>loading from local index...</div>'"::onkeyup="xmlhttpPost(); return false;"#(/allowrealtime)#-->
       <input type="hidden" name="maximumRecords" value="#[maximumRecords]#" />
       <input type="hidden" name="startRecord" value="#[startRecord]#" />
-      <input type="hidden" name="contentdom", value="all" />
+      <input type="hidden" name="contentdom" value="all" />
       <div class="headRow">
         <div class="menu#(topmenu)# empty::#(/topmenu)#">
           #(topmenu)#::
@@ -54,7 +53,7 @@
   <main>
     <div class="ym-wrapper">
       <div class="ym-wbox">
-        <div id="devInfo">
+        <div id="devInfo" data-done="script html5">
           yjson is invalid! (trailing comma after navigation entry)
         </div>
 
@@ -73,12 +72,14 @@
         <div id="searchResults">
           <table class="sortable hidden">
             <thead>
-              <th>Protocol</th>
-              <th>Host</th>
-              <th>Path</th>
-              <th>URL</th>
-              <th>Size</th>
-              <th>Date</th>
+              <tr>
+                <th>Protocol</th>
+                <th>Host</th>
+                <th>Path</th>
+                <th>URL</th>
+                <th>Size</th>
+                <th>Date</th>
+              </tr>
             </thead>
             <tbody class="plain"></tbody>
           </table>
