@@ -2632,8 +2632,11 @@
 
 fieldset.framed > legend, .fontSans, header .logo, #footerMenu, table, code.key, nav,
 #navSub, body#yacySearch header,
+body#yacyInteractive header,
 body#webSearch header, body#yacySearch main,
-body#webSearch main, body#yacySearch #searchTrailer .ui-widget {
+body#yacyInteractive main,
+body#webSearch main, body#yacySearch #searchTrailer .ui-widget,
+body#yacyInteractive #searchTrailer .ui-widget {
   font-family: "Droid Sans", Arial, Helvetica, sans-serif; }
 
 input:not([type="range"]),
@@ -2656,14 +2659,20 @@ button[href^="https://"].plain:not(.noExt):before, table.sortable th:not(.noSort
 
 a[href^="http://"]:not(.noExt):before, button[href^="http://"].plain:not(.noExt):before,
 a[href^="https://"]:not(.noExt):before,
-button[href^="https://"].plain:not(.noExt):before, table.sortable th:not(.noSort):after, body#yacySearch #messages > p:before, body#yacySearch div #messages > .p:before, div body#yacySearch #messages > .p:before {
+button[href^="https://"].plain:not(.noExt):before, table.sortable th:not(.noSort):after, body#yacySearch #messages > p:before, body#yacySearch div #messages > .p:before, div body#yacySearch #messages > .p:before,
+body#yacyInteractive #messages > p:before,
+body#yacyInteractive div #messages > .p:before,
+div body#yacyInteractive #messages > .p:before {
   font-family: FontAwesome;
   font-style: normal;
   font-size: 0.85em; }
 
 a[href^="http://"]:not(.noExt):before, button[href^="http://"].plain:not(.noExt):before,
 a[href^="https://"]:not(.noExt):before,
-button[href^="https://"].plain:not(.noExt):before, table.sortable th:not(.noSort):after, body#yacySearch #messages > p:before, body#yacySearch div #messages > .p:before, div body#yacySearch #messages > .p:before {
+button[href^="https://"].plain:not(.noExt):before, table.sortable th:not(.noSort):after, body#yacySearch #messages > p:before, body#yacySearch div #messages > .p:before, div body#yacySearch #messages > .p:before,
+body#yacyInteractive #messages > p:before,
+body#yacyInteractive div #messages > .p:before,
+div body#yacyInteractive #messages > .p:before {
   display: inline-block; }
 
 #devInfo {
@@ -3121,259 +3130,363 @@ nav span,
 
 /** Pages specific CSS */
 body#yacySearch header,
+body#yacyInteractive header,
 body#webSearch header {
   height: auto; }
 body#yacySearch nav ul,
+body#yacyInteractive nav ul,
 body#webSearch nav ul {
   font-size: 0.8em;
   padding: 0; }
-body#yacySearch main a:before, body#yacySearch main button.plain:before,
-body#webSearch main a:before,
-body#webSearch main button.plain:before {
+body#yacySearch main a:before:not([class*='icon-']), body#yacySearch main button.plain:before:not([class*='icon-']),
+body#yacyInteractive main a:before:not([class*='icon-']),
+body#yacyInteractive main button.plain:before:not([class*='icon-']),
+body#webSearch main a:before:not([class*='icon-']),
+body#webSearch main button.plain:before:not([class*='icon-']) {
   display: none; }
 body#yacySearch h1.greeting,
+body#yacyInteractive h1.greeting,
 body#webSearch h1.greeting {
   font-style: italic;
   font-size: 1.2em;
   opacity: 0.9; }
 
-body#yacySearch {
+body#yacySearch,
+body#yacyInteractive {
   /** YAML layout */
   /** Page layout */ }
-  body#yacySearch .ym-column {
+  body#yacySearch .ym-column,
+  body#yacyInteractive .ym-column {
     display: block;
     overflow: hidden;
     padding-right: 250px;
     width: auto; }
-  body#yacySearch .ym-col1 {
+  body#yacySearch .ym-col1,
+  body#yacyInteractive .ym-col1 {
     /* content */
     position: relative;
     float: left;
     width: 100%; }
-  body#yacySearch .ym-col3 {
+  body#yacySearch .ym-col3,
+  body#yacyInteractive .ym-col3 {
     /* sidebar */
     position: relative;
     float: left;
     width: 250px;
     margin: 0 -250px 0 0; }
-  body#yacySearch header {
-    height: auto; }
-  body#yacySearch nav ul {
-    font-size: 0.8em;
-    padding: 0; }
-  body#yacySearch main a:before, body#yacySearch main button.plain:before {
-    display: none; }
-  body#yacySearch h1.greeting {
-    font-style: italic;
-    font-size: 1.2em;
-    opacity: 0.9; }
-  body#yacySearch header {
+  body#yacySearch header,
+  body#yacyInteractive header {
     box-shadow: 0 4px 5px rgba(50, 50, 50, 0.4);
     border-bottom: 3px solid #94c6e4; }
     body#yacySearch header .headRow,
-    body#yacySearch header .content {
+    body#yacySearch header .content,
+    body#yacyInteractive header .headRow,
+    body#yacyInteractive header .content {
       margin-left: 103px;
       padding-left: 0.5em; }
-    body#yacySearch header .headRow {
+    body#yacySearch header .headRow,
+    body#yacyInteractive header .headRow {
       background-color: #444444; }
-    body#yacySearch header .subRow {
+    body#yacySearch header .subRow,
+    body#yacyInteractive header .subRow {
       padding-top: 0.5em;
       padding-bottom: 0.5em;
       background-color: #222222;
       font-size: 0.9em; }
-    body#yacySearch header .logo {
+    body#yacySearch header .logo,
+    body#yacyInteractive header .logo {
       position: absolute;
       overflow: visible;
       left: 0;
       top: 0;
       width: 103px;
       margin: 0.5em; }
-    body#yacySearch header .menu.empty {
+    body#yacySearch header .menu.empty,
+    body#yacyInteractive header .menu.empty {
       height: 2em; }
-    body#yacySearch header .search {
+    body#yacySearch header .search,
+    body#yacyInteractive header .search {
       margin-bottom: 0.2em; }
-    body#yacySearch header label {
+    body#yacySearch header label,
+    body#yacyInteractive header label {
       padding-right: 0.5em; }
-    body#yacySearch header form {
+    body#yacySearch header form,
+    body#yacyInteractive header form {
       margin: 0; }
-    body#yacySearch header input {
+    body#yacySearch header input,
+    body#yacyInteractive header input {
       margin-left: 0.8em;
       margin-right: 0.3em;
       padding: 0.2em;
       width: 20em; }
-    body#yacySearch header button {
+    body#yacySearch header button,
+    body#yacyInteractive header button {
       text-shadow: 0; }
     body#yacySearch header input,
-    body#yacySearch header button {
+    body#yacySearch header button,
+    body#yacyInteractive header input,
+    body#yacyInteractive header button {
       margin-top: 0;
       margin-bottom: 0;
       -moz-box-sizing: content-box;
       box-sizing: content-box; }
-  body#yacySearch nav {
+  body#yacySearch nav,
+  body#yacyInteractive nav {
     padding: 0;
     margin: 0; }
-  body#yacySearch h1.greeting {
+  body#yacySearch h1.greeting,
+  body#yacyInteractive h1.greeting {
     float: right;
     padding: 0;
     margin: 0;
     margin-right: 1.5em; }
-  body#yacySearch #searchProgress {
+  body#yacySearch #searchProgress,
+  body#yacyInteractive #searchProgress {
     height: 1em; }
-  body#yacySearch main a:before, body#yacySearch main button.plain:before {
-    display: none; }
-  body#yacySearch #resultsList {
+  body#yacySearch #resultsList,
+  body#yacyInteractive #resultsList {
     margin-right: 1em; }
-  body#yacySearch .searchResult {
+  body#yacySearch .searchResult,
+  body#yacyInteractive .searchResult {
     margin-bottom: 2em;
     margin-left: -0.5em;
     padding: 0.5em;
     border-radius: 5px; }
-    body#yacySearch .searchResult:hover {
+    body#yacySearch .searchResult:hover,
+    body#yacyInteractive .searchResult:hover {
       background-color: #fdfefe; }
-    body#yacySearch .searchResult .icon {
+    body#yacySearch .searchResult .icon,
+    body#yacyInteractive .searchResult .icon {
       float: left; }
-      body#yacySearch .searchResult .icon .controls {
+      body#yacySearch .searchResult .icon .controls,
+      body#yacyInteractive .searchResult .icon .controls {
         font-size: 0.8em;
         line-height: 1.3em;
         text-align: center; }
-        body#yacySearch .searchResult .icon .controls > * {
+        body#yacySearch .searchResult .icon .controls > *,
+        body#yacyInteractive .searchResult .icon .controls > * {
           display: block;
           margin-bottom: 0.3em; }
         body#yacySearch .searchResult .icon .controls i.fa, body#yacySearch .searchResult .icon .controls i.lb-cancel:before, body#yacySearch .searchResult .icon .controls i.lb-next:hover:before,
-        body#yacySearch .searchResult .icon .controls i.lb-prev:hover:before, body#yacySearch .searchResult .icon .controls .lb-data i.lb-close:before, .lb-data body#yacySearch .searchResult .icon .controls i.lb-close:before {
+        body#yacySearch .searchResult .icon .controls i.lb-prev:hover:before, body#yacySearch .searchResult .icon .controls .lb-data i.lb-close:before, .lb-data body#yacySearch .searchResult .icon .controls i.lb-close:before,
+        body#yacyInteractive .searchResult .icon .controls i.fa,
+        body#yacyInteractive .searchResult .icon .controls i.lb-cancel:before,
+        body#yacyInteractive .searchResult .icon .controls i.lb-next:hover:before,
+        body#yacyInteractive .searchResult .icon .controls i.lb-prev:hover:before,
+        body#yacyInteractive .searchResult .icon .controls .lb-data i.lb-close:before,
+        .lb-data body#yacyInteractive .searchResult .icon .controls i.lb-close:before {
           opacity: 0.6; }
         body#yacySearch .searchResult .icon .controls a:hover i.fa, body#yacySearch .searchResult .icon .controls button.plain:hover i.fa, body#yacySearch .searchResult .icon .controls a:hover i.lb-cancel:before, body#yacySearch .searchResult .icon .controls button.plain:hover i.lb-cancel:before, body#yacySearch .searchResult .icon .controls a:hover i.lb-next:hover:before, body#yacySearch .searchResult .icon .controls button.plain:hover i.lb-next:hover:before,
         body#yacySearch .searchResult .icon .controls a:hover i.lb-prev:hover:before,
-        body#yacySearch .searchResult .icon .controls button.plain:hover i.lb-prev:hover:before, body#yacySearch .searchResult .icon .controls a:hover .lb-data i.lb-close:before, .lb-data body#yacySearch .searchResult .icon .controls a:hover i.lb-close:before, body#yacySearch .searchResult .icon .controls button.plain:hover .lb-data i.lb-close:before, .lb-data body#yacySearch .searchResult .icon .controls button.plain:hover i.lb-close:before {
+        body#yacySearch .searchResult .icon .controls button.plain:hover i.lb-prev:hover:before, body#yacySearch .searchResult .icon .controls a:hover .lb-data i.lb-close:before, .lb-data body#yacySearch .searchResult .icon .controls a:hover i.lb-close:before, body#yacySearch .searchResult .icon .controls button.plain:hover .lb-data i.lb-close:before, .lb-data body#yacySearch .searchResult .icon .controls button.plain:hover i.lb-close:before,
+        body#yacyInteractive .searchResult .icon .controls a:hover i.fa,
+        body#yacyInteractive .searchResult .icon .controls button.plain:hover i.fa,
+        body#yacyInteractive .searchResult .icon .controls a:hover i.lb-cancel:before,
+        body#yacyInteractive .searchResult .icon .controls button.plain:hover i.lb-cancel:before,
+        body#yacyInteractive .searchResult .icon .controls a:hover i.lb-next:hover:before,
+        body#yacyInteractive .searchResult .icon .controls button.plain:hover i.lb-next:hover:before,
+        body#yacyInteractive .searchResult .icon .controls a:hover i.lb-prev:hover:before,
+        body#yacyInteractive .searchResult .icon .controls button.plain:hover i.lb-prev:hover:before,
+        body#yacyInteractive .searchResult .icon .controls a:hover .lb-data i.lb-close:before,
+        .lb-data body#yacyInteractive .searchResult .icon .controls a:hover i.lb-close:before,
+        body#yacyInteractive .searchResult .icon .controls button.plain:hover .lb-data i.lb-close:before,
+        .lb-data body#yacyInteractive .searchResult .icon .controls button.plain:hover i.lb-close:before {
           opacity: 1; }
-    body#yacySearch .searchResult .content {
+    body#yacySearch .searchResult .content,
+    body#yacyInteractive .searchResult .content {
       margin-left: 30px; }
     body#yacySearch .searchResult .icon,
-    body#yacySearch .searchResult h1 {
+    body#yacySearch .searchResult h1,
+    body#yacyInteractive .searchResult .icon,
+    body#yacyInteractive .searchResult h1 {
       line-height: 1.5em;
       font-size: 1.3em;
       margin: 0;
       font-weight: bold; }
-    body#yacySearch .searchResult .urlInfo {
+    body#yacySearch .searchResult .urlInfo,
+    body#yacyInteractive .searchResult .urlInfo {
       font-size: 0.9em; }
-      body#yacySearch .searchResult .urlInfo span {
+      body#yacySearch .searchResult .urlInfo span,
+      body#yacyInteractive .searchResult .urlInfo span {
         display: inline-block;
         padding: 0;
         padding-right: 0.3em; }
-        body#yacySearch .searchResult .urlInfo span:not(:first-of-type):before {
+        body#yacySearch .searchResult .urlInfo span:not(:first-of-type):before,
+        body#yacyInteractive .searchResult .urlInfo span:not(:first-of-type):before {
           content: '|';
           display: inline-block;
           padding-right: 0.3em; }
-      body#yacySearch .searchResult .urlInfo a.iconic, body#yacySearch .searchResult .urlInfo button.iconic.plain {
+      body#yacySearch .searchResult .urlInfo a.iconic, body#yacySearch .searchResult .urlInfo button.iconic.plain,
+      body#yacyInteractive .searchResult .urlInfo a.iconic,
+      body#yacyInteractive .searchResult .urlInfo button.iconic.plain {
         font-size: 1.2em; }
-    body#yacySearch .searchResult .date {
+    body#yacySearch .searchResult .date,
+    body#yacyInteractive .searchResult .date {
       font-style: italic; }
-    body#yacySearch .searchResult .tags {
+    body#yacySearch .searchResult .tags,
+    body#yacyInteractive .searchResult .tags {
       display: block; }
-    body#yacySearch .searchResult .snippet {
+    body#yacySearch .searchResult .snippet,
+    body#yacyInteractive .searchResult .snippet {
       word-wrap: break-word; }
-      body#yacySearch .searchResult .snippet:after {
+      body#yacySearch .searchResult .snippet:after,
+      body#yacyInteractive .searchResult .snippet:after {
         content: '\2026'; }
-    body#yacySearch .searchResult h1 {
+    body#yacySearch .searchResult h1,
+    body#yacyInteractive .searchResult h1 {
       display: inline-block; }
-    body#yacySearch .searchResult p, body#yacySearch .searchResult div .p, div body#yacySearch .searchResult .p {
+    body#yacySearch .searchResult p, body#yacySearch .searchResult div .p, div body#yacySearch .searchResult .p,
+    body#yacyInteractive .searchResult p,
+    body#yacyInteractive .searchResult div .p,
+    div body#yacyInteractive .searchResult .p {
       margin-bottom: 0.5em; }
-      body#yacySearch .searchResult p.url, body#yacySearch .searchResult div .url.p, div body#yacySearch .searchResult .url.p {
+      body#yacySearch .searchResult p.url, body#yacySearch .searchResult div .url.p, div body#yacySearch .searchResult .url.p,
+      body#yacyInteractive .searchResult p.url,
+      body#yacyInteractive .searchResult div .url.p,
+      div body#yacyInteractive .searchResult .url.p {
         font-size: 0.9em;
         white-space: nowrap;
         text-overflow: ellipsis;
         overflow: hidden; }
-        body#yacySearch .searchResult p.url:hover, body#yacySearch .searchResult div .url.p:hover, div body#yacySearch .searchResult .url.p:hover {
+        body#yacySearch .searchResult p.url:hover, body#yacySearch .searchResult div .url.p:hover, div body#yacySearch .searchResult .url.p:hover,
+        body#yacyInteractive .searchResult p.url:hover,
+        body#yacyInteractive .searchResult div .url.p:hover,
+        div body#yacyInteractive .searchResult .url.p:hover {
           text-overflow: inherit;
           white-space: inherit; }
-    body#yacySearch .searchResult p:last-of-type, body#yacySearch .searchResult div .p:last-of-type, div body#yacySearch .searchResult .p:last-of-type {
+    body#yacySearch .searchResult p:last-of-type, body#yacySearch .searchResult div .p:last-of-type, div body#yacySearch .searchResult .p:last-of-type,
+    body#yacyInteractive .searchResult p:last-of-type,
+    body#yacyInteractive .searchResult div .p:last-of-type,
+    div body#yacyInteractive .searchResult .p:last-of-type {
       margin-bottom: 0; }
-  body#yacySearch .urlActions {
+  body#yacySearch .urlActions,
+  body#yacyInteractive .urlActions {
     margin-bottom: 0.3em;
     opacity: 0.7; }
-  body#yacySearch #searchTrailer .ym-cbox > div {
+  body#yacySearch #searchTrailer .ym-cbox > div,
+  body#yacyInteractive #searchTrailer .ym-cbox > div {
     margin-top: 1em;
     width: 220px; }
-  body#yacySearch #searchTrailer .ym-cbox > div:first-of-type {
+  body#yacySearch #searchTrailer .ym-cbox > div:first-of-type,
+  body#yacyInteractive #searchTrailer .ym-cbox > div:first-of-type {
     margin-top: 0; }
-  body#yacySearch #searchTrailer label {
+  body#yacySearch #searchTrailer label,
+  body#yacyInteractive #searchTrailer label {
     display: block; }
-  body#yacySearch #searchTrailer fieldset {
+  body#yacySearch #searchTrailer fieldset,
+  body#yacyInteractive #searchTrailer fieldset {
     padding: 0.5em; }
-    body#yacySearch #searchTrailer fieldset legend {
+    body#yacySearch #searchTrailer fieldset legend,
+    body#yacyInteractive #searchTrailer fieldset legend {
       font-size: 0.8em;
       padding: 0 0.3em; }
-  body#yacySearch #tagCloud {
+  body#yacySearch #tagCloud,
+  body#yacyInteractive #tagCloud {
     text-align: center; }
-    body#yacySearch #tagCloud a, body#yacySearch #tagCloud button.plain {
+    body#yacySearch #tagCloud a, body#yacySearch #tagCloud button.plain,
+    body#yacyInteractive #tagCloud a,
+    body#yacyInteractive #tagCloud button.plain {
       display: inline-block;
       padding: 3px; }
-      body#yacySearch #tagCloud a:hover, body#yacySearch #tagCloud button.plain:hover {
+      body#yacySearch #tagCloud a:hover, body#yacySearch #tagCloud button.plain:hover,
+      body#yacyInteractive #tagCloud a:hover,
+      body#yacyInteractive #tagCloud button.plain:hover {
         border-radius: 5px;
         color: #fff !important; }
-  body#yacySearch #sidebarAbout .ui-accordion-content {
+  body#yacySearch #sidebarAbout .ui-accordion-content,
+  body#yacyInteractive #sidebarAbout .ui-accordion-content {
     padding: 0.5em; }
-    body#yacySearch #sidebarAbout .ui-accordion-content iframe {
+    body#yacySearch #sidebarAbout .ui-accordion-content iframe,
+    body#yacyInteractive #sidebarAbout .ui-accordion-content iframe {
       height: auto !important; }
-  body#yacySearch #resBarTop {
+  body#yacySearch #resBarTop,
+  body#yacyInteractive #resBarTop {
     margin-bottom: 1em; }
-  body#yacySearch #resCounter {
+  body#yacySearch #resCounter,
+  body#yacyInteractive #resCounter {
     font-size: 0.9em;
     font-style: italic; }
-  body#yacySearch .resNav {
+  body#yacySearch .resNav,
+  body#yacyInteractive .resNav {
     margin-left: 1.5em; }
     body#yacySearch .resNav .left:before,
-    body#yacySearch .resNav .right:before {
+    body#yacySearch .resNav .right:before,
+    body#yacyInteractive .resNav .left:before,
+    body#yacyInteractive .resNav .right:before {
       font-family: FontAwesome;
       font-style: normal;
       font-size: 1.2em; }
     body#yacySearch .resNav a, body#yacySearch .resNav button.plain,
-    body#yacySearch .resNav span {
+    body#yacySearch .resNav span,
+    body#yacyInteractive .resNav a,
+    body#yacyInteractive .resNav button.plain,
+    body#yacyInteractive .resNav span {
       display: inline-block;
       margin: 0 0.2em;
       padding: 0 0.25em; }
-    body#yacySearch .resNav span.current {
+    body#yacySearch .resNav span.current,
+    body#yacyInteractive .resNav span.current {
       font-weight: bold; }
-    body#yacySearch .resNav a:not(.iconic), body#yacySearch .resNav button.plain:not(.iconic) {
+    body#yacySearch .resNav a:not(.iconic), body#yacySearch .resNav button.plain:not(.iconic),
+    body#yacyInteractive .resNav a:not(.iconic),
+    body#yacyInteractive .resNav button.plain:not(.iconic) {
       border-top: 3px solid transparent;
       font-weight: bold;
       border-radius: 3px;
       background-color: #d5e8f4; }
-      body#yacySearch .resNav a:not(.iconic):hover, body#yacySearch .resNav button.plain:not(.iconic):hover {
+      body#yacySearch .resNav a:not(.iconic):hover, body#yacySearch .resNav button.plain:not(.iconic):hover,
+      body#yacyInteractive .resNav a:not(.iconic):hover,
+      body#yacyInteractive .resNav button.plain:not(.iconic):hover {
         border-top: 3px solid #94E84D;
         color: #4d87c7; }
-    body#yacySearch .resNav .left:before {
+    body#yacySearch .resNav .left:before,
+    body#yacyInteractive .resNav .left:before {
       content: "\f0d9"; }
-    body#yacySearch .resNav .right:before {
+    body#yacySearch .resNav .right:before,
+    body#yacyInteractive .resNav .right:before {
       content: "\f0da"; }
-  body#yacySearch #resNav {
+  body#yacySearch #resNav,
+  body#yacyInteractive #resNav {
     display: inline-block; }
-  body#yacySearch #resNavBottom {
+  body#yacySearch #resNavBottom,
+  body#yacyInteractive #resNavBottom {
     float: right; }
-  body#yacySearch #messages > p, body#yacySearch div #messages > .p, div body#yacySearch #messages > .p {
+  body#yacySearch #messages > p, body#yacySearch div #messages > .p, div body#yacySearch #messages > .p,
+  body#yacyInteractive #messages > p,
+  body#yacyInteractive div #messages > .p,
+  div body#yacyInteractive #messages > .p {
     padding: 0.3em 1em;
     border-radius: 5px; }
-  body#yacySearch #messages .error:before {
+  body#yacySearch #messages .error:before,
+  body#yacyInteractive #messages .error:before {
     content: "\f06a"; }
-  body#yacySearch #messages .suggest strong {
+  body#yacySearch #messages .suggest strong,
+  body#yacyInteractive #messages .suggest strong {
     font-style: italic; }
-  body#yacySearch #messages .suggest:before {
+  body#yacySearch #messages .suggest:before,
+  body#yacyInteractive #messages .suggest:before {
     content: "\f0eb"; }
-  body#yacySearch table.sideBar td {
+  body#yacySearch table.sideBar td,
+  body#yacyInteractive table.sideBar td {
     padding: 0.2em 0; }
-  body#yacySearch table.sideBar td:first-of-type {
+  body#yacySearch table.sideBar td:first-of-type,
+  body#yacyInteractive table.sideBar td:first-of-type {
     padding-left: 0.5em; }
-  body#yacySearch #searchMode {
+  body#yacySearch #searchMode,
+  body#yacyInteractive #searchMode {
     padding: 0.5em;
     border: 1px solid #ccc;
     border-radius: 5px;
     display: table; }
-    body#yacySearch #searchMode .row {
+    body#yacySearch #searchMode .row,
+    body#yacyInteractive #searchMode .row {
       display: table-row; }
-    body#yacySearch #searchMode .col {
+    body#yacySearch #searchMode .col,
+    body#yacyInteractive #searchMode .col {
       display: table-cell;
       vertical-align: middle; }
-  body#yacySearch #thumbList .thumbContainer {
+  body#yacySearch #thumbList .thumbContainer,
+  body#yacyInteractive #thumbList .thumbContainer {
     float: left;
     margin-right: 0.5em;
     margin-bottom: 0.5em;
@@ -3384,22 +3497,29 @@ body#yacySearch {
     background-color: #c1ddee;
     border-radius: 3px;
     border: 1px solid #ccc; }
-    body#yacySearch #thumbList .thumbContainer > * {
+    body#yacySearch #thumbList .thumbContainer > *,
+    body#yacyInteractive #thumbList .thumbContainer > * {
       visibility: hidden;
       margin-bottom: 0.3em; }
-    body#yacySearch #thumbList .thumbContainer:hover > * {
+    body#yacySearch #thumbList .thumbContainer:hover > *,
+    body#yacyInteractive #thumbList .thumbContainer:hover > * {
       visibility: visible; }
-    body#yacySearch #thumbList .thumbContainer .content {
+    body#yacySearch #thumbList .thumbContainer .content,
+    body#yacyInteractive #thumbList .thumbContainer .content {
       display: block;
       font-size: 0.85em;
       padding: 0.3em;
       line-height: 1.7em;
       background-color: rgba(58, 58, 58, 0.65); }
-      body#yacySearch #thumbList .thumbContainer .content > * {
+      body#yacySearch #thumbList .thumbContainer .content > *,
+      body#yacyInteractive #thumbList .thumbContainer .content > * {
         display: block; }
     body#yacySearch #thumbList .thumbContainer .content,
     body#yacySearch #thumbList .thumbContainer .content a,
-    body#yacySearch #thumbList .thumbContainer .content button.plain {
+    body#yacySearch #thumbList .thumbContainer .content button.plain,
+    body#yacyInteractive #thumbList .thumbContainer .content,
+    body#yacyInteractive #thumbList .thumbContainer .content a,
+    body#yacyInteractive #thumbList .thumbContainer .content button.plain {
       color: #fff !important; }
 
 body#webSearch .searchDomains label {
@@ -3412,3 +3532,11 @@ body#webSearch .searchDomains {
   margin-top: 0.5em; }
 body#webSearch input[type="text"] {
   width: 20em; }
+
+body#yacyInteractive #searchFacetNavigation *:not(fieldset).facet {
+  display: inline-block;
+  margin-right: 0.5em;
+  line-height: 1.7em; }
+  body#yacyInteractive #searchFacetNavigation *:not(fieldset).facet span {
+    font-size: 0.8em;
+    opacity: 0.9; }

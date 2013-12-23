@@ -1,0 +1,10 @@
+#searchFacetNavigation *:not(fieldset).facet {
+  display:inline-block;
+  margin-right:0.5em;
+  line-height:1.7em;
+
+  span {
+    font-size:0.8em;
+    opacity:0.9;
+  }
+}

@@ -11,7 +11,7 @@ nav ul {
 main {
   @extend %font-sans;
 
-  a:before {
+  a:before:not([class*='icon-']) {
     display:none;
   }
 }

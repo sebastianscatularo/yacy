@@ -4,12 +4,17 @@
 
 /** Pages specific CSS */
 body#yacySearch,
+body#yacyInteractive,
 body#webSearch {
   @import 'page-search';
 }
-body#yacySearch {
+body#yacySearch,
+body#yacyInteractive {
   @import 'page-yacy-search';
 }
 body#webSearch {
   @import 'page-web-search';
+}
+body#yacyInteractive {
+  @import 'page-yacy-interactive';
 }
