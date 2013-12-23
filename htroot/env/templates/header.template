@@ -308,6 +308,12 @@
         </ul>
       </li>
     </ul>
+    <div id="navSearch">
+      <input type="text" placeholder="quick find" size="7"/>
+      <div id="navSearchResults" class="hidden">
+        <ul></ul>
+      </div>
+    </div>
     <div id="navSub" class="hidden">
       <div class="wrap">
         <div class="content"></div>

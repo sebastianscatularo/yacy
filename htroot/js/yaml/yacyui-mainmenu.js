@@ -11,6 +11,28 @@ YaCyUi.Func.MainMenu = YaCyUi.Func.MainMenu || function() {
   this.toggleUp = $('<i class="fa fa-caret-up"></i>').hide();
   this.toggleDown = $('<i class="fa fa-caret-down"></i>');
 
+  function addQuickSearch() {
+    self.searchCache = {};
+    $('#nav ul.main').find('a').each(function() {
+      self.searchCache[$(this).text()] = $(this).attr('href');
+    });
+    $('#navSearch input').on('focus', function() {
+      $('#navSearchResults').slideDown('fast');
+    }).on('blur', function() {
+      $('#navSearchResults').slideUp('fast');
+    }).on('input', function() {
+      $('#navSearchResults li').remove();
+      var query = $(this).val().toLowerCase().trim();
+      if (query.length >= 3) {
+        for (var key in self.searchCache) {
+          if (key.toLowerCase().indexOf(query) > -1) {
+            $('#navSearchResults ul').append('<li><a href="' + self.searchCache[key] + '">' + key + '</a>')
+          }
+        }
+      }
+    });
+  };
+
   /** Attach click handler to toplevel entries and menu toggle. */
 
   function addInteractionHandler() {
@@ -116,6 +138,7 @@ YaCyUi.Func.MainMenu = YaCyUi.Func.MainMenu || function() {
     $('#breadCrumb').html(breadCrumb);
   }
 
+  addQuickSearch();
   addInteractionHandler();
   createBreadCrumbAndMarkActive();
   $('#menuToggle').show();

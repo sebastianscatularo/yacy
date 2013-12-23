@@ -1,5 +1,5 @@
 /**********
- * Full main navigation. */
+* Full main navigation. */
 @import 'menu-base';
 
 #nav {
@@ -20,6 +20,31 @@
         background-color:#666;
       }
     }
+  }
+}
+
+#navSearch {
+  display:inline-block;
+  color:#fff;
+  border-bottom:1px solid #fff;
+
+  input {
+    margin: 0 0.2em;
+    padding: 0.3em;
+    background-color:transparent;
+    border:none;
+    box-shadow:none;
+    color:#fff;
+  }
+}
+#navSearchResults {
+  position:absolute;
+  z-index:10;
+  background-color:$ycu-var-color-nav-bg;
+
+  li {
+    margin-left:0.5em;
+    margin-right:0.5em;
   }
 }
 
