@@ -3521,6 +3521,22 @@ body#yacyInteractive {
     body#yacyInteractive #thumbList .thumbContainer .content a,
     body#yacyInteractive #thumbList .thumbContainer .content button.plain {
       color: #fff !important; }
+  body#yacySearch .osmResults,
+  body#yacyInteractive .osmResults {
+    margin-bottom: 1.5em; }
+    body#yacySearch .osmResults .copyRight,
+    body#yacyInteractive .osmResults .copyRight {
+      margin-top: 0.5em;
+      font-style: italic;
+      font-size: 0.8em;
+      text-align: center; }
+  body#yacySearch .osmResult,
+  body#yacyInteractive .osmResult {
+    display: inline-block; }
+  body#yacySearch .osmTile,
+  body#yacyInteractive .osmTile {
+    width: 192px;
+    height: auto; }
 
 body#webSearch .searchDomains label {
   padding-right: 0.5em; }

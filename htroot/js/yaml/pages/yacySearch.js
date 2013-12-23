@@ -101,8 +101,20 @@ YaCyPage.EventHandler = function() {
     // handle navigational keys
     $(document).on('keydown', this.handleArrowKeys);
     // reset search button on changes
-    $('#search').on('keydown', function() {
+    $('#search').on('focus', function() {
+      this.select();
+    }).on('input', function() {
       $('#startSearch').text('Search');
+    });
+
+    $('.searchDomains input[name="contentdom"]').on('change', function() {
+      $('.searchDomains a.moreLink').attr('href',
+        '/index.html?searchoptions=1&amp;former=' +
+        $('#search').val() + '&amp;contentdom=' + $(this).val()
+      );
+      if ($('#search').val().trim().length > 0) {
+        $('#searchForm').submit();
+      }
     });
   };
 
@@ -123,6 +135,13 @@ YaCyPage.EventHandler = function() {
 YaCyPage.init = function() {
   YaCyPage.eventHandler = new YaCyPage.EventHandler();
   YaCyPage.eventHandler.addInteractionHandler();
+
+  // set more options link
+  $('.searchDomains a.moreLink').attr('href',
+    '/index.html?searchoptions=1&amp;former=' +
+    $('#search').val() + '&amp;contentdom=' +
+    $('.searchDomains input[name="contentdom"]').filter(':checked').val()
+  );
 
   // add autocomplete to search field
   $('#search').autocomplete({

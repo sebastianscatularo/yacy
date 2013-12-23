@@ -20,8 +20,6 @@ $ycu-var-sidebar-width:250px;
 }
 
 /** Page layout */
-//@import 'page-search';
-
 header {
   $logo-width:103px;
   box-shadow:0 4px 5px rgba(50,50,50,0.4);
@@ -433,4 +431,22 @@ table.sideBar {
       color:#fff !important;
     }
   }
+}
+
+.osmResults {
+  margin-bottom:1.5em;
+
+  .copyRight {
+    margin-top:0.5em;
+    font-style:italic;
+    font-size:0.8em;
+    text-align:center;
+  }
+}
+.osmResult {
+  display:inline-block;
+}
+.osmTile {
+  width:192px;
+  height:auto;
 }

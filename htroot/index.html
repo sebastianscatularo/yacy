@@ -7,13 +7,16 @@
   <link rel="alternate" type="application/rss+xml" title="Search for #[former]#" href="yacysearch.rss?query=#[former]#" />
   <link rel="search" type="application/opensearchdescription+xml" title="YaCy Search on '#[clientname]#'" href="opensearchdescription.xml" />
   <script type="text/javascript" src="/js/yaml/pages/yacySearch.js"></script>
-  <!--<link rel="stylesheet" type="text/css" media="screen" href="/env/highslide.css" />
-  <script type="text/javascript" src="/js/highslide/highslide.js"></script>
-  <script type="text/javascript">hs.outlineType = 'rounded-white';</script>
-  <script type="text/javascript" src="js/html.js"></script>-->
+  #(focus)#::
+  <script type="text/javascript">
+  $(function() {
+    $('#search').focus();
+  });
+  </script>
+  ::#(/focus)#
 </head>
 
-<body id="webSearch" onload="#(focus)#::document.getElementById('search').focus()#(/focus)#">
+<body id="webSearch">
   <ul class="ym-skiplinks">
     <li><a class="ym-skip" href="#nav">Skip to navigation (Press Enter)</a></li>
     <li><a class="ym-skip" href="#main">Skip to main content (Press Enter)</a></li>
@@ -35,11 +38,7 @@
         <div style="position:fixed; bottom: 0; right: 1px;"><a href="/Status.html">&pi;</a></div>
         #(/pi)#
 
-        <div id="devInfo">
-          - some scripts needs update
-          State:
-          * valid HTML5
-        </div>
+        <div id="devInfo" data-done="html5"></div>
 
         <div class="center">
           <a href="#[promoteSearchPageGreeting.homepage]#" class="noExt iconic">
@@ -50,10 +49,10 @@
           </h1>
         </div>
 
-        <form action="yacysearch.html" method="get" id="searchform" accept-charset="UTF-8">
+        <form action="yacysearch.html" method="get" id="searchForm" accept-charset="UTF-8">
           <div class="center">
             <fieldset>
-              <input name="query" class="searchinput" id="search" type="text" size="40" maxlength="80" value="#[former]#" onFocus="this.select()" />
+              <input name="query" class="searchinput" id="search" type="text" size="40" maxlength="80" value="#[former]#"/>
               <button type="submit" name="Enter" class="icon-search">Search</button>
               <input type="hidden" name="verify" value="#[search.verify]#" />
               #(searchdomswitches)#::
@@ -79,7 +78,7 @@
                 <label for="app">Applications</label>
                 #(/searchapp)#
                 #(searchoptions)#
-                <a href="/index.html?searchoptions=1" onclick="this.href='/index.html?searchoptions=1&amp;former='+document.getElementById('searchform').search.value+'&amp;contentdom='+radioValue(document.getElementById('searchform').contentdom)">more options...</a>::
+                <a class="moreLink" href="/index.html?searchoptions=1">more options...</a>::
                 #(/searchoptions)#
               </fieldset>
               #(/searchdomswitches)#
