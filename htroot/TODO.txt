@@ -9,3 +9,5 @@
 - remove nowrap from table td's
 - replace highslide with lightbox2
 - check multiline validators
+- remove CDATA escapes
+- remove old Bookmarks manager (replaced by YMarks)?
