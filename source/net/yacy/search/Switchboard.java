@@ -511,11 +511,12 @@ public final class Switchboard extends serverSwitch {
         final String solrurls = getConfig(SwitchboardConstants.FEDERATED_SERVICE_SOLR_INDEXING_URL, "http://127.0.0.1:8983/solr");
         final boolean usesolr = getConfigBool(SwitchboardConstants.FEDERATED_SERVICE_SOLR_INDEXING_ENABLED, false) & solrurls.length() > 0;
         final int solrtimeout = getConfigInt(SwitchboardConstants.FEDERATED_SERVICE_SOLR_INDEXING_TIMEOUT, 60000);
+        final boolean writeEnabled = getConfigBool(SwitchboardConstants.FEDERATED_SERVICE_SOLR_INDEXING_WRITEENABLED, true);
 
         if (usesolr && solrurls != null && solrurls.length() > 0) {
             try {
                 ArrayList<RemoteInstance> instances = RemoteInstance.getShardInstances(solrurls, null, null, solrtimeout);
-                this.index.fulltext().connectRemoteSolr(instances);
+                this.index.fulltext().connectRemoteSolr(instances, writeEnabled);
             } catch (final IOException e ) {
                 ConcurrentLog.logException(e);
             }
@@ -1334,11 +1335,12 @@ public final class Switchboard extends serverSwitch {
             final String solrurls = getConfig(SwitchboardConstants.FEDERATED_SERVICE_SOLR_INDEXING_URL, "http://127.0.0.1:8983/solr");
             final boolean usesolr = getConfigBool(SwitchboardConstants.FEDERATED_SERVICE_SOLR_INDEXING_ENABLED, false) & solrurls.length() > 0;
             final int solrtimeout = getConfigInt(SwitchboardConstants.FEDERATED_SERVICE_SOLR_INDEXING_TIMEOUT, 60000);
+            final boolean writeEnabled = getConfigBool(SwitchboardConstants.FEDERATED_SERVICE_SOLR_INDEXING_WRITEENABLED, true);
 
             if (usesolr && solrurls != null && solrurls.length() > 0) {
                 try {
                     ArrayList<RemoteInstance> instances = RemoteInstance.getShardInstances(solrurls, null, null, solrtimeout);
-                    this.index.fulltext().connectRemoteSolr(instances);
+                    this.index.fulltext().connectRemoteSolr(instances, writeEnabled);
                 } catch (final IOException e ) {
                     ConcurrentLog.logException(e);
                 }
@@ -3657,7 +3659,7 @@ public final class Switchboard extends serverSwitch {
         mySeed.put(Seed.UTC, GenericFormatter.UTCDiffString());
         mySeed.setFlagAcceptRemoteCrawl(getConfigBool("crawlResponse", true));
         mySeed.setFlagAcceptRemoteIndex(getConfigBool("allowReceiveIndex", true));
-        mySeed.setFlagSSLAvailable(getConfigBool("server.https", false));
+        mySeed.setFlagSSLAvailable(this.getHttpServer().withSSL() && getConfigBool("server.https", false));
     }
 
     public void loadSeedLists() {

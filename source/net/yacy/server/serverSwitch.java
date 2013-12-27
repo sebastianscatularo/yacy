@@ -47,11 +47,11 @@ import net.yacy.cora.protocol.HeaderFramework;
 import net.yacy.cora.protocol.RequestHeader;
 import net.yacy.cora.protocol.http.HTTPClient;
 import net.yacy.cora.util.ConcurrentLog;
+import net.yacy.http.YaCyHttpServer;
 import net.yacy.kelondro.util.FileUtils;
 import net.yacy.kelondro.workflow.BusyThread;
 import net.yacy.kelondro.workflow.WorkflowThread;
 import net.yacy.server.serverAccessTracker.Track;
-import net.yacy.server.serverCore.Session;
 
 public class serverSwitch
 {
@@ -69,7 +69,8 @@ public class serverSwitch
     private final ConcurrentMap<InetAddress, String> authorization;
     private final NavigableMap<String, BusyThread> workerThreads;
     private final serverAccessTracker accessTracker;
-
+    private YaCyHttpServer httpserver; // implemented HttpServer
+    
     public serverSwitch(
         final File dataPath,
         final File appPath,
@@ -440,43 +441,6 @@ public class serverSwitch
         }
     }
 
-    public void closeSessions(String sessionName) {
-        if ( sessionName == null ) {
-            return;
-        }
-
-        for ( final Session s : serverCore.getJobList() ) {
-            if ( (s.isAlive()) && (s.getName().equals(sessionName)) ) {
-                // try to stop session
-                s.setStopped(true);
-                try {
-                    Thread.sleep(100);
-                } catch (final InterruptedException ex ) {
-                }
-
-                // try to interrupt session
-                s.interrupt();
-                try {
-                    Thread.sleep(100);
-                } catch (final InterruptedException ex ) {
-                }
-
-                // try to close socket
-                if ( s.isAlive() ) {
-                    s.close();
-                }
-
-                // wait for session to finish
-                if ( s.isAlive() ) {
-                    try {
-                        s.join(500);
-                    } catch (final InterruptedException ex ) {
-                    }
-                }
-            }
-        }
-    }
-
     public Iterator<String> /*of serverThread-Names (String)*/threadNames() {
         return this.workerThreads.keySet().iterator();
     }
@@ -638,6 +602,16 @@ public class serverSwitch
         byte[] bytes = new byte[length];
         pwGenerator.nextBytes(bytes);
         return Digest.encodeMD5Hex(bytes);
+    }
+    /**
+     * set/remember jetty server
+     * @param jettyserver 
+     */
+    public void setHttpServer(YaCyHttpServer jettyserver) {
+        this.httpserver = jettyserver;
+    }
+    public YaCyHttpServer getHttpServer() {
+        return httpserver;
     }
 
 }

@@ -40,6 +40,7 @@ import net.yacy.cora.order.Base64Order;
 import net.yacy.cora.order.Digest;
 import net.yacy.cora.protocol.Domains;
 import net.yacy.cora.protocol.RequestHeader;
+import net.yacy.http.YaCyHttpServer;
 import net.yacy.kelondro.util.Formatter;
 import net.yacy.peers.Network;
 import net.yacy.peers.Seed;
@@ -93,6 +94,7 @@ public class SettingsAck_p {
             // check passed. set account:
             env.setConfig(SwitchboardConstants.ADMIN_ACCOUNT_B64MD5, Digest.encodeMD5Hex(Base64Order.standardCoder.encodeString(user + ":" + pw1)));
             env.setConfig("adminAccount", "");
+            env.setConfig("adminAccountUserName", user);
             prop.put("info", "5");//admin account changed
             prop.putHTML("info_user", user);
             return prop;
@@ -108,7 +110,7 @@ public class SettingsAck_p {
             prop.putHTML("info_port", port);
             if (!env.getConfig("port", port).equals(port)) {
                 // validation port
-                final serverCore theServerCore = (serverCore) env.getThread("10_httpd");
+                final YaCyHttpServer theServerCore =  env.getHttpServer();
                 try {
                     final InetSocketAddress theNewAddress = theServerCore.generateSocketAddress(port);
                     final String hostName = Domains.getHostName(theNewAddress.getAddress());

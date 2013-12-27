@@ -42,8 +42,6 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.ExecutionException;
 
 import net.yacy.cora.date.GenericFormatter;
-import net.yacy.cora.document.id.DigestURL;
-import net.yacy.cora.federate.yacy.CacheStrategy;
 import net.yacy.cora.lod.JenaTripleStore;
 import net.yacy.cora.protocol.ClientIdentification;
 import net.yacy.cora.protocol.RequestHeader;
@@ -51,10 +49,11 @@ import net.yacy.cora.protocol.TimeoutRequest;
 import net.yacy.cora.protocol.http.HTTPClient;
 import net.yacy.cora.sorting.Array;
 import net.yacy.cora.util.ConcurrentLog;
-import net.yacy.crawler.retrieval.Response;
 import net.yacy.data.Translator;
 import net.yacy.gui.YaCyApp;
 import net.yacy.gui.framework.Browser;
+import net.yacy.http.YaCyHttpServer;
+import net.yacy.http.Jetty8HttpServerImpl;
 import net.yacy.kelondro.util.FileUtils;
 import net.yacy.kelondro.util.Formatter;
 import net.yacy.kelondro.util.MemoryControl;
@@ -65,9 +64,10 @@ import net.yacy.peers.operation.yacyVersion;
 import net.yacy.search.Switchboard;
 import net.yacy.search.SwitchboardConstants;
 import net.yacy.server.serverCore;
-import net.yacy.server.http.HTTPDemon;
-
 import com.google.common.io.Files;
+import net.yacy.cora.document.id.DigestURL;
+import net.yacy.cora.federate.yacy.CacheStrategy;
+import net.yacy.crawler.retrieval.Response;
 
 
 /**
@@ -343,30 +343,23 @@ public final class yacy {
             }
 
             // start main threads
-            final String port = sb.getConfig("port", "8090");
+            final int port = sb.getConfigInt("port", 8090);
             try {
-                final HTTPDemon protocolHandler = new HTTPDemon(sb);
-                final serverCore server = new serverCore(
-                        timeout /*control socket timeout in milliseconds*/,
-                        true /* block attacks (wrong protocol) */,
-                        protocolHandler /*command class*/,
-                        sb,
-                        30000 /*command max length incl. GET args*/);
-                server.setName("httpd:"+port);
-                server.setPriority(Thread.MAX_PRIORITY);
-                server.setObeyIntermission(false);
-
-                // start the server
-                sb.deployThread("10_httpd", "HTTPD Server/Proxy", "the HTTPD, used as web server and proxy", null, server, 0, 0, 0, 0);
-                //server.start();
-
+                // start http server
+            	YaCyHttpServer httpServer;
+                httpServer = new Jetty8HttpServerImpl(port);
+                httpServer.startupServer();
+                sb.setHttpServer(httpServer);
+                ConcurrentLog.info("STARTUP",httpServer.getVersion());
+                
                 // open the browser window
                 final boolean browserPopUpTrigger = sb.getConfig(SwitchboardConstants.BROWSER_POP_UP_TRIGGER, "true").equals("true");
                 if (browserPopUpTrigger) try {
                     final String  browserPopUpPage = sb.getConfig(SwitchboardConstants.BROWSER_POP_UP_PAGE, "ConfigBasic.html");
                     //boolean properPW = (sb.getConfig("adminAccount", "").isEmpty()) && (sb.getConfig(httpd.ADMIN_ACCOUNT_B64MD5, "").length() > 0);
                     //if (!properPW) browserPopUpPage = "ConfigBasic.html";
-                    Browser.openBrowser((server.withSSL()?"https":"http") + "://localhost:" + serverCore.getPortNr(port) + "/" + browserPopUpPage);
+                    Browser.openBrowser(("http://localhost:"+port) + "/" + browserPopUpPage);
+                   // Browser.openBrowser((server.withSSL()?"https":"http") + "://localhost:" + serverCore.getPortNr(port) + "/" + browserPopUpPage);
                 } catch (final Throwable e) {
                     // cannot open browser. This may be normal in headless environments
                     //Log.logException(e);
@@ -425,14 +418,8 @@ public final class yacy {
                 // shut down
                 Array.terminate();
                 ConcurrentLog.config("SHUTDOWN", "caught termination signal");
-                server.terminate(false);
-                server.interrupt();
-                server.close();
+                httpServer.stop();
 
-                // idle until the processes are down
-                if (server.isAlive()) {
-                    server.interrupt();
-                }
                 ConcurrentLog.config("SHUTDOWN", "server has terminated");
                 sb.close();
             } catch (final Exception e) {

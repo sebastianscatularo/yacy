@@ -4,7 +4,7 @@
 
     <groupId>net.yacy</groupId>
     <artifactId>yacycore</artifactId>
-    <version>1.3</version>
+    <version>1.67</version>
     <packaging>jar</packaging>
     <description>YaCy - a Peer to Peer Web Search Engine</description>
     <name>YaCy</name>
@@ -29,46 +29,55 @@
         </developer>
     </developers>
 
-
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.6</maven.compiler.source>
+        <maven.compiler.target>1.6</maven.compiler.target>
+        <!-- the Solr version used in dependency section for all related dependencies -->
+        <solr.version>4.6.0</solr.version> 
+        
+        <!-- properties used for filtering yacyBuildProperties.java -->       
+        <REPL_DATE>${DSTAMP}</REPL_DATE>
+        <REPL_RELEASE>yacy_v${project.version}_${DSTAMP}_${releaseNr}.tar.gz</REPL_RELEASE>
+        <REPL_VERSION>${project.version}</REPL_VERSION>
+        <REPL_REVISION_NR>${releaseNr}</REPL_REVISION_NR>
+        <REPL_YACY_ROOT_DIR>.</REPL_YACY_ROOT_DIR>
+        <REPL_PKGMANAGER>false</REPL_PKGMANAGER>
+        <REPL_RESTARTCMD>/etc/init.d/yacy restart</REPL_RESTARTCMD>
     </properties>
 
     <build>
         <sourceDirectory>source</sourceDirectory>
-        <!-- testSourceDirectory>test</testSourceDirectory -->
+        <testSourceDirectory>test</testSourceDirectory>
         <finalName>yacycore</finalName>
 
         <plugins>
-
-            <!-- included to make directory visible in IDE (Netbeans) -->
+            <!-- included to make htroot visible in IDE (Netbeans) -->
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <version>1.7</version>
-                <executions>
-                    <execution>
-                        <id>add-source-htroot</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>add-source</goal>
-                        </goals>
-                        <configuration>
-                            <sources>
-                                <source>htroot</source>
-                            </sources>
-                        </configuration>
-                    </execution>
-                </executions>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.4</version>                
+                <configuration>
+                    <warSourceDirectory>htroot</warSourceDirectory>
+                </configuration>
             </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.5.1</version>
+                <version>3.1</version>
                 <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
+                    <excludes>
+                        <!-- special exclude for compatibility with ant build script
+                        Note: the ant build uses a tricky source filtering to filter yacyBuildProperties.java
+                        for the Maven build the original source is used for filtering to produce generated-sources.
+                        For the ant build script the yacyBuildProperties.java must be at it's origianl location,
+                        thus it is excluded here to prevent Maven compile error "duplicate source"
+                        -->
+                        <exclude>net/yacy/peers/operation/*.java</exclude>
+                    </excludes>  
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>          
                 </configuration>
             </plugin>
 
@@ -77,19 +86,16 @@
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>2.4</version>
                 <configuration>
-                    <!-- not to be packed into jar, needed because of use of  add-source -->
-                    <excludes>
-                        <directory>htroot</directory>
-                    </excludes>
                     <archive>
                         <manifest>
                             <mainClass>net.yacy.yacy</mainClass>
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                            <addClasspath>true</addClasspath>
                         </manifest>
                         <manifestEntries>
-                            <Implementation-Build>${project.version}-${buildNumber}</Implementation-Build>
+                            <Implementation-Build>${project.version}-${releaseNr}</Implementation-Build>          
                         </manifestEntries>
-                    </archive>
+                    </archive>                    
                 </configuration>
             </plugin>
 
@@ -100,7 +106,7 @@
                     <descriptors>
                         <descriptor>assembly.xml</descriptor>
                     </descriptors>
-                    <finalName>yacy_v${project.version}_${buildNumber}</finalName>
+                    <finalName>yacy_v${project.version}_${DSTAMP}_${releaseNr}</finalName>
                     <outputDirectory>RELEASE</outputDirectory>
                     <appendAssemblyId>false</appendAssemblyId>
                 </configuration>
@@ -114,7 +120,7 @@
                 </executions>
             </plugin>
 
-            <!-- compile htroot -->
+           <!-- compile htroot -->
             <plugin>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <executions>
@@ -154,73 +160,53 @@
                     </excludes>
                 </configuration>
             </plugin>
-
+            
+            <!-- custom plugin to add YaCy release number from local Git clone 
+            sets property <releaseNr>9nnn</releasNr> <DSTAMP>yyyyMMdd</DSTAMP> 
+            ! run sub project in libbuild to install the plugin ! -->
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>buildnumber-maven-plugin</artifactId>
-                <version>1.2</version>
-                <executions>
-                    <execution>
-                        <id>1</id>
-                        <!-- phase must be after phase initialize, as used property releaseNr only available after initialize -->
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>create</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <doCheck>false</doCheck>
-                    <doUpdate>false</doUpdate>
-                    <shortRevisionLength>5</shortRevisionLength>
-                    <revisionOnScmFailure>9000</revisionOnScmFailure>
-                    <!-- creates a string e.g. 20130131-1fd45 -->
-                    <format>{0,date,yyyyMMdd}_{1}</format>
-                    <items>
-                        <item>timestamp</item>                        
-                        <item>${releaseNr}</item> <!-- custom releaseNr read as property from child project GitRevTask -->
-                        <item>scmVersion</item> <!-- Git short version - from remote archive  CURRENTLY NOT USED -->
-                    </items>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>2.6</version>
-                <executions>
-                    <execution>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>build-classpath</goal>
-                        </goals>
-                        <configuration>
-                            <!--attach>true</attach-->
-                            <outputFilterFile>true</outputFilterFile>
-                            <outputFile>${project.build.directory}/classpath.properties</outputFile>
-                            <!--fileSeparator>\\\\</fileSeparator-->
-                        </configuration>
-                    </execution>
-
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>properties-maven-plugin</artifactId>
-                <version>1.0-alpha-2</version>
+                <groupId>net.yacy</groupId>
+                <artifactId>maven-plugin-gitrevisionnumber</artifactId>
+                <version>1.0</version>
                 <executions>
                     <execution>
                         <phase>initialize</phase>
                         <goals>
-                            <goal>read-project-properties</goal>
+                            <goal>create</goal>
                         </goals>
-                        <configuration>
-                            <files>
-                                <file>libbuild/gitbuildnumber.properties</file>
-                            </files>
-                        </configuration>
+                        <!-- optional parameter to set/change the propertyName 
+                        <configuration> 
+                            <branchPropertyName>branch</branchPropertyName>
+                            <buildNumberPropertyName>releasNr</buildNumberPropertyName> 
+                            <commitDatePropertyName>DSTAMP</commitDatePropertyName> 
+                        </configuration> 
+                        -->
                     </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>templating-maven-plugin</artifactId>
+                <version>1.0-alpha-3</version>
+                <executions>
+                      <execution>
+                        <id>filter-src</id>
+                        <goals>
+                            <goal>filter-sources</goal>
+                        </goals>
+                        <configuration>              
+                            <!-- sourceDirectory should be a separate template directory like  
+                                 <sourceDirectory>${basedir}/libbuild/java-templates</sourceDirectory> 
+                              to not duplicate the yacyBuildProperties.java we use the original files as sourceDirectory 
+                              (to be compatible with the ant build.xml,
+                              but it should be changed in future for both build systems to use a templateDirectory, 
+                              to eliminate the need of special compiler excludes
+                            -->                            
+                            <sourceDirectory>${basedir}/source/net/yacy/peers/operation</sourceDirectory>
+                            <outputDirectory>${project.build.directory}/generated-sources/java/net/yacy/peers/operation</outputDirectory>
+                  
+                        </configuration>
+                    </execution> 
                 </executions>
             </plugin>
 
@@ -283,26 +269,9 @@
                         </configuration>
                     </execution>
 
-                    <execution>
-                        <id>install-domaingraph-jar</id>
-                        <phase>clean</phase>
-                        <goals>
-                            <goal>install-file</goal>
-                        </goals>
-                        <configuration>
-                            <file>${basedir}/htroot/processing/domaingraph/applet/domaingraph.jar</file>
-                            <groupId>net.yacy.extlib</groupId>
-                            <artifactId>domaingraph</artifactId>
-                            <version>0135</version>
-                            <packaging>jar</packaging>
-                            <generatePom>true</generatePom>
-                        </configuration>
-                    </execution>
-
                 </executions>
             </plugin>
         </plugins>
-
     </build>
 
     <dependencies>
@@ -311,12 +280,6 @@
             <artifactId>junit</artifactId>
             <version>4.7</version>
             <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <artifactId>hamcrest-core</artifactId>
-                    <groupId>org.hamcrest</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>
@@ -337,34 +300,17 @@
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
-            <version>1.7</version>
-            <type>jar</type>
+            <version>1.8</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-compress</artifactId>
-            <version>1.4.1</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>xz</artifactId>
-                    <groupId>org.tukaani</groupId>
-                </exclusion>
-            </exclusions>
+            <version>1.6</version>
         </dependency>
         <dependency>
             <groupId>commons-fileupload</groupId>
             <artifactId>commons-fileupload</artifactId>
-            <version>1.2.2</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-httpclient</groupId>
-            <artifactId>commons-httpclient</artifactId>
-            <version>3.1</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>2.1</version>
+            <version>1.3</version>
         </dependency>
         <dependency>
             <groupId>commons-jxpath</groupId>
@@ -379,12 +325,12 @@
         <dependency>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
-            <version>1.1.1</version>
+            <version>1.1.3</version>
         </dependency>
         <dependency>
             <groupId>org.apache.pdfbox</groupId>
             <artifactId>fontbox</artifactId>
-            <version>1.7.1</version>
+            <version>1.8.3</version>
         </dependency>
         <dependency>
             <groupId>org.apache.geronimo.specs</groupId>
@@ -394,7 +340,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>r05</version>
+            <version>15.0</version>
         </dependency>
         <dependency>
             <groupId>org.htmlparser</groupId>
@@ -404,20 +350,17 @@
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <version>4.2.2</version>
-            <type>jar</type>
+            <version>4.3.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpcore</artifactId>
-            <version>4.2.3</version>
-            <type>jar</type>
+            <version>4.3</version>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpmime</artifactId>
-            <version>4.2.2</version>
-            <type>jar</type>
+            <version>4.3.1</version>
         </dependency>
         <dependency>
             <groupId>com.ibm.icu</groupId>
@@ -428,11 +371,6 @@
             <groupId>com.hp.hpl.jena</groupId>
             <artifactId>iri</artifactId>
             <version>0.8</version>
-        </dependency>
-        <dependency>
-            <groupId>ant</groupId>
-            <artifactId>ant-jakarta-oro</artifactId>
-            <version>1.6.1</version>
         </dependency>
         <dependency>
             <groupId>org</groupId>
@@ -452,12 +390,12 @@
         <dependency>
             <groupId>org.apache.pdfbox</groupId>
             <artifactId>jempbox</artifactId>
-            <version>1.7.1</version>
+            <version>1.8.3</version>
         </dependency>
         <dependency>
             <groupId>com.hp.hpl.jena</groupId>
             <artifactId>jena</artifactId>
-            <version>2.6.4</version>
+            <version>2.6.4</version>            
             <exclusions>
                 <exclusion>
                     <artifactId>slf4j-log4j12</artifactId>
@@ -466,36 +404,24 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>org.mortbay.jetty</groupId>
-            <artifactId>jetty</artifactId>
-            <version>6.1.26-patched-JETTY-1340</version>
-        </dependency>
-        <dependency>
-            <groupId>org.mortbay.jetty</groupId>
-            <artifactId>jetty-util</artifactId>
-            <version>6.1.26-patched-JETTY-1340</version>
-        </dependency>
-        <dependency>
             <groupId>com.jcraft</groupId>
             <artifactId>jsch</artifactId>
-            <version>0.1.42</version>
-            <type>jar</type>
+            <version>0.1.50</version>
         </dependency>
         <dependency>
             <groupId>com.googlecode.json-simple</groupId>
             <artifactId>json-simple</artifactId>
-            <version>1.1</version>
+            <version>1.1.1</version>
         </dependency>
         <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
-            <version>1.6.3</version>
+            <version>1.7.3</version>
         </dependency>
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
-            <version>1.2.16</version>
-            <type>jar</type>
+            <version>1.2.17</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -505,90 +431,88 @@
         <dependency>
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-analyzers-common</artifactId>
-            <version>4.0.0</version>
+            <version>${solr.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-analyzers-phonetic</artifactId>
-            <version>4.0.0</version>
+            <version>${solr.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-core</artifactId>
-            <version>4.0.0</version>
-            <type>jar</type>
+            <version>${solr.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-grouping</artifactId>
-            <version>4.0.0</version>
+            <version>${solr.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-highlighter</artifactId>
-            <version>4.0.0</version>
+            <version>${solr.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-memory</artifactId>
-            <version>4.0.0</version>
+            <version>${solr.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-misc</artifactId>
-            <version>4.0.0</version>
+            <version>${solr.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-queries</artifactId>
-            <version>4.0.0</version>
+            <version>${solr.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-spatial</artifactId>
-            <version>4.0.0</version>
+            <version>${solr.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-suggest</artifactId>
-            <version>4.0.0</version>
+            <version>${solr.version}</version>
         </dependency>
         <dependency>
             <groupId>com.drewnoakes</groupId>
             <artifactId>metadata-extractor</artifactId>
-            <version>2.4.0-beta-1</version>
+            <version>2.6.2</version>
         </dependency>
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.12</version>
+            <groupId>oro</groupId>
+            <artifactId>oro</artifactId>
+            <version>2.0.8</version>
         </dependency>
         <dependency>
             <groupId>org.apache.pdfbox</groupId>
             <artifactId>pdfbox</artifactId>
-            <version>1.7.1</version>
-            <type>jar</type>
+            <version>1.8.3</version>
         </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
-            <version>3.6</version>
+            <version>3.9</version>
         </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-scratchpad</artifactId>
-            <version>3.6</version>
+            <version>3.9</version>
         </dependency>
         <dependency>
             <groupId>sax</groupId>
             <artifactId>sax</artifactId>
             <version>2.0.1</version>
-        </dependency>
+        </dependency>        
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
-            <version>2.5</version>
-        </dependency>
+            <groupId>org.eclipse.jetty.orbit</groupId>
+            <artifactId>javax.servlet</artifactId>
+            <version>3.0.0.v201112011016</version>
+        </dependency>        
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -602,19 +526,38 @@
         <dependency>
             <groupId>org.apache.solr</groupId>
             <artifactId>solr-solrj</artifactId>
-            <version>4.0.0</version>
-            <type>jar</type>
+            <version>${solr.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.solr</groupId>
             <artifactId>solr-core</artifactId>
-            <version>4.0.0</version>
-            <type>jar</type>
+            <version>${solr.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>slf4j-log4j12</artifactId>
+                    <groupId>org.slf4j</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-server</artifactId>
+            <version>8.1.14.v20131031</version>
+        </dependency>      
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-servlet</artifactId>
+            <version>8.1.14.v20131031</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-servlets</artifactId>
+            <version>8.1.14.v20131031</version>
+        </dependency>    
         <dependency>
             <groupId>org.codehaus.woodstox</groupId>
             <artifactId>wstx-asl</artifactId>
-            <version>3.2.7</version>
+            <version>3.2.9</version>
         </dependency>
         <dependency>
             <groupId>xerces</groupId>
@@ -633,21 +576,6 @@
             <groupId>net.yacy.extlib</groupId>
             <artifactId>webcat</artifactId>
             <version>0.1</version>
-        </dependency>
-        <dependency>
-            <groupId>net.yacy.extlib</groupId>
-            <artifactId>domaingraph</artifactId>
-            <version>0135</version>
-            <!--          <type>jar</type>
-            <scope>system</scope>
-            <systemPath>${basedir}/htroot/processing/domaingraph/applet/domaingraph.jar</systemPath>
-            -->
-        </dependency>
-        <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.core</artifactId>
-            <version>4.1.0</version>
-            <type>jar</type>
         </dependency>
     </dependencies>
 </project>

@@ -38,11 +38,11 @@ import net.yacy.cora.protocol.HeaderFramework;
 import net.yacy.cora.protocol.RequestHeader;
 import net.yacy.data.Translator;
 import net.yacy.data.WorkTables;
+import net.yacy.http.YaCyHttpServer;
 import net.yacy.kelondro.workflow.InstantBusyThread;
 import net.yacy.peers.Seed;
 import net.yacy.search.Switchboard;
 import net.yacy.search.SwitchboardConstants;
-import net.yacy.server.serverCore;
 import net.yacy.server.serverObjects;
 import net.yacy.server.serverSwitch;
 import net.yacy.server.http.HTTPDFileHandler;
@@ -102,7 +102,8 @@ public class ConfigBasic {
             port = env.getConfigLong("port", 8090); //this allows a low port, but it will only get one, if the user edits the config himself.
             ssl = env.getConfigBool("server.https", false);
         }
-
+        if (ssl) prop.put("withsslenabled_sslport",env.getHttpServer().getSslPort());
+        
         // check if peer name already exists
         final Seed oldSeed = sb.peers.lookupByName(peerName);
         if (oldSeed == null &&
@@ -131,10 +132,10 @@ public class ConfigBasic {
         final boolean reconnect;
         if (!(env.getConfigLong("port", port) == port) || env.getConfigBool("server.https", false) != ssl) {
             // validate port
-            final serverCore theServerCore = (serverCore) env.getThread("10_httpd");
+            final YaCyHttpServer theServerCore =  env.getHttpServer();
             env.setConfig("port", port);
             env.setConfig("server.https", ssl);
-
+            
             // redirect the browser to the new port
             reconnect = true;
 
@@ -157,7 +158,7 @@ public class ConfigBasic {
             prop.put("nextStep_host", host);
             prop.put("reconnect_port", port);
             prop.put("nextStep_port", port);
-            prop.put("reconnect_sslSupport", theServerCore.withSSL() ? "1" : "0");
+            prop.put("reconnect_sslSupport", theServerCore.withSSL() ? "1" : "0"); 
             prop.put("nextStep_sslSupport", theServerCore.withSSL() ? "1" : "0");
 
             // generate new shortcut (used for Windows)

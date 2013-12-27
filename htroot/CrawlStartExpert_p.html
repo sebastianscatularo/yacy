@@ -11,7 +11,7 @@
   #%env/templates/page-start.template%#
 
   <div id="api">
-    <a class="api" href="http://www.yacy-websuche.de/wiki/index.php/Dev:API#Managing_crawl_jobs" title="Click on this API button to see a documentation of the POST request parameter for crawl starts."><img src="/env/grafics/api.png" alt="API" class="api"/></a>
+    <a class="api" href="http://www.yacy-websuche.de/wiki/index.php/Dev:API#Managing_crawl_jobs" target="_blank" title="Click on this API button to see a documentation of the POST request parameter for crawl starts."><img src="/env/grafics/api.png" alt="API" class="api"/></a>
   </div>
 
   <div id="devInfo" data-done="html5">
@@ -27,7 +27,7 @@
     You can define <abbr>URLs</abbr> as start points for Web page crawling and start crawling here.
     <em>Crawling</em> means that <abbr>YaCy</abbr> will download the given website, extract all links in it and then download the content behind these links.
     This is repeated as long as specified under <em>Crawling Depth</em>.
-    A crawl can also be started using <a href="http://www.gnu.org/s/wget/">wget</a> and the <a href="http://www.yacy-websuche.de/wiki/index.php/Dev:API#Managing_crawl_jobs">post arguments</a> for this web page.
+    A crawl can also be started using <a href="http://www.gnu.org/s/wget/" target="_blank">wget</a> and the <a href="http://www.yacy-websuche.de/wiki/index.php/Dev:API#Managing_crawl_jobs" target="_blank">post arguments</a> for this web page.
   </p>
 
   <form action="Crawler_p.html" id="crawlerForm" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
@@ -276,7 +276,7 @@
         </div>
         <div class="formHelp hidden">
           <p>
-            The filter is a <b><a href="http://download.oracle.com/javase/6/docs/api/java/util/regex/Pattern.html">regular expression</a></b>.
+            The filter is a <b><a href="http://download.oracle.com/javase/6/docs/api/java/util/regex/Pattern.html" target="_blank">regular expression</a></b>.
           </p>
           <p>
             <i>Example:</i> to allow only urls that contain the word 'science', set the must-match filter to '<code>.*science.*</code>'.
@@ -401,7 +401,7 @@
         </div>
         <div class="formHelp hidden">
           <p>
-            The filter is a <b><a href="http://download.oracle.com/javase/6/docs/api/java/util/regex/Pattern.html">regular expression</a></b> that <b>must not match</b> with the <abbr>URLs</abbr> to allow that the content of the <abbr>URL</abbr> is indexed.
+            The filter is a <b><a href="http://download.oracle.com/javase/6/docs/api/java/util/regex/Pattern.html" target="_blank">regular expression</a></b> that <b>must not match</b> with the <abbr>URLs</abbr> to allow that the content of the <abbr>URL</abbr> is indexed.
           </p>
         </div>
       </fieldset>

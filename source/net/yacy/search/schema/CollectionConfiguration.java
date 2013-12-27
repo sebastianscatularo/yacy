@@ -70,6 +70,7 @@ import net.yacy.crawler.retrieval.Response;
 import net.yacy.document.Condenser;
 import net.yacy.document.Document;
 import net.yacy.document.SentenceReader;
+import net.yacy.document.content.DCEntry;
 import net.yacy.document.parser.html.ContentScraper;
 import net.yacy.document.parser.html.ImageEntry;
 import net.yacy.kelondro.data.citation.CitationReference;
@@ -788,6 +789,22 @@ public class CollectionConfiguration extends SchemaConfiguration implements Seri
                 add(doc, CollectionSchema.publisher_url_s, html.getPublisherLink().toNormalform(true));
             }
         }
+
+        if (parser instanceof DCEntry) {
+            // the document was created with a surrogate parsing; overwrite all md: -entries to Solr
+            DCEntry dcentry = (DCEntry) parser;
+            for (Map.Entry<String, String[]> entry: dcentry.getMap().entrySet()) {
+                String tag = entry.getKey();
+                if (!tag.startsWith("md:") || tag.length() < 4) continue;
+                CollectionSchema solr_field = CollectionSchema.valueOf(tag.substring(3));
+                if (solr_field == null) continue;
+                String[] values = entry.getValue();
+                if (values == null || values.length == 0) continue;
+                if (allAttr || contains(solr_field)) {
+                    add(doc, solr_field, values);
+                }
+            }
+        }
         
         String content = document.getTextString();
         String tokens = digestURL.toTokens();
@@ -1365,7 +1382,7 @@ public class CollectionConfiguration extends SchemaConfiguration implements Seri
             }
             this.collections = new HashMap<String, Pattern>();
             Collection<Object> c = doc.getFieldValues(CollectionSchema.collection_sxt.getSolrFieldName());
-            for (Object cn: c) this.collections.put((String) cn, QueryParams.catchall_pattern);
+            if (c != null) for (Object cn: c) if (cn != null) this.collections.put((String) cn, QueryParams.catchall_pattern);
             this.failReason = (String) doc.getFieldValue(CollectionSchema.failreason_s.getSolrFieldName());
             this.failType = FailType.valueOf((String) doc.getFieldValue(CollectionSchema.failtype_s.getSolrFieldName()));
             this.httpstatus = (Integer) doc.getFieldValue(CollectionSchema.httpstatus_i.getSolrFieldName());

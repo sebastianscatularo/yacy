@@ -23,9 +23,11 @@ package net.yacy.search.query;
 import java.util.ArrayList;
 
 import org.apache.solr.common.params.CommonParams;
+import org.apache.solr.common.params.MultiMapSolrParams;
 
 import net.yacy.cora.document.id.DigestURL;
 import net.yacy.cora.util.CommonPattern;
+import net.yacy.search.index.Segment;
 import net.yacy.search.schema.CollectionSchema;
 import net.yacy.server.serverObjects;
 
@@ -73,21 +75,11 @@ public class QueryModifier {
             add("/file");
         }
         
+        // parse 'common search mistakes' like guessed regular expressions
+        querystring = filetypeParser(querystring, "*");
+        
         // parse filetype
-        final int ftp = querystring.indexOf("filetype:", 0);
-        if ( ftp >= 0 ) {
-            int ftb = querystring.indexOf(' ', ftp);
-            if ( ftb == -1 ) {
-                ftb = querystring.length();
-            }
-            filetype = querystring.substring(ftp + 9, ftb);
-            querystring = querystring.replace("filetype:" + filetype, "");
-            while ( !filetype.isEmpty() && filetype.charAt(0) == '.' ) {
-                filetype = filetype.substring(1);
-            }
-            add("filetype:" + filetype);
-            if (filetype.isEmpty()) filetype = null;
-        }
+        querystring = filetypeParser(querystring, "filetype:");
         
         // parse site
         final int sp = querystring.indexOf("site:", 0);
@@ -140,6 +132,23 @@ public class QueryModifier {
         return querystring.trim();
     }
     
+    private String filetypeParser(String querystring, final String filetypePrefix) {
+        final int ftp = querystring.indexOf(filetypePrefix, 0);
+        if ( ftp >= 0 ) {
+            int ftb = querystring.indexOf(' ', ftp);
+            if ( ftb < 0 ) ftb = querystring.length();
+            filetype = querystring.substring(ftp + filetypePrefix.length(), ftb);
+            querystring = querystring.replace(filetypePrefix + filetype, "");
+            while ( !filetype.isEmpty() && filetype.charAt(0) == '.' ) {
+                filetype = filetype.substring(1);
+            }
+            add("filetype:" + filetype);
+            if (filetype.isEmpty()) filetype = null;
+            if (querystring.length() == 0) querystring = "*";
+        }
+        return querystring;
+    }
+    
     public void add(String m) {
         if (modifier.length() > 0 && modifier.charAt(modifier.length() - 1) != ' ' && m != null && m.length() > 0) modifier.append(' ');
         if (m != null) modifier.append(m);
@@ -148,10 +157,11 @@ public class QueryModifier {
     public String toString() {
         return this.modifier.toString();
     }
+
     
-    public void apply(serverObjects post) {
+    private StringBuilder apply(String FQ) {
         
-        final StringBuilder fq = new StringBuilder(post.get(CommonParams.FQ,""));
+        final StringBuilder fq = new StringBuilder(FQ);
         
         if (this.sitehost != null && this.sitehost.length() > 0 && fq.indexOf(CollectionSchema.host_s.getSolrFieldName()) < 0) {
             // consider to search for hosts with 'www'-prefix, if not already part of the host name
@@ -179,11 +189,29 @@ public class QueryModifier {
             fq.append(" AND ").append(CollectionSchema.url_protocol_s.getSolrFieldName()).append(":\"").append(this.protocol).append('\"');
         }
 
+        return fq;
+    }
+    public void apply(serverObjects post) {
+        
+        final StringBuilder fq = apply(post.get(CommonParams.FQ,""));
+        
         if (fq.length() > 0) {
             String fqs = fq.toString();
             if (fqs.startsWith(" AND ")) fqs = fqs.substring(5);
             post.remove(CommonParams.FQ);
             post.put(CommonParams.FQ, fqs);
+        }
+    }
+
+    public void apply(MultiMapSolrParams mmsp) {
+
+        final StringBuilder fq = apply(mmsp.get(CommonParams.FQ,""));
+
+        if (fq.length() > 0) {
+            String fqs = fq.toString();
+            if (fqs.startsWith(" AND ")) fqs = fqs.substring(5);
+            mmsp.getMap().remove(CommonParams.FQ);
+            mmsp.getMap().put(CommonParams.FQ, new String[]{fqs});
         }
     }
     

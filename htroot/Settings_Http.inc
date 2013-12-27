@@ -43,6 +43,13 @@
       </div>
     </fieldset>
 
+	<fieldset class="formSection">
+      <legend>HTTP Server</legend>
+      <div class="content">
+		HTTP Server Version: <span class="tt">#[httpservername]#</span>
+      </div>
+    </fieldset>
+
     <fieldset class="formControl">
       <div class="description">
         <p>

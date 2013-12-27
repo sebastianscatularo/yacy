@@ -7,8 +7,6 @@
 # you must delete the yacy.conf file in DATA/SETTINGS
 
 # ----------------------------------------------------------------------------
-# the HTTP service configurations
-
 # port number where the server should bind to
 port = 8090
 
@@ -386,6 +384,7 @@ use_proxyAccounts=true
 #adminAccount=admin:mysecretpassword
 adminAccount=
 adminAccountBase64MD5=
+adminAccountUserName=admin
 
 # special access handling for users from localhost:
 # access from localhost may be granted with administration authority
@@ -1092,6 +1091,7 @@ federated.service.solr.indexing.sharding = MODULO_HOST_MD5
 # the lazy attribute causes that fields containing "" or 0 are not added and not written
 federated.service.solr.indexing.lazy = true
 federated.service.solr.indexing.timeout = 60000
+federated.service.solr.indexing.writeEnabled = true
 
 # temporary definition of backend services to use.
 # After the migration a rwi+solr combination is used, the solr contains the content of the previously used metadata-db.
